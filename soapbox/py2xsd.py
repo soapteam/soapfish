@@ -105,16 +105,18 @@ def generate_xsd(schema):
     return xmlelement
     
 
-if __name__ == "__main__":
+def main():
     import os
-    print os.getcwd()
     if len(sys.argv) != 2:
-        print "Use: py2wsld.py <path to pytho file>"
-        sys.exit()
+        print "Use: py2xsd <path to pytho file>"
+        return
     module = sys.argv[1]
     globals = imp.load_source("module.name", module)
     schema = getattr(globals,"Schema")
     schemaelement = generate_xsd(schema)
     print etree.tostring(schemaelement, pretty_print=True)
+    
+if __name__ == "__main__":
+    main()
         
 

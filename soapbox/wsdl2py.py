@@ -88,7 +88,7 @@ def main(is_server, path):
             schema=schemaxml,
             is_server=is_server)
     
-if __name__ == "__main__":
+def console_main():
     parser = OptionParser(usage = "usage: %prog [-c|-s] path_to_wsdl")
     parser.add_option("-c", "--client", dest="client",
                   help="Generate webservice http client code.")
@@ -103,3 +103,6 @@ if __name__ == "__main__":
         main(True, options.server)
     else:
         parser.print_help()
+        
+if __name__ == "__main__":
+    console_main()

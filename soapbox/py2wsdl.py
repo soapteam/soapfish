@@ -88,12 +88,20 @@ def generate_wsdl(service):
                                         "tns" : service.targetNamespace})
     definitions.render(xmlelement, definitions, "http://schemas.xmlsoap.org/wsdl/")
     return etree.tostring(xmlelement, pretty_print=True)
-    
-if __name__ == "__main__":
+
+
+def main():
+    if len(sys.argv) != 2:
+        print "use: py2wsdl <path to python file>"
+        return
     path = sys.argv[1]
     globals = imp.load_source("", path)
     service = getattr(globals,"SERVICE")
     print generate_wsdl(service)
+    
+if __name__ == "__main__":
+    main()
+    
     
     
     

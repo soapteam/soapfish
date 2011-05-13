@@ -21,9 +21,9 @@ py2xsd.py, xsd2py.py, wsdl2py.py, py2wsdl.py.
 	utils.py is mostly jinja2 helper functions. jinja2 is templating engine used
 for code generation.
 
-1. Working with XML
-================
-	The main building block are xsd.ComplexType, xsd.Element, xsd.Attribute and
+= 1. Working with XML =
+
+The main building block are xsd.ComplexType, xsd.Element, xsd.Attribute and
 simple types defined in xsd package. xsd.ComplexType is a parent to extend to define
 own type. Main methods for types are xml - translates object into XML, and parsexml
 builds object from XML.
