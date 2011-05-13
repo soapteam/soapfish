@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<wsdl:definitions xmlns:tns="http://flightdataservices.com/ops.wsdl" xmlns:xs="http://www.w3.org/2000/10/XMLSchema" xmlns:fds="http://flightdataservices.com/ops.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OPS" targetNamespace="http://flightdataservices.com/ops.wsdl" xmlns="http://flightdataservices.com/ops.xsd">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://flightdataservices.com/ops.xsd">
+			<xs:complexType name="airport">
+				<xs:sequence>
+					<xs:element name="code_type">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="ICAO"/>
+								<xs:enumeration value="IATA"/>
+								<xs:enumeration value="FAA"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="code" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="weight">
+					<xs:sequence>
+						<xs:element name="value" type="xs:integer"/>
+						<xs:element name="unit">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="kg"/>
+									<xs:enumeration value="lb"/>
+								</xs:restriction>
+						</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+			</xs:complexType>
+			
+			<xs:simpleType name="pilot">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="CAPTAIN"/>
+					<xs:enumeration value="FIRST_OFFICER"/>
+				</xs:restriction>
+			</xs:simpleType>
+      
+			<xs:complexType name="ops">
+				<xs:sequence>
+					<xs:element name="aircraft" type="xs:string" nillable="false"/>
+					<xs:element name="flight_number" type="xs:string"/>
+					<xs:element name="type">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="COMMERCIAL"/>
+								<xs:enumeration value="INCOMPLETE"/>
+								<xs:enumeration value="ENGINE_RUN_UP"/>
+								<xs:enumeration value="TEST"/>
+								<xs:enumeration value="TRAINING"/>
+								<xs:enumeration value="FERRY"/>
+								<xs:enumeration value="POSITIONING"/>
+								<xs:enumeration value="LINE_TRAINING"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="takeoff_airport" type="fds:airport"/>
+					<xs:element name="takeoff_gate_datetime" type="xs:dateTime" minOccurs="0"/>
+					<xs:element name="takeoff_datetime" type="xs:dateTime"/>
+					<xs:element name="takeoff_fuel" minOccurs="0" type="fds:weight"/>
+					<xs:element name="takeoff_gross_weight" minOccurs="0" type="fds:weight"/>
+					<xs:element name="takeoff_pilot" minOccurs="0" type="fds:pilot"/>
+					<xs:element name="landing_airport" type="fds:airport"/>
+					<xs:element name="landing_gate_datetime" type="xs:dateTime" minOccurs="0"/>
+					<xs:element name="landing_datetime" type="xs:dateTime"/>
+					<xs:element name="landing_fuel" minOccurs="0" type="fds:weight"/>
+					<xs:element name="landing_pilot" minOccurs="0" type="fds:pilot"/>
+					<xs:element name="destination_airport" minOccurs="0" type="fds:airport"/>
+					<xs:element name="captain_code" minOccurs="0" type="xs:string"/>
+					<xs:element name="first_officer_code" minOccurs="0" type="xs:string"/>
+					<xs:element name="V2" minOccurs="0" type="xs:integer"/>
+					<xs:element name="Vref" minOccurs="0" type="xs:integer"/>
+					<xs:element name="Vapp" minOccurs="0" type="xs:integer"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="status">
+				<xs:sequence>
+					<xs:element name="action">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="INSERTED"/>
+								<xs:enumeration value="UPDATED"/>
+								<xs:enumeration value="EXISTS"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="id" type="xs:long"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="ops" type="fds:ops"/>
+			<xs:element name="status" type="fds:status"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="PutOpsInput">
+		<wsdl:part name="body" element="fds:ops"/>
+	</wsdl:message>
+	<wsdl:message name="PutOpsOutput">
+		<part name="body" element="fds:status"/>
+	</wsdl:message>
+	<wsdl:portType name="PutOpsPortType">
+		<wsdl:operation name="PutOps">
+			<wsdl:input message="tns:PutOpsInput"/>
+			<wsdl:output message="tns:PutOpsOutput"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PutOpsBinding" type="tns:PutOpsPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="PutOps">
+			<soap:operation soapAction="http://polaris.flightdataservices.com/ws/ops/PutOps"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="OPS">
+		<wsdl:documentation>Register Flight Ops</wsdl:documentation>
+		<wsdl:port name="PutOpsPort" binding="tns:PutOpsBinding">
+			<soap:address location="http://polaris.flightdataservices.com/ws/ops"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
