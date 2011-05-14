@@ -4,6 +4,7 @@ import xsd
 import re
 import py2wsdl
 import httplib2
+from utils import uncapitalize
 
 class SOAPVersion:
     SOAP11 = "SOAP 1.1"
@@ -98,8 +99,8 @@ def get_django_dispatch(service):
         
     def build_soap_message(o):
         try:
-            o.xml(o.__class__.__name__.lower(), service.schema)#Validation.
-        except:
+            o.xml(uncapitalize(o.__class__.__name__), service.schema)#Validation.
+        except Exception, e:
             raise ValueError(e)
             
         return Envelope.reponse(o)
@@ -131,7 +132,7 @@ def get_django_dispatch(service):
                 return_object = method.function(request, input_object)
                 return HttpResponse(build_soap_message(return_object))
             raise ValueError("Method not found!")
-        except (ValueError,etree.XMLSyntaxError), e:
+        except (ValueError,etree.XMLSyntaxError) as e:
             fault = Fault(faultcode="Client", faultstring=str(e), detail=str(e))
         except Exception, e:
             #Presents of detail element indicates that the problem is related 

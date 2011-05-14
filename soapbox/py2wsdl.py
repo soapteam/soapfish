@@ -3,6 +3,7 @@ import imp
 import wsdl
 from lxml import etree
 from py2xsd import generate_xsdspec
+from utils import uncapitalize
 
 def build_service(definitions, service):
     wsdl_service = wsdl.Service()
@@ -54,7 +55,7 @@ def build_messages(definitions, service):
         if isinstance(method.input, str):
             inputMessage.part.element = "sns:"+method.input
         else:
-            inputMessage.part.type = "sns:"+method.input.__name__.lower()
+            inputMessage.part.type = "sns:"+uncapitalize(method.input.__name__)
         definitions.messages.append(inputMessage)
         
         outputMessage = wsdl.Message(name=method.operationName+"Output")
@@ -63,7 +64,7 @@ def build_messages(definitions, service):
         if isinstance(method.output, str):
             outputMessage.part.element = "sns:"+method.output
         else:
-            outputMessage.part.type = "sns:"+method.output.__name__.lower()
+            outputMessage.part.type = "sns:"+uncapitalize(method.output.__name__)
         definitions.messages.append(outputMessage)
         
 def build_types(definitions, schema):

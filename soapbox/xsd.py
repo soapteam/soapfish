@@ -42,6 +42,19 @@ class ElementFormDefault:
     QUALIFIED = "qualified"
     UNQUALIFIED = "unqualified"
     
+class Indicator(object):
+    def __init__(self, fields):
+        self.fields = fields
+        
+class Sequence(Indicator):
+    pass
+
+class Choice(Indicator):
+    pass
+
+class All(Indicator):
+    pass
+    
 class Type(object):   
     """Abstract."""     
     def accept(self, value):
@@ -425,7 +438,7 @@ class Complex_PythonType(type):
     
 class ComplexType(Type):
     """Parent for XML elements that have sub-elements."""
-    INDICATOR = None#Indicator see: class Indicators. To be defined in sub-type.
+    INDICATOR = Sequence#Indicator see: class Indicators. To be defined in sub-type.
     INHERITANCE = None#Type of inheritance see: class Inheritance, to be defined in sub-type.
     NAMESPACE = None#String, preferably URL with name space for this element. Is set be Scheme instance.
     ELEMENT_FORM_DEFAULT = None#String, one of two values.
@@ -583,18 +596,7 @@ class Document(ComplexType):
         
         
     
-class Indicator(object):
-    def __init__(self, fields):
-        self.fields = fields
-        
-class Sequence(Indicator):
-    pass
 
-class Choice(Indicator):
-    pass
-
-class All(Indicator):
-    pass
 
 class List(SimpleType):
     pass
