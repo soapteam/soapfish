@@ -18,7 +18,7 @@ Schema = xsd.Schema(
 )
 
 def get_stock_price(request, gsp):
-    print gsp.company
+    print gsp.company, gsp.datetime
     return StockPrice(price=139)
 
 get_stock_price_method = xsd.Method(
