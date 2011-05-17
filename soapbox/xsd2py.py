@@ -109,6 +109,19 @@ class {{ct.name|class}}(xsd.ComplexType):
     {{element.ref|removens}} = xsd.Ref({{element.ref|type}})
     {%- endif %}
 {%- endfor %}
+
+{%- if content.sequence %}
+
+    @classmethod
+    def create(cls,{%- for e in elements %}{% if e.minOccurs == 1 or e.minOccurs == None %}{{e.name}},{% endif %}{% endfor %} ):
+        instance = cls()
+        {%- for e in elements %}
+            {%- if e.minOccurs == 1 or e.minOccurs == None%}
+        instance.{{e.name}} = {{e.name}} 
+            {%- endif %}
+        {%- endfor %}
+        return instance
+{%- endif %}
 {% endfor %}
 {# ------------------------ End of ComplexTypes -------------------------------#}
 
