@@ -55,11 +55,9 @@ SERVICE = soap.Service(
     methods = [{{binding.operation.name}}_method, ])
     
 {% if is_server %}
-#Comment this lines for py2xsd generation to avoid error message about 
-#DJANGO_SETTINGS_MODULE not being set. If authorization is required
-#dispatch can be wrapped with login required in way similar to csrf_exempt. 
-from django.views.decorators.csrf import csrf_exempt
-dispatch = csrf_exempt(soap.get_django_dispatch(SERVICE))
+#Uncomment this lines to turn on dispatching. 
+#from django.views.decorators.csrf import csrf_exempt
+#dispatch = csrf_exempt(soap.get_django_dispatch(SERVICE))
 
 #Put this lines in your urls.py:
 #urlpatterns += patterns('',
@@ -75,15 +73,14 @@ class ServiceStub(soap.Stub):
 {% endfor %}
 """
 
-def main(is_server, path):
-    xml = open(path).read()
+def generate_code_from_wsdl(is_server, xml):
     xmlelement = etree.fromstring(xml)
     XSD_NAMESPACE = find_xsd_namepsace(xmlelement.nsmap)
     environment.filters["type"] = get_get_type(XSD_NAMESPACE)
     definitions = Definitions.parse_xmlelement(xmlelement)
     schema = definitions.types.schema
     schemaxml = environment.from_string(SCHEMA_TEMPLATE).render(schema=schema)
-    print environment.from_string(TEMPLATE).render(
+    return environment.from_string(TEMPLATE).render(
             definitions=definitions,
             schema=schemaxml,
             is_server=is_server)
@@ -98,9 +95,11 @@ def console_main():
     if options.client and options.server:
         parser.error("Options -c and -s are mutually exclusive")
     elif options.client:
-        main(False, options.client)
+        xml = open(options.client).read()
+        print generate_code_from_wsdl(False, xml)
     elif options.server:
-        main(True, options.server)
+        xml = open(options.server).read()
+        print generate_code_from_wsdl(True, xml)
     else:
         parser.print_help()
         

@@ -169,12 +169,12 @@ class Integer(SimpleType):
     def accept(self, value):
         if value is None:
             return None
-        elif isinstance(value, int):
+        elif isinstance(value, int) or isinstance(value, long):
             return value
         elif isinstance(value, str):
             return int(value)
         else:
-            raise ValueError("Incorrect value '%s' for Interger field." % value)
+            raise ValueError("Incorrect value '%s' for Integer field." % value)
         
     def xmlvalue(self, value):
         return str(value)

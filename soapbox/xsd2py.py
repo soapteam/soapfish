@@ -137,16 +137,19 @@ Schema = xsd.Schema(
         
 XSD_NAMESPACE = None
     
+def generate_code_from_xsd(xml):
+    xmlelement = etree.fromstring(xml)
+    XSD_NAMESPACE = find_xsd_namepsace(xmlelement.nsmap)
+    environment.filters["type"] = get_get_type(XSD_NAMESPACE)
+    schema = Schema.parse_xmlelement(etree.fromstring(xml))
+    return environment.from_string(TEMPLATE).render(schema=schema)
+
 def main():
     if len(sys.argv) !=2:
         print "use: xsd2py <path to xsd>"
         return
     xml = open(sys.argv[1]).read()
-    xmlelement = etree.fromstring(xml)
-    XSD_NAMESPACE = find_xsd_namepsace(xmlelement.nsmap)
-    environment.filters["type"] = get_get_type(XSD_NAMESPACE)
-    schema = Schema.parse_xmlelement(etree.fromstring(xml))
-    print environment.from_string(TEMPLATE).render(schema=schema)
+    print generate_code_from_xsd(xml)
     
 if __name__ == "__main__":
     main()

@@ -7,8 +7,6 @@ class Pilot(xsd.String):
     
 
 
-
-
 class Airport(xsd.ComplexType):
     INHERITANCE = None
     INDICATOR = xsd.Sequence
