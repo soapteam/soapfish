@@ -124,13 +124,17 @@ def get_django_dispatch(service):
             for method in service.methods:
                 if soap_action != method.soapAction:
                     continue
+                
                 if isinstance(method.input,str): 
                     element = service.schema.elements[method.input]
                     input_object = element._type.parsexml(message,service.schema)
                 else:
                     input_object = method.input.parsexml(message,service.schema)
+                    
                 return_object = method.function(request, input_object)
-                return HttpResponse(build_soap_message(return_object))
+                soap_message = build_soap_message(return_object)
+                return HttpResponse(soap_message,content_type="application/soap+xml")
+            
             raise ValueError("Method not found!")
         except (ValueError,etree.XMLSyntaxError) as e:
             fault = Fault(faultcode="Client", faultstring=str(e), detail=str(e))
@@ -141,7 +145,7 @@ def get_django_dispatch(service):
             fault = Fault(faultcode="Server", faultstring=str(e), detail=str(e))
         envelope = Envelope()
         envelope.Body = Body(Fault=fault)
-        return HttpResponse(envelope.xml("Envelope"))        
+        return HttpResponse(envelope.xml("Envelope"), content_type="application/soap+xml")        
     return django_dispatch
 
 
