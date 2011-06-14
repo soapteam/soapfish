@@ -102,9 +102,9 @@ class BooleanTypeTest(unittest.TestCase):
         self.assertEqual(expected_xml, xml)
         
     def test_attribute_nil(self):
-        mixed = xsd.Attribute(xsd.Boolean, nilable = True, use=xsd.Use.OPTIONAL)
+        mixed = xsd.Attribute(xsd.Boolean, nillable = True, use=xsd.Use.OPTIONAL)
         xmlelement = etree.Element("complexType")
-        mixed.render(xmlelement,"mixed", None)
+        mixed.render(xmlelement,"mixed", xsd.NIL)
         expected_xml = """<complexType mixed="nil"/>\n"""
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
@@ -731,6 +731,7 @@ class NillableTest(unittest.TestCase):
     def test_nilable_element_rendering(self):
         class Test(xsd.ComplexType):
             value = xsd.Element(xsd.Integer,nillable=True)
+            notnillable = xsd.Element(xsd.Integer,minOccurs=0)
         test = Test()
         test.value = xsd.NIL
         xml = test.xml("test")
@@ -738,6 +739,13 @@ class NillableTest(unittest.TestCase):
   <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
 </test>\n"""
         self.assertEqual(xml, EXPECTED_XML)
+        try:
+            test.notnillable = xsd.NIL
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False, "Should not get here.")
+        
         
     def test_nillable_element_parsing(self):
         class Test(xsd.ComplexType):
@@ -749,6 +757,7 @@ class NillableTest(unittest.TestCase):
     def test_nillable_list_rendering(self):
         class Test(xsd.ComplexType):
             values = xsd.ListElement(xsd.String,"value",nillable=True)
+            notnillable = xsd.ListElement(xsd.String,"notnillable",minOccurs=0)
         test = Test()
         test.values.append("XXX")
         test.values.append(xsd.NIL)
@@ -758,6 +767,13 @@ class NillableTest(unittest.TestCase):
   <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
 </test>\n"""
         self.assertEqual(xml, EXPECTED_XML)
+        
+        try:
+            test.notnillable.append(xsd.NIL)
+        except:
+            pass
+        else:
+            self.assertTrue(False, "Should not get here.")
         
     def test_nillable_list_parsing(self):
         class Test(xsd.ComplexType):
@@ -774,6 +790,15 @@ class NillableTest(unittest.TestCase):
         self.assertEqual(test.values[1],xsd.NIL)
         self.assertEqual(test.values[2],xsd.NIL)
         self.assertEqual(test.values[3],2)
+        
+    def test_nillable_attribute(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Attribute(xsd.String,nillable=True,use=xsd.Use.OPTIONAL)
+        test = Test()
+        self.assertEqual(test.xml("test"),"<test/>\n")
+        test.value = xsd.NIL
+        self.assertEqual('<test value="nil"/>\n',test.xml("test"))
+        
  
         
 if __name__ == "__main__":

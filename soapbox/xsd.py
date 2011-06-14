@@ -140,6 +140,8 @@ class Boolean(SimpleType):
         else:
             raise ValueError("Boolean value error - %s" % value)
         
+        
+        
 class DateTime(SimpleType):
     """Example text value: 2001-10-26T21:32:52"""
     FORMTA = "%Y-%m-%dT%H:%M:%S"            
@@ -302,7 +304,7 @@ class Element(object):
            :param tagname: str, name of tag when different to field declared in
                            ComplexType, important when tag name is python reserved 
                            work e.g. import
-           :param nilable: bool, is object nilable.  
+           :param nillable: bool, is object nilable.  
         """
         if not minOccurs in [0,1]: raise "minOccurs for Element can by only 0 or 1, use ListElement insted."
         self._creation_number = Element._creation_counter
@@ -325,7 +327,10 @@ class Element(object):
     def accept(self,value):
         """Checks is the value correct from type defined in constructions."""
         if value == NIL:
-            return NIL
+            if self.nillable:
+                return NIL
+            else:
+                raise ValueError("Nil value for not nillable element.")  
         else:
             return self._type.accept(value)
     
@@ -385,7 +390,7 @@ class Attribute(Element):
         <job>Programmer<job>
     </person>
     name and surname are attributes. Attribute type can be only simple types."""
-    def __init__(self,type_clazz, use=Use.REQUIRED, tagname = None,nilable = False,
+    def __init__(self,type_clazz, use=Use.REQUIRED, tagname = None,nillable = False,
                  default=None):
         """
         :param type_clazz: Only simple tapes are accepted: String, Integer etc.
@@ -395,7 +400,7 @@ class Attribute(Element):
         else:
             minOccurs = 0
         super(Attribute, self).__init__(type_clazz, tagname=tagname, minOccurs = minOccurs)
-        self.nilable = nilable
+        self.nillable = nillable
         self.use = use
         self.default = default
         
@@ -403,9 +408,15 @@ class Attribute(Element):
         if value is None:
             if self._minOccurs:
                 raise ValueError("Value None is not acceptable for required field.")
-            elif not self.nilable:
-                return 
-        xmlvalue = self._type.xmlvalue(value)
+            else:
+                return
+        elif value == NIL:
+            if self.nillable:
+                xmlvalue = "nil"
+            else:
+                raise ValueError("Nil value for not nillable Attribute.")
+        else: 
+            xmlvalue = self._type.xmlvalue(value)
         parent.set(field_name, xmlvalue)
         
     def parse(self, instance, field_name, xmlelement):
@@ -477,7 +488,10 @@ class ListElement(Element):
         class TypedList(list):
             def append(self,value):
                 if value == NIL:
-                    accepted_value = NIL
+                    if this.nillable:
+                        accepted_value = NIL
+                    else:
+                        raise ValueError("Nil value in not nillable list.")
                 else:
                     accepted_value = this._type.accept(value)
                 super(TypedList,self).append(accepted_value)
