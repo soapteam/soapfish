@@ -109,6 +109,152 @@ class BooleanTypeTest(unittest.TestCase):
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
         
+        
+        
+class DecimalTypeTest(unittest.TestCase):
+    def test_enumeration(self):
+        class Test(xsd.ComplexType):
+            integer = xsd.Element(xsd.Decimal(enumeration=[1,2,3]))
+        test = Test()
+        try:
+            test.integer = 4
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+    def test_fractionDigits(self):
+        class Test(xsd.ComplexType):
+            float = xsd.Element(xsd.Decimal(fractionDigits=2))
+        test = Test()
+        test.float = 2.22
+        try:
+            test.float = 2.2
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+    def test_Inclusive(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Decimal(minInclusive=0,maxInclusive=100))
+        test = Test()
+        test.value = 0
+        test.value = 50
+        test.value = 100
+        
+        try:
+            test.value = -1
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+        try:
+            test.value = 101
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+            
+    def test_Exclusive(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Decimal(minExclusive=-100,maxExclusive=0))
+        test = Test()
+        test.value = -99
+        test.value = -50
+        test.value = -1
+        
+        try:
+            test.value = -100
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+        try:
+            test.value = 0
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+        try:
+            test.value = 1
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+        try:
+            test.value = -101
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+            
+    def test_pattern(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Decimal(pattern=r'1+'))
+        test = Test()
+        test.value = 11
+        test.value = 111
+        
+        try:
+            test.value = 2
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+    def test_totalDigits(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Decimal(totalDigits=4))
+        test = Test()
+        test.value = 1.2
+        test.value = 22.22
+        test.value = 1.234
+        try:
+            test.value = 12.345
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+        try:
+            test.value = 12345
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"Should not get here.")
+            
+    def test_rendring(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Decimal)
+        test = Test()
+        test.value = 4.13
+        xml = test.xml("test")
+        self.assertEqual("<test>\n  <value>4.13</value>\n</test>\n", xml)
+        
+    def test_parsing(self):
+        xml = "<test><value>3.14</value></test>"
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Decimal)
+        test = Test.parsexml(xml)
+        self.assertEqual(test.value, 3.14,"PI value is wrong OMG!")
+            
+            
+    
+        
+  
+        
+class IntegerTypeTest(unittest.TestCase):
+    pass
+    
+  
+        
 class DatetimeTest(unittest.TestCase):
     def test_rendering(self):
         dt = datetime(2001, 10, 26, 21, 32, 52)

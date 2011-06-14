@@ -1,6 +1,7 @@
 from lxml import etree
 from datetime import datetime
 from copy import copy
+import re
 #http://lxml.de/validation.html#xmlschema
 
 #Design Decision Log:
@@ -160,22 +161,73 @@ class DateTime(SimpleType):
         else:
             return datetime.strptime(value, self.FORMTA)
             
-class Integer(SimpleType):
+class Decimal(SimpleType):
     def __init__(self, enumeration = None, fractionDigits=None, maxExclusive=None, 
                  maxInclusive=None, minExclusive=None, minInclusive=None, 
                  pattern=None, totalDigits=None):
-        pass
+        self.enumeration = enumeration
+        self.fractionDigits = fractionDigits
+        self.maxExclusive = maxExclusive
+        self.maxInclusive = maxInclusive
+        self.minExclusive = minExclusive
+        self.minInclusive = minInclusive
+        self.pattern = pattern
+        self.totalDigits = totalDigits
         
+    def _check_restrictions(self, value):
+        if self.enumeration is not None and value not in self.enumeration:
+            raise ValueError("%s not in enumeration %s" % (value,self.enumeration))
+        
+        if self.fractionDigits is not None:
+            strvalue = str(value)
+            if self.fractionDigits == 0:
+                if strvalue.find(".") != -1:
+                    raise ValueError("Wrong fraction digits for value %s allowed %s" % (strvalue, self.fractionDigits))
+            else:
+                if strvalue.find(".") == -1:
+                    raise ValueError("Wrong fraction digits for value %s allowed %s" % (strvalue, self.fractionDigits))
+                fr = strvalue.split(".")[1]
+                if len(fr) != self.fractionDigits:
+                    raise ValueError("Wrong fraction digits for value %s allowed %s" % (strvalue, self.fractionDigits))
+                        
+        if self.maxExclusive is not None and value >= self.maxExclusive:
+            raise ValueError("Value %s greater or equal to maxExclusive %s" %(value,self.maxExclusive))
+        if self.maxInclusive is not None and value > self.maxInclusive:
+            raise ValueError("Value %s greater than maxInclusive %s" %(value,self.maxInclusive))
+        if self.minExclusive is not None and value <= self.minExclusive:
+            raise ValueError("Value %s smaller or equal to minExclusive %s" %(value,self.minExclusive))
+        if self.minInclusive is not None and value < self.minInclusive:
+            raise ValueError("Value %s smaller than minInclusive %s" %(value,self.minInclusive))
+        
+        if self.pattern is not None:
+            compiled_pattern = re.compile(self.pattern)
+            if not compiled_pattern.match(str(value)):
+                raise ValueError("Value %s doesn't match pattern %s." %(value, self.pattern))
+            
+        if self.totalDigits is not None:
+            strvalue = str(value)
+            l = len(strvalue)
+            if strvalue.find(".") != -1:
+                l = l - 1
+            if l > self.totalDigits:
+                raise ValueError("Number of total digits of %s is bigger than %s." % (strvalue, self.totalDigits))
+            
+        return value
+     
     def accept(self, value):
         if value is None:
             return None
-        elif isinstance(value, int) or isinstance(value, long):
-            return value
+        elif isinstance(value, int) or isinstance(value, long) or isinstance(value, float):
+            pass#value is just value
         elif isinstance(value, str):
-            return int(value)
+            value = float(value)
         else:
-            raise ValueError("Incorrect value '%s' for Integer field." % value)
+            raise ValueError("Incorrect value '%s' for Decimal field." % value)
         
+        self._check_restrictions(value)
+        return value
+        
+          
     def xmlvalue(self, value):
         return str(value)
     
@@ -184,6 +236,36 @@ class Integer(SimpleType):
             return None
         else:
             return self.accept(xmlvalue)
+        
+        
+        
+class Integer(Decimal):
+    def __init__(self, enumeration = None, maxExclusive=None, 
+                 maxInclusive=None, minExclusive=None, minInclusive=None, 
+                 pattern=None, totalDigits=None):
+        super(Integer,self).__init__(enumeration = enumeration,fractionDigits=0, maxExclusive=maxExclusive, 
+                 maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive, 
+                 pattern=pattern, totalDigits=totalDigits)
+        
+    def accept(self, value):
+        if value is None:
+            return None
+        elif isinstance(value, int) or isinstance(value, long):
+            pass#value is just value continue.
+        elif isinstance(value, str):
+            value = int(value)
+        else:
+            raise ValueError("Incorrect value '%s' for Decimal field." % value)
+        
+        self._check_restrictions(value)
+        return value
+    
+    
+        
+class Int(Integer):
+    def accept(self,value):
+        value = super(self, Int).accept(value)
+        
     
 class Long(Integer):
     def accept(self, value):
@@ -541,7 +623,8 @@ class ComplexType(Type):
     @classmethod
     def __parse_with_validation(cls, xml, schema):
         from py2xsd import generate_xsd
-        schemaelement = etree.XMLSchema(generate_xsd(schema))
+        schema = generate_xsd(schema)
+        schemaelement = etree.XMLSchema(schema)
         parser = etree.XMLParser(schema = schemaelement)
         xmlelement = etree.fromstring(xml, parser)
         return xmlelement

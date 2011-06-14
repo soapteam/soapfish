@@ -5,11 +5,12 @@ import xsd
 import xsdspec
 from utils import uncapitalize
 
+NUMERIC_TYPES = [xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long]
 def get_xsd_type(_type):
     """Check is basic type from XSD scope, else it must be user 
     defined type."""
     base_class = _type.__class__.__bases__[0]
-    if base_class == xsd.SimpleType or _type.__class__ == xsd.Long: 
+    if base_class == xsd.SimpleType or _type.__class__  in NUMERIC_TYPES:
         return "xsd:" + uncapitalize(_type.__class__.__name__)
     else:
         return "sns:" + uncapitalize(_type.__class__.__name__)
