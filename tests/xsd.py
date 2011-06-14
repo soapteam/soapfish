@@ -247,11 +247,58 @@ class DecimalTypeTest(unittest.TestCase):
             
             
     
-        
-  
-        
 class IntegerTypeTest(unittest.TestCase):
-    pass
+    def test_rendering_and_parsing(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Integer(totalDigits=2))
+        test = Test()
+        test.value = 22
+        xml = test.xml("test")
+        XML = "<test>\n  <value>22</value>\n</test>\n"
+        self.assertEqual(XML, xml)
+        
+        test1 = Test.parsexml(XML)
+        self.assertEqual(22, test1.value)
+        
+    def test_Int(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Int)
+        test = Test()
+        test.value = 1
+        self.assertEqual(1, test.value)
+        try:
+            test.value = 2147483648
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False, "Should not get here.")
+            
+        try:
+            test.value = -2147483649
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False, "Should not get here.")
+            
+    def test_Long(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Long)
+        test = Test()
+        test.value = 1
+        self.assertEqual(1, test.value)
+        try:
+            test.value = 9223372036854775807+1
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False, "Should not get here.")
+            
+        try:
+            test.value = -9223372036854775808-1
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False, "Should not get here.")
     
   
         
@@ -678,6 +725,56 @@ class DocumentTest(unittest.TestCase):
                       <code>XXX</code>
                   </airport>"""
         document = AirporttDocument
+    
+        
+class NillableTest(unittest.TestCase):
+    def test_nilable_element_rendering(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Integer,nillable=True)
+        test = Test()
+        test.value = xsd.NIL
+        xml = test.xml("test")
+        EXPECTED_XML = """<test>
+  <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+</test>\n"""
+        self.assertEqual(xml, EXPECTED_XML)
+        
+    def test_nillable_element_parsing(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.Long,nillable=True)
+        xml = """<test><value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/></test>"""
+        test = Test.parsexml(xml)
+        self.assertEquals(test.value,xsd.NIL) 
+        
+    def test_nillable_list_rendering(self):
+        class Test(xsd.ComplexType):
+            values = xsd.ListElement(xsd.String,"value",nillable=True)
+        test = Test()
+        test.values.append("XXX")
+        test.values.append(xsd.NIL)
+        xml = test.xml("test")
+        EXPECTED_XML = """<test>
+  <value>XXX</value>
+  <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+</test>\n"""
+        self.assertEqual(xml, EXPECTED_XML)
+        
+    def test_nillable_list_parsing(self):
+        class Test(xsd.ComplexType):
+            values = xsd.ListElement(xsd.Int,"value",nillable=True)
+        XML = """<test>
+                    <value>1</value>
+                    <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                    <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                    <value>2</value>
+                </test>
+                """
+        test = Test.parsexml(XML)
+        self.assertEqual(test.values[0],1)
+        self.assertEqual(test.values[1],xsd.NIL)
+        self.assertEqual(test.values[2],xsd.NIL)
+        self.assertEqual(test.values[3],2)
+ 
         
 if __name__ == "__main__":
     unittest.main()

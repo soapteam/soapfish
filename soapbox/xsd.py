@@ -2,6 +2,7 @@ from lxml import etree
 from datetime import datetime
 from copy import copy
 import re
+from utils import uncapitalize
 #http://lxml.de/validation.html#xmlschema
 
 #Design Decision Log:
@@ -29,7 +30,8 @@ import re
 # Because instance if required in case b) creating it from class in case
 # a) makes other methods independent from this two syntaxes.
 
- 
+NIL = object()
+
 class Use:
     OPTIONAL = "optional"
     REQUIRED = "required"
@@ -69,6 +71,7 @@ class Type(object):
 
     def rander(self, parent, value):
         raise NotImplementedError
+    
     
 class SimpleType(Type):
     """Defines an interface for simple types."""    
@@ -135,7 +138,7 @@ class Boolean(SimpleType):
         elif value == 'nil' or value is None:
             return None
         else:
-            raise ValueError
+            raise ValueError("Boolean value error - %s" % value)
         
 class DateTime(SimpleType):
     """Example text value: 2001-10-26T21:32:52"""
@@ -160,6 +163,8 @@ class DateTime(SimpleType):
             return None
         else:
             return datetime.strptime(value, self.FORMTA)
+            
+            
             
 class Decimal(SimpleType):
     def __init__(self, enumeration = None, fractionDigits=None, maxExclusive=None, 
@@ -261,24 +266,21 @@ class Integer(Decimal):
         return value
     
     
-        
-class Int(Integer):
-    def accept(self,value):
-        value = super(self, Int).accept(value)
-        
-    
 class Long(Integer):
-    def accept(self, value):
-        value = super(Long, self).accept(value)
-        if value is None:
-            return None
-        else:
-            if -9223372036854775808 < value < 9223372036854775807:
-                return value
-            else:
-                raise ValueError("Value '%s' out of range for Long type: -9223372036854775808 and 9223372036854775807.")
-            
-    
+    def __init__(self, enumeration = None, maxExclusive=None, 
+                 maxInclusive=9223372036854775807, minExclusive=None, minInclusive=-9223372036854775808, 
+                 pattern=None, totalDigits=None):
+        super(Integer,self).__init__(enumeration = enumeration,fractionDigits=0, maxExclusive=maxExclusive, 
+                                     maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive, 
+                                     pattern=pattern, totalDigits=totalDigits)
+                   
+class Int(Long):
+    def __init__(self, enumeration = None, maxExclusive=None, 
+                 maxInclusive=2147483647, minExclusive=None, minInclusive=-2147483648, 
+                 pattern=None, totalDigits=None):
+        super(Integer,self).__init__(enumeration = enumeration,fractionDigits=0, maxExclusive=maxExclusive, 
+                                     maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive, 
+                                     pattern=pattern, totalDigits=totalDigits)
         
     
 class Element(object):
@@ -289,7 +291,7 @@ class Element(object):
     For elements that can appear multiple times use ListElement."""
     _creation_counter = 0
     
-    def __init__(self, _type, minOccurs = 1, tagname = None, nilable = False,
+    def __init__(self, _type, minOccurs = 1, tagname = None, nillable = False,
                  default = None):
         """:param _type: Class or instance of class that inherits from Type,
                          usually a child of SimpleType from xsd package,
@@ -312,6 +314,7 @@ class Element(object):
         self._minOccurs = minOccurs
         self.tagname = tagname
         self.default = default
+        self.nillable = nillable
         
     def empty_value(self):
         """Empty value methods is used when new object is constructed for 
@@ -321,7 +324,10 @@ class Element(object):
     
     def accept(self,value):
         """Checks is the value correct from type defined in constructions."""
-        return self._type.accept(value)
+        if value == NIL:
+            return NIL
+        else:
+            return self._type.accept(value)
     
     def render(self, parent, field_name, value, namespace=None):
         if value is None:
@@ -333,16 +339,24 @@ class Element(object):
         if namespace and self._type.ELEMENT_FORM_DEFAULT == ElementFormDefault.QUALIFIED :
             field_name = "{%s}%s" % (namespace, field_name)
         xmlelement = etree.Element(field_name)
-        self._type.render(xmlelement, value, namespace)
+        if value == NIL:
+            xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
+        else:
+            self._type.render(xmlelement, value, namespace)
         parent.append(xmlelement)
         
     
     def parse(self, instance, field_name, xmlelement):
-        value = self._type.parse_xmlelement(xmlelement)
+        if xmlelement.get("{http://www.w3.org/2001/XMLSchema-instance}nil") == "true":
+            value = NIL
+        else:
+            value = self._type.parse_xmlelement(xmlelement)
         setattr(instance, field_name, value)
     
     def __repr__(self):
         return "%s<%s>" %  (self.__class__.__name__,self._type.__class__.__name__)
+    
+    
     
 class ClassNamedElement(Element):
     """Use this element when tagname should be based on class name in rendering time."""
@@ -356,12 +370,13 @@ class ClassNamedElement(Element):
             namespace = value.NAMESPACE
             
         if namespace:
-            tagname = "{%s}%s" % (namespace, value.__class__.__name__.lower())
+            tagname = "{%s}%s" % (namespace, uncapitalize(value.__class__.__name__))
         else:
             tagname = value.__class__.__name__
         xmlelement = etree.Element(tagname)
         self._type.render(xmlelement, value)
         parent.append(xmlelement)
+    
     
     
 class Attribute(Element): 
@@ -448,11 +463,12 @@ class ListElement(Element):
     Note that tag name is required for this field, as the field name should 
     be in plural form, and tag usually is not.
     """
-    def __init__(self, clazz, tagname, minOccurs=None,maxOccurs=None):
+    def __init__(self, clazz, tagname, minOccurs=None,maxOccurs=None,nillable=False):
         super(ListElement,self).__init__(clazz)
         self.minOccurs = minOccurs
         self.maxOccurs = maxOccurs
         self.tagname = tagname
+        self.nillable = nillable
 
     def accept(self,value):
         return value
@@ -460,7 +476,10 @@ class ListElement(Element):
     def empty_value(this):
         class TypedList(list):
             def append(self,value):
-                accepted_value = this._type.accept(value)
+                if value == NIL:
+                    accepted_value = NIL
+                else:
+                    accepted_value = this._type.accept(value)
                 super(TypedList,self).append(accepted_value)
         return TypedList()         
     
@@ -478,13 +497,21 @@ class ListElement(Element):
             else:
                 tagname = self.tagname
             xmlelement = etree.Element(tagname)
-            self._type.render(xmlelement, item, namespace)
+            if item == NIL:
+                xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
+            else:
+                self._type.render(xmlelement, item, namespace)
             parent.append(xmlelement)
             
     def parse(self, instance, field_name, xmlelement):
-        value = self._type.parse_xmlelement(xmlelement)
+        if xmlelement.get("{http://www.w3.org/2001/XMLSchema-instance}nil"):
+            value = NIL
+        else:
+            value = self._type.parse_xmlelement(xmlelement)
         _list = getattr(instance, field_name)
         _list.append(value)
+        
+        
         
 class ComplexTypeMetaInfo(object): 
     def __init__(self,cls):
@@ -673,9 +700,9 @@ class Document(ComplexType):
     #TODO:schema support
     @classmethod
     def parsexml(cls, xml):
-        field = self._meta.fields[0]#The only field
+        field = cls._meta.fields[0]#The only field
         xmlelement = etree.fromstring(xml)
-        field.parse(self, field._name, xmlelement)
+        field.parse(cls, field._name, xmlelement)
         
         
     

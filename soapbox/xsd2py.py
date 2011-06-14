@@ -102,8 +102,17 @@ class {{ct.name|class}}(xsd.ComplexType):
     {{element.name}} = xsd.Element({{element.type|type}}{% if element.minOccurs == 0 %}, minOccurs=0{% endif %})
     {%- endif %}
     {%- if element.simpleType %}
-    {{element.name}} = xsd.Element({{element.simpleType.restriction.base|type}}( enumeration = 
-    [{% for enum in element.simpleType.restriction.enumerations %} "{{enum.value}}",{% endfor %}]) )
+    {{element.name}} = xsd.Element({{element.simpleType.restriction.base|type}}(
+    {%- if element.simpleType.restriction.enumerations %} 
+    enumeration = [{% for enum in element.simpleType.restriction.enumerations %} "{{enum.value}}",{% endfor %}]) 
+    {%- endif %}
+    {%- if element.simpleType.restriction.minInclusive %}minInclusive = {{element.simpleType.restriction.minInclusive.value}},{%- endif %}
+    {%- if element.simpleType.restriction.maxInclusive %}maxInclusive = {{element.simpleType.restriction.maxInclusive.value}},{%- endif %}
+    {%- if element.simpleType.restriction.minExclusive %}minExclusive = {{element.simpleType.restriction.minExclusive.value}},{%- endif %}
+    {%- if element.simpleType.restriction.maxExclusive %}maxExclusive = {{element.simpleType.restriction.maxExclusive.value}},{%- endif %}
+    {%- if element.simpleType.restriction.fractionDigits %}fractionDigits = {{element.simpleType.restriction.fractionDigits.value}},{%- endif %}
+    {%- if element.simpleType.restriction.totalDigits %}totalDigits = {{element.simpleType.restriction.totalDigits.value}},{%- endif %}
+    {%- if element.simpleType.restriction.pattern %}pattern = {{element.simpleType.restriction.pattern.value}},{%- endif %})
     {%- endif %}
     {%- if element.ref %}
     {{element.ref|removens}} = xsd.Ref({{element.ref|type}})

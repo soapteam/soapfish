@@ -14,12 +14,22 @@ class Enumeration(xsd.ComplexType):
 class Pattern(xsd.ComplexType):
     NAMESPACE = "http://www.w3.org/2001/XMLSchema"
     value = xsd.Attribute(xsd.String)
-    
+   
+class RestrictionValue(xsd.ComplexType):
+    NAMESPACE = "http://www.w3.org/2001/XMLSchema"
+    value = xsd.Attribute(xsd.Decimal)
+     
 class Restriction(xsd.ComplexType):
     NAMESPACE = "http://www.w3.org/2001/XMLSchema"
     base = xsd.Attribute(xsd.String)
     enumerations = xsd.ListElement(Enumeration,"enumeration")
     pattern = xsd.Element(Pattern)
+    minInclusive = xsd.Element(RestrictionValue)
+    minExclusive = xsd.Element(RestrictionValue)
+    maxExclusive = xsd.Element(RestrictionValue)
+    maxInclusive = xsd.Element(RestrictionValue)
+    fractionDigits = xsd.Element(RestrictionValue)
+    totalDigits = xsd.Element(RestrictionValue)
     
     def to_python(self):
         enum_values = map(lambda e: '"%s"'%e.value, self.enumerations)
@@ -42,6 +52,7 @@ class Element(xsd.ComplexType):
     type = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     ref = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     minOccurs = xsd.Attribute(xsd.Integer, use=xsd.Use.OPTIONAL)
+    nillable = xsd.Attribute(xsd.Boolean,use=xsd.Use.OPTIONAL)
     simpleType = xsd.Element(SimpleType, minOccurs=0)
     
         
@@ -119,7 +130,7 @@ SCHEMA = xsd.Schema(
     simpleTypes = [],
     attributeGroups = [],
     groups = [],
-    complexTypes = [Enumeration, Pattern, Restriction, List, SimpleType, Element,
+    complexTypes = [Enumeration, Pattern, RestrictionValue, Restriction, List, SimpleType, Element,
                     Sequence, Attribute, AttributeGroup, AttributeGroupReference,
                     Extension, ComplexContent, ComplexType, Group, Schema     ],
     elements = {})

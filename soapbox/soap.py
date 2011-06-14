@@ -30,7 +30,7 @@ class Body(xsd.ComplexType):
 
 class Envelope(xsd.ComplexType):
     """SOAP Envelope."""
-    Header = xsd.Element(Header, nilable=True) 
+    Header = xsd.Element(Header, nillable=True) 
     Body = xsd.Element(Body)
     
     @classmethod

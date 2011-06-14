@@ -1,3 +1,5 @@
+#This modules translates Python model code to xsdspec nodes that can be
+#used to xsd generation.
 import sys
 import imp
 from lxml import etree
@@ -25,19 +27,57 @@ def xsd_attribute(attribute):
 def create_xsd_element(element):
     xsd_element = xsdspec.Element()
     xsd_element.name = element._name
+    if getattr(element,"nillable"):
+        xsd_element.nillable = True
     if element._minOccurs == 0:
         xsd_element.minOccurs = 0
+        
     # SimpleType defined in place.
     parent_type = element._type.__class__.__bases__[0]
+    is_simple_type = False
+    _type = element._type
+    
     if hasattr(element._type, "enumeration") and element._type.enumeration\
-     and parent_type == xsd.SimpleType:
+    or hasattr(_type,"fractionDigits") and _type.fractionDigits\
+    or hasattr(_type,"pattern") and _type.pattern\
+    or hasattr(_type,"minInclusive") and _type.minInclusive\
+    or hasattr(_type,"minExclusive") and _type.minExclusive\
+    or hasattr(_type,"maxExclusive") and _type.maxExclusive\
+    or hasattr(_type,"maxInclusive") and _type.maxInclusive\
+    or hasattr(_type,"totalDigits") and _type.totalDigits:
         xsd_element.simpleType = xsdspec.SimpleType()
         xsd_element.simpleType.restriction = xsdspec.Restriction()
         xsd_element.simpleType.restriction.base = get_xsd_type(element._type)
+        is_simple_type = True
+        
+    if hasattr(element._type, "enumeration") and element._type.enumeration\
+    and parent_type == xsd.SimpleType:
         for value in element._type.enumeration:
             enum = xsdspec.Enumeration.create(value)
             xsd_element.simpleType.restriction.enumerations.append(enum)
-    else:
+    
+    if hasattr(_type,"fractionDigits") and _type.fractionDigits:
+        xsd_element.simpleType.restriction.fractionDigits = xsdspec.RestrictionValue(value=_type.fractionDigits)
+        
+    if hasattr(_type,"pattern") and _type.pattern:
+        xsd_element.simpleType.restriction.pattern = xsdspec.RestrictionValue(value=_type.pattern)
+        
+    if hasattr(_type,"minInclusive") and _type.minInclusive:
+        xsd_element.simpleType.restriction.minInclusive = xsdspec.RestrictionValue(value=_type.minInclusive)
+        
+    if hasattr(_type,"minExclusive") and _type.minExclusive:
+        xsd_element.simpleType.restriction.minExclusive = xsdspec.RestrictionValue(value=_type.minExclusive)
+        
+    if hasattr(_type,"maxExclusive") and _type.maxExclusive:
+        xsd_element.simpleType.restriction.maxExclusive = xsdspec.RestrictionValue(value=_type.maxExclusive)
+        
+    if hasattr(_type,"maxInclusive") and _type.maxInclusive:
+        xsd_element.simpleType.restriction.maxInclusive = xsdspec.RestrictionValue(value=_type.maxInclusive)
+        
+    if hasattr(_type,"totalDigits") and _type.totalDigits:
+        xsd_element.simpleType.restriction.totalDigits = xsdspec.RestrictionValue(value=_type.totalDigits)
+    
+    if not is_simple_type:
         xsd_element.type = get_xsd_type(element._type)
     return xsd_element
 
@@ -71,7 +111,9 @@ def xsd_simpleType(st):
     xsd_restriction.base = get_xsd_type(st.__bases__[0]())
     if hasattr(st,"enumeration") and st.enumeration:
         for enum in st.enumeration:
-            xsd_restriction.enumerations.append(xsdspec.Enumeration.create(enum)) 
+            xsd_restriction.enumerations.append(xsdspec.Enumeration.create(enum))
+    if hasattr(st,"fractionDigits") and st.fractionDigits:
+        xsd_restriction.fractionDigits = xsdspec.RestrictionValue(value=st.fractionDigits)
     elif hasattr(st, "pattern") and st.pattern:
         xsd_restriction.pattern = st.pattern
     xsd_simpleType.restriction = xsd_restriction

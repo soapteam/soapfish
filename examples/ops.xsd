@@ -83,7 +83,14 @@ xmlns="http://flightdataservices.com/ops.xsd">
           </xsd:restriction>
         </xsd:simpleType>
       </xsd:element>
-      <xsd:element name="id" type="xsd:long"/>
+      <xsd:element name="id">
+      	<xsd:simpleType>
+  			<xsd:restriction base="xsd:integer">
+    			<xsd:minInclusive value="0.0"/>
+    			<xsd:maxInclusive value="120"/>
+  			</xsd:restriction>
+  		</xsd:simpleType>
+  	</xsd:element>
     </xsd:sequence>
   </xsd:complexType>
   <xsd:element name="status" type="sns:status"/>
