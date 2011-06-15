@@ -49,6 +49,7 @@ class TypeRegister(object):
     
 USER_TYPE_REGISTER = TypeRegister()
 
+UNBOUNDED = "unbounded"
 
 class Use:
     OPTIONAL = "optional"
@@ -536,6 +537,9 @@ class ListElement(Element):
                         raise ValueError("Nil value in not nillable list.")
                 else:
                     accepted_value = this._type.accept(value)
+                if this.maxOccurs is not None and this.maxOccurs != UNBOUNDED:
+                    if (len(self)+1)>this.maxOccurs:
+                        raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" %( len(self), this.maxOccurs))
                 super(TypedList,self).append(accepted_value)
         return TypedList()         
     
