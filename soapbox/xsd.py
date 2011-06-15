@@ -32,6 +32,24 @@ from utils import uncapitalize
 
 NIL = object()
 
+class TypeRegister(object):
+    """Allows tracking user defined class and their names, to be able to resolve 
+    string references e.g. a = xsd.Element("A"). Note that class names must be unique
+    due to fact that search engine uses just class names."""
+    def __init__(self):
+        self.types = []
+    
+    def add_type(self, clazz):
+        self.types.append(clazz)
+    
+    def find_type(self, typeid):
+        for clazz in self.types:
+            if clazz.__name__ == typeid:
+                return clazz
+    
+USER_TYPE_REGISTER = TypeRegister()
+
+
 class Use:
     OPTIONAL = "optional"
     REQUIRED = "required"
@@ -57,9 +75,17 @@ class Choice(Indicator):
 
 class All(Indicator):
     pass
+
+
+class Type_PythonType(type):
+    def __new__(cls,name,bases,attrs):
+        newcls = super(Type_PythonType,cls).__new__(cls,name,bases,attrs)
+        USER_TYPE_REGISTER.add_type(newcls)
+        return newcls
     
 class Type(object):   
     """Abstract."""     
+    __metaclass__ = Type_PythonType
     def accept(self, value):
         raise NotImplementedError
     
@@ -309,14 +335,21 @@ class Element(object):
         if not minOccurs in [0,1]: raise "minOccurs for Element can by only 0 or 1, use ListElement insted."
         self._creation_number = Element._creation_counter
         Element._creation_counter += 1
-        if isinstance(_type, Type):
-            self._type = _type
-        else:
-            self._type = _type()
+        self._passed_type = _type
+        self._type = None#Will be evaluated when needed from _passed_type
         self._minOccurs = minOccurs
         self.tagname = tagname
         self.default = default
         self.nillable = nillable
+        
+    def _evaluate_type(self):
+        if self._type is None:
+            if isinstance(self._passed_type,str):
+                self._passed_type = USER_TYPE_REGISTER.find_type(self._passed_type)
+            if isinstance(self._passed_type, Type):
+                self._type = self._passed_type
+            else:
+                self._type = self._passed_type()
         
     def empty_value(self):
         """Empty value methods is used when new object is constructed for 
@@ -325,6 +358,7 @@ class Element(object):
         return self.default
     
     def accept(self,value):
+        self._evaluate_type()
         """Checks is the value correct from type defined in constructions."""
         if value == NIL:
             if self.nillable:
@@ -335,6 +369,7 @@ class Element(object):
             return self._type.accept(value)
     
     def render(self, parent, field_name, value, namespace=None):
+        self._evaluate_type()
         if value is None:
             return
         #This allows complexType to redefine the name space a.k.a. 
@@ -352,6 +387,7 @@ class Element(object):
         
     
     def parse(self, instance, field_name, xmlelement):
+        self._evaluate_type()
         if xmlelement.get("{http://www.w3.org/2001/XMLSchema-instance}nil") == "true":
             value = NIL
         else:
@@ -359,7 +395,10 @@ class Element(object):
         setattr(instance, field_name, value)
     
     def __repr__(self):
-        return "%s<%s>" %  (self.__class__.__name__,self._type.__class__.__name__)
+        if isinstance(self._type,str):
+            return "%s<%s>" %  (self.__class__.__name__,self._type)
+        else:
+            return "%s<%s>" %  (self.__class__.__name__,self._type.__class__.__name__)
     
     
     
@@ -405,6 +444,7 @@ class Attribute(Element):
         self.default = default
         
     def render(self, parent, field_name, value, namespace=None):
+        self._evaluate_type()
         if value is None:
             if self._minOccurs:
                 raise ValueError("Value None is not acceptable for required field.")
@@ -420,6 +460,7 @@ class Attribute(Element):
         parent.set(field_name, xmlvalue)
         
     def parse(self, instance, field_name, xmlelement):
+        self._evaluate_type()
         xmlvalue = xmlelement.get(field_name)
         if xmlvalue is None:
             xmlvalue = self.default
@@ -487,6 +528,7 @@ class ListElement(Element):
     def empty_value(this):
         class TypedList(list):
             def append(self,value):
+                this._evaluate_type()
                 if value == NIL:
                     if this.nillable:
                         accepted_value = NIL
@@ -499,11 +541,12 @@ class ListElement(Element):
     
    
     def render(self, parent, field_name, value, namespace=None):
+        self._evaluate_type()
         items = value#The value must be list of items.
         if self.minOccurs and len(items) < self.minOccurs:
-            raise ValueError("For %s minOccurs=%d but list length %d." %(name, self.minOccurs, len(items)))
+            raise ValueError("For %s minOccurs=%d but list length %d." %(field_name, self.minOccurs, len(items)))
         if self.maxOccurs and len(items) > self.maxOccurs:
-            raise ValueError("For %s maxOccurs=%d but list length %d." % (name, self.maxOccurs))
+            raise ValueError("For %s maxOccurs=%d but list length %d." % (field_name, self.maxOccurs))
         
         for item in items:
             if namespace:
@@ -518,6 +561,7 @@ class ListElement(Element):
             parent.append(xmlelement)
             
     def parse(self, instance, field_name, xmlelement):
+        self._evaluate_type()
         if xmlelement.get("{http://www.w3.org/2001/XMLSchema-instance}nil"):
             value = NIL
         else:
@@ -525,8 +569,7 @@ class ListElement(Element):
         _list = getattr(instance, field_name)
         _list.append(value)
         
-        
-        
+                
 class ComplexTypeMetaInfo(object): 
     def __init__(self,cls):
         self.cls = cls
@@ -550,7 +593,7 @@ class ComplexTypeMetaInfo(object):
         self.allelements = sorted(self.fields+self.groups, key=lambda f: f._creation_number)
         self.all = sorted(self.fields+self.groups+self.attributes, key=lambda f: f._creation_number)
         
-class Complex_PythonType(type):
+class Complex_PythonType(Type_PythonType):
     """Python type for ComplexType, builds _meta object for every class that 
     inherit from ComplexType. """
     def __new__(cls,name,bases,attrs):
@@ -589,13 +632,13 @@ class ComplexType(Type):
             super(ComplexType,self).__setattr__(attr,field.accept(value))
         
     def accept(self, value):
-        """Instance methods that valid other instance."""
+        """Instance methods that validate other instance."""
         if value is None:
             return None
         elif isinstance(value,self.__class__):
             return value
         else:
-            raise ValueError('!!')
+            raise ValueError('Wrong value object type %s for %s.' % (value,self.__class__.__name__))
         
             
     def render(self, parent, instance, namespace=None):

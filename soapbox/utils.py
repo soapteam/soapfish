@@ -29,7 +29,7 @@ def get_get_type(XSD_NAMESPACES):
         if ns in XSD_NAMESPACES:
             return "xsd." + classyfiy(typename)
         else:
-            return classyfiy(typename)
+            return '"%s"' % classyfiy(typename)
     return get_type
     
 def use(usevalue):

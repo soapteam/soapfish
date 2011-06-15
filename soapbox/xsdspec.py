@@ -54,6 +54,7 @@ class Element(xsd.ComplexType):
     minOccurs = xsd.Attribute(xsd.Integer, use=xsd.Use.OPTIONAL)
     nillable = xsd.Attribute(xsd.Boolean,use=xsd.Use.OPTIONAL)
     simpleType = xsd.Element(SimpleType, minOccurs=0)
+    complexType = xsd.Element("XSDComplexType")
     
         
 class Sequence(xsd.ComplexType):
@@ -97,7 +98,7 @@ class ComplexContent(xsd.ComplexType):
     restriction = xsd.Element(Extension)
     
 
-class ComplexType(xsd.ComplexType):
+class XSDComplexType(xsd.ComplexType):
     NAMESPACE = "http://www.w3.org/2001/XMLSchema"
     name = xsd.Attribute(xsd.String)
     sequence = xsd.Element(Sequence)
@@ -120,7 +121,7 @@ class Schema(xsd.ComplexType):
     simpleTypes = xsd.ListElement(SimpleType,"simpleType")
     groups = xsd.ListElement(Group,"group")
     attributeGroups = xsd.ListElement(AttributeGroup,"attributeGroup")
-    complexTypes = xsd.ListElement(ComplexType,"complexType")
+    complexTypes = xsd.ListElement(XSDComplexType,"complexType")
     elements = xsd.ListElement(Element,"element")
     
     
@@ -132,7 +133,7 @@ SCHEMA = xsd.Schema(
     groups = [],
     complexTypes = [Enumeration, Pattern, RestrictionValue, Restriction, List, SimpleType, Element,
                     Sequence, Attribute, AttributeGroup, AttributeGroupReference,
-                    Extension, ComplexContent, ComplexType, Group, Schema     ],
+                    Extension, ComplexContent, XSDComplexType, Group, Schema     ],
     elements = {})
     
     

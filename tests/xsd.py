@@ -514,7 +514,7 @@ class XSD_Spec_Test(unittest.TestCase):
         </xs:sequence>
     </xs:complexType>"""
     def test_complexType(self):
-        airport = xsdspec.ComplexType.parse_xmlelement(etree.fromstring(self.AIRPORT_XML))
+        airport = xsdspec.XSDComplexType.parse_xmlelement(etree.fromstring(self.AIRPORT_XML))
         self.assertEqual("airport", airport.name)
         code_type_element = airport.sequence.elements[0]
         code_element = airport.sequence.elements[1]
@@ -727,6 +727,7 @@ class DocumentTest(unittest.TestCase):
         document = AirporttDocument
     
         
+        
 class NillableTest(unittest.TestCase):
     def test_nilable_element_rendering(self):
         class Test(xsd.ComplexType):
@@ -800,7 +801,15 @@ class NillableTest(unittest.TestCase):
         self.assertEqual('<test value="nil"/>\n',test.xml("test"))
         
  
-        
+class ElementTypeEvaluation(unittest.TestCase):
+    def test_string_type_evalutation(self):
+        class B1(xsd.ComplexType):
+            a = xsd.Element("A1")
+        class A1(xsd.ComplexType):
+            pass
+        b = B1()
+        b.a = A1()
+               
 if __name__ == "__main__":
     unittest.main()
           
