@@ -734,6 +734,12 @@ class ComplexType(Type):
         if schema:
             self.__parse_with_validation(xml, schema)
         return xml
+    
+    @classmethod
+    def _force_elements_type_evalution(cls):
+        """Allows schema object to force elements type evalution for XSD generation"""
+        for element in cls._meta.all:
+            element._evaluate_type()
         
 class Group(ComplexType):
     """Parent object for XSD Groups. Marker. Must be use with Ref."""
@@ -814,10 +820,24 @@ class Schema(object):
         self.__init_namespace(self.attributeGroups)
         self.__init_namespace(self.complexTypes)
         
+        self._force_elements_type_evalution(self.complexTypes)
+        self._force_elements_type_evalution(self.attributeGroups)
+        self._force_elements_type_evalution(self.groups)
+        
+        for element in self.elements.values():
+            element._evaluate_type()
+        
+        
+        
     def __init_namespace(self, types):
         for _type in types:
             _type.NAMESPACE = self.targetNamespace
             _type.ELEMENT_FORM_DEFAULT = self.elementFormDefault
+            
+    
+    def _force_elements_type_evalution(self, types):
+        for t in types:
+            t._force_elements_type_evalution()
             
             
 class Method(object):

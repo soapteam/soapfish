@@ -14,8 +14,8 @@ Schema = xsd.Schema(
       targetNamespace = "http://code.google.com/p/soapbox/stock.xsd",
       #Register all complex types to schema.
       complexTypes = [GetStockPrice, StockPrice],
-      elements = {"getStockPrice":xsd.Element(GetStockPrice), 
-                  "stockPrice":xsd.Element(StockPrice)}              
+      elements = {"getStockPrice":xsd.Element("GetStockPrice"), 
+                  "stockPrice":xsd.Element("StockPrice")}              
 )
 
 def get_stock_price(request, gsp):

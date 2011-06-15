@@ -82,7 +82,7 @@ def create_xsd_element(element):
     return xsd_element
 
 def xsd_complexType(complexType):
-    xsd_ct = xsdspec.ComplexType()
+    xsd_ct = xsdspec.XSDComplexType()
     xsd_ct.name = uncapitalize(complexType.__name__)
     
     for attribute in complexType._meta.attributes:
