@@ -26,11 +26,14 @@ def xsd_attribute(attribute):
 
 def create_xsd_element(element):
     xsd_element = xsdspec.Element()
-    xsd_element.name = element._name
-    if getattr(element,"nillable"):
-        xsd_element.nillable = True
-    if element._minOccurs == 0:
-        xsd_element.minOccurs = 0
+    xsd_element.name = element.tagname if element.tagname else element._name
+    xsd_element.nillable = element.nillable
+    xsd_element.minOccurs = element._minOccurs
+    if hasattr(element,"_maxOccurs"):
+        xsd_element.maxOccurs = element._maxOccurs
+    
+    
+    
         
     # SimpleType defined in place.
     parent_type = element._type.__class__.__bases__[0]

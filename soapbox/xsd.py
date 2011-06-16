@@ -517,11 +517,9 @@ class ListElement(Element):
     be in plural form, and tag usually is not.
     """
     def __init__(self, clazz, tagname, minOccurs=None,maxOccurs=None,nillable=False):
-        super(ListElement,self).__init__(clazz)
-        self.minOccurs = minOccurs
-        self.maxOccurs = maxOccurs
-        self.tagname = tagname
-        self.nillable = nillable
+        super(ListElement,self).__init__(clazz,tagname=tagname,nillable=nillable)
+        self._maxOccurs = maxOccurs
+        self._minOccurs = minOccurs
 
     def accept(self,value):
         return value
@@ -537,9 +535,9 @@ class ListElement(Element):
                         raise ValueError("Nil value in not nillable list.")
                 else:
                     accepted_value = this._type.accept(value)
-                if this.maxOccurs is not None and this.maxOccurs != UNBOUNDED:
-                    if (len(self)+1)>this.maxOccurs:
-                        raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" %( len(self), this.maxOccurs))
+                if this._maxOccurs is not None and this._maxOccurs != UNBOUNDED:
+                    if (len(self)+1)>this._maxOccurs:
+                        raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" %( len(self), this._maxOccurs))
                 super(TypedList,self).append(accepted_value)
         return TypedList()         
     
@@ -547,10 +545,10 @@ class ListElement(Element):
     def render(self, parent, field_name, value, namespace=None):
         self._evaluate_type()
         items = value#The value must be list of items.
-        if self.minOccurs and len(items) < self.minOccurs:
-            raise ValueError("For %s minOccurs=%d but list length %d." %(field_name, self.minOccurs, len(items)))
-        if self.maxOccurs and len(items) > self.maxOccurs:
-            raise ValueError("For %s maxOccurs=%d but list length %d." % (field_name, self.maxOccurs))
+        if self._minOccurs and len(items) < self._minOccurs:
+            raise ValueError("For %s minOccurs=%d but list length %d." %(field_name, self._minOccurs, len(items)))
+        if self._maxOccurs and len(items) > self._maxOccurs:
+            raise ValueError("For %s maxOccurs=%d but list length %d." % (field_name, self._maxOccurs))
         
         for item in items:
             if namespace:

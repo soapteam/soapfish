@@ -7,7 +7,7 @@ class GetStockPrice(xsd.ComplexType):
     
 class StockPrice(xsd.ComplexType):
     nillable = xsd.Element(xsd.Int,nillable=True)
-    price = xsd.Element(xsd.Decimal(fractionDigits=2))
+    prices = xsd.ListElement(xsd.Decimal(fractionDigits=2),tagname="price",minOccurs=0,maxOccurs=xsd.UNBOUNDED,nillable=True)
     
 Schema = xsd.Schema(
       #Should be unique URL, can be any string.
@@ -20,7 +20,11 @@ Schema = xsd.Schema(
 
 def get_stock_price(request, gsp):
     print gsp.company, gsp.datetime
-    return StockPrice(nillable=xsd.NIL,price=139.21)
+    sp = StockPrice(nillable=xsd.NIL)
+    sp.prices.append(13.29)
+    sp.prices.append(4.56)
+    sp.prices.append(xsd.NIL)
+    return sp
 
 get_stock_price_method = xsd.Method(
     function = get_stock_price,
