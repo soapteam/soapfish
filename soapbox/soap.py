@@ -1,14 +1,10 @@
 #SOAP Protocol implementation, dispatchers and client stub.
 from lxml import etree
 import xsd
-import re
 import py2wsdl
 import httplib2
 from utils import uncapitalize
-
-class SOAPVersion:
-    SOAP11 = "SOAP 1.1"
-    SOAP12 = "SOAP 1.2"
+from consts import SOAPVersion
     
 #------------------------------- SOAP 1.2 --------------------------
 #SOAP messages description objects.
@@ -135,9 +131,11 @@ def get_django_dispatch(service):
     def soap12_django_dispatch(request):
         def get_soap_action(request):
             content_types = request.META["CONTENT_TYPE"].split(";")
+            
             for content_type in content_types:
                 if content_type.strip(" ").startswith("action="):
-                    return content_type.split("=")[1]
+                    action = content_type.split("=")[1]
+                    return action.replace('"',"")
             return None
         "Dispatch method tied to service."
         #We don't want to import this in main  context as the project may be 

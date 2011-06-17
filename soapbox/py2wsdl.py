@@ -11,7 +11,7 @@ def build_service(definitions, service):
         wsdl_port = wsdl.Port()
         wsdl_port.name = method.operationName+"Port"
         wsdl_port.binding = "tns:" + method.operationName+"Binding"
-        wsdl_port.address = wsdl.SOAP_Address(location=service.location)
+        wsdl_port.address = wsdl.SOAP_Address.create(service.version,location=service.location)
         wsdl_service.port = wsdl_port
     definitions.services.append(wsdl_service)
     
@@ -20,16 +20,16 @@ def build_bindings(definitions, service):
         binding = wsdl.Binding()
         binding.name = method.operationName +"Binding"
         binding.type = "tns:" + method.operationName + "PortType"
-        binding.binding = wsdl.SOAP_Binding()
+        binding.binding = wsdl.SOAP_Binding.create(service.version)
         binding.binding.style = "document"
         binding.binding.transport = "http://schemas.xmlsoap.org/soap/http"
         
         operation = wsdl.Operation()
         operation.name = method.operationName
-        operation.operation = wsdl.SOAP_Operation()
+        operation.operation = wsdl.SOAP_Operation.create(service.version)
         operation.operation.soapAction = method.soapAction
-        operation.input = wsdl.Input(body=wsdl.SOAP_Body(use="literal"))
-        operation.output = wsdl.Input(body=wsdl.SOAP_Body(use="literal"))
+        operation.input = wsdl.Input(body=wsdl.SOAP_Body.create(service.version,use="literal"))
+        operation.output = wsdl.Input(body=wsdl.SOAP_Body.create(service.version,use="literal"))
         binding.operation = operation
         
         definitions.bindings.append(binding)
@@ -84,7 +84,7 @@ def generate_wsdl(service):
     xmlelement = etree.Element("{http://schemas.xmlsoap.org/wsdl/}definitions",
                                nsmap = {"xsd" : "http://www.w3.org/2001/XMLSchema",
                                         "wsdl" : "http://schemas.xmlsoap.org/wsdl/",
-                                        "soap" : "http://schemas.xmlsoap.org/wsdl/soap/",
+                                        "soap" : service.version,
                                         "sns" : service.schema.targetNamespace,
                                         "tns" : service.targetNamespace})
     definitions.render(xmlelement, definitions, "http://schemas.xmlsoap.org/wsdl/")

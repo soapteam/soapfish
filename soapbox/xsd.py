@@ -375,7 +375,9 @@ class Element(object):
             return
         #This allows complexType to redefine the name space a.k.a. 
         #to use name space different then parent's one.
-        if hasattr(self._type,"NAMESPACE"):
+        if hasattr(value,"NAMESPACE"):
+            namespace = value.NAMESPACE
+        elif hasattr(self._type,"NAMESPACE"):
             namespace = self._type.NAMESPACE
             
         if namespace:

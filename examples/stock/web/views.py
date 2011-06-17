@@ -1,6 +1,6 @@
 # Create your views here.
 from soapbox import xsd, soap
-from soapbox.soap import SOAPVersion
+from soapbox.consts import SOAPVersion
 
 class GetStockPrice(xsd.ComplexType):
     company = xsd.Element(xsd.String, minOccurs=1)
