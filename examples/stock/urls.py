@@ -5,5 +5,6 @@ from django.conf.urls.defaults import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',    
-     url(r'^stock$', "stock.web.views.dispatch"),
+     url(r'^stock/soap11$', "stock.web.views.dispatch11"),
+     url(r'^stock/soap12$', "stock.web.views.dispatch12"),
 )

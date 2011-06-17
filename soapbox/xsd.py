@@ -369,7 +369,7 @@ class Element(object):
         else:
             return self._type.accept(value)
     
-    def render(self, parent, field_name, value, namespace=None):
+    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
         self._evaluate_type()
         if value is None:
             return
@@ -377,8 +377,15 @@ class Element(object):
         #to use name space different then parent's one.
         if hasattr(self._type,"NAMESPACE"):
             namespace = self._type.NAMESPACE
-        if namespace and self._type.ELEMENT_FORM_DEFAULT == ElementFormDefault.QUALIFIED :
-            field_name = "{%s}%s" % (namespace, field_name)
+            
+        if namespace:
+            if hasattr(self._type,"ELEMENT_FORM_DEFAULT"):
+                if self._type.ELEMENT_FORM_DEFAULT== ElementFormDefault.QUALIFIED:
+                    field_name = "{%s}%s" % (namespace, field_name)
+            else:
+                if elementFormDefault == ElementFormDefault.QUALIFIED:
+                    field_name = "{%s}%s" % (namespace, field_name)
+            
         xmlelement = etree.Element(field_name)
         if value == NIL:
             xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
@@ -408,13 +415,13 @@ class ClassNamedElement(Element):
     def __init__(self,_type, minOccurs = 1, nilable = False):
         super(ClassNamedElement, self).__init__(_type, minOccurs,None,nilable)
         
-    def render(self, parent, field_name, value, namespace=None):
+    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
         if value is None:
             return
         if hasattr(value,"NAMESPACE"):
             namespace = value.NAMESPACE
             
-        if namespace:
+        if namespace and elementFormDefault==ElementFormDefault.QUALIFIED:
             tagname = "{%s}%s" % (namespace, uncapitalize(value.__class__.__name__))
         else:
             tagname = value.__class__.__name__
@@ -444,7 +451,7 @@ class Attribute(Element):
         self.use = use
         self.default = default
         
-    def render(self, parent, field_name, value, namespace=None):
+    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
         self._evaluate_type()
         if value is None:
             if self._minOccurs:
@@ -542,7 +549,7 @@ class ListElement(Element):
         return TypedList()         
     
    
-    def render(self, parent, field_name, value, namespace=None):
+    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
         self._evaluate_type()
         items = value#The value must be list of items.
         if self._minOccurs and len(items) < self._minOccurs:
@@ -562,6 +569,7 @@ class ListElement(Element):
                 self._type.render(xmlelement, item, namespace)
             parent.append(xmlelement)
             
+            
     def parse(self, instance, field_name, xmlelement):
         self._evaluate_type()
         if xmlelement.get("{http://www.w3.org/2001/XMLSchema-instance}nil"):
@@ -570,6 +578,7 @@ class ListElement(Element):
             value = self._type.parse_xmlelement(xmlelement)
         _list = getattr(instance, field_name)
         _list.append(value)
+        
         
                 
 class ComplexTypeMetaInfo(object): 
@@ -595,6 +604,8 @@ class ComplexTypeMetaInfo(object):
         self.allelements = sorted(self.fields+self.groups, key=lambda f: f._creation_number)
         self.all = sorted(self.fields+self.groups+self.attributes, key=lambda f: f._creation_number)
         
+        
+        
 class Complex_PythonType(Type_PythonType):
     """Python type for ComplexType, builds _meta object for every class that 
     inherit from ComplexType. """
@@ -603,6 +614,8 @@ class Complex_PythonType(Type_PythonType):
         if name != 'Complex':
             newcls._meta = ComplexTypeMetaInfo(newcls)
         return newcls
+    
+    
     
 class ComplexType(Type):
     """Parent for XML elements that have sub-elements."""
@@ -633,6 +646,7 @@ class ComplexType(Type):
                 raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__,attr))
             super(ComplexType,self).__setattr__(attr,field.accept(value))
         
+        
     def accept(self, value):
         """Instance methods that validate other instance."""
         if value is None:
@@ -651,7 +665,8 @@ class ComplexType(Type):
                     parent = parent, 
                     field_name = field._name, 
                     value = getattr(instance, field._name), 
-                    namespace = self.NAMESPACE)
+                    namespace = self.NAMESPACE,
+                    elementFormDefault=self.ELEMENT_FORM_DEFAULT)
             else:
                 field.render(
                     parent = parent, 
@@ -689,6 +704,7 @@ class ComplexType(Type):
                 subelements.append(subelement)
         return subelements
          
+         
     @classmethod
     def parse_xmlelement(cls, xmlelement):    
         instance = cls()
@@ -706,6 +722,7 @@ class ComplexType(Type):
                 
         return instance
     
+    
     @classmethod
     def __parse_with_validation(cls, xml, schema):
         from py2xsd import generate_xsd
@@ -715,6 +732,7 @@ class ComplexType(Type):
         xmlelement = etree.fromstring(xml, parser)
         return xmlelement
     
+    
     @classmethod
     def parsexml(cls, xml, schema=None):
         if schema:
@@ -722,6 +740,7 @@ class ComplexType(Type):
         else:
             xmlelement = etree.fromstring(xml)
         return cls.parse_xmlelement(xmlelement)
+        
         
     def xml(self, tagname, schema=None):
         if self.NAMESPACE:
@@ -733,12 +752,15 @@ class ComplexType(Type):
             self.__parse_with_validation(xml, schema)
         return xml
     
+    
     @classmethod
     def _force_elements_type_evalution(cls):
         """Allows schema object to force elements type evalution for XSD generation"""
         for element in cls._meta.all:
             element._evaluate_type()
-        
+     
+
+  
 class Group(ComplexType):
     """Parent object for XSD Groups. Marker. Must be use with Ref."""
     pass

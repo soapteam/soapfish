@@ -1,4 +1,6 @@
 import sys
+import urllib2
+import httplib2
 from optparse import OptionParser
 from lxml import etree
 from jinja2 import Template,Environment
@@ -103,5 +105,38 @@ def console_main():
     else:
         parser.print_help()
         
+
+        
+def open_http_document(url):
+    http = httplib2.Http()
+    _,content = http.request(url)
+    return content
+
+def resolve_imports(url,known_urls=None):
+    def rewite_content(from_doc, to_doc):
+        for item in from_doc:
+            to_doc.append(item)
+    #----------------------------------------
+    if known_urls is None: known_urls = []
+    if url in known_urls: return
+     
+    text = open_http_document(url)
+    known_urls.append(url)
+    
+    document = etree.fromstring(text)
+    wsdl_imports = document.xpath("//wsdl:import",namespaces={"wsdl":"http://schemas.xmlsoap.org/wsdl/"})
+    for imp in wsdl_imports:
+        inner_doc = resolve_imports(imp.get("location"),known_urls)
+        document.remove(imp)
+        if inner_doc is not None:
+            
+        
+    print etree.tostring(document,pretty_print=True)
+    return document
+    
 if __name__ == "__main__":
-    console_main()
+    #console_main()
+    url = "http://ec2-46-137-40-70.eu-west-1.compute.amazonaws.com/QPulse5WebServices/Services/Core.svc?wsdl"
+    resolve_imports(url)
+    
+    

@@ -1,5 +1,6 @@
 # Create your views here.
 from soapbox import xsd, soap
+from soapbox.soap import SOAPVersion
 
 class GetStockPrice(xsd.ComplexType):
     company = xsd.Element(xsd.String, minOccurs=1)
@@ -33,13 +34,24 @@ get_stock_price_method = xsd.Method(
     output = "stockPrice",
     operationName = "GetStockPrice")
 
-SERVICE = soap.Service(
+SERVICE11 = soap.Service(
     #WSDL targetNamespce
     targetNamespace = "http://code.google.com/p/soapbox/stock.wsdl",
+    version = SOAPVersion.SOAP11,
     #The url were request should be send.
-    location = "http://127.0.0.1:8000/stock",
+    location = "http://127.0.0.1:8000/stock/soap11",
+    schema = Schema,
+    methods = [get_stock_price_method])
+
+SERVICE12 = soap.Service(
+    #WSDL targetNamespce
+    targetNamespace = "http://code.google.com/p/soapbox/stock.wsdl",
+    version = SOAPVersion.SOAP12,
+    #The url were request should be send.
+    location = "http://127.0.0.1:8000/stock/soap12",
     schema = Schema,
     methods = [get_stock_price_method])
 
 from django.views.decorators.csrf import csrf_exempt
-dispatch = csrf_exempt(soap.get_django_dispatch(SERVICE))
+dispatch11 = csrf_exempt(soap.get_django_dispatch(SERVICE11))
+dispatch12 = csrf_exempt(soap.get_django_dispatch(SERVICE12))

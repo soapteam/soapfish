@@ -24,6 +24,7 @@ def xsd_attribute(attribute):
     xsdattr.type = get_xsd_type(attribute._type)
     return xsdattr
 
+
 def create_xsd_element(element):
     xsd_element = xsdspec.Element()
     xsd_element.name = element.tagname if element.tagname else element._name
@@ -31,10 +32,7 @@ def create_xsd_element(element):
     xsd_element.minOccurs = element._minOccurs
     if hasattr(element,"_maxOccurs"):
         xsd_element.maxOccurs = element._maxOccurs
-    
-    
-    
-        
+            
     # SimpleType defined in place.
     parent_type = element._type.__class__.__bases__[0]
     is_simple_type = False
@@ -84,6 +82,8 @@ def create_xsd_element(element):
         xsd_element.type = get_xsd_type(element._type)
     return xsd_element
 
+
+
 def xsd_complexType(complexType):
     xsd_ct = xsdspec.XSDComplexType()
     xsd_ct.name = uncapitalize(complexType.__name__)
@@ -107,6 +107,8 @@ def xsd_complexType(complexType):
         container.elements.append(xsd_element)
     return xsd_ct
 
+
+
 def xsd_simpleType(st):
     xsd_simpleType = xsdspec.SimpleType()
     xsd_simpleType.name = st.__name__.lower()
@@ -122,6 +124,8 @@ def xsd_simpleType(st):
     xsd_simpleType.restriction = xsd_restriction
     return xsd_simpleType
 
+
+
 def generate_xsdspec(schema):
     xsd_schema = xsdspec.Schema()
     xsd_schema.targetNamespace = schema.targetNamespace
@@ -134,6 +138,8 @@ def generate_xsdspec(schema):
     generate_elements(xsd_schema, schema)
     return xsd_schema
 
+
+
 def generate_elements(xsd_schema, schema):
     for name, element in schema.elements.iteritems():
         xsd_element = xsdspec.Element()
@@ -141,6 +147,7 @@ def generate_elements(xsd_schema, schema):
         xsd_element.type = get_xsd_type(element._type)
         xsd_schema.elements.append(xsd_element)
         
+    
     
 def generate_xsd(schema):
     xsd_schema = generate_xsdspec(schema)
