@@ -65,10 +65,10 @@ def get_django_dispatch(service):
             soap_message = SOAP.Envelope.reponse(return_object)
             return HttpResponse(soap_message,content_type=SOAP.CONTENT_TYPE)
         except (ValueError,etree.XMLSyntaxError) as e:
-            content = SOAP.get_error_message(SOAP.CODE.CLIENT,str(e))
+            response = SOAP.get_error_response(SOAP.Code.CLIENT,str(e))
         except Exception, e:
-            content = SOAP.get_error_message(SOAP.CODE.SERVER,str(e))
-        return HttpResponse(content, content_type=SOAP.CONTENT_TYPE)
+            response = SOAP.get_error_response(SOAP.Code.SERVER,str(e))
+        return HttpResponse(response, content_type=SOAP.CONTENT_TYPE)
     #-------------------------------------------------------------
     return django_dispatch
     
