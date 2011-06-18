@@ -1,53 +1,57 @@
 import sys
 import imp
-import wsdl
+from wsdl import get_wsdl_classes
 from lxml import etree
 from py2xsd import generate_xsdspec
 from utils import uncapitalize
-
-def build_service(definitions, service):
+from soap import SOAP_HTTP_Transport
+           
+def build_service(wsdl,definitions, service):
     wsdl_service = wsdl.Service()
-    for method in service.methods:
-        wsdl_port = wsdl.Port()
-        wsdl_port.name = method.operationName+"Port"
-        wsdl_port.binding = "tns:" + method.operationName+"Binding"
-        wsdl_port.address = wsdl.SOAP_Address.create(service.version,location=service.location)
-        wsdl_service.port = wsdl_port
+    wsdl_service.name = service.name
+    
+    wsdl_port = wsdl.Port()
+    wsdl_port.name = service.name+"Port"
+    wsdl_port.binding = "tns:" + service.name+"Binding"
+    wsdl_port.address = wsdl.SOAP_Address(location=service.location)
+    
+    wsdl_service.ports.append(wsdl_port)
     definitions.services.append(wsdl_service)
     
-def build_bindings(definitions, service):
-    for method in service.methods:
-        binding = wsdl.Binding()
-        binding.name = method.operationName +"Binding"
-        binding.type = "tns:" + method.operationName + "PortType"
-        binding.binding = wsdl.SOAP_Binding.create(service.version)
-        binding.binding.style = "document"
-        binding.binding.transport = "http://schemas.xmlsoap.org/soap/http"
-        
+def build_bindings(wsdl,definitions, service):
+    binding = wsdl.Binding()
+    binding.name = service.name +"Binding"
+    binding.type = "tns:" + service.name + "PortType"
+    binding.binding = wsdl.SOAP_Binding()
+    binding.binding.style = "document"
+    binding.binding.transport = SOAP_HTTP_Transport
+    
+    for method in service.methods:        
         operation = wsdl.Operation()
         operation.name = method.operationName
-        operation.operation = wsdl.SOAP_Operation.create(service.version)
+        operation.operation = wsdl.SOAP_Operation()
         operation.operation.soapAction = method.soapAction
-        operation.input = wsdl.Input(body=wsdl.SOAP_Body.create(service.version,use="literal"))
-        operation.output = wsdl.Input(body=wsdl.SOAP_Body.create(service.version,use="literal"))
-        binding.operation = operation
+        operation.input = wsdl.Input(body=wsdl.SOAP_Body(use="literal"))
+        operation.output = wsdl.Input(body=wsdl.SOAP_Body(use="literal"))
+        operation.style = method.style
+        binding.operations.append(operation)
         
-        definitions.bindings.append(binding)
+    definitions.bindings.append(binding)
         
         
-def build_portTypes(definitions, service):
+def build_portTypes(wsdl,definitions, service):
+    portType = wsdl.PortType()
+    portType.name = service.name + "PortType"
     for method in service.methods:
-        portType = wsdl.PortType()
-        portType.name = method.operationName + "PortType"
         operation = wsdl.Operation()
         operation.name = method.operationName
         operation.input = wsdl.Input(message="tns:" +method.operationName+"Input")
         operation.output = wsdl.Input(message="tns:" +method.operationName+"Output")
-        portType.operation = operation
+        portType.operations.append(operation)
         
-        definitions.portTypes.append(portType)
+    definitions.portTypes.append(portType)
         
-def build_messages(definitions, service):
+def build_messages(wsdl,definitions, service):
     for method in service.methods:
         inputMessage = wsdl.Message(name=method.operationName+"Input")
         inputMessage.part = wsdl.Part()
@@ -67,24 +71,25 @@ def build_messages(definitions, service):
             outputMessage.part.type = "sns:"+uncapitalize(method.output.__name__)
         definitions.messages.append(outputMessage)
         
-def build_types(definitions, schema):
+def build_types(wsdl,definitions, schema):
     xsd_schema = generate_xsdspec(schema)
     definitions.types = wsdl.Types(schema=xsd_schema)
         
         
         
 def generate_wsdl(service):
+    wsdl = get_wsdl_classes(service.version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions(targetNamespace=service.targetNamespace)
-    build_types(definitions, service.schema)
-    build_service(definitions, service)
-    build_bindings(definitions, service)
-    build_portTypes(definitions, service)
-    build_messages(definitions, service)
+    build_types(wsdl,definitions, service.schema)
+    build_service(wsdl,definitions, service)
+    build_bindings(wsdl,definitions, service)
+    build_portTypes(wsdl,definitions, service)
+    build_messages(wsdl,definitions, service)
     
     xmlelement = etree.Element("{http://schemas.xmlsoap.org/wsdl/}definitions",
                                nsmap = {"xsd" : "http://www.w3.org/2001/XMLSchema",
                                         "wsdl" : "http://schemas.xmlsoap.org/wsdl/",
-                                        "soap" : service.version,
+                                        "soap" : service.version.BINDING_NAMESPACE,
                                         "sns" : service.schema.targetNamespace,
                                         "tns" : service.targetNamespace})
     definitions.render(xmlelement, definitions, "http://schemas.xmlsoap.org/wsdl/")

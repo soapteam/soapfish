@@ -1,6 +1,6 @@
 # Create your views here.
 from soapbox import xsd, soap
-from soapbox.consts import SOAPVersion
+from soapbox.soap import SOAPVersion
 
 class GetStockPrice(xsd.ComplexType):
     company = xsd.Element(xsd.String, minOccurs=1)
@@ -35,8 +35,8 @@ get_stock_price_method = xsd.Method(
     operationName = "GetStockPrice")
 
 SERVICE11 = soap.Service(
-    #WSDL targetNamespce
-    targetNamespace = "http://code.google.com/p/soapbox/stock.wsdl",
+    name = "StockService",
+    targetNamespace = "http://code.google.com/p/soapbox/stock.wsdl",#WSDL targetNamespce
     version = SOAPVersion.SOAP11,
     #The url were request should be send.
     location = "http://127.0.0.1:8000/stock/soap11",
@@ -45,6 +45,7 @@ SERVICE11 = soap.Service(
 
 SERVICE12 = soap.Service(
     #WSDL targetNamespce
+    name = "StockService",
     targetNamespace = "http://code.google.com/p/soapbox/stock.wsdl",
     version = SOAPVersion.SOAP12,
     #The url were request should be send.

@@ -1,113 +1,33 @@
 #SOAP Protocol implementation, dispatchers and client stub.
 from lxml import etree
 import xsd
-import py2wsdl
 import httplib2
+import soap11
+import soap12
 from utils import uncapitalize
-from consts import SOAPVersion
-    
-#------------------------------- SOAP 1.2 --------------------------
-#SOAP messages description objects.
-class Header(xsd.ComplexType):
-    """SOAP Envelope Header."""
-    pass
 
-class SOAP12Fault(xsd.ComplexType):
-    """SOAP Envelope Fault."""
-    Code = xsd.Element(xsd.String)
-    Reason = xsd.Element(xsd.String)
-    
-class SOAP12Body(xsd.ComplexType):
-    """SOAP Envelope Body."""
-    message = xsd.ClassNamedElement(xsd.ComplexType, minOccurs=0)
-    Fault = xsd.Element(SOAP12Fault, minOccurs=0)
-    def content(self):
-        return etree.tostring(self._xmlelement[0], pretty_print=True)
-
-class SOAP12Envelope(xsd.ComplexType):
-    """SOAP Envelope."""
-    Header = xsd.Element(Header, nillable=True) 
-    Body = xsd.Element(SOAP12Body)
+SOAP_HTTP_Transport = "http://schemas.xmlsoap.org/soap/http"
+                    
+class SOAPVersion:
+    SOAP12 = soap12
+    SOAP11 = soap11
     
     @classmethod
-    def reponse(cls, return_object):
-        envelope = SOAP12Envelope()
-        envelope.Body = SOAP12Body()
-        envelope.Body.message = return_object 
-        return envelope.xml("Envelope")
-    
-Schema = xsd.Schema(
-    targetNamespace = "http://www.w3.org/2003/05/soap-envelope",
-    elementFormDefault = xsd.ElementFormDefault.QUALIFIED,
-    complexTypes = [Header, SOAP12Body, SOAP12Envelope, SOAP12Fault])
-
-
-#------------------------------- SOAP 1.1 --------------------------
-class SOAP11Fault(xsd.ComplexType):
-    """SOAP Envelope Fault."""
-    faultcode = xsd.Element(xsd.String)
-    faultstring = xsd.Element(xsd.String)
-    detail = xsd.Element(xsd.String)
-    
-class SOAP11Body(xsd.ComplexType):
-    """SOAP Envelope Body."""
-    message = xsd.ClassNamedElement(xsd.ComplexType, minOccurs=0)
-    Fault = xsd.Element(SOAP11Fault, minOccurs=0)
-    def content(self):
-        return etree.tostring(self._xmlelement[0], pretty_print=True)
-
-class SOAP11Envelope(xsd.ComplexType):
-    """SOAP Envelope."""
-    Header = xsd.Element(Header, nillable=True) 
-    Body = xsd.Element(SOAP11Body)
-    
-    @classmethod
-    def reponse(cls, return_object):
-        envelope = SOAP11Envelope()
-        envelope.Body = SOAP11Body()
-        envelope.Body.message = return_object 
-        return envelope.xml("Envelope")
-    
-Schema = xsd.Schema(
-    targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/",
-    elementFormDefault = xsd.ElementFormDefault.QUALIFIED,
-    complexTypes = [Header, SOAP11Body, SOAP11Envelope, SOAP11Fault])
-
-class SOAPError(Exception):
-    pass
-    
-class Service(object):
-    """Describes service aggregating informations required for dispatching 
-    and WSDL generation. """ 
-    def __init__(self, targetNamespace, location, schema, methods, 
-                 version=SOAPVersion.SOAP11):
-        """:param targetNamespace: string
-           :param location: string, endpoint url.
-           :param schema: xsd.Schema instance.
-           :param methods: list of xsd.Methods"""
-        self.targetNamespace = targetNamespace
-        self.location = location
-        self.schema = schema
-        self.methods = methods
-        self.version = version
+    def get_version(cls, namespace):
+        if namespace == cls.SOAP11.ENVELOPE or namespace == cls.SOAP11.BINDING:
+            return cls.SOAP11
+        elif  namespace == cls.SOAP12.ENVELOPE or namespace == cls.SOAP12.BINDING:
+            return cls.SOAP11
+        else:
+            raise ValueError("SOAP version with namespace '%s' is not supported." % namespace)
         
-    def get_method(self, operationName):
-        return filter(lambda m:m.operationName ==operationName, self.methods)[0]
-            
-
-#TODO:
-#1. Fault code could use Client.Authentication notation to indicate error type.
-  
+    @classmethod
+    def get_version_name(cls, namespace):
+        version = cls.get_version(namespace)
+        return version.__name__
+    
+    
 def get_django_dispatch(service):
-    """Returns dispatch method for specified service. Dispatch method can be 
-    pointed by urls.py, it will capture incoming SOAP message, translate it into 
-    object and call appropriate method. Expecting return object that can be 
-    translated to valid SOAP response for this service. 
-        On any excpetion raised from method the response will be SOAP Fault message.
-    ValueError are translated into fault code Client, other to Server.  
-        Incoming and outgoing XMLs are validated against XSD generated from service 
-    schema. Incorrect or missing values will cause Fault response. 
-    """    
     def call_the_method(request,message,soap_action):
         for method in service.methods:
             if soap_action != method.soapAction:
@@ -126,83 +46,57 @@ def get_django_dispatch(service):
                 raise ValueError(e)
             return return_object
         raise ValueError("Method not found!")
+    #-------------------------------------------------------------
+    def django_dispatch(request):
+        from django.http import HttpResponse
+        import py2wsdl
+        SOAP = service.version
+        
+        if request.method == "GET" and request.GET.has_key("wsdl"):
+            wsdl = py2wsdl.generate_wsdl(service)
+            return HttpResponse(wsdl,mimetype="text/xml")
+        
+        try:
+            xml = request.raw_post_data
+            envelope = SOAP.Envelope.parsexml(xml)
+            message = envelope.Body.content()
+            soap_action = SOAP.determin_soap_action(request)
+            return_object = call_the_method(request, message, soap_action)
+            soap_message = SOAP.Envelope.reponse(return_object)
+            return HttpResponse(soap_message,content_type=SOAP.CONTENT_TYPE)
+        except (ValueError,etree.XMLSyntaxError) as e:
+            content = SOAP.get_error_message(SOAP.CODE.CLIENT,str(e))
+        except Exception, e:
+            content = SOAP.get_error_message(SOAP.CODE.SERVER,str(e))
+        return HttpResponse(content, content_type=SOAP.CONTENT_TYPE)
+    #-------------------------------------------------------------
+    return django_dispatch
     
         
-    def soap12_django_dispatch(request):
-        def get_soap_action(request):
-            content_types = request.META["CONTENT_TYPE"].split(";")
-            
-            for content_type in content_types:
-                if content_type.strip(" ").startswith("action="):
-                    action = content_type.split("=")[1]
-                    return action.replace('"',"")
-            return None
-        "Dispatch method tied to service."
-        #We don't want to import this in main  context as the project may be 
-        #using different way of dispatching. Django would be unnessesery 
-        #dependecy which is sensible to assume to be true in Django dispatch only.
-        from django.http import HttpResponse
-        if request.method == "GET" and request.GET.has_key("wsdl"):
-            wsdl = py2wsdl.generate_wsdl(service)
-            return HttpResponse(wsdl,mimetype="text/xml")
-            
-        try:
-            xml = request.raw_post_data
-            envelope = SOAP12Envelope.parsexml(xml)
-            message = envelope.Body.content()
-            soap_action = get_soap_action(request)
-          
-            return_object = call_the_method(request, message, soap_action)
-           
-            soap_message = SOAP12Envelope.reponse(return_object)
-            return HttpResponse(soap_message,content_type="application/soap+xml")
-        except (ValueError,etree.XMLSyntaxError) as e:
-            fault = SOAP12Fault(Code="Sender", Reason=str(e))
-        except Exception, e:
-            fault = SOAP12Fault(Code="Receiver", Reason=str(e))
-        envelope = SOAP12Envelope()
-        envelope.Body = SOAP12Body(Fault=fault)
-        return HttpResponse(envelope.xml("Envelope"), content_type="text/xml")
-    #-------------------------------------------------------------------------------------
-    def soap11_django_dispatch(request):
-        "Dispatch method tied to service."
-        def get_soap_action(request):
-            if request.META.get("HTTP_SOAPACTION"):
-                return request.META.get("HTTP_SOAPACTION").replace('"','')
-            elif request.META.get("HTTP_ACTION"):
-                return request.META.get("HTTP_ACTION").replace('"','')
-            else:
-                return None
-        #We don't want to import this in main  context as the project may be 
-        #using different way of dispatching. Django would be unnessesery 
-        #dependecy which is sensible to assume to be true in Django dispatch only.
-        from django.http import HttpResponse
-        if request.method == "GET" and request.GET.has_key("wsdl"):
-            wsdl = py2wsdl.generate_wsdl(service)
-            return HttpResponse(wsdl,mimetype="text/xml")
-            
-        try:
-            xml = request.raw_post_data
-            envelope = SOAP11Envelope.parsexml(xml)
-            message = envelope.Body.content()
-            soap_action = get_soap_action(request)
-          
-            return_object = call_the_method(request, message, soap_action)
-            soap_message = SOAP11Envelope.reponse(return_object)
-            return HttpResponse(soap_message,content_type="application/soap+xml")
-        except (ValueError,etree.XMLSyntaxError) as e:
-            fault = SOAP11Fault(faultcode="Client", faultstring=str(e),detail=str(e))
-        except Exception, e:
-            fault = SOAP11Fault(faultcode="Server", faultstring=str(e),detail=str(e))
-        envelope = SOAP11Envelope()
-        envelope.Body = SOAP11Body(Fault=fault)
-        return HttpResponse(envelope.xml("Envelope"), content_type="application/soap+xml")
-    #-------------------------------------------------------------------------------------
-    if service.version == SOAPVersion.SOAP12:        
-        return soap12_django_dispatch
-    else:
-        return soap11_django_dispatch
+        
 
+class SOAPError(Exception):
+    pass
+    
+class Service(object):
+    """Describes service aggregating informations required for dispatching 
+    and WSDL generation. """ 
+    def __init__(self, name,targetNamespace, location, schema, methods, 
+                 version=SOAPVersion.SOAP11):
+        """:param targetNamespace: string
+           :param location: string, endpoint url.
+           :param schema: xsd.Schema instance.
+           :param methods: list of xsd.Methods"""
+        self.name = name
+        self.targetNamespace = targetNamespace
+        self.location = location
+        self.schema = schema
+        self.methods = methods
+        self.version = version
+        
+    def get_method(self, operationName):
+        return filter(lambda m:m.operationName ==operationName, self.methods)[0]
+            
 
 class Stub(object):
     """Client stub. Handles only document style calls.""" 

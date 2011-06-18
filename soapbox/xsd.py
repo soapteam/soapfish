@@ -51,6 +51,10 @@ USER_TYPE_REGISTER = TypeRegister()
 
 UNBOUNDED = "unbounded"
 
+class CallStyle:
+    DOCUMENT = "document"
+    RPC = "rpc"
+    
 class Use:
     OPTIONAL = "optional"
     REQUIRED = "required"
@@ -644,9 +648,11 @@ class ComplexType(Type):
         else:
             try:
                 field = self._find_field(self._meta.all, attr)
+                super(ComplexType,self).__setattr__(attr,field.accept(value))
             except IndexError:
-                raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__,attr))
-            super(ComplexType,self).__setattr__(attr,field.accept(value))
+                pass#raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__,attr))
+            super(ComplexType,self).__setattr__(attr,value)
+            
         
         
     def accept(self, value):
@@ -866,13 +872,17 @@ class Method(object):
     """Method description. The main information is mapping soapAction and operationName
     to function for dispatcher. input and output mapping informs how and which
     objects should be created on incoming/outgoing messages."""
-    def __init__(self, operationName, soapAction, input, output, function=None):
+    def __init__(self, operationName, soapAction, input, output, function=None,
+                 inputPartName="body",outputPartName = "body",style=CallStyle.DOCUMENT):
         """:param function: The function that should be called. Required only for server."""
         self.operationName = operationName
         self.soapAction = soapAction
         self.input = input
         self.output = output
         self.function = function
+        self.inputPartName = inputPartName
+        self.outputPartName = outputPartName
+        self.style = style
         
 
     
