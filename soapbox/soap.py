@@ -108,22 +108,15 @@ class Stub(object):
     def __init__(self, username=None, password=None):
         self.username = username
         self.password = password
-    
-    def _build_header(self, method):
-        if self.SERVICE.version == SOAPVersion.SOAP11:
-            return {"content-type" : 'text/xml',
-                     "SOAPAction"   : method.soapAction}
-        elif self.SERVICE.version == SOAPVersion.SOAP12:
-            return {"content-type" : "application/soap+xml;action=%s" % method.soapAction}
-        else:
-            raise ValueError("SOAP Version not supported %s" % self.SERVICE.version)
         
     def _handle_response(self, method, response, content):
-        envelope = Envelope.parsexml(content)
+        SOAP = self.SERVICE.version
+        envelope = SOAP.Envelope.parsexml(content)
+        
         if envelope.Body.Fault:
-            raise SOAPError("Fault Code:%s, Fault String: %s" % 
-                               (envelope.Body.Fault.faultcode,
-                                envelope.Body.Fault.faultstring))
+            code,message = SOAP.parse_fault_message(envelope.Body.Fault)
+            raise SOAPError("Fault Code:%s, Fault Message: %s" % (code,message))
+        
         message = envelope.Body.content()
         
         if isinstance(method.output, str):
@@ -140,15 +133,16 @@ class Stub(object):
         
     def call(self, operationName, parameter):
         #Will raise: lxml.etree.XMLSyntaxError on validation problems.
+        SOAP = self.SERVICE.version
         parameter.xml(parameter.__class__.__name__.lower(), self.SERVICE.schema)
-            
+        
         h = httplib2.Http()
         if self.username:
             h.add_credentials(self.username, self.password)
         
         method = self.SERVICE.get_method(operationName)    
-        headers = self._build_header(method)    
-        envelope = Envelope.reponse(parameter)
+        headers = SOAP.build_header(method)    
+        envelope = SOAP.Envelope.reponse(parameter)
     
         response, content = h.request(self.SERVICE.location, "POST",
              body=envelope, headers=headers)
