@@ -378,7 +378,7 @@ class Element(object):
         self._evaluate_type()
         if value is None: return
         
-        if self.namespace:
+        if self.namespace is not None:
             namespace = self.namespace    
         if namespace is not None and elementFormDefault==ElementFormDefault.QUALIFIED:
             field_name = "{%s}%s" % (namespace, field_name)
@@ -413,15 +413,14 @@ class ClassNamedElement(Element):
         super(ClassNamedElement, self).__init__(_type, minOccurs,None,nilable)
         
     def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
-        if value is None:
-            return
-        if hasattr(value,"NAMESPACE"):
-            namespace = value.NAMESPACE
-            
-        if namespace and elementFormDefault==ElementFormDefault.QUALIFIED:
+        if value is None: return
+        
+        namespace = value.SCHEMA.targetNamespace
+        if namespace:
             tagname = "{%s}%s" % (namespace, uncapitalize(value.__class__.__name__))
         else:
-            tagname = value.__class__.__name__
+            tagname = uncapitalize(value.__class__.__name__)
+            
         xmlelement = etree.Element(tagname)
         self._type.render(xmlelement, value)
         parent.append(xmlelement)
@@ -555,11 +554,14 @@ class ListElement(Element):
         if self._maxOccurs and len(items) > self._maxOccurs:
             raise ValueError("For %s maxOccurs=%d but list length %d." % (field_name, self._maxOccurs))
         
+        if self.namespace is not None:
+            namespace = self.namespace
+        if namespace is not None and elementFormDefault == ElementFormDefault.QUALIFIED:
+            tagname = "{%s}%s" % (namespace,self.tagname)
+        else:
+            tagname = self.tagname
+                
         for item in items:
-            if namespace:
-                tagname = "{%s}%s" % (namespace,self.tagname)
-            else:
-                tagname = self.tagname
             xmlelement = etree.Element(tagname)
             if item == NIL:
                 xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
@@ -619,6 +621,7 @@ class ComplexType(Type):
     """Parent for XML elements that have sub-elements."""
     INDICATOR = Sequence#Indicator see: class Indicators. To be defined in sub-type.
     INHERITANCE = None#Type of inheritance see: class Inheritance, to be defined in sub-type.
+    SCHEMA = None
     
     __metaclass__ = Complex_PythonType
     
@@ -829,10 +832,10 @@ class Schema(object):
         self.complexTypes = complexTypes
         self.elements = elements
         
-#        self.__init_namespace(self.simpleTypes)
-#        self.__init_namespace(self.groups)
-#        self.__init_namespace(self.attributeGroups)
-#        self.__init_namespace(self.complexTypes)
+        self.__init_schema(self.simpleTypes)
+        self.__init_schema(self.groups)
+        self.__init_schema(self.attributeGroups)
+        self.__init_schema(self.complexTypes)
         
         self._force_elements_type_evalution(self.complexTypes)
         self._force_elements_type_evalution(self.attributeGroups)
@@ -843,12 +846,10 @@ class Schema(object):
         
         
         
-#    def __init_namespace(self, types):
-#        for _type in types:
-#            _type.NAMESPACE = self.targetNamespace
-#            _type.ELEMENT_FORM_DEFAULT = self.elementFormDefault
-            
-    
+    def __init_schema(self, types):
+        for _type in types:
+            _type.SCHEMA = self
+               
     def _force_elements_type_evalution(self, types):
         for t in types:
             t._force_elements_type_evalution()

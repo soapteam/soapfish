@@ -38,10 +38,13 @@ def get_django_dispatch(service):
                 input_object = element._type.parsexml(message,service.schema)
             else:
                 input_object = method.input.parsexml(message,service.schema)
-                
+    
             return_object = method.function(request, input_object)
             try:
-                return_object.xml(uncapitalize(return_object.__class__.__name__), service.schema)#Validation.
+                tagname = uncapitalize(return_object.__class__.__name__)
+                return_object.xml(tagname,namespace=service.schema.targetNamespace,
+                                  elementFormDefault=service.schema.elementFormDefault,
+                                  schema=service.schema)#Validation.
             except Exception, e:
                 raise ValueError(e)
             return return_object

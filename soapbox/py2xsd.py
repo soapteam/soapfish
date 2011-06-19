@@ -152,9 +152,10 @@ def generate_elements(xsd_schema, schema):
 def generate_xsd(schema):
     xsd_schema = generate_xsdspec(schema)
     xmlelement = etree.Element("{http://www.w3.org/2001/XMLSchema}schema",
-                               nsmap = {"xsd" : "http://www.w3.org/2001/XMLSchema",
+                               nsmap = {"xsd" : xsdspec.XSD_NAMESPACE,
                                         "sns" : schema.targetNamespace})
-    xsd_schema.render(xmlelement, xsd_schema)
+    xsd_schema.render(xmlelement, xsd_schema,namespace=xsdspec.XSD_NAMESPACE,
+                      elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
     return xmlelement
     
 
