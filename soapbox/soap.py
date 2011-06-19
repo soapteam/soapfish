@@ -134,14 +134,17 @@ class Stub(object):
     def call(self, operationName, parameter):
         #Will raise: lxml.etree.XMLSyntaxError on validation problems.
         SOAP = self.SERVICE.version
-        parameter.xml(parameter.__class__.__name__.lower(), self.SERVICE.schema)
+        parameter.xml(parameter.__class__.__name__.lower(), 
+                      schema=self.SERVICE.schema,
+                      namespace=self.SERVICE.schema.targetNamespace,
+                      elementFormDefault=self.SERVICE.schema.elementFormDefault)
         
         h = httplib2.Http()
         if self.username:
             h.add_credentials(self.username, self.password)
         
         method = self.SERVICE.get_method(operationName)    
-        headers = SOAP.build_header(method)    
+        headers = SOAP.build_header(method.soapAction)    
         envelope = SOAP.Envelope.reponse(parameter)
     
         response, content = h.request(self.SERVICE.location, "POST",
