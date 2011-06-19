@@ -53,7 +53,7 @@ UNBOUNDED = "unbounded"
 
 class CallStyle:
     DOCUMENT = "document"
-    RPC = "rpc"
+    RPC = "RPC"
     
 class Use:
     OPTIONAL = "optional"
@@ -106,7 +106,7 @@ class Type(object):
     
 class SimpleType(Type):
     """Defines an interface for simple types."""    
-    def render(self, parent, value, namespace):
+    def render(self, parent, value, namespace,elementFormDefault):
         parent.text = self.xmlvalue(value)
         
     def parse_xmlelement(self, xmlelement):
@@ -325,7 +325,7 @@ class Element(object):
     _creation_counter = 0
     
     def __init__(self, _type, minOccurs = 1, tagname = None, nillable = False,
-                 default = None):
+                 default = None,namespace=None):
         """:param _type: Class or instance of class that inherits from Type,
                          usually a child of SimpleType from xsd package,
                          or user defined class that inherits from ComplexType.
@@ -346,6 +346,7 @@ class Element(object):
         self.tagname = tagname
         self.default = default
         self.nillable = nillable
+        self.namespace = namespace
         
     def _evaluate_type(self):
         if self._type is None:
@@ -375,28 +376,18 @@ class Element(object):
     
     def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
         self._evaluate_type()
-        if value is None:
-            return
-        #This allows complexType to redefine the name space a.k.a. 
-        #to use name space different then parent's one.
-        if hasattr(value,"NAMESPACE"):
-            namespace = value.NAMESPACE
-        elif hasattr(self._type,"NAMESPACE"):
-            namespace = self._type.NAMESPACE
-            
-        if namespace:
-            if hasattr(self._type,"ELEMENT_FORM_DEFAULT"):
-                if self._type.ELEMENT_FORM_DEFAULT== ElementFormDefault.QUALIFIED:
-                    field_name = "{%s}%s" % (namespace, field_name)
-            else:
-                if elementFormDefault == ElementFormDefault.QUALIFIED:
-                    field_name = "{%s}%s" % (namespace, field_name)
+        if value is None: return
+        
+        if self.namespace:
+            namespace = self.namespace    
+        if namespace is not None and elementFormDefault==ElementFormDefault.QUALIFIED:
+            field_name = "{%s}%s" % (namespace, field_name)
             
         xmlelement = etree.Element(field_name)
         if value == NIL:
             xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
         else:
-            self._type.render(xmlelement, value, namespace)
+            self._type.render(xmlelement, value, namespace,elementFormDefault)
         parent.append(xmlelement)
         
     
@@ -500,15 +491,16 @@ class Ref(Element):
     Note that name and surname are not wrapped with <person> tag.
     """
     def empty_value(self):
+        self._evaluate_type()
         return copy(self._type)
     
-    def render(self, parent, field_name, value, namespace=None):
+    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
         if value is None:
             if self._required:
                 raise ValueError("Value None is not acceptable for required field.")
             else:
                 return
-        self._type.render(parent, value, namespace)
+        self._type.render(parent, value, namespace,elementFormDefault)
         
 class Content(Ref):
     """Direct access to element.text. Note that <> will be escaped."""
@@ -572,7 +564,7 @@ class ListElement(Element):
             if item == NIL:
                 xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
             else:
-                self._type.render(xmlelement, item, namespace)
+                self._type.render(xmlelement, item, namespace,elementFormDefault)
             parent.append(xmlelement)
             
             
@@ -627,8 +619,6 @@ class ComplexType(Type):
     """Parent for XML elements that have sub-elements."""
     INDICATOR = Sequence#Indicator see: class Indicators. To be defined in sub-type.
     INHERITANCE = None#Type of inheritance see: class Inheritance, to be defined in sub-type.
-    NAMESPACE = None#String, preferably URL with name space for this element. Is set be Scheme instance.
-    ELEMENT_FORM_DEFAULT = None#String, one of two values.
     
     __metaclass__ = Complex_PythonType
     
@@ -665,21 +655,16 @@ class ComplexType(Type):
             raise ValueError('Wrong value object type %s for %s.' % (value,self.__class__.__name__))
         
             
-    def render(self, parent, instance, namespace=None):
+    def render(self, parent, instance, namespace=None,elementFormDefault=None):
         if instance is None: return None
         for field in instance._meta.all: 
-            if self.ELEMENT_FORM_DEFAULT == ElementFormDefault.QUALIFIED:
-                field.render(
-                    parent = parent, 
-                    field_name = field._name, 
-                    value = getattr(instance, field._name), 
-                    namespace = self.NAMESPACE,
-                    elementFormDefault=self.ELEMENT_FORM_DEFAULT)
-            else:
-                field.render(
-                    parent = parent, 
-                    field_name = field._name, 
-                    value = getattr(instance, field._name))
+            field.render(
+                parent = parent, 
+                field_name = field._name, 
+                value = getattr(instance, field._name), 
+                namespace = namespace,
+                elementFormDefault=elementFormDefault)
+            
     
     @classmethod
     def _find_field(cls, fields, name):
@@ -750,11 +735,11 @@ class ComplexType(Type):
         return cls.parse_xmlelement(xmlelement)
         
         
-    def xml(self, tagname, schema=None):
-        if self.NAMESPACE:
-            tagname = "{%s}%s" % (self.NAMESPACE, tagname)
+    def xml(self, tagname, namespace=None,elementFormDefault=None,schema=None):
+        if namespace:
+            tagname = "{%s}%s" % (namespace, tagname)
         xmlelement = etree.Element(tagname)
-        self.render(xmlelement, self, self.NAMESPACE)
+        self.render(xmlelement, self, namespace,elementFormDefault)
         xml = etree.tostring(xmlelement, pretty_print=True)
         if schema:
             self.__parse_with_validation(xml, schema)
@@ -779,6 +764,7 @@ class AttributeGroup(Group):
 
 class Document(ComplexType):
     """Represents whole xml, is expected to have only one field the root."""
+    NAMESPACE = None
     class MockElement(object):
         def __init__(self):
             self.element = None
@@ -843,10 +829,10 @@ class Schema(object):
         self.complexTypes = complexTypes
         self.elements = elements
         
-        self.__init_namespace(self.simpleTypes)
-        self.__init_namespace(self.groups)
-        self.__init_namespace(self.attributeGroups)
-        self.__init_namespace(self.complexTypes)
+#        self.__init_namespace(self.simpleTypes)
+#        self.__init_namespace(self.groups)
+#        self.__init_namespace(self.attributeGroups)
+#        self.__init_namespace(self.complexTypes)
         
         self._force_elements_type_evalution(self.complexTypes)
         self._force_elements_type_evalution(self.attributeGroups)
@@ -857,10 +843,10 @@ class Schema(object):
         
         
         
-    def __init_namespace(self, types):
-        for _type in types:
-            _type.NAMESPACE = self.targetNamespace
-            _type.ELEMENT_FORM_DEFAULT = self.elementFormDefault
+#    def __init_namespace(self, types):
+#        for _type in types:
+#            _type.NAMESPACE = self.targetNamespace
+#            _type.ELEMENT_FORM_DEFAULT = self.elementFormDefault
             
     
     def _force_elements_type_evalution(self, types):

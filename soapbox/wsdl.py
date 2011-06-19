@@ -11,29 +11,25 @@ def get_by_name(_list, fullname):
     
 def get_wsdl_classes(soap_namespace):
     class SOAP_Binding(xsd.ComplexType):
-        NAMESPACE = soap_namespace
         ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
         style = xsd.Attribute(xsd.String)
         transport = xsd.Attribute(xsd.String)
         
     class SOAP_Operation(xsd.ComplexType):
-        NAMESPACE = soap_namespace 
         ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
         soapAction = xsd.Attribute(xsd.String)
         style = xsd.Attribute(xsd.String,use=xsd.Use.OPTIONAL)
 
     class SOAP_Body(xsd.ComplexType):
-        NAMESPACE = soap_namespace
         ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
         use = xsd.Attribute(xsd.String)
         
     class SOAP_Address(xsd.ComplexType):
-        NAMESPACE = soap_namespace
         ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
         location = xsd.Attribute(xsd.String)
     
     class Types(xsd.ComplexType):
-        schema = xsd.Element(xsdspec.Schema)
+        schema = xsd.Element(xsdspec.Schema,namespace=xsdspec.XSD_NAMESPACE)
         
     class Part(xsd.ComplexType):
         name = xsd.Attribute(xsd.String)
@@ -46,14 +42,14 @@ def get_wsdl_classes(soap_namespace):
     
     class Input(xsd.ComplexType):
         message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
-        body = xsd.Element(SOAP_Body, minOccurs=0)
+        body = xsd.Element(SOAP_Body, namespace=soap_namespace,minOccurs=0)
     
     class Operation(xsd.ComplexType):
-        operation = xsd.Element(SOAP_Operation)
+        operation = xsd.Element(SOAP_Operation,namespace=soap_namespace)
         name = xsd.Attribute(xsd.String)
         input = xsd.Element(Input)
         output = xsd.Element(Input)
-        body = xsd.Element(SOAP_Body)
+        body = xsd.Element(SOAP_Body,namespace=soap_namespace)
         
         def __init__(self,**kwargs):
             super(Operation,self).__init__(**kwargs)
@@ -85,7 +81,7 @@ def get_wsdl_classes(soap_namespace):
     class Binding(xsd.ComplexType):
         name = xsd.Attribute(xsd.String)
         type = xsd.Attribute(xsd.String)
-        binding = xsd.Element(SOAP_Binding)
+        binding = xsd.Element(SOAP_Binding,namespace=soap_namespace)
         operations = xsd.ListElement(Operation,"operation")
         
         def __init__(self,**kwargs):
@@ -106,7 +102,7 @@ def get_wsdl_classes(soap_namespace):
     class Port(xsd.ComplexType):
         name = xsd.Attribute(xsd.String)
         binding = xsd.Attribute(xsd.String)
-        address = xsd.Element(SOAP_Address)
+        address = xsd.Element(SOAP_Address,namespace=soap_namespace)
           
     class Service(xsd.ComplexType):
         name = xsd.Attribute(xsd.String,use=xsd.Use.OPTIONAL)

@@ -1,8 +1,8 @@
 from lxml import etree
 import xsd
 
+XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
 class Enumeration(xsd.ComplexType):
-    NAMESPACE = "http://www.w3.org/2001/XMLSchema"
     value = xsd.Attribute(xsd.String)
     
     @classmethod

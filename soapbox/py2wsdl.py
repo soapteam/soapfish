@@ -1,5 +1,6 @@
 import sys
 import imp
+import xsd
 from wsdl import get_wsdl_classes
 from lxml import etree
 from py2xsd import generate_xsdspec
@@ -92,7 +93,9 @@ def generate_wsdl(service):
                                         "soap" : service.version.BINDING_NAMESPACE,
                                         "sns" : service.schema.targetNamespace,
                                         "tns" : service.targetNamespace})
-    definitions.render(xmlelement, definitions, "http://schemas.xmlsoap.org/wsdl/")
+    definitions.render(xmlelement, definitions, 
+                       namespace="http://schemas.xmlsoap.org/wsdl/",
+                       elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
     return etree.tostring(xmlelement, pretty_print=True)
 
 
