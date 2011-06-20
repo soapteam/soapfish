@@ -614,6 +614,7 @@ SCHEMA_XML = """
     <xs:element name="status" type="fds:status"/>
 </xs:schema>"""
 
+
 class SchemaTest(unittest.TestCase):
     def test_schema_parsing(self):
         schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(SCHEMA_XML))
@@ -809,6 +810,7 @@ class ElementTypeEvaluation(unittest.TestCase):
             pass
         b = B1()
         b.a = A1()
+        
         
 class PatternTest(unittest.TestCase):
     def test_string_pattern(self):
