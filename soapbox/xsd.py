@@ -124,8 +124,10 @@ class String(SimpleType):
     pattern = None#To be defined in child.
     
     def __init__(self, enumeration=None,pattern=None):
-        self.enumeration = enumeration
-        self.pattern = pattern
+        if enumeration is not None:
+            self.enumeration = enumeration#Override static value
+        if pattern is not None:
+            self.pattern = pattern#Override static value
          
     def accept(self,value):
         if value is None: return value
@@ -134,11 +136,12 @@ class String(SimpleType):
         
         if self.pattern:
             cp = re.compile(self.pattern)
+            print cp.match(value)
             if not cp.match(value):
                 raise ValueError("Value '%s' doesn't match pattern '%s'" % (value,self.pattern))
              
         if self.enumeration:
-            if not value in self.enumeration:
+            if not (value in self.enumeration):
                 raise ValueError("Value '%s' not in list %s." % (str(value), self.enumeration))
         
         return value

@@ -809,6 +809,20 @@ class ElementTypeEvaluation(unittest.TestCase):
             pass
         b = B1()
         b.a = A1()
+        
+class PatternTest(unittest.TestCase):
+    def test_string_pattern(self):
+        class Test(xsd.ComplexType):
+            value = xsd.Element(xsd.String(pattern=r"^a*$"))
+        test = Test()
+        test.value = "a"
+        test.value = "aaa"
+        try:
+            test.value = "b"
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False, "Should not get here.")
                
 if __name__ == "__main__":
     unittest.main()
