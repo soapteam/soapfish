@@ -121,22 +121,27 @@ class SimpleType(Type):
         
 class String(SimpleType):    
     enumeration = None#To be defined in child.
-    def __init__(self, enumeration=None):
-        if enumeration:
-            self.enumeration = enumeration
-        
+    pattern = None#To be defined in child.
+    
+    def __init__(self, enumeration=None,pattern=None):
+        self.enumeration = enumeration
+        self.pattern = pattern
+         
     def accept(self,value):
-        if value is None:
-            return value
+        if value is None: return value
         if not isinstance(value,str):
             raise ValueError("Value '%s' for class '%s'." % (str(value),self.__class__.__name__))
+        
+        if self.pattern:
+            cp = re.compile(self.pattern)
+            if not cp.match(value):
+                raise ValueError("Value '%s' doesn't match pattern '%s'" % (value,self.pattern))
+             
         if self.enumeration:
-            if value in self.enumeration:
-                return value
-            else:
+            if not value in self.enumeration:
                 raise ValueError("Value '%s' not in list %s." % (str(value), self.enumeration))
-        else:
-            return value
+        
+        return value
         
     def xmlvalue(self, value):
         return value
