@@ -18,9 +18,28 @@ from soapbox.xsd import UNBOUNDED
 class {{st.name|class}}({{st.restriction.base|type}}):
         {%- if st.restriction.enumerations %}    
     enumeration = [{% for enum in st.restriction.enumerations %} "{{enum.value}}", {% endfor %}]
-        {%- elif st.restriction.pattern %}
+        {% endif %}
+        {%- if st.restriction.pattern %}
     pattern = r"{{st.restriction.pattern.value}}"
         {%- endif %}
+        
+        {%- if st.restriction.minInclusive %}
+    minInclusive = r"{{st.restriction.minInclusive.value}}"
+        {%- elif st.restriction.minExclusive %}
+    minExclusive = r"{{st.restriction.minExclusive.value}}"
+        {%- endif %}
+        
+        {%- if st.restriction.maxInclusive %}
+    maxInclusive = r"{{st.restriction.maxInclusive.value}}"
+        {%- elif st.restriction.maxExclusive %}
+    maxExclusive = r"{{st.restriction.maxExclusive.value}}"
+        {%- endif %}
+        
+        {%- if not st.restriction.enumerations and not st.restriction.pattern 
+            and not st.restriction.minInclusive and not st.restriction.minExclusive
+            and not st.restriction.maxInclusive and not st.restriction.maxExclusive %}
+    pass
+        {% endif %}
     {% endif %}
 
     {%- if st.list %}
@@ -100,14 +119,12 @@ class {{ct.name|class}}(xsd.ComplexType):
 
 {%- for element in elements %}
     
-    {%- if element.maxOccurs > 1 %}
-        {%- set field_type = "ListElement" %}
-    {%- else %}
-        {%- set field_type = "Element" %}
-    {%- endif %} 
-    
     {%- if element.type %}
-    {{element.name}} = xsd.{{field_type}}({{element.type|type}}{% if not element.minOccurs is none %}, minOccurs={{element.minOccurs|upper}}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{element.maxOccurs|upper}}{% endif %}{% if element.nillable %},nillable=True{% endif %})
+        {%- if element.maxOccurs > 1 %}
+    {{element.name}}s = xsd.ListElement({{element.type|type}},"{{element.name}}"{% if not element.minOccurs is none %}, minOccurs={{element.minOccurs|upper}}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{element.maxOccurs|upper}}{% endif %}{% if element.nillable %},nillable=True{% endif %})
+        {%- else %}
+    {{element.name}} = xsd.Element({% if not element.minOccurs is none %}, minOccurs={{element.minOccurs|upper}}{% endif %}{% if element.nillable %},nillable=True{% endif %})
+        {%- endif %}
     {%- endif %}
     
     {%- if element.simpleType %}
@@ -237,8 +254,8 @@ class {{element.name|class}}(xsd.ComplexType):
     {% endif %}
 {%- endfor %}
 
-
 Schema = xsd.Schema(
+    imports = [{% for i in schema.imports %}SCHEMA{{loop.index}},{% endfor %}],
     targetNamespace = "{{schema.targetNamespace}}",
     elementFormDefault = "{{schema.elementFormDefault}}",
     simpleTypes = [{% for st in schema.simpleTypes %} {{st.name|class}},{% endfor %}],

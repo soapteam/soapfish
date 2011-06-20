@@ -17,7 +17,7 @@ class Pattern(xsd.ComplexType):
    
 class RestrictionValue(xsd.ComplexType):
     NAMESPACE = "http://www.w3.org/2001/XMLSchema"
-    value = xsd.Attribute(xsd.Decimal)
+    value = xsd.Attribute(xsd.String)
      
 class Restriction(xsd.ComplexType):
     NAMESPACE = "http://www.w3.org/2001/XMLSchema"
@@ -114,11 +114,16 @@ class Group(xsd.ComplexType):
     sequence = xsd.Element(Sequence)
   
         
+class Import(xsd.ComplexType):
+    schemaLocation = xsd.Attribute(xsd.String)
+    namespace = xsd.Attribute(xsd.String)
+    
 class Schema(xsd.ComplexType):
     NAMESPACE = "http://www.w3.org/2001/XMLSchema"
     targetNamespace = xsd.Attribute(xsd.String)
     elementFormDefault = xsd.Attribute(xsd.String(enumeration=["qualified", "unqualified"]),
                                        use=xsd.Use.OPTIONAL, default = "unqualified")
+    imports = xsd.ListElement(Import,"import")
     simpleTypes = xsd.ListElement(SimpleType,"simpleType")
     groups = xsd.ListElement(Group,"group")
     attributeGroups = xsd.ListElement(AttributeGroup,"attributeGroup")

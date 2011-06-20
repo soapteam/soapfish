@@ -275,6 +275,22 @@ class Decimal(SimpleType):
         else:
             return self.accept(xmlvalue)
         
+class Double(Decimal):
+    def __init__(self, enumeration = None,maxExclusive=None, maxInclusive=None,
+                 minExclusive=None, minInclusive=None, pattern=None):
+        super(Double,self).__init__(
+            enumeration = enumeration,maxExclusive=maxExclusive,
+            maxInclusive=maxInclusive, minExclusive=minExclusive,
+            minInclusive=minInclusive, pattern=pattern)
+        
+class Float(Decimal):
+    def __init__(self, enumeration = None,maxExclusive=None, maxInclusive=None,
+                 minExclusive=None, minInclusive=None, pattern=None):
+        super(Double,self).__init__(
+            enumeration = enumeration,maxExclusive=maxExclusive,
+            maxInclusive=maxInclusive, minExclusive=minExclusive,
+            minInclusive=minInclusive, pattern=pattern)
+    
         
         
 class Integer(Decimal):
@@ -807,12 +823,20 @@ class NMTOKEN(String):
 class NMTOKENS(String):
     pass
 
+class AnyType(Type):
+    pass
+
+class Base64Binary(String):
+    pass
+    
     
 class Schema(object):
     """Main object for XSD schema. This object is required for XSD and WSDLgeneration
         and correct namespaces as it propagates targetNamespace to all objects.
         Instance of this is expected to be named Schema. """
-    def __init__(self,targetNamespace, elementFormDefault=ElementFormDefault.UNQUALIFIED ,simpleTypes=[], attributeGroups=[], groups=[], complexTypes=[], elements={}):
+    def __init__(self,targetNamespace, elementFormDefault=ElementFormDefault.UNQUALIFIED ,
+                 simpleTypes=[], attributeGroups=[], groups=[], complexTypes=[], elements={},
+                 imports=None):
         """
         :param targetNamespace: string, xsd namespace URL.
         :param elementFormDefault: unqualified/qualified Defines should namespace 
@@ -831,6 +855,7 @@ class Schema(object):
         self.groups = groups
         self.complexTypes = complexTypes
         self.elements = elements
+        self.imports = imports
         
         self.__init_schema(self.simpleTypes)
         self.__init_schema(self.groups)
