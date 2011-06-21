@@ -164,28 +164,25 @@ def PutOps(request,ops):
     #Put your implementation here.
     return Status(id=100,action="INSERTED")
 
-PutOps_method = xsd.Method(function = PutOps,
+PutOps_method = xsd.Method(
+    function = PutOps,
     soapAction = "http://polaris.flightdataservices.com/ws/ops/PutOps",  
-    input = "ops",#Pointer to Schema.elements
-    inputPartName = "body",  
+    input = "ops",#Pointer to Schema.elements  
     output = "status",#Pointer to Schema.elements
-    outputPartName = "body",
-    operationName = "PutOps",)
+    operationName = "PutOps")
     
     
     
-PutOpsPort_SERVICE = soap.Service(
-    name = "PutOps",
+SERVICE = soap.Service(
     targetNamespace = "http://flightdataservices.com/ops.wsdl",
     location = "http://polaris.flightdataservices.com/ws/ops",
     schema = Schema,
-    version = soap.SOAPVersion.SOAP11,
     methods = [PutOps_method, ])
  
 
 #Uncomment this lines to turn on dispatching. 
 #from django.views.decorators.csrf import csrf_exempt
-ops_dispatch = csrf_exempt(soap.get_django_dispatch(PutOpsPort_SERVICE))
+ops_dispatch = csrf_exempt(soap.get_django_dispatch(SERVICE))
 
 #Put this lines in your urls.py:
 #urlpatterns += patterns('',

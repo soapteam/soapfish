@@ -84,8 +84,8 @@ class SOAPError(Exception):
 class Service(object):
     """Describes service aggregating informations required for dispatching 
     and WSDL generation. """ 
-    def __init__(self, name,targetNamespace, location, schema, methods, 
-                 version=SOAPVersion.SOAP11):
+    def __init__(self,targetNamespace, location, schema, methods, 
+                 version=SOAPVersion.SOAP11,name="Service"):
         """:param targetNamespace: string
            :param location: string, endpoint url.
            :param schema: xsd.Schema instance.

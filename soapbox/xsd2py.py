@@ -123,7 +123,7 @@ class {{ct.name|class}}(xsd.ComplexType):
         {%- if element.maxOccurs > 1 %}
     {{element.name}}s = xsd.ListElement({{element.type|type}},"{{element.name}}"{% if not element.minOccurs is none %}, minOccurs={{element.minOccurs|upper}}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{element.maxOccurs|upper}}{% endif %}{% if element.nillable %},nillable=True{% endif %})
         {%- else %}
-    {{element.name}} = xsd.Element({% if not element.minOccurs is none %}, minOccurs={{element.minOccurs|upper}}{% endif %}{% if element.nillable %},nillable=True{% endif %})
+    {{element.name}} = xsd.Element({{element.type|type}}{% if not element.minOccurs is none %}, minOccurs={{element.minOccurs|upper}}{% endif %}{% if element.nillable %},nillable=True{% endif %})
         {%- endif %}
     {%- endif %}
     
