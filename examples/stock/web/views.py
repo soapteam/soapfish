@@ -162,6 +162,7 @@ Schema = xsd.Schema(
         
 def PutOps(request,ops):
     #Put your implementation here.
+    print ops.aircraft,ops.takeoff_datetime
     return Status(id=100,action="INSERTED")
 
 PutOps_method = xsd.Method(

@@ -47,7 +47,12 @@ def get_django_dispatch(service):
                                   schema=service.schema)#Validation.
             except Exception, e:
                 raise ValueError(e)
-            return return_object
+            
+            if isinstance(method.output,str):
+                tagname = method.output
+            else:
+                tagname = uncapitalize(return_object.__class__.__name__)
+            return tagname,return_object
         raise ValueError("Method not found!")
     #-------------------------------------------------------------
     def django_dispatch(request):
@@ -64,8 +69,8 @@ def get_django_dispatch(service):
             envelope = SOAP.Envelope.parsexml(xml)
             message = envelope.Body.content()
             soap_action = SOAP.determin_soap_action(request)
-            return_object = call_the_method(request, message, soap_action)
-            soap_message = SOAP.Envelope.reponse(return_object)
+            tagname,return_object = call_the_method(request, message, soap_action)
+            soap_message = SOAP.Envelope.reponse(tagname,return_object)
             return HttpResponse(soap_message,content_type=SOAP.CONTENT_TYPE)
         except (ValueError,etree.XMLSyntaxError) as e:
             response = SOAP.get_error_response(SOAP.Code.CLIENT,str(e))
@@ -120,7 +125,7 @@ class Stub(object):
         message = envelope.Body.content()
         
         if isinstance(method.output, str):
-            element = self.SERVICE.schema.elements[method.output]
+            element = self.SERVICE.schema.get_element_by_name(method.output)
             _type = element._type
         else:
             _type = method.output
@@ -134,9 +139,14 @@ class Stub(object):
     def call(self, operationName, parameter):
         #Will raise: lxml.etree.XMLSyntaxError on validation problems.
         SOAP = self.SERVICE.version
-        parameter.xml(parameter.__class__.__name__.lower(), 
+        method = self.SERVICE.get_method(operationName)
+        if isinstance(method.input,str):
+            tagname = method.input
+        else:
+            tagname = uncapitalize(parameter.__class__.__name__)
+        parameter.xml(tagname, 
                       schema=self.SERVICE.schema,
-                      namespace=self.SERVICE.schema.targetNamespace,
+                      namespace=parameter.SCHEMA.targetNamespace,
                       elementFormDefault=self.SERVICE.schema.elementFormDefault)
         
         h = httplib2.Http()
@@ -145,7 +155,7 @@ class Stub(object):
         
         method = self.SERVICE.get_method(operationName)    
         headers = SOAP.build_header(method.soapAction)    
-        envelope = SOAP.Envelope.reponse(parameter)
+        envelope = SOAP.Envelope.reponse(tagname,parameter)
     
         response, content = h.request(self.SERVICE.location, "POST",
              body=envelope, headers=headers)

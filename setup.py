@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="soapbox",
-    version="0.1.1",
+    version="0.1.2",
     author="Damian Powazka",
     author_email="dpowazka@gmail.com",
     url="http://code.google.com/p/soapbox/",

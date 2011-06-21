@@ -57,5 +57,8 @@ def urlcontext(url):
     return "^"+path+"$" #build regex
 
 def uncapitalize(value):
-    return value[0].lower() + value[1:]
+    if value == "QName":
+        return value
+    else:
+        return value[0].lower() + value[1:]
     

@@ -136,7 +136,6 @@ class String(SimpleType):
         
         if self.pattern:
             cp = re.compile(self.pattern)
-            print cp.match(value)
             if not cp.match(value):
                 raise ValueError("Value '%s' doesn't match pattern '%s'" % (value,self.pattern))
              
@@ -294,7 +293,7 @@ class Double(Decimal):
 class Float(Decimal):
     def __init__(self, enumeration = None,maxExclusive=None, maxInclusive=None,
                  minExclusive=None, minInclusive=None, pattern=None):
-        super(Double,self).__init__(
+        super(Float,self).__init__(
             enumeration = enumeration,maxExclusive=maxExclusive,
             maxInclusive=maxInclusive, minExclusive=minExclusive,
             minInclusive=minInclusive, pattern=pattern)
@@ -438,15 +437,17 @@ class ClassNamedElement(Element):
         
     def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
         if value is None: return
+        tagname = value.name
+        value = value.value
+        if value is None: return
         
         namespace = value.SCHEMA.targetNamespace
         if namespace:
-            tagname = "{%s}%s" % (namespace, uncapitalize(value.__class__.__name__))
-        else:
-            tagname = uncapitalize(value.__class__.__name__)
-            
+            tagname = "{%s}%s" % (namespace, tagname)
+        
         xmlelement = etree.Element(tagname)
-        self._type.render(xmlelement, value)
+        self._type.render(xmlelement, value,namespace=namespace,
+                          elementFormDefault=value.SCHEMA.elementFormDefault)
         parent.append(xmlelement)
     
     
@@ -747,6 +748,7 @@ class ComplexType(Type):
     def __parse_with_validation(cls, xml, schema):
         from py2xsd import generate_xsd
         schema = generate_xsd(schema)
+        #print etree.tostring(schema,pretty_print=True)
         schemaelement = etree.XMLSchema(schema)
         parser = etree.XMLParser(schema = schemaelement)
         xmlelement = etree.fromstring(xml, parser)
@@ -816,6 +818,12 @@ class Document(ComplexType):
     
 
 
+class UnsignedLong(Long):
+    pass
+
+class UnsignedInt(Int):
+    pass
+
 class List(SimpleType):
     pass
 
@@ -836,6 +844,20 @@ class AnyType(Type):
 
 class Base64Binary(String):
     pass
+
+class Duration(String):
+    pass
+
+class UnsignedShort(Int):
+    pass
+
+class UnsignedByte(UnsignedShort):
+    pass
+class Short(Int):
+    pass
+
+class Byte(Short):
+    pass
     
     
 class Schema(object):
@@ -844,7 +866,7 @@ class Schema(object):
         Instance of this is expected to be named Schema. """
     def __init__(self,targetNamespace, elementFormDefault=ElementFormDefault.UNQUALIFIED ,
                  simpleTypes=[], attributeGroups=[], groups=[], complexTypes=[], elements={},
-                 imports=None):
+                 imports=None,location=None):
         """
         :param targetNamespace: string, xsd namespace URL.
         :param elementFormDefault: unqualified/qualified Defines should namespace 
@@ -864,11 +886,17 @@ class Schema(object):
         self.complexTypes = complexTypes
         self.elements = elements
         self.imports = imports
+        self.location = location
         
         self.__init_schema(self.simpleTypes)
         self.__init_schema(self.groups)
         self.__init_schema(self.attributeGroups)
         self.__init_schema(self.complexTypes)
+        
+        for element in self.elements.values():
+            if isinstance(element._passed_type,ComplexType):
+                element._passed_type.__class__.SCHEMA = self
+            
         
         self._force_elements_type_evalution(self.complexTypes)
         self._force_elements_type_evalution(self.attributeGroups)
@@ -877,8 +905,6 @@ class Schema(object):
         for element in self.elements.values():
             element._evaluate_type()
         
-        
-        
     def __init_schema(self, types):
         for _type in types:
             _type.SCHEMA = self
@@ -886,6 +912,17 @@ class Schema(object):
     def _force_elements_type_evalution(self, types):
         for t in types:
             t._force_elements_type_evalution()
+            
+    def get_element_by_name(self, name):
+        if self.elements.has_key(name):
+            return self.elements[name]
+        else:
+            for _import in self.imports:
+                element = _import.get_element_by_name(name)
+                if element is not None:
+                    return element
+            return None
+                    
             
             
 class Method(object):

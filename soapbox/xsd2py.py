@@ -262,7 +262,7 @@ Schema = xsd.Schema(
     attributeGroups = [{% for ag in schema.attributeGroups %} {{ag.name|class}},{% endfor %}],
     groups = [{% for g in schema.groups %} {{g.name|class}},{% endfor %}],
     complexTypes = [{% for ct in schema.complexTypes %} {{ct.name|class}},{% endfor %}],
-    elements = { {% for e in schema.elements %} "{{e.name}}":xsd.Element({% if e.type %}{{e.type|type}}{% else %}{{e.name|class}}{% endif %}),{% endfor %}})
+    elements = { {% for e in schema.elements %} "{{e.name}}":xsd.Element({% if e.type %}{{e.type|type}}{% else %}{{e.name|class}}(){% endif %}),{% endfor %}})
 """
         
 XSD_NAMESPACE = None
