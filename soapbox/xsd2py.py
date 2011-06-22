@@ -12,6 +12,12 @@ environment.filters["use"] = use
 
 TEMPLATE = """from soapbox import xsd
 from soapbox.xsd import UNBOUNDED
+
+{#- XSD importing #}
+{%- for i in schema.imports %}
+from xsd{{loop.index}} import Schema as SCHEMA{{loop.index}}
+{%- endfor %}
+{#- End of XSD importing #}
 {# ------------------ SimpleType Generation ---------------------#}
 {% for st in schema.simpleTypes %}
     {%- if st.restriction %}
