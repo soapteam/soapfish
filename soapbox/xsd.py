@@ -430,6 +430,8 @@ class Element(object):
     
     
     
+
+        
 class ClassNamedElement(Element):
     """Use this element when tagname should be based on class name in rendering time."""
     def __init__(self,_type, minOccurs = 1, nilable = False):
@@ -940,6 +942,12 @@ class Method(object):
         self.inputPartName = inputPartName
         self.outputPartName = outputPartName
         self.style = style
+        
+        
+class NamedType(ComplexType):
+    def __init__(self,name=None,value=None):
+        self.name = name
+        self.value = value
         
 
     
