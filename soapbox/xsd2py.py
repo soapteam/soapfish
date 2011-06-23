@@ -1,25 +1,19 @@
 import sys
-from jinja2 import Template,Environment
+import httplib2
+import hashlib
+from jinja2 import Environment
 from xsdspec import *
 from utils import removens, classyfiy, get_get_type, use, find_xsd_namepsace
 
     
-environment = Environment()
-environment.filters["class"] = classyfiy
-environment.filters["removens"] = removens
-environment.filters["use"] = use
-
-
-TEMPLATE = """from soapbox import xsd
-from soapbox.xsd import UNBOUNDED
-
-{#- XSD importing #}
-{%- for i in schema.imports %}
-from xsd{{loop.index}} import Schema as SCHEMA{{loop.index}}
+TEMPLATE = """{#- XSD importing #}
+{%- for imp in schema.imports %}
+{{resolve_import(imp,known_namespaces)}}
 {%- endfor %}
 {#- End of XSD importing #}
+
 {# ------------------ SimpleType Generation ---------------------#}
-{% for st in schema.simpleTypes %}
+{%- for st in schema.simpleTypes %}
     {%- if st.restriction %}
 class {{st.name|class}}({{st.restriction.base|type}}):
         {%- if st.restriction.enumerations %}    
@@ -61,7 +55,7 @@ class {{attrGroup.name|class}}(xsd.AttributeGroup):
     {%- for attribute in attrGroup.attributes %}
     {{attribute.name}} = xsd.Attribute({{attribute.type|type}}{% if attribute.use %}, use={{attribute.use|use}}{% endif %})
     {%- endfor %}
-{% endfor %}
+{%- endfor %}
 
 {%- for group in schema.groups %}
 class {{group.name|class}}(xsd.Group):
@@ -170,8 +164,8 @@ class {{ct.name|class}}(xsd.ComplexType):
 {%- for element in schema.elements %}
     {%- if element.complexType %}
 
-{% set ct = element.complexType %}
-{% set content = element.complexType %}
+{%- set ct = element.complexType %}
+{%- set content = element.complexType %}
 
 {%- if not ct.sequence and not ct.complexContent %}
 class {{element.name|class}}(xsd.ComplexType):
@@ -260,8 +254,8 @@ class {{element.name|class}}(xsd.ComplexType):
     {% endif %}
 {%- endfor %}
 
-Schema = xsd.Schema(
-    imports = [{% for i in schema.imports %}SCHEMA{{loop.index}},{% endfor %}],
+Schema{{schema_name(schema.targetNamespace)}} = xsd.Schema(
+    imports = [{% for i in schema.imports %}Schema{{schema_name(i.namespace)}},{% endfor %}],
     targetNamespace = "{{schema.targetNamespace}}",
     elementFormDefault = "{{schema.elementFormDefault}}",
     simpleTypes = [{% for st in schema.simpleTypes %} {{st.name|class}},{% endfor %}],
@@ -271,21 +265,60 @@ Schema = xsd.Schema(
     elements = { {% for e in schema.elements %} "{{e.name}}":xsd.Element({% if e.type %}{{e.type|type}}{% else %}{{e.name|class}}(){% endif %}),{% endfor %}})
 """
         
-XSD_NAMESPACE = None
-    
-def generate_code_from_xsd(xml):
-    xmlelement = etree.fromstring(xml)
+def schema_name(namespace):
+    return hashlib.sha512(namespace).hexdigest()[0:5]
+      
+def generate_code_from_xsd(xmlelement,known_namespaces=None):
+    if known_namespaces is None:
+        known_namespaces = []
     XSD_NAMESPACE = find_xsd_namepsace(xmlelement.nsmap)
-    environment.filters["type"] = get_get_type(XSD_NAMESPACE)
-    schema = Schema.parse_xmlelement(etree.fromstring(xml))
+    
+    schema = Schema.parse_xmlelement(xmlelement)
+    if schema.targetNamespace in known_namespaces:
+        return ""
+    else:
+        return schema_to_py(schema,XSD_NAMESPACE,known_namespaces)
+    
+
+def schema_to_py(schema,xsd_namespce,known_namespaces=None):
+    if known_namespaces is None:
+        known_namespaces = []
+    known_namespaces.append(schema.targetNamespace)
+    
+    environment = Environment()
+    environment.filters["class"] = classyfiy
+    environment.filters["removens"] = removens
+    environment.filters["use"] = use
+    environment.filters["type"] = get_get_type(xsd_namespce)
+    environment.globals["resolve_import"] = resolve_import
+    environment.globals["known_namespaces"] = known_namespaces
+    environment.globals["schema_name"] = schema_name
     return environment.from_string(TEMPLATE).render(schema=schema)
+
+
+def resolve_import(xsdimport,known_namespaces):
+    xml = open_document(xsdimport.schemaLocation)
+    xmlelement = etree.fromstring(xml)
+    return generate_code_from_xsd(xmlelement,known_namespaces)
+    
+def open_document(document_address):
+    if document_address.startswith("http:"):
+        http = httplib2.Http()
+        _,content = http.request(document_address)
+        return content
+    else:
+        return open(document_address).read()
+    
 
 def main():
     if len(sys.argv) !=2:
         print "use: xsd2py <path to xsd>"
         return
     xml = open(sys.argv[1]).read()
-    print generate_code_from_xsd(xml)
+    xmlelement = etree.fromstring(xml)
+    print """from soapbox import xsd
+from soapbox.xsd import UNBOUNDED"""
+    print generate_code_from_xsd(xmlelement)
     
 if __name__ == "__main__":
     main()
