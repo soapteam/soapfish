@@ -3,7 +3,7 @@ from lxml import etree
 from jinja2 import Environment
 from wsdl import get_wsdl_classes,get_by_name
 from utils import removens, classyfiy, get_get_type, use, find_xsd_namepsace,urlcontext
-from xsd2py import schema_to_py, schema_name
+from xsd2py import schema_to_py, schema_name, open_document
 from soap import SOAP_HTTP_Transport,SOAPVersion
 
 
@@ -127,31 +127,14 @@ def console_main():
     if options.client and options.server:
         parser.error("Options -c and -s are mutually exclusive")
     elif options.client:
-        xml = open(options.client).read()
+        xml = open_document(options.client)
         print generate_code_from_wsdl(False, xml)
     elif options.server:
-        xml = open(options.server).read()
+        xml = open_document(options.server)
         print generate_code_from_wsdl(True, xml)
     else:
         parser.print_help()
         
-
-def resolve_imports(document):
-    def rewite_content(from_doc, to_doc):
-        for item in from_doc:
-            to_doc.append(item)
-    #---------------------------------------- 
-    text = open_document(document)
-    
-    document = etree.fromstring(text)
-    wsdl_imports = document.xpath("//wsdl:import",namespaces={"wsdl":"http://schemas.xmlsoap.org/wsdl/"})
-    for imp in wsdl_imports:
-        inner_doc = resolve_imports(imp.get("location"))
-        document.remove(imp)
-        if inner_doc is not None:
-            pass
-    print etree.tostring(document,pretty_print=True)
-    return document
     
 if __name__ == "__main__":
     console_main()

@@ -446,7 +446,7 @@ class ClassNamedElement(Element):
         namespace = value.SCHEMA.targetNamespace
         if namespace:
             tagname = "{%s}%s" % (namespace, tagname)
-        
+            
         xmlelement = etree.Element(tagname)
         self._type.render(xmlelement, value,namespace=namespace,
                           elementFormDefault=value.SCHEMA.elementFormDefault)
@@ -670,8 +670,8 @@ class ComplexType(Type):
                 field = self._find_field(self._meta.all, attr)
                 super(ComplexType,self).__setattr__(attr,field.accept(value))
             except IndexError:
-                pass#raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__,attr))
-            super(ComplexType,self).__setattr__(attr,value)
+                raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__,attr))
+            
             
         
         
@@ -945,6 +945,9 @@ class Method(object):
         
         
 class NamedType(ComplexType):
+    name = Element(String)
+    value = Element(ComplexType)
+    
     def __init__(self,name=None,value=None):
         self.name = name
         self.value = value

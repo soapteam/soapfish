@@ -147,7 +147,7 @@ class Stub(object):
         parameter.xml(tagname, 
                       schema=self.SERVICE.schema,
                       namespace=parameter.SCHEMA.targetNamespace,
-                      elementFormDefault=self.SERVICE.schema.elementFormDefault)
+                      elementFormDefault=parameter.SCHEMA.elementFormDefault)
         
         h = httplib2.Http()
         if self.username:

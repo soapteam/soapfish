@@ -50,11 +50,18 @@ def get_wsdl_classes(soap_namespace):
         input = xsd.Element(Input)
         output = xsd.Element(Input)
         body = xsd.Element(SOAP_Body,namespace=soap_namespace)
+        binding = xsd.Element("Binding")
+        definition = xsd.Element("Definitions")
         
         def __init__(self,**kwargs):
             super(Operation,self).__init__(**kwargs)
             self.binding = None
             self.definition = None
+            
+        def render(self,*args,**kwargs):
+            self.binding = None
+            self.definition = None
+            super(Operation,self).render(*args,**kwargs)
             
         def set_definition(self, definition):
             self.definition = definition
@@ -83,6 +90,12 @@ def get_wsdl_classes(soap_namespace):
         type = xsd.Attribute(xsd.String)
         binding = xsd.Element(SOAP_Binding,namespace=soap_namespace)
         operations = xsd.ListElement(Operation,"operation")
+        definition = xsd.Element("Definitions")
+        
+               
+        def render(self,*args,**kwargs):
+            self.definition = None
+            super(Binding,self).render(*args,**kwargs)
         
         def __init__(self,**kwargs):
             super(Binding,self).__init__(**kwargs)
