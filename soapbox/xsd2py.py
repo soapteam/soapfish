@@ -257,6 +257,9 @@ class {{element.name|class}}(xsd.ComplexType):
 Schema{{schema_name(schema.targetNamespace)}} = xsd.Schema(
     imports = [{% for i in schema.imports %}Schema{{schema_name(i.namespace)}},{% endfor %}],
     targetNamespace = "{{schema.targetNamespace}}",
+    {%- if location %}
+    location = "{{location}}",
+    {%- endif %}
     elementFormDefault = "{{schema.elementFormDefault}}",
     simpleTypes = [{% for st in schema.simpleTypes %} {{st.name|class}},{% endfor %}],
     attributeGroups = [{% for ag in schema.attributeGroups %} {{ag.name|class}},{% endfor %}],
@@ -268,7 +271,7 @@ Schema{{schema_name(schema.targetNamespace)}} = xsd.Schema(
 def schema_name(namespace):
     return hashlib.sha512(namespace).hexdigest()[0:5]
       
-def generate_code_from_xsd(xmlelement,known_namespaces=None):
+def generate_code_from_xsd(xmlelement,known_namespaces=None,location=None):
     if known_namespaces is None:
         known_namespaces = []
     XSD_NAMESPACE = find_xsd_namepsace(xmlelement.nsmap)
@@ -277,10 +280,10 @@ def generate_code_from_xsd(xmlelement,known_namespaces=None):
     if schema.targetNamespace in known_namespaces:
         return ""
     else:
-        return schema_to_py(schema,XSD_NAMESPACE,known_namespaces)
+        return schema_to_py(schema,XSD_NAMESPACE,known_namespaces,location)
     
 
-def schema_to_py(schema,xsd_namespce,known_namespaces=None):
+def schema_to_py(schema,xsd_namespce,known_namespaces=None,location=None):
     if known_namespaces is None:
         known_namespaces = []
     known_namespaces.append(schema.targetNamespace)
@@ -293,13 +296,14 @@ def schema_to_py(schema,xsd_namespce,known_namespaces=None):
     environment.globals["resolve_import"] = resolve_import
     environment.globals["known_namespaces"] = known_namespaces
     environment.globals["schema_name"] = schema_name
+    environment.globals["location"] = location
     return environment.from_string(TEMPLATE).render(schema=schema)
 
 
 def resolve_import(xsdimport,known_namespaces):
     xml = open_document(xsdimport.schemaLocation)
     xmlelement = etree.fromstring(xml)
-    return generate_code_from_xsd(xmlelement,known_namespaces)
+    return generate_code_from_xsd(xmlelement,known_namespaces,xsdimport.schemaLocation)
     
 def open_document(document_address):
     if document_address.startswith("http:"):
