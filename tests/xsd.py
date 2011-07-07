@@ -339,11 +339,12 @@ class DatetimeTest(unittest.TestCase):
         else:
             self.assertTrue(False)
             
-    def test_parsing_timezone(self):
+    def test_parsing_utctimezone(self):
         class Test(xsd.ComplexType):
             datetime = xsd.Element(xsd.DateTime)
         XML = """<root><datetime>2011-06-30T00:19:00+0000Z</datetime></root>"""
         test = Test.parsexml(XML)
+        self.assertEqual(datetime(2011,6,30,0,19,0), test.datetime.replace(tzinfo=None))
         
         
         
