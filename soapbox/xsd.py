@@ -3,7 +3,7 @@ from datetime import datetime
 from copy import copy
 import re
 from utils import uncapitalize
-import iso8601
+from soapbox import iso8601
 #http://lxml.de/validation.html#xmlschema
 
 #Design Decision Log:
