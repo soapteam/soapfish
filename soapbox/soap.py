@@ -110,9 +110,13 @@ class Stub(object):
     """Client stub. Handles only document style calls.""" 
     SERVICE = None
     
-    def __init__(self, username=None, password=None):
+    def __init__(self, username=None, password=None,service=None):
         self.username = username
         self.password = password
+        if service:
+            self.service = service
+        else:
+            self.service = self.SERVICE 
         
     def _handle_response(self, method, response, content):
         SOAP = self.SERVICE.version
@@ -156,9 +160,10 @@ class Stub(object):
         method = self.SERVICE.get_method(operationName)    
         headers = SOAP.build_header(method.soapAction)    
         envelope = SOAP.Envelope.reponse(tagname,parameter)
-    
+        
         response, content = h.request(self.SERVICE.location, "POST",
              body=envelope, headers=headers)
+    
         return self._handle_response(method, response, content)
         
         

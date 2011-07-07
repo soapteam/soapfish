@@ -1,6 +1,7 @@
 import unittest
 from datetime import datetime
 from soapbox import xsd
+from soapbox import iso8601
 
 class Pilot(xsd.String):
     enumeration = [ "CAPTAIN",  "FIRST_OFFICER", ]
@@ -93,7 +94,7 @@ class OPS_Test(unittest.TestCase):
         self.assertEqual("ICAO", ops.takeoff_airport.code_type)
         self.assertEqual("EGLL", ops.takeoff_airport.code)
         self.assertEqual(None, ops.takeoff_pilot)
-        self.assertEqual(datetime(2009,12,30,23,35,59),ops.landing_gate_datetime)
+        self.assertEqual(iso8601.parse_date("2009-12-30T23:35:59Z"),ops.landing_gate_datetime)
         
 if __name__ == "__main__":
     unittest.main()

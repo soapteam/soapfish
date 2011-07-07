@@ -34,7 +34,7 @@ def build_bindings(wsdl,definitions, service):
         operation.operation.soapAction = method.soapAction
         operation.input = wsdl.Input(body=wsdl.SOAP_Body(use="literal"))
         operation.output = wsdl.Input(body=wsdl.SOAP_Body(use="literal"))
-        operation.style = method.style
+        operation.operation.style = method.style
         binding.operations.append(operation)
         
     definitions.bindings.append(binding)

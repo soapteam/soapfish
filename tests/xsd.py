@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 from lxml import etree
 from soapbox import xsd, xsdspec
+from soapbox import iso8601
 
 class Aircraft(xsd.ComplexType):
     tail_number = xsd.Attribute(xsd.String)
@@ -80,6 +81,18 @@ class ListElementTest(unittest.TestCase):
 """     
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
+        
+    def test_parsing(self):
+        class Test(xsd.ComplexType):
+            values = xsd.ListElement(xsd.Int,"value")
+        XML = """
+        <test>
+            <value>1</value>
+            <value>2</value>
+        </test>"""
+        test = Test.parsexml(XML)
+        self.assertEqual(2, len(test.values))
+        self.assertEqual(1, test.values[0])
         
 class BooleanTypeTest(unittest.TestCase):
     def test_element_true(self):
@@ -325,6 +338,12 @@ class DatetimeTest(unittest.TestCase):
             pass
         else:
             self.assertTrue(False)
+            
+    def test_parsing_timezone(self):
+        class Test(xsd.ComplexType):
+            datetime = xsd.Element(xsd.DateTime)
+        XML = """<root><datetime>2011-06-30T00:19:00+0000Z</datetime></root>"""
+        test = Test.parsexml(XML)
         
         
         
@@ -469,7 +488,7 @@ class XmlParsingTest(unittest.TestCase):
         self.assertEqual("IATA", flight.takeoff_airport.type)
         self.assertEqual("EGLL", flight.landing_airport.code)
         self.assertEqual("ICAO", flight.landing_airport.type)
-        self.assertEqual(datetime(2001, 10, 26, 21, 32, 52), flight.takeoff_datetime)
+        self.assertEqual(iso8601.parse_date("2001-10-26T21:32:52z"), flight.takeoff_datetime)
         
     LIST_XML = """<flight>
   <landing_airport>

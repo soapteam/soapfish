@@ -3,6 +3,7 @@ from datetime import datetime
 from copy import copy
 import re
 from utils import uncapitalize
+import iso8601
 #http://lxml.de/validation.html#xmlschema
 
 #Design Decision Log:
@@ -182,14 +183,14 @@ class Boolean(SimpleType):
         
 class DateTime(SimpleType):
     """Example text value: 2001-10-26T21:32:52"""
-    FORMTA = "%Y-%m-%dT%H:%M:%S"            
+    FORMTA = "%Y-%m-%dT%H:%M:%S%z"            
     def accept(self, value):
         if value is None:
             return None
         elif isinstance(value, datetime):
             return value
         elif isinstance(value, str):
-            return datetime.strptime(value, self.FORMTA)
+            return iso8601.parse_date(value)
         raise ValueError("Incorrect type value '%s' for Datetime field." % value)
     
     def xmlvalue(self, value):
@@ -202,7 +203,7 @@ class DateTime(SimpleType):
         if value is None or value == 'nil':
             return None
         else:
-            return datetime.strptime(value, self.FORMTA)
+            return iso8601.parse_date(value)
             
             
             
@@ -687,6 +688,8 @@ class ComplexType(Type):
             
     def render(self, parent, instance, namespace=None,elementFormDefault=None):
         if instance is None: return None
+        if self.SCHEMA:
+            namespace = self.SCHEMA.targetNamespace
         for field in instance._meta.all: 
             field.render(
                 parent = parent, 
