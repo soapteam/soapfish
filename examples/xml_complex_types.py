@@ -14,7 +14,7 @@ class Flight(xsd.ComplexType):
     landing_airport = xsd.Element(Airport)
     landing_datetime = xsd.Element(xsd.DateTime, minOccurs=0)
     
-flight = Flight(tail_number="LN-KKA")#Constructor handles field inititailization.
+flight = Flight(tail_number="G-DEMO")#Constructor handles field inititailization.
 flight.takeoff_airport = Airport(type="IATA", code="WAW")
 flight.landing_airport = Airport(type="ICAO", code="EGLL")
 

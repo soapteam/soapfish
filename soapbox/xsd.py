@@ -956,7 +956,6 @@ class NamedType(ComplexType):
         self.value = value
         
 
-    
 
 
 
