@@ -1,15 +1,11 @@
+import xsd
 from urlparse import urlparse
 
 def removens(full_typename):
     if full_typename is None:
         return None
     
-    typename = full_typename.split(":")
-    if len(typename) == 2:
-        ns, typename = typename
-    else:
-        ns = None
-    return typename
+    return full_typename.split(':')[-1]
 
 def classyfiy(value):
     return value[0].upper() +value[1:]

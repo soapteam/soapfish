@@ -175,7 +175,6 @@ def generate_xsd(schema):
     
 
 def main():
-    import os
     if len(sys.argv) != 2:
         print "Use: py2xsd <path to pytho file>"
         return

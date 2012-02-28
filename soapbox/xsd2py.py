@@ -1,8 +1,9 @@
+import etree
 import sys
 import httplib2
 import hashlib
 from jinja2 import Environment
-from xsdspec import *
+from xsdspec import Schema
 from utils import removens, classyfiy, get_get_type, use, find_xsd_namepsace
 
     

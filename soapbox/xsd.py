@@ -2,7 +2,6 @@ from lxml import etree
 from datetime import datetime
 from copy import copy
 import re
-from utils import uncapitalize
 from soapbox import iso8601
 #http://lxml.de/validation.html#xmlschema
 

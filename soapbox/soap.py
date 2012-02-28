@@ -1,6 +1,5 @@
 #SOAP Protocol implementation, dispatchers and client stub.
 from lxml import etree
-import xsd
 import httplib2
 import soap11
 import soap12
