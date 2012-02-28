@@ -2,9 +2,10 @@ import unittest
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl
 
+
 XSD = """
-<xsd:schema xmlns:sns="http://flightdataservices.com/ops.xsd" 
-xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+<xsd:schema xmlns:sns="http://flightdataservices.com/ops.xsd"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 targetNamespace="http://flightdataservices.com/ops.xsd"
 xmlns="http://flightdataservices.com/ops.xsd">
   <xsd:simpleType name="pilot">
@@ -114,7 +115,7 @@ WSDL = """<?xml version="1.0"?>
                     <xs:element name="code" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
-            
+
             <xs:complexType name="weight">
                     <xs:sequence>
                         <xs:element name="value" type="xs:integer"/>
@@ -128,14 +129,14 @@ WSDL = """<?xml version="1.0"?>
                         </xs:element>
                     </xs:sequence>
             </xs:complexType>
-            
+
             <xs:simpleType name="pilot">
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="CAPTAIN"/>
                     <xs:enumeration value="FIRST_OFFICER"/>
                 </xs:restriction>
             </xs:simpleType>
-      
+
             <xs:complexType name="ops">
                 <xs:sequence>
                     <xs:element name="aircraft" type="xs:string" nillable="false"/>
@@ -223,18 +224,20 @@ WSDL = """<?xml version="1.0"?>
     </wsdl:service>
 </wsdl:definitions>"""
 
+
 class CodeGenerationTest(unittest.TestCase):
+
     def test_code_generation_from_xsd(self):
         code = generate_code_from_xsd(XSD)
         exec code in {}
-        
+
     def test_code_generation_from_wsdl_client(self):
         code = generate_code_from_wsdl(False, WSDL)
         exec code in {}
-        
+
     def test_code_generation_from_wsdl_server(self):
         code = generate_code_from_wsdl(True, WSDL)
         exec code in {}
-        
+
 if __name__ == "__main__":
     unittest.main()
