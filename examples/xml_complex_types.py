@@ -2,9 +2,11 @@
 from datetime import datetime
 from soapbox import xsd
 
+
 class Airport(xsd.ComplexType):
-     type = xsd.Element(xsd.String)
-     code = xsd.Element(xsd.String)
+    type = xsd.Element(xsd.String)
+    code = xsd.Element(xsd.String)
+
 
 class Flight(xsd.ComplexType):
     tail_number = xsd.Attribute(xsd.String)
@@ -13,8 +15,9 @@ class Flight(xsd.ComplexType):
     takeoff_datetime = xsd.Element(xsd.DateTime, minOccurs=0)
     landing_airport = xsd.Element(Airport)
     landing_datetime = xsd.Element(xsd.DateTime, minOccurs=0)
-    
-flight = Flight(tail_number="G-DEMO")#Constructor handles field inititailization.
+
+
+flight = Flight(tail_number="G-DEMO")  # Constructor handles field inititailization.
 flight.takeoff_airport = Airport(type="IATA", code="WAW")
 flight.landing_airport = Airport(type="ICAO", code="EGLL")
 
@@ -22,4 +25,4 @@ print flight.xml("flight")
 #datetime field types will accept, datetime object or string,
 #that parses correctly to such object.
 flight.takeoff_datetime = datetime.now()
-print flight.xml("flight")  
+print flight.xml("flight")

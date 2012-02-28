@@ -1,8 +1,11 @@
 #Example 1. Rendering object to XML.
 from soapbox import xsd
+
+
 class Airport(xsd.ComplexType):
-     type = xsd.Element(xsd.String)
-     code = xsd.Element(xsd.String)
+    type = xsd.Element(xsd.String)
+    code = xsd.Element(xsd.String)
+
 
 airport = Airport()
 airport.type = "IATA"
