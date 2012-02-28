@@ -32,10 +32,12 @@ from soapbox import iso8601
 
 NIL = object()
 
+
 class TypeRegister(object):
     """Allows tracking user defined class and their names, to be able to resolve
     string references e.g. a = xsd.Element("A"). Note that class names must be unique
     due to fact that search engine uses just class names."""
+
     def __init__(self):
         self.types = []
 
@@ -47,50 +49,62 @@ class TypeRegister(object):
             if clazz.__name__ == typeid:
                 return clazz
 
+
 USER_TYPE_REGISTER = TypeRegister()
 
 UNBOUNDED = "unbounded"
 
+
 class CallStyle:
     DOCUMENT = "document"
     RPC = "RPC"
+
 
 class Use:
     OPTIONAL = "optional"
     REQUIRED = "required"
     PROHIBITED = "prohibited"
 
+
 class Inheritance:
     RESTRICTION = "RESTRICTION"
     EXTENSION = "EXTENSION"
+
 
 class ElementFormDefault:
     QUALIFIED = "qualified"
     UNQUALIFIED = "unqualified"
 
+
 class Indicator(object):
+
     def __init__(self, fields):
         self.fields = fields
+
 
 class Sequence(Indicator):
     pass
 
+
 class Choice(Indicator):
     pass
+
 
 class All(Indicator):
     pass
 
 
 class Type_PythonType(type):
-    def __new__(cls,name,bases,attrs):
-        newcls = super(Type_PythonType,cls).__new__(cls,name,bases,attrs)
+    def __new__(cls, name, bases, attrs):
+        newcls = super(Type_PythonType, cls).__new__(cls, name, bases, attrs)
         USER_TYPE_REGISTER.add_type(newcls)
         return newcls
+
 
 class Type(object):
     """Abstract."""
     __metaclass__ = Type_PythonType
+
     def accept(self, value):
         raise NotImplementedError
 
@@ -106,7 +120,7 @@ class Type(object):
 
 class SimpleType(Type):
     """Defines an interface for simple types."""
-    def render(self, parent, value, namespace,elementFormDefault):
+    def render(self, parent, value, namespace, elementFormDefault):
         parent.text = self.xmlvalue(value)
 
     def parse_xmlelement(self, xmlelement):
@@ -115,29 +129,30 @@ class SimpleType(Type):
     def xmlvalue(self, value):
         raise NotImplementedError
 
-    def pythonvalue(self, xmlavalue):
+    def pythonvalue(self, xmlvalue):
         raise NotImplementedError
 
 
 class String(SimpleType):
-    enumeration = None#To be defined in child.
-    pattern = None#To be defined in child.
+    enumeration = None  # To be defined in child.
+    pattern = None      # To be defined in child.
 
-    def __init__(self, enumeration=None,pattern=None):
+    def __init__(self, enumeration=None, pattern=None):
         if enumeration is not None:
-            self.enumeration = enumeration#Override static value
+            self.enumeration = enumeration  # Override static value
         if pattern is not None:
-            self.pattern = pattern#Override static value
+            self.pattern = pattern  # Override static value
 
-    def accept(self,value):
-        if value is None: return value
-        if not isinstance(value,str):
-            raise ValueError("Value '%s' for class '%s'." % (str(value),self.__class__.__name__))
+    def accept(self, value):
+        if value is None:
+            return value
+        if not isinstance(value, str):
+            raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
 
         if self.pattern:
             cp = re.compile(self.pattern)
             if not cp.match(value):
-                raise ValueError("Value '%s' doesn't match pattern '%s'" % (value,self.pattern))
+                raise ValueError("Value '%s' doesn't match pattern '%s'" % (value, self.pattern))
 
         if self.enumeration:
             if not (value in self.enumeration):
@@ -151,12 +166,14 @@ class String(SimpleType):
     def pythonvalue(self, xmlvalue):
         return xmlvalue
 
+
 class Boolean(SimpleType):
+
     def accept(self, value):
         if value in [True, False, None]:
             return value
         else:
-            raise ValueError("Value '%s' for class '%s'." % (str(value),self.__class__.__name__))
+            raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
 
     def xmlvalue(self, value):
         if value == True:
@@ -166,9 +183,9 @@ class Boolean(SimpleType):
         elif value is None:
             return "nil"
         else:
-            raise ValueError("Value '%s' for class '%s'." % (str(value),self.__class__.__name__))
+            raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
 
-    def pythonvalue(self,value):
+    def pythonvalue(self, value):
         if value == 'false':
             return False
         elif value == 'true':
@@ -179,10 +196,10 @@ class Boolean(SimpleType):
             raise ValueError("Boolean value error - %s" % value)
 
 
-
 class DateTime(SimpleType):
     """Example text value: 2001-10-26T21:32:52"""
     FORMTA = "%Y-%m-%dT%H:%M:%S%z"
+
     def accept(self, value):
         if value is None:
             return None
@@ -205,9 +222,9 @@ class DateTime(SimpleType):
             return iso8601.parse_date(value)
 
 
-
 class Decimal(SimpleType):
-    def __init__(self, enumeration = None, fractionDigits=None, maxExclusive=None,
+
+    def __init__(self, enumeration=None, fractionDigits=None, maxExclusive=None,
                  maxInclusive=None, minExclusive=None, minInclusive=None,
                  pattern=None, totalDigits=None):
         self.enumeration = enumeration
@@ -221,7 +238,7 @@ class Decimal(SimpleType):
 
     def _check_restrictions(self, value):
         if self.enumeration is not None and value not in self.enumeration:
-            raise ValueError("%s not in enumeration %s" % (value,self.enumeration))
+            raise ValueError("%s not in enumeration %s" % (value, self.enumeration))
 
         if self.fractionDigits is not None:
             strvalue = str(value)
@@ -236,18 +253,18 @@ class Decimal(SimpleType):
                     raise ValueError("Wrong fraction digits for value %s allowed %s" % (strvalue, self.fractionDigits))
 
         if self.maxExclusive is not None and value >= self.maxExclusive:
-            raise ValueError("Value %s greater or equal to maxExclusive %s" %(value,self.maxExclusive))
+            raise ValueError("Value %s greater or equal to maxExclusive %s" % (value, self.maxExclusive))
         if self.maxInclusive is not None and value > self.maxInclusive:
-            raise ValueError("Value %s greater than maxInclusive %s" %(value,self.maxInclusive))
+            raise ValueError("Value %s greater than maxInclusive %s" % (value, self.maxInclusive))
         if self.minExclusive is not None and value <= self.minExclusive:
-            raise ValueError("Value %s smaller or equal to minExclusive %s" %(value,self.minExclusive))
+            raise ValueError("Value %s smaller or equal to minExclusive %s" % (value, self.minExclusive))
         if self.minInclusive is not None and value < self.minInclusive:
-            raise ValueError("Value %s smaller than minInclusive %s" %(value,self.minInclusive))
+            raise ValueError("Value %s smaller than minInclusive %s" % (value, self.minInclusive))
 
         if self.pattern is not None:
             compiled_pattern = re.compile(self.pattern)
             if not compiled_pattern.match(str(value)):
-                raise ValueError("Value %s doesn't match pattern %s." %(value, self.pattern))
+                raise ValueError("Value %s doesn't match pattern %s." % (value, self.pattern))
 
         if self.totalDigits is not None:
             strvalue = str(value)
@@ -263,7 +280,7 @@ class Decimal(SimpleType):
         if value is None:
             return None
         elif isinstance(value, int) or isinstance(value, long) or isinstance(value, float):
-            pass#value is just value
+            pass  # value is just value
         elif isinstance(value, str):
             value = float(value)
         else:
@@ -271,7 +288,6 @@ class Decimal(SimpleType):
 
         self._check_restrictions(value)
         return value
-
 
     def xmlvalue(self, value):
         return str(value)
@@ -282,29 +298,33 @@ class Decimal(SimpleType):
         else:
             return self.accept(xmlvalue)
 
+
 class Double(Decimal):
-    def __init__(self, enumeration = None,maxExclusive=None, maxInclusive=None,
+
+    def __init__(self, enumeration=None, maxExclusive=None, maxInclusive=None,
                  minExclusive=None, minInclusive=None, pattern=None):
-        super(Double,self).__init__(
-            enumeration = enumeration,maxExclusive=maxExclusive,
+        super(Double, self).__init__(
+            enumeration=enumeration, maxExclusive=maxExclusive,
             maxInclusive=maxInclusive, minExclusive=minExclusive,
             minInclusive=minInclusive, pattern=pattern)
+
 
 class Float(Decimal):
-    def __init__(self, enumeration = None,maxExclusive=None, maxInclusive=None,
+
+    def __init__(self, enumeration=None, maxExclusive=None, maxInclusive=None,
                  minExclusive=None, minInclusive=None, pattern=None):
-        super(Float,self).__init__(
-            enumeration = enumeration,maxExclusive=maxExclusive,
+        super(Float, self).__init__(
+            enumeration=enumeration, maxExclusive=maxExclusive,
             maxInclusive=maxInclusive, minExclusive=minExclusive,
             minInclusive=minInclusive, pattern=pattern)
-
 
 
 class Integer(Decimal):
-    def __init__(self, enumeration = None, maxExclusive=None,
+
+    def __init__(self, enumeration=None, maxExclusive=None,
                  maxInclusive=None, minExclusive=None, minInclusive=None,
                  pattern=None, totalDigits=None):
-        super(Integer,self).__init__(enumeration = enumeration,fractionDigits=0, maxExclusive=maxExclusive,
+        super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
                  maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
                  pattern=pattern, totalDigits=totalDigits)
 
@@ -312,7 +332,7 @@ class Integer(Decimal):
         if value is None:
             return None
         elif isinstance(value, int) or isinstance(value, long):
-            pass#value is just value continue.
+            pass  # value is just value continue.
         elif isinstance(value, str):
             value = int(value)
         else:
@@ -323,18 +343,21 @@ class Integer(Decimal):
 
 
 class Long(Integer):
-    def __init__(self, enumeration = None, maxExclusive=None,
+
+    def __init__(self, enumeration=None, maxExclusive=None,
                  maxInclusive=9223372036854775807, minExclusive=None, minInclusive=-9223372036854775808,
                  pattern=None, totalDigits=None):
-        super(Integer,self).__init__(enumeration = enumeration,fractionDigits=0, maxExclusive=maxExclusive,
+        super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
                                      pattern=pattern, totalDigits=totalDigits)
 
+
 class Int(Long):
-    def __init__(self, enumeration = None, maxExclusive=None,
+
+    def __init__(self, enumeration=None, maxExclusive=None,
                  maxInclusive=2147483647, minExclusive=None, minInclusive=-2147483648,
                  pattern=None, totalDigits=None):
-        super(Integer,self).__init__(enumeration = enumeration,fractionDigits=0, maxExclusive=maxExclusive,
+        super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
                                      pattern=pattern, totalDigits=totalDigits)
 
@@ -347,8 +370,8 @@ class Element(object):
     For elements that can appear multiple times use ListElement."""
     _creation_counter = 0
 
-    def __init__(self, _type, minOccurs = 1, tagname = None, nillable = False,
-                 default = None,namespace=None):
+    def __init__(self, _type, minOccurs=1, tagname=None, nillable=False,
+                 default=None, namespace=None):
         """:param _type: Class or instance of class that inherits from Type,
                          usually a child of SimpleType from xsd package,
                          or user defined class that inherits from ComplexType.
@@ -360,11 +383,12 @@ class Element(object):
                            work e.g. import
            :param nillable: bool, is object nilable.
         """
-        if not minOccurs in [0,1]: raise "minOccurs for Element can by only 0 or 1, use ListElement insted."
+        if not minOccurs in [0, 1]:
+            raise "minOccurs for Element can by only 0 or 1, use ListElement insted."
         self._creation_number = Element._creation_counter
         Element._creation_counter += 1
         self._passed_type = _type
-        self._type = None#Will be evaluated when needed from _passed_type
+        self._type = None  # Will be evaluated when needed from _passed_type
         self._minOccurs = minOccurs
         self.tagname = tagname
         self.default = default
@@ -373,7 +397,7 @@ class Element(object):
 
     def _evaluate_type(self):
         if self._type is None:
-            if isinstance(self._passed_type,str):
+            if isinstance(self._passed_type, str):
                 self._passed_type = USER_TYPE_REGISTER.find_type(self._passed_type)
             if isinstance(self._passed_type, Type):
                 self._type = self._passed_type
@@ -386,7 +410,7 @@ class Element(object):
         and other types of aggregates this should by an empty aggregate."""
         return self.default
 
-    def accept(self,value):
+    def accept(self, value):
         self._evaluate_type()
         """Checks is the value correct from type defined in constructions."""
         if value == NIL:
@@ -397,22 +421,22 @@ class Element(object):
         else:
             return self._type.accept(value)
 
-    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
+    def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
         self._evaluate_type()
-        if value is None: return
+        if value is None:
+            return
 
         if self.namespace is not None:
             namespace = self.namespace
-        if namespace is not None and elementFormDefault==ElementFormDefault.QUALIFIED:
+        if namespace is not None and elementFormDefault == ElementFormDefault.QUALIFIED:
             field_name = "{%s}%s" % (namespace, field_name)
 
         xmlelement = etree.Element(field_name)
         if value == NIL:
-            xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
+            xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil", "true")
         else:
-            self._type.render(xmlelement, value, namespace,elementFormDefault)
+            self._type.render(xmlelement, value, namespace, elementFormDefault)
         parent.append(xmlelement)
-
 
     def parse(self, instance, field_name, xmlelement):
         self._evaluate_type()
@@ -423,35 +447,33 @@ class Element(object):
         setattr(instance, field_name, value)
 
     def __repr__(self):
-        if isinstance(self._type,str):
-            return "%s<%s>" %  (self.__class__.__name__,self._type)
+        if isinstance(self._type, str):
+            return "%s<%s>" % (self.__class__.__name__, self._type)
         else:
-            return "%s<%s>" %  (self.__class__.__name__,self._type.__class__.__name__)
-
-
-
+            return "%s<%s>" % (self.__class__.__name__, self._type.__class__.__name__)
 
 
 class ClassNamedElement(Element):
     """Use this element when tagname should be based on class name in rendering time."""
-    def __init__(self,_type, minOccurs = 1, nilable = False):
-        super(ClassNamedElement, self).__init__(_type, minOccurs,None,nilable)
+    def __init__(self, _type, minOccurs=1, nilable=False):
+        super(ClassNamedElement, self).__init__(_type, minOccurs, None, nilable)
 
-    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
-        if value is None: return
+    def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
+        if value is None:
+            return
         tagname = value.name
         value = value.value
-        if value is None: return
+        if value is None:
+            return
 
         namespace = value.SCHEMA.targetNamespace
         if namespace:
             tagname = "{%s}%s" % (namespace, tagname)
 
         xmlelement = etree.Element(tagname)
-        self._type.render(xmlelement, value,namespace=namespace,
+        self._type.render(xmlelement, value, namespace=namespace,
                           elementFormDefault=value.SCHEMA.elementFormDefault)
         parent.append(xmlelement)
-
 
 
 class Attribute(Element):
@@ -460,7 +482,7 @@ class Attribute(Element):
         <job>Programmer<job>
     </person>
     name and surname are attributes. Attribute type can be only simple types."""
-    def __init__(self,type_clazz, use=Use.REQUIRED, tagname = None,nillable = False,
+    def __init__(self, type_clazz, use=Use.REQUIRED, tagname=None, nillable=False,
                  default=None):
         """
         :param type_clazz: Only simple tapes are accepted: String, Integer etc.
@@ -469,12 +491,12 @@ class Attribute(Element):
             minOccurs = 1
         else:
             minOccurs = 0
-        super(Attribute, self).__init__(type_clazz, tagname=tagname, minOccurs = minOccurs)
+        super(Attribute, self).__init__(type_clazz, tagname=tagname, minOccurs=minOccurs)
         self.nillable = nillable
         self.use = use
         self.default = default
 
-    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
+    def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
         self._evaluate_type()
         if value is None:
             if self._minOccurs:
@@ -520,13 +542,14 @@ class Ref(Element):
         self._evaluate_type()
         return copy(self._type)
 
-    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
+    def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
         if value is None:
             if self._required:
                 raise ValueError("Value None is not acceptable for required field.")
             else:
                 return
-        self._type.render(parent, value, namespace,elementFormDefault)
+        self._type.render(parent, value, namespace, elementFormDefault)
+
 
 class Content(Ref):
     """Direct access to element.text. Note that <> will be escaped."""
@@ -547,17 +570,17 @@ class ListElement(Element):
     Note that tag name is required for this field, as the field name should
     be in plural form, and tag usually is not.
     """
-    def __init__(self, clazz, tagname, minOccurs=None,maxOccurs=None,nillable=False):
-        super(ListElement,self).__init__(clazz,tagname=tagname,nillable=nillable)
+    def __init__(self, clazz, tagname, minOccurs=None, maxOccurs=None, nillable=False):
+        super(ListElement, self).__init__(clazz, tagname=tagname, nillable=nillable)
         self._maxOccurs = maxOccurs
         self._minOccurs = minOccurs
 
-    def accept(self,value):
+    def accept(self, value):
         return value
 
     def empty_value(this):
         class TypedList(list):
-            def append(self,value):
+            def append(self, value):
                 this._evaluate_type()
                 if value == NIL:
                     if this.nillable:
@@ -567,35 +590,33 @@ class ListElement(Element):
                 else:
                     accepted_value = this._type.accept(value)
                 if this._maxOccurs is not None and this._maxOccurs != UNBOUNDED:
-                    if (len(self)+1)>this._maxOccurs:
-                        raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" %( len(self), this._maxOccurs))
-                super(TypedList,self).append(accepted_value)
+                    if (len(self) + 1) > this._maxOccurs:
+                        raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" % (len(self), this._maxOccurs))
+                super(TypedList, self).append(accepted_value)
         return TypedList()
 
-
-    def render(self, parent, field_name, value, namespace=None,elementFormDefault=None):
+    def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
         self._evaluate_type()
-        items = value#The value must be list of items.
+        items = value  # The value must be list of items.
         if self._minOccurs and len(items) < self._minOccurs:
-            raise ValueError("For %s minOccurs=%d but list length %d." %(field_name, self._minOccurs, len(items)))
+            raise ValueError("For %s minOccurs=%d but list length %d." % (field_name, self._minOccurs, len(items)))
         if self._maxOccurs and len(items) > self._maxOccurs:
             raise ValueError("For %s maxOccurs=%d but list length %d." % (field_name, self._maxOccurs))
 
         if self.namespace is not None:
             namespace = self.namespace
         if namespace is not None and elementFormDefault == ElementFormDefault.QUALIFIED:
-            tagname = "{%s}%s" % (namespace,self.tagname)
+            tagname = "{%s}%s" % (namespace, self.tagname)
         else:
             tagname = self.tagname
 
         for item in items:
             xmlelement = etree.Element(tagname)
             if item == NIL:
-                xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil","true")
+                xmlelement.set("{http://www.w3.org/2001/XMLSchema-instance}nil", "true")
             else:
-                self._type.render(xmlelement, item, namespace,elementFormDefault)
+                self._type.render(xmlelement, item, namespace, elementFormDefault)
             parent.append(xmlelement)
-
 
     def parse(self, instance, field_name, xmlelement):
         self._evaluate_type()
@@ -607,16 +628,16 @@ class ListElement(Element):
         _list.append(value)
 
 
-
 class ComplexTypeMetaInfo(object):
-    def __init__(self,cls):
+
+    def __init__(self, cls):
         self.cls = cls
         self.fields = []
         self.attributes = []
         self.groups = []
         for attr in dir(cls):
-            item = getattr(cls,attr)
-            if isinstance(getattr(cls,attr),Attribute):
+            item = getattr(cls, attr)
+            if isinstance(getattr(cls, attr), Attribute):
                 item._name = attr
                 self.attributes.append(item)
             elif isinstance(item, Ref):
@@ -628,87 +649,80 @@ class ComplexTypeMetaInfo(object):
         self.fields = sorted(self.fields, key=lambda f: f._creation_number)
         self.attributes = sorted(self.attributes, key=lambda f: f._creation_number)
         self.groups = sorted(self.groups, key=lambda f: f._creation_number)
-        self.allelements = sorted(self.fields+self.groups, key=lambda f: f._creation_number)
-        self.all = sorted(self.fields+self.groups+self.attributes, key=lambda f: f._creation_number)
-
+        self.allelements = sorted(self.fields + self.groups, key=lambda f: f._creation_number)
+        self.all = sorted(self.fields + self.groups + self.attributes, key=lambda f: f._creation_number)
 
 
 class Complex_PythonType(Type_PythonType):
     """Python type for ComplexType, builds _meta object for every class that
     inherit from ComplexType. """
-    def __new__(cls,name,bases,attrs):
-        newcls = super(Complex_PythonType,cls).__new__(cls,name,bases,attrs)
+    def __new__(cls, name, bases, attrs):
+        newcls = super(Complex_PythonType, cls).__new__(cls, name, bases, attrs)
         if name != 'Complex':
             newcls._meta = ComplexTypeMetaInfo(newcls)
         return newcls
 
 
-
 class ComplexType(Type):
     """Parent for XML elements that have sub-elements."""
-    INDICATOR = Sequence#Indicator see: class Indicators. To be defined in sub-type.
-    INHERITANCE = None#Type of inheritance see: class Inheritance, to be defined in sub-type.
+    INDICATOR = Sequence  # Indicator see: class Indicators. To be defined in sub-type.
+    INHERITANCE = None    # Type of inheritance see: class Inheritance, to be defined in sub-type.
     SCHEMA = None
 
     __metaclass__ = Complex_PythonType
 
-    def __new__(cls,*args,**kwargs):
-        instance = super(ComplexType,cls).__new__(cls)
+    def __new__(cls, *args, **kwargs):
+        instance = super(ComplexType, cls).__new__(cls)
         for field in instance._meta.all:
-            setattr(instance,field._name,field.empty_value())
+            setattr(instance, field._name, field.empty_value())
         return instance
 
-    def __init__(self,**kwargs):
-        for key,value in kwargs.items():
-            setattr(self,key,value)
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def __setattr__(self, attr, value):
         if attr == "_xmlelement":
-            super(ComplexType,self).__setattr__(attr,value)
+            super(ComplexType, self).__setattr__(attr, value)
         else:
             try:
                 field = self._find_field(self._meta.all, attr)
-                super(ComplexType,self).__setattr__(attr,field.accept(value))
+                super(ComplexType, self).__setattr__(attr, field.accept(value))
             except IndexError:
-                raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__,attr))
-
-
-
+                raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__, attr))
 
     def accept(self, value):
         """Instance methods that validate other instance."""
         if value is None:
             return None
-        elif isinstance(value,self.__class__):
+        elif isinstance(value, self.__class__):
             return value
         else:
-            raise ValueError('Wrong value object type %s for %s.' % (value,self.__class__.__name__))
+            raise ValueError('Wrong value object type %s for %s.' % (value, self.__class__.__name__))
 
-
-    def render(self, parent, instance, namespace=None,elementFormDefault=None):
-        if instance is None: return None
+    def render(self, parent, instance, namespace=None, elementFormDefault=None):
+        if instance is None:
+            return None
         if self.SCHEMA:
             namespace = self.SCHEMA.targetNamespace
         for field in instance._meta.all:
             field.render(
-                parent = parent,
-                field_name = field._name,
-                value = getattr(instance, field._name),
-                namespace = namespace,
+                parent=parent,
+                field_name=field._name,
+                value=getattr(instance, field._name),
+                namespace=namespace,
                 elementFormDefault=elementFormDefault)
-
 
     @classmethod
     def _find_field(cls, fields, name):
-        return filter(lambda f:f._name == name,fields)[0]
+        return filter(lambda f: f._name == name, fields)[0]
 
     @classmethod
     def _get_field_by_name(cls, fields, field_name):
         for field in fields:
             if field.tagname == field_name or field._name == field_name:
                 return field
-        raise ValueError("Field not found '%s', fields: %s" %(field_name, fields))
-
+        raise ValueError("Field not found '%s', fields: %s" % (field_name, fields))
 
     @classmethod
     def _find_subelement(cls, field, xmlelement):
@@ -718,8 +732,8 @@ class ComplexType(Type):
             if tag[:1] == "{":
                 return tag[1:].split("}", 1)
             else:
-                return (None,tag)
-        #--------------------------------------------
+                return (None, tag)
+
         subelements = []
         for subelement in xmlelement:
             if isinstance(subelement, etree._Comment):
@@ -728,7 +742,6 @@ class ComplexType(Type):
             if tag == field._name or tag == field.tagname:
                 subelements.append(subelement)
         return subelements
-
 
     @classmethod
     def parse_xmlelement(cls, xmlelement):
@@ -747,17 +760,15 @@ class ComplexType(Type):
 
         return instance
 
-
     @classmethod
     def __parse_with_validation(cls, xml, schema):
         from py2xsd import generate_xsd
         schema = generate_xsd(schema)
-        #print etree.tostring(schema,pretty_print=True)
+        #print etree.tostring(schema, pretty_print=True)
         schemaelement = etree.XMLSchema(schema)
-        parser = etree.XMLParser(schema = schemaelement)
+        parser = etree.XMLParser(schema=schemaelement)
         xmlelement = etree.fromstring(xml, parser)
         return xmlelement
-
 
     @classmethod
     def parsexml(cls, xml, schema=None):
@@ -767,17 +778,15 @@ class ComplexType(Type):
             xmlelement = etree.fromstring(xml)
         return cls.parse_xmlelement(xmlelement)
 
-
-    def xml(self, tagname, namespace=None,elementFormDefault=None,schema=None):
+    def xml(self, tagname, namespace=None, elementFormDefault=None, schema=None):
         if namespace:
             tagname = "{%s}%s" % (namespace, tagname)
         xmlelement = etree.Element(tagname)
-        self.render(xmlelement, self, namespace,elementFormDefault)
+        self.render(xmlelement, self, namespace, elementFormDefault)
         xml = etree.tostring(xmlelement, pretty_print=True)
         if schema:
             self.__parse_with_validation(xml, schema)
         return xml
-
 
     @classmethod
     def _force_elements_type_evalution(cls):
@@ -786,79 +795,94 @@ class ComplexType(Type):
             element._evaluate_type()
 
 
-
 class Group(ComplexType):
     """Parent object for XSD Groups. Marker. Must be use with Ref."""
     pass
+
 
 class AttributeGroup(Group):
     """Parent object for XSD Attribute Groups. Marker. Must be use with Ref."""
     pass
 
+
 class Document(ComplexType):
     """Represents whole xml, is expected to have only one field the root."""
     NAMESPACE = None
+
     class MockElement(object):
+
         def __init__(self):
             self.element = None
+
         def append(self, element):
             self.element = element
 
     def render(self):
-        field = self._meta.fields[0]#The only field
+        field = self._meta.fields[0]  # The only field.
         mockelement = Document.MockElement()
         instance = getattr(self, field._name)
         field.render(mockelement, field._name, instance, self.NAMESPACE)
         return etree.tostring(mockelement.element, pretty_print=True)
 
-    #TODO:schema support
+    # TODO: Schema support.
     @classmethod
     def parsexml(cls, xml):
-        field = cls._meta.fields[0]#The only field
+        field = cls._meta.fields[0]  # The only field.
         xmlelement = etree.fromstring(xml)
         field.parse(cls, field._name, xmlelement)
-
-
-
 
 
 class UnsignedLong(Long):
     pass
 
+
 class UnsignedInt(Int):
     pass
+
 
 class List(SimpleType):
     pass
 
+
 class AnyURI(String):
     pass
+
 
 class QName(String):
     pass
 
+
 class NMTOKEN(String):
     pass
+
 
 class NMTOKENS(String):
     pass
 
+
 class AnyType(Type):
     pass
+
 
 class Base64Binary(String):
     pass
 
+
 class Duration(String):
     pass
+
 
 class UnsignedShort(Int):
     pass
 
+
 class UnsignedByte(UnsignedShort):
     pass
+
+
 class Short(Int):
     pass
+
 
 class Byte(Short):
     pass
@@ -868,9 +892,9 @@ class Schema(object):
     """Main object for XSD schema. This object is required for XSD and WSDLgeneration
         and correct namespaces as it propagates targetNamespace to all objects.
         Instance of this is expected to be named Schema. """
-    def __init__(self,targetNamespace, elementFormDefault=ElementFormDefault.UNQUALIFIED ,
+    def __init__(self, targetNamespace, elementFormDefault=ElementFormDefault.UNQUALIFIED,
                  simpleTypes=[], attributeGroups=[], groups=[], complexTypes=[], elements={},
-                 imports=None,location=None):
+                 imports=None, location=None):
         """
         :param targetNamespace: string, xsd namespace URL.
         :param elementFormDefault: unqualified/qualified Defines should namespace
@@ -898,9 +922,8 @@ class Schema(object):
         self.__init_schema(self.complexTypes)
 
         for element in self.elements.values():
-            if isinstance(element._passed_type,ComplexType):
+            if isinstance(element._passed_type, ComplexType):
                 element._passed_type.__class__.SCHEMA = self
-
 
         self._force_elements_type_evalution(self.complexTypes)
         self._force_elements_type_evalution(self.attributeGroups)
@@ -918,7 +941,7 @@ class Schema(object):
             t._force_elements_type_evalution()
 
     def get_element_by_name(self, name):
-        if self.elements.has_key(name):
+        if name in self.elements:
             return self.elements[name]
         else:
             for _import in self.imports:
@@ -928,13 +951,12 @@ class Schema(object):
             return None
 
 
-
 class Method(object):
     """Method description. The main information is mapping soapAction and operationName
     to function for dispatcher. input and output mapping informs how and which
     objects should be created on incoming/outgoing messages."""
     def __init__(self, operationName, soapAction, input, output, function=None,
-                 inputPartName="body",outputPartName = "body",style=CallStyle.DOCUMENT):
+                 inputPartName="body", outputPartName="body", style=CallStyle.DOCUMENT):
         """:param function: The function that should be called. Required only for server."""
         self.operationName = operationName
         self.soapAction = soapAction
@@ -950,13 +972,6 @@ class NamedType(ComplexType):
     name = Element(String)
     value = Element(ComplexType)
 
-    def __init__(self,name=None,value=None):
+    def __init__(self, name=None, value=None):
         self.name = name
         self.value = value
-
-
-
-
-
-
-

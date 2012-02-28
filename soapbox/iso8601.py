@@ -20,11 +20,15 @@ ISO8601_REGEX = re.compile(r"(?P<year>[0-9]{4})(-(?P<month>[0-9]{1,2})(-(?P<day>
 )
 TIMEZONE_REGEX = re.compile("(?P<prefix>[+-])(?P<hours>[0-9]{2}).(?P<minutes>[0-9]{2})")
 
+
 class ParseError(Exception):
     """Raised when there is a problem parsing a date string"""
 
+
 # Yoinked from python docs
 ZERO = timedelta(0)
+
+
 class Utc(tzinfo):
     """UTC
 
@@ -37,7 +41,10 @@ class Utc(tzinfo):
 
     def dst(self, dt):
         return ZERO
+
+
 UTC = Utc()
+
 
 class FixedOffset(tzinfo):
     """Fixed offset in hours and minutes from UTC
@@ -59,6 +66,7 @@ class FixedOffset(tzinfo):
     def __repr__(self):
         return "<FixedOffset %r>" % self.__name
 
+
 def parse_timezone(tzstring, default_timezone=UTC):
     """Parses ISO 8601 time zone specs into tzinfo offsets
 
@@ -77,6 +85,7 @@ def parse_timezone(tzstring, default_timezone=UTC):
         hours = -hours
         minutes = -minutes
     return FixedOffset(hours, minutes, tzstring)
+
 
 def parse_date(datestring, default_timezone=UTC):
     """Parses ISO 8601 dates into datetime objects

@@ -1,6 +1,7 @@
 from lxml import etree
 import xsd
 
+
 ENVELOPE_NAMESPACE = "http://www.w3.org/2003/05/soap-envelope"
 BINDING_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/soap12/"
 CONTENT_TYPE = "application/soap+xml"
@@ -11,11 +12,12 @@ def determin_soap_action(request):
     for content_type in content_types:
         if content_type.strip(" ").startswith("action="):
             action = content_type.split("=")[1]
-            return action.replace('"',"")
+            return action.replace('"', "")
     return None
 
+
 def build_header(soapAction):
-    return {"content-type" : CONTENT_TYPE+"action=%s" % soapAction}
+    return {"content-type": CONTENT_TYPE + "action=%s" % soapAction}
 
 
 def get_error_response(code, message):
@@ -24,33 +26,40 @@ def get_error_response(code, message):
     fault = Fault(Code=code, Reason=reason)
     envelope = Envelope()
     envelope.Body = Body(Fault=fault)
-    return envelope.xml("Envelope",namespace=ENVELOPE_NAMESPACE,
+    return envelope.xml("Envelope", namespace=ENVELOPE_NAMESPACE,
                         elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
 
+
 def parse_fault_message(fault):
-    return fault.Code.Value,fault.Reason.Text
+    return fault.Code.Value, fault.Reason.Text
+
 
 class Header(xsd.ComplexType):
     """SOAP Envelope Header."""
     pass
+
 
 class Code(xsd.ComplexType):
     CLIENT = "ns0:Sender"
     SERVER = "ns0:Receiver"
     Value = xsd.Element(xsd.String)
 
+
 class LanguageString(xsd.String):
-    def render(self, parent, value, namespace,elementFormDefault):
+    def render(self, parent, value, namespace, elementFormDefault):
         parent.text = self.xmlvalue(value)
-        parent.set("{http://www.w3.org/XML/1998/namespace}lang","en")
+        parent.set("{http://www.w3.org/XML/1998/namespace}lang", "en")
+
 
 class Reason(xsd.ComplexType):
     Text = xsd.Element(LanguageString)
+
 
 class Fault(xsd.ComplexType):
     """SOAP Envelope Fault."""
     Code = xsd.Element(Code)
     Reason = xsd.Element(Reason)
+
 
 class Body(xsd.ComplexType):
     """SOAP Envelope Body."""
@@ -60,20 +69,22 @@ class Body(xsd.ComplexType):
     def content(self):
         return etree.tostring(self._xmlelement[0], pretty_print=True)
 
+
 class Envelope(xsd.ComplexType):
     """SOAP Envelope."""
     Header = xsd.Element(Header, nillable=True)
     Body = xsd.Element(Body)
 
     @classmethod
-    def reponse(cls, tagname,return_object):
+    def reponse(cls, tagname, return_object):
         envelope = Envelope()
         envelope.Body = Body()
-        envelope.Body.message = xsd.NamedType(name=tagname,value=return_object)
-        return envelope.xml("Envelope",namespace=ENVELOPE_NAMESPACE,
+        envelope.Body.message = xsd.NamedType(name=tagname, value=return_object)
+        return envelope.xml("Envelope", namespace=ENVELOPE_NAMESPACE,
                             elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
 
+
 SCHEMA = xsd.Schema(
-    targetNamespace = ENVELOPE_NAMESPACE,
-    elementFormDefault = xsd.ElementFormDefault.QUALIFIED,
-    complexTypes = [Header, Body, Envelope, Code, Reason, Fault])
+    targetNamespace=ENVELOPE_NAMESPACE,
+    elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
+    complexTypes=[Header, Body, Envelope, Code, Reason, Fault])
