@@ -4,18 +4,18 @@ from urlparse import urlparse
 def removens(full_typename):
     if full_typename is None:
         return None
-    
+
     return full_typename.split(':')[-1]
 
 def classyfiy(value):
     return value[0].upper() +value[1:]
-    
-    
+
+
 def get_get_type(XSD_NAMESPACES):
     def get_type(full_typename):
         if full_typename is None:
             return None
-        
+
         typename = full_typename.split(":")
         if len(typename) == 2:
             ns, typename = typename
@@ -27,7 +27,7 @@ def get_get_type(XSD_NAMESPACES):
         else:
             return '"%s"' % classyfiy(typename)
     return get_type
-    
+
 def use(usevalue):
     if usevalue == xsd.Use.OPTIONAL:
         return "xsd.Use.OPTIONAL"
@@ -37,7 +37,7 @@ def use(usevalue):
         return "xsd.Use.PROHIBITED"
     else:
         raise ValueError
-    
+
 def find_xsd_namepsace(nsmap):
     namespaces = []
     for key, value in nsmap.iteritems():
@@ -47,7 +47,7 @@ def find_xsd_namepsace(nsmap):
     return namespaces
 
 def urlcontext(url):
-    """http://polaris.flightdataservices.com/ws/ops-> ^ws/ops$""" 
+    """http://polaris.flightdataservices.com/ws/ops-> ^ws/ops$"""
     o = urlparse(url)
     path = o.path[1:]#remove trailing /
     return "^"+path+"$" #build regex
@@ -57,4 +57,4 @@ def uncapitalize(value):
         return value
     else:
         return value[0].lower() + value[1:]
-    
+

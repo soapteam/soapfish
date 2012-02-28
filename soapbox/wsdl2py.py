@@ -26,7 +26,7 @@ from soapbox.xsd import UNBOUNDED
 
 {%- for service in definitions.services %}
 {% for port in service.ports %}
- 
+
 {%- set binding = get_by_name(definitions.bindings,port.binding) %}
 {%- set XXX = binding.set_definition(definitions) %}
 {%- set XXX = binding.feedback_Operations() %}
@@ -34,13 +34,13 @@ from soapbox.xsd import UNBOUNDED
 {%- if binding.binding.transport != SOAPTransport %}
     {% continue %}
 {% endif %}
-    
+
     {%- for operation in binding.operations %}
         {%- set XXX = operation.set_definition(definitions) %}
         {%- set inputMessage = operation.get_InputMessage() %}
         {%- set outputMessage = operation.get_OutputMessage() %}
 
-{% if is_server %}        
+{% if is_server %}
 def {{operation.name}}(request,{{inputMessage.part.element|removens}}):
     #Put your implementation here.
     return {{outputMessage.part.element|removens}}
@@ -49,13 +49,13 @@ def {{operation.name}}(request,{{inputMessage.part.element|removens}}):
 {{operation.name}}_method = xsd.Method(
     {%- if is_server %}function = {{operation.name}},{% endif %}
     soapAction = "{{operation.operation.soapAction}}",
-    {%- if inputMessage.part.element %}  
+    {%- if inputMessage.part.element %}
     input = "{{inputMessage.part.element|removens}}",#Pointer to Schema.elements
     inputPartName = "{{inputMessage.part.name}}",
     {%- else %}
     input = {{inputMessage.part.type|removens|class}},
     {%- endif %}
-    {%- if inputMessage.part.element %}  
+    {%- if inputMessage.part.element %}
     output = "{{outputMessage.part.element|removens}}",#Pointer to Schema.elements
     outputPartName = "{{outputMessage.part.name}}",
     {%- else %}
@@ -65,19 +65,19 @@ def {{operation.name}}(request,{{inputMessage.part.element|removens}}):
     {%- if operation.operation.style %}
     style = "{{operation.operation.style}}",
     {%- endif %})
-    
+
     {% endfor %}
-    
+
 {{port.name}}_SERVICE = soap.Service(
     name = "{{port.name}}",
     targetNamespace = "{{definitions.targetNamespace}}",
     location = "{{port.address.location}}",
     schema = Schema{{schema_name(definitions.types.schema.targetNamespace)}},
-    version = soap.SOAPVersion.SOAP11, 
+    version = soap.SOAPVersion.SOAP11,
     methods = [{% for o in binding.operations %}{{o.name}}_method,{% endfor %} ])
- 
+
 {% if is_server %}
-#Uncomment this lines to turn on dispatching. 
+#Uncomment this lines to turn on dispatching.
 #from django.views.decorators.csrf import csrf_exempt
 #dispatch = csrf_exempt(soap.get_django_dispatch({{port.name}}_SERVICE))
 
@@ -88,15 +88,15 @@ def {{operation.name}}(request,{{inputMessage.part.element|removens}}):
 {%- else %}
 class {{port.name}}ServiceStub(soap.Stub):
     SERVICE = {{port.name}}_SERVICE
-    
+
     {% for operation in binding.operations %}
         {%- set inputMessage = operation.get_InputMessage() %}
         {%- set outputMessage = operation.get_OutputMessage() %}
     def {{operation.name}}(self, {{inputMessage.part.element|removens}}):
         return self.call("{{operation.name}}", {{inputMessage.part.element|removens}})
     {% endfor %}
-{%- endif %} 
- 
+{%- endif %}
+
 {% endfor %} {# ports for #}
 {% endfor %} {# services for #}
 """
@@ -106,7 +106,7 @@ def generate_code_from_wsdl(is_server, xml):
     xmlelement = etree.fromstring(xml)
     XSD_NAMESPACE = find_xsd_namepsace(xmlelement.nsmap)
     environment.filters["type"] = get_get_type(XSD_NAMESPACE)
-    
+
     wsdl = get_wsdl_classes(SOAPVersion.SOAP11.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xmlelement)
     schema = definitions.types.schema
@@ -116,7 +116,7 @@ def generate_code_from_wsdl(is_server, xml):
             definitions=definitions,
             schema=schemaxml,
             is_server=is_server)
-    
+
 def console_main():
     parser = OptionParser(usage = "usage: %prog [-c|-s] path_to_wsdl")
     parser.add_option("-c", "--client", dest="client",
@@ -134,11 +134,11 @@ def console_main():
         print generate_code_from_wsdl(True, xml)
     else:
         parser.print_help()
-        
-    
+
+
 if __name__ == "__main__":
     console_main()
     #url = "http://ec2-46-137-40-70.eu-west-1.compute.amazonaws.com/QPulse5WebServices/Services/Core.svc?wsdl"
     #resolve_imports(url)
-    
-    
+
+

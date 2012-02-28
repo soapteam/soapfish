@@ -26,10 +26,10 @@ def get_error_response(code, message):
     envelope.Body = Body(Fault=fault)
     return envelope.xml("Envelope",namespace=ENVELOPE_NAMESPACE,
                         elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
-    
+
 def parse_fault_message(fault):
     return fault.Code.Value,fault.Reason.Text
-    
+
 class Header(xsd.ComplexType):
     """SOAP Envelope Header."""
     pass
@@ -38,15 +38,15 @@ class Code(xsd.ComplexType):
     CLIENT = "ns0:Sender"
     SERVER = "ns0:Receiver"
     Value = xsd.Element(xsd.String)
-    
+
 class LanguageString(xsd.String):
     def render(self, parent, value, namespace,elementFormDefault):
         parent.text = self.xmlvalue(value)
         parent.set("{http://www.w3.org/XML/1998/namespace}lang","en")
-        
+
 class Reason(xsd.ComplexType):
     Text = xsd.Element(LanguageString)
-    
+
 class Fault(xsd.ComplexType):
     """SOAP Envelope Fault."""
     Code = xsd.Element(Code)
@@ -62,17 +62,17 @@ class Body(xsd.ComplexType):
 
 class Envelope(xsd.ComplexType):
     """SOAP Envelope."""
-    Header = xsd.Element(Header, nillable=True) 
+    Header = xsd.Element(Header, nillable=True)
     Body = xsd.Element(Body)
 
     @classmethod
     def reponse(cls, tagname,return_object):
         envelope = Envelope()
         envelope.Body = Body()
-        envelope.Body.message = xsd.NamedType(name=tagname,value=return_object)  
+        envelope.Body.message = xsd.NamedType(name=tagname,value=return_object)
         return envelope.xml("Envelope",namespace=ENVELOPE_NAMESPACE,
                             elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
-    
+
 SCHEMA = xsd.Schema(
     targetNamespace = ENVELOPE_NAMESPACE,
     elementFormDefault = xsd.ElementFormDefault.QUALIFIED,
