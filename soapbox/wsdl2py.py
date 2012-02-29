@@ -12,6 +12,7 @@
 import argparse
 import textwrap
 
+from datetime import datetime
 from jinja2 import Environment, PackageLoader
 from lxml import etree
 
@@ -55,6 +56,7 @@ def get_rendering_environment():
     env.globals['SOAPTransport'] = SOAP_HTTP_Transport
     env.globals['get_by_name'] = get_by_name
     env.globals['schema_name'] = schema_name
+    env.globals['generation_dt'] = datetime.now()
     return env
 
 
