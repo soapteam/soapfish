@@ -247,8 +247,8 @@ class String(SimpleType):
         if value is None:
             return value
 
-        if not isinstance(value, str):
-            raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
+        if not isinstance(value, basestring):
+            raise ValueError("Value '%s' for class '%s'." % (unicode(value), self.__class__.__name__))
 
         if self.pattern:
             cp = re.compile(self.pattern)
@@ -257,7 +257,7 @@ class String(SimpleType):
 
         if self.enumeration:
             if not (value in self.enumeration):
-                raise ValueError("Value '%s' not in list %s." % (str(value), self.enumeration))
+                raise ValueError("Value '%s' not in list %s." % (unicode(value), self.enumeration))
 
         return value
 
@@ -323,7 +323,7 @@ class DateTime(SimpleType):
             return None
         elif isinstance(value, datetime):
             return value
-        elif isinstance(value, str):
+        elif isinstance(value, basestring):
             return iso8601.parse_date(value)
         raise ValueError("Incorrect type value '%s' for Datetime field." % value)
 
@@ -411,7 +411,7 @@ class Decimal(SimpleType):
             return None
         elif isinstance(value, int) or isinstance(value, long) or isinstance(value, float):
             pass  # value is just value
-        elif isinstance(value, str):
+        elif isinstance(value, basestring):
             value = float(value)
         else:
             raise ValueError("Incorrect value '%s' for Decimal field." % value)
@@ -481,7 +481,7 @@ class Integer(Decimal):
             return None
         elif isinstance(value, int) or isinstance(value, long):
             pass  # value is just value continue.
-        elif isinstance(value, str):
+        elif isinstance(value, basestring):
             value = int(value)
         else:
             raise ValueError("Incorrect value '%s' for Decimal field." % value)
@@ -557,7 +557,7 @@ class Element(object):
         '''
         '''
         if self._type is None:
-            if isinstance(self._passed_type, str):
+            if isinstance(self._passed_type, basestring):
                 self._passed_type = USER_TYPE_REGISTER.find_type(self._passed_type)
             if isinstance(self._passed_type, Type):
                 self._type = self._passed_type
@@ -617,7 +617,7 @@ class Element(object):
     def __repr__(self):
         '''
         '''
-        if isinstance(self._type, str):
+        if isinstance(self._type, basestring):
             return '%s<%s>' % (self.__class__.__name__, self._type)
         else:
             return '%s<%s>' % (self.__class__.__name__, self._type.__class__.__name__)

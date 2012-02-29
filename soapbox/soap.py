@@ -112,7 +112,7 @@ class Stub(object):
 
         message = envelope.Body.content()
 
-        if isinstance(method.output, str):
+        if isinstance(method.output, basestring):
             element = self.SERVICE.schema.get_element_by_name(method.output)
             _type = element._type
         else:
@@ -129,7 +129,7 @@ class Stub(object):
         '''
         SOAP = self.SERVICE.version
         method = self.SERVICE.get_method(operationName)
-        if isinstance(method.input, str):
+        if isinstance(method.input, basestring):
             tagname = method.input
         else:
             tagname = uncapitalize(parameter.__class__.__name__)
@@ -167,7 +167,7 @@ def get_django_dispatch(service):
             if soap_action != method.soapAction:
                 continue
 
-            if isinstance(method.input, str):
+            if isinstance(method.input, basestring):
                 element = service.schema.elements[method.input]
                 input_object = element._type.parsexml(message, service.schema)
             else:
@@ -182,7 +182,7 @@ def get_django_dispatch(service):
             except Exception, e:
                 raise ValueError(e)
 
-            if isinstance(method.output, str):
+            if isinstance(method.output, basestring):
                 tagname = method.output
             else:
                 tagname = uncapitalize(return_object.__class__.__name__)

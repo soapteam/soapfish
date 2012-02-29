@@ -87,7 +87,7 @@ def build_messages(wsdl, definitions, service):
         inputMessage = wsdl.Message(name=method.operationName + 'Input')
         inputMessage.part = wsdl.Part()
         inputMessage.part.name = 'body'
-        if isinstance(method.input, str):
+        if isinstance(method.input, basestring):
             inputMessage.part.element = 'sns:' + method.input
         else:
             inputMessage.part.type = 'sns:' + uncapitalize(method.input.__name__)
@@ -96,7 +96,7 @@ def build_messages(wsdl, definitions, service):
         outputMessage = wsdl.Message(name=method.operationName + 'Output')
         outputMessage.part = wsdl.Part()
         outputMessage.part.name = 'body'
-        if isinstance(method.output, str):
+        if isinstance(method.output, basestring):
             outputMessage.part.element = 'sns:' + method.output
         else:
             outputMessage.part.type = 'sns:' + uncapitalize(method.output.__name__)
