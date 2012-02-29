@@ -11,7 +11,6 @@
 
 import argparse
 import hashlib
-import httplib2
 import keyword
 import textwrap
 

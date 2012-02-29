@@ -8,6 +8,8 @@
 # Imports
 
 
+import httplib2
+
 from urlparse import urlparse
 
 from . import xsd
