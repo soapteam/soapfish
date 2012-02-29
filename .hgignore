@@ -1,7 +1,41 @@
-# use glob syntax.
+# Use glob syntax
 syntax: glob
 
-*.pyc
+# Dot directories
+.*/
+
+# Transient files
+*.log
+*.tmp
+
+# Operating System cruft
+Desktop.ini
+Thumbs.db
+__MACOSX
+.DS_Store
+
+# Sphinx transient files (old style)
+.build
+.static
+
+# Eclipse, WingIDE and Text Editors
+*.sw[nop]
+*~
 .project
 .pydevproject
-tmp\*.*
+*.wp[ur]
+
+# Python builds and binaries
+dist
+build
+*.egg
+*.egg-info
+*.py[co]
+
+# Jenkins
+.coverage
+coverage.xml
+nosetests.xml
+cpd.xml
+pep8.log
+pylint.log
