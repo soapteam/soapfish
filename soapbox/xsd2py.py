@@ -19,7 +19,14 @@ from jinja2 import Environment, PackageLoader
 from lxml import etree
 
 from .xsdspec import Schema
-from .utils import removens, classyfiy, get_get_type, use, find_xsd_namepsace
+from .utils import (
+    classyfiy,
+    find_xsd_namepsace,
+    get_get_type,
+    open_document,
+    removens,
+    use,
+)
 
 
 ################################################################################
@@ -48,20 +55,6 @@ def get_rendering_environment():
     env.globals['resolve_import'] = resolve_import
     env.globals['schema_name'] = schema_name
     return env
-
-
-def open_document(path):
-    '''
-    '''
-    # Handle documents available on the Internet:
-    if path.startswith('http:'):
-        http = httplib2.Http()
-        _, content = http.request(path)
-        return content
-
-    # Attempt to open the document from the filesystem:
-    else:
-        return open(path, 'r').read()
 
 
 def resolve_import(xsdimport, known_namespaces):

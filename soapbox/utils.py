@@ -1,19 +1,56 @@
-import xsd
+# -*- coding: utf-8 -*-
+################################################################################
+
+'''
+'''
+
+################################################################################
+# Imports
+
+
 from urlparse import urlparse
+
+from . import xsd
+
+
+################################################################################
+# Functions
+
+
+def open_document(path):
+    '''
+    '''
+    # Handle documents available on the Internet:
+    if path.startswith('http:'):
+        http = httplib2.Http()
+        _, content = http.request(path)
+        return content
+
+    # Attempt to open the document from the filesystem:
+    else:
+        return open(path, 'r').read()
 
 
 def removens(full_typename):
+    '''
+    '''
     if not full_typename:
         return None
     return full_typename.split(':')[-1]
 
 
 def classyfiy(value):
+    '''
+    '''
     return value[0].upper() + value[1:]
 
 
 def get_get_type(XSD_NAMESPACES):
+    '''
+    '''
     def get_type(full_typename):
+        '''
+        '''
         if not full_typename:
             return None
 
@@ -29,6 +66,8 @@ def get_get_type(XSD_NAMESPACES):
 
 
 def use(usevalue):
+    '''
+    '''
     if usevalue == xsd.Use.OPTIONAL:
         return 'xsd.Use.OPTIONAL'
     elif usevalue == xsd.Use.REQUIRED:
@@ -40,6 +79,8 @@ def use(usevalue):
 
 
 def find_xsd_namepsace(nsmap):
+    '''
+    '''
     namespaces = []
     for key, value in nsmap.iteritems():
         if value == 'http://www.w3.org/2001/XMLSchema' \
@@ -49,13 +90,20 @@ def find_xsd_namepsace(nsmap):
 
 
 def urlcontext(url):
-    """http://polaris.flightdataservices.com/ws/ops-> ^ws/ops$"""
+    '''
+    http://example.net/ws/endpoint --> ^ws/endpoint$
+    '''
     o = urlparse(url)
-    path = o.path.lstrip('/')
-    return r'^%s$' % path  # build regex
+    return r'^%s$' % o.path.lstrip('/')
 
 
 def uncapitalize(value):
+    '''
+    '''
     if value == 'QName':
         return value
     return value[0].lower() + value[1:]
+
+
+################################################################################
+# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

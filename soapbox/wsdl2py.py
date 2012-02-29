@@ -16,9 +16,17 @@ from jinja2 import Environment, PackageLoader
 from lxml import etree
 
 from .soap import SOAP_HTTP_Transport, SOAPVersion
-from .utils import removens, classyfiy, get_get_type, use, find_xsd_namepsace, urlcontext
+from .utils import (
+    classyfiy,
+    find_xsd_namepsace,
+    get_get_type,
+    open_document,
+    removens,
+    urlcontext,
+    use,
+)
 from .wsdl import get_wsdl_classes, get_by_name
-from .xsd2py import schema_to_py, schema_name, open_document
+from .xsd2py import schema_to_py, schema_name
 
 
 ################################################################################
