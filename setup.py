@@ -11,13 +11,13 @@ setup(
     license="New BSD",
     install_requires=['lxml','jinja2'],
     packages=["soapbox"],
-    entry_points = {
+    entry_points={
         'console_scripts': [
-            'xsd2py = soapbox.xsd2py:main',
-            'wsdl2py = soapbox.wsdl2py:console_main',
-            'py2xsd = soapbox.py2xsd:main',
-            'py2wsdl = soapbox.py2wsdl:main'
-        ]
+            'py2wsdl=soapbox.py2wsdl:main',
+            'py2xsd=soapbox.py2xsd:main',
+            'wsdl2py=soapbox.wsdl2py:main',
+            'xsd2py=soapbox.xsd2py:main',
+        ],
     },
     platforms="Python 2.6 and later.",
     classifiers=[
