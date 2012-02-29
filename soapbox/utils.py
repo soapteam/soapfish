@@ -78,7 +78,7 @@ def use(usevalue):
         raise ValueError
 
 
-def find_xsd_namepsace(nsmap):
+def find_xsd_namespaces(nsmap):
     '''
     '''
     namespaces = []

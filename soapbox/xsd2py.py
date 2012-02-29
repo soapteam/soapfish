@@ -21,7 +21,7 @@ from lxml import etree
 from .xsdspec import Schema
 from .utils import (
     classyfiy,
-    find_xsd_namepsace,
+    find_xsd_namespaces,
     get_get_type,
     open_document,
     removens,
@@ -76,7 +76,7 @@ def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None):
     '''
     if known_namespaces is None:
         known_namespaces = []
-    xsd_namespace = find_xsd_namepsace(xmlelement.nsmap)
+    xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
 
     schema = Schema.parse_xmlelement(xmlelement)
 

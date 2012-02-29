@@ -18,7 +18,7 @@ from lxml import etree
 from .soap import SOAP_HTTP_Transport, SOAPVersion
 from .utils import (
     classyfiy,
-    find_xsd_namepsace,
+    find_xsd_namespaces,
     get_get_type,
     open_document,
     removens,
@@ -63,13 +63,13 @@ def generate_code_from_wsdl(xml, target):
     '''
     env = get_rendering_environment()
     xmlelement = etree.fromstring(xml)
-    XSD_NAMESPACE = find_xsd_namepsace(xmlelement.nsmap)
+    XSD_NAMESPACE = find_xsd_namespaces(xmlelement.nsmap)
     env.filters['type'] = get_get_type(XSD_NAMESPACE)
 
     wsdl = get_wsdl_classes(SOAPVersion.SOAP11.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xmlelement)
     schema = definitions.types.schema
-    xsd_namespace = find_xsd_namepsace(xmlelement.nsmap)
+    xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
     schemaxml = schema_to_py(schema, xsd_namespace)
 
     tpl = env.get_template('wsdl')
