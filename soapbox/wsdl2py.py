@@ -93,7 +93,7 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|removens }}):
     name='{{ port.name }}',
     targetNamespace='{{ definitions.targetNamespace }}',
     location='{{ port.address.location }}',
-    schema=Schema{{ schema_name(definitions.types.schema.targetNamespace) }},
+    schema=Schema_{{ schema_name(definitions.types.schema.targetNamespace) }},
     version=soap.SOAPVersion.SOAP11,
     methods=[{% for o in binding.operations %}{{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}],
 )
@@ -120,13 +120,13 @@ class {{ port.name }}ServiceStub(soap.Stub):
     \'\'\'
     \'\'\'
     SERVICE = {{ port.name }}_SERVICE
-    {% for operation in binding.operations %}
-        {%- set inputMessage = operation.get_InputMessage() %}
+{%- for operation in binding.operations %}
+{%- set inputMessage = operation.get_InputMessage() %}
     def {{ operation.name }}(self, {{ inputMessage.part.element|removens }}):
         \'\'\'
         \'\'\'
         return self.call('{{ operation.name}}', {{ inputMessage.part.element|removens }})
-    {% endfor %}
+{% endfor %}
 {%- endif %}
 {%- endfor %}{# ports #}
 {%- endfor %}{# services #}

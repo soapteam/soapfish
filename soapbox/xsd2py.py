@@ -22,27 +22,27 @@ TEMPLATE = '''\
 class {{ st.name|class }}({{ st.restriction.base|type }}):
     \'\'\'
     \'\'\'
-    {%- if st.restriction.enumerations %}
+{%- if st.restriction.enumerations %}
     enumeration = [{% for enum in st.restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
-    {% endif %}
-    {%- if st.restriction.pattern %}
+{% endif %}
+{%- if st.restriction.pattern %}
     pattern = r'{{ st.restriction.pattern.value }}'
-    {% endif %}
-    {%- if st.restriction.minInclusive %}
+{% endif %}
+{%- if st.restriction.minInclusive %}
     minInclusive = r'{{ st.restriction.minInclusive.value }}'
-    {%- elif st.restriction.minExclusive %}
+{%- elif st.restriction.minExclusive %}
     minExclusive = r'{{ st.restriction.minExclusive.value }}'
-    {% endif %}
-    {%- if st.restriction.maxInclusive %}
+{% endif %}
+{%- if st.restriction.maxInclusive %}
     maxInclusive = r'{{ st.restriction.maxInclusive.value }}'
-    {%- elif st.restriction.maxExclusive %}
+{%- elif st.restriction.maxExclusive %}
     maxExclusive = r'{{ st.restriction.maxExclusive.value }}'
-    {% endif %}
-    {%- if not st.restriction.enumerations and not st.restriction.pattern
-           and not st.restriction.minInclusive and not st.restriction.minExclusive
-           and not st.restriction.maxInclusive and not st.restriction.maxExclusive %}
+{% endif %}
+{%- if not st.restriction.enumerations and not st.restriction.pattern
+        and not st.restriction.minInclusive and not st.restriction.minExclusive
+        and not st.restriction.maxInclusive and not st.restriction.maxExclusive %}
     pass
-    {% endif %}
+{% endif %}
 {% endif %}
 
 {%- if st.list %}
@@ -89,21 +89,19 @@ class {{ group.name|class }}(xsd.Group):
 {#- ---------- ComplexTypes ---------- -#}
 
 {% for ct in schema.complexTypes %}
-{% set content = ct %}
-
+{%- set content = ct %}
 {%- if not ct.sequence and not ct.complexContent %}
 class {{ ct.name|class }}(xsd.ComplexType):
     \'\'\'
     \'\'\'
 {%- endif %}
-
 {%- if ct.complexContent %}
     {%- if ct.complexContent.restriction %}
 class {{ ct.name|class }}({{ ct.complexContent.restriction.base|type }}):
     \'\'\'
     \'\'\'
     INHERITANCE = xsd.Inheritance.RESTRICTION
-    {%- set content=ct.complexContent.restriction %}
+    {%- set content = ct.complexContent.restriction %}
     {%- else %}
 class {{ ct.name|class }}({{ ct.complexContent.extension.base|type }}):
     \'\'\'
@@ -293,10 +291,11 @@ class {{ element.name|class }}(xsd.ComplexType):
 {%- endif %}
 {%- endfor %}
 
-Schema{{ schema_name(schema.targetNamespace) }} = xsd.Schema(
-    imports=[{% for i in schema.imports %}Schema{{ schema_name(i.namespace) }}{% if not loop.last %}, {% endif %}{% endfor %}],
+Schema_{{ schema_name(schema.targetNamespace) }} = xsd.Schema(
+    imports=[{% for i in schema.imports %}Schema_{{ schema_name(i.namespace) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     targetNamespace='{{ schema.targetNamespace }}',
-    {% if location %}location = '{{ location }}',{% endif %}
+    {%- if location %}
+    location='{{ location }}',{% endif %}
     elementFormDefault='{{ schema.elementFormDefault }}',
     simpleTypes=[{% for st in schema.simpleTypes %}{{ st.name|class }}{% if not loop.last %}, {% endif %}{% endfor %}],
     attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|class }}{% if not loop.last %}, {% endif %}{% endfor %}],
