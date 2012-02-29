@@ -31,7 +31,7 @@ def open_document(path):
         return open(path, 'r').read()
 
 
-def removens(full_typename):
+def remove_namespace(full_typename):
     '''
     '''
     if not full_typename:

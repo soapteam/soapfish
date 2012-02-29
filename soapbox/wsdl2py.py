@@ -21,7 +21,7 @@ from .utils import (
     find_xsd_namespaces,
     get_get_type,
     open_document,
-    removens,
+    remove_namespace,
     urlcontext,
     use,
 )
@@ -49,7 +49,7 @@ def get_rendering_environment():
         loader=PackageLoader(*pkg),
     )
     env.filters['class'] = classyfiy
-    env.filters['removens'] = removens
+    env.filters['remove_namespace'] = remove_namespace
     env.filters['urlcontext'] = urlcontext
     env.filters['use'] = use
     env.globals['SOAPTransport'] = SOAP_HTTP_Transport

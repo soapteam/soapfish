@@ -57,11 +57,11 @@ class {{ group.name|class }}(xsd.Group):
     '''
     {%- for element in group.sequence.elements %}
     {%- if element.ref %}
-    {{ element.ref|removens }} = xsd.Element({{ element.ref|type }})
-    {%- if element.ref|removens in keywords %}
-    _{{ element.ref|removens }} = xsd.Element({{ element.type|type }}, tagname='{{ element.ref|removens }}')
+    {{ element.ref|remove_namespace }} = xsd.Element({{ element.ref|type }})
+    {%- if element.ref|remove_namespace in keywords %}
+    _{{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type }}, tagname='{{ element.ref|remove_namespace }}')
     {%- else %}
-    {{ element.ref|removens }} = xsd.Element({{ element.type|type }})
+    {{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type }})
     {%- endif %}
     {%- else %}
     {%- if element.name in keywords %}
@@ -113,13 +113,13 @@ class {{ ct.name|class }}(xsd.ComplexType):
 {%- endif %}
 {%- for attribute in content.attributes %}
     {%- if attribute.ref %}
-    {{ attribute.ref|removens }} = xsd.Attribute({{ attribute.ref|type }})
+    {{ attribute.ref|remove_namespace }} = xsd.Attribute({{ attribute.ref|type }})
     {%- else %}
     {{ attribute.name }} = xsd.Attribute({{ attribute.type|type }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
     {%- endif %}
 {%- endfor %}
 {%- for attrGroupRef in content.attributeGroups %}
-    {{ attrGroupRef.ref|removens }} = xsd.Ref({{ attrGroupRef.ref|type }})
+    {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type }})
 {%- endfor %}
 {%- for element in elements %}
     {%- if element.type %}
@@ -154,7 +154,7 @@ class {{ ct.name|class }}(xsd.ComplexType):
     {%- if element.simpleType.restriction.totalDigits %}totalDigits={{ element.simpleType.restriction.totalDigits.value }},{% endif %}
     {%- if element.simpleType.restriction.pattern %}pattern={{ element.simpleType.restriction.pattern.value }},{% endif %})
     {%- endif %}
-    {%- if element.ref %}{{ element.ref|removens }} = xsd.Ref({{ element.ref|type }}){% endif %}
+    {%- if element.ref %}{{ element.ref|remove_namespace }} = xsd.Ref({{ element.ref|type }}){% endif %}
 {%- endfor %}
 {%- if content.sequence %}
 
@@ -215,13 +215,13 @@ class {{ element.name|class }}(xsd.ComplexType):
 {%- endif %}
 {%- for attribute in content.attributes %}
     {%- if attribute.ref %}
-    {{ attribute.ref|removens }} = xsd.Attribute({{ attribute.ref|type }})
+    {{ attribute.ref|remove_namespace }} = xsd.Attribute({{ attribute.ref|type }})
     {%- else %}
     {{ attribute.name }} = xsd.Attribute({{ attribute.type|type }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
     {%- endif %}
 {%- endfor %}
 {%- for attrGroupRef in content.attributeGroups %}
-    {{ attrGroupRef.ref|removens }} = xsd.Ref({{ attrGroupRef.ref|type }})
+    {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type }})
 {%- endfor %}
 {%- for element in elements %}
     {%- if element.maxOccurs > 1 %}
@@ -255,7 +255,7 @@ class {{ element.name|class }}(xsd.ComplexType):
     {%- if element.simpleType.restriction.pattern %}pattern={{ element.simpleType.restriction.pattern.value }},{% endif %})
     {%- endif %}
     {%- if element.ref %}
-    {{ element.ref|removens }} = xsd.Ref({{ element.ref|type }})
+    {{ element.ref|remove_namespace }} = xsd.Ref({{ element.ref|type }})
     {%- endif %}
 {%- endfor %}
 {%- if content.sequence %}

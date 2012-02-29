@@ -24,7 +24,7 @@ from .utils import (
     find_xsd_namespaces,
     get_get_type,
     open_document,
-    removens,
+    remove_namespace,
     use,
 )
 
@@ -49,7 +49,7 @@ def get_rendering_environment():
         loader=PackageLoader(*pkg),
     )
     env.filters['class'] = classyfiy
-    env.filters['removens'] = removens
+    env.filters['remove_namespace'] = remove_namespace
     env.filters['use'] = use
     env.globals['keywords'] = keyword.kwlist
     env.globals['resolve_import'] = resolve_import
