@@ -14,7 +14,7 @@ from . import xsd
 
 
 ################################################################################
-# Functions
+# File Functions
 
 
 def open_document(path):
@@ -31,6 +31,10 @@ def open_document(path):
         return open(path, 'r').read()
 
 
+################################################################################
+# Template Filters
+
+
 def remove_namespace(full_typename):
     '''
     '''
@@ -39,13 +43,21 @@ def remove_namespace(full_typename):
     return full_typename.split(':')[-1]
 
 
-def classyfiy(value):
+def capitalize(value):
     '''
     '''
-    return value[0].upper() + value[1:]
+    return value.capitalize()
 
 
-def get_get_type(XSD_NAMESPACES):
+def uncapitalize(value):
+    '''
+    '''
+    if value == 'QName':
+        return value
+    return value[0].lower() + value[1:]
+
+
+def get_get_type(xsd_namespaces):
     '''
     '''
     def get_type(full_typename):
@@ -53,15 +65,14 @@ def get_get_type(XSD_NAMESPACES):
         '''
         if not full_typename:
             return None
-
         typename = full_typename.split(':')
         if len(typename) < 2:
             typename.insert(0, None)
         ns, typename = typename
-        if ns in XSD_NAMESPACES:
-            return 'xsd.%s' % classyfiy(typename)
+        if ns in xsd_namespaces:
+            return 'xsd.%s' % capitalize(typename)
         else:
-            return '\'%s\'' % classyfiy(typename)
+            return '\'%s\'' % capitalize(typename)
     return get_type
 
 
@@ -78,17 +89,6 @@ def use(usevalue):
         raise ValueError
 
 
-def find_xsd_namespaces(nsmap):
-    '''
-    '''
-    namespaces = []
-    for key, value in nsmap.iteritems():
-        if value == 'http://www.w3.org/2001/XMLSchema' \
-            or value == 'http://www.w3.org/2000/10/XMLSchema':
-            namespaces.append(key)
-    return namespaces
-
-
 def urlcontext(url):
     '''
     http://example.net/ws/endpoint --> ^ws/endpoint$
@@ -97,12 +97,22 @@ def urlcontext(url):
     return r'^%s$' % o.path.lstrip('/')
 
 
-def uncapitalize(value):
+################################################################################
+# Other Functions
+
+
+def find_xsd_namespaces(nsmap):
     '''
     '''
-    if value == 'QName':
-        return value
-    return value[0].lower() + value[1:]
+    xsd_namespaces = [
+        'http://www.w3.org/2000/10/XMLSchema',
+        'http://www.w3.org/2001/XMLSchema',
+    ]
+    namespaces = []
+    for key, value in nsmap.iteritems():
+        if value in xsd_namespaces:
+            namespaces.append(key)
+    return namespaces
 
 
 ################################################################################

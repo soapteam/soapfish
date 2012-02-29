@@ -20,7 +20,7 @@ from lxml import etree
 
 from .xsdspec import Schema
 from .utils import (
-    classyfiy,
+    capitalize,
     find_xsd_namespaces,
     get_get_type,
     open_document,
@@ -48,7 +48,7 @@ def get_rendering_environment():
         extensions=['jinja2.ext.loopcontrols'],
         loader=PackageLoader(*pkg),
     )
-    env.filters['class'] = classyfiy
+    env.filters['capitalize'] = capitalize
     env.filters['remove_namespace'] = remove_namespace
     env.filters['use'] = use
     env.globals['keywords'] = keyword.kwlist

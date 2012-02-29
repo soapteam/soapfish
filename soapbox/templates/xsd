@@ -8,7 +8,7 @@
 {#- Simple Types -#}
 {%- for st in schema.simpleTypes %}
 {%- if st.restriction %}
-class {{ st.name|class }}({{ st.restriction.base|type }}):
+class {{ st.name|capitalize }}({{ st.restriction.base|type }}):
     '''
     '''
 {%- if st.restriction.enumerations %}
@@ -35,7 +35,7 @@ class {{ st.name|class }}({{ st.restriction.base|type }}):
 
 {% endif %}
 {%- if st.list %}
-class {{ st.name|class }}(xsd.List):
+class {{ st.name|capitalize }}(xsd.List):
     '''
     '''
     pass
@@ -43,7 +43,7 @@ class {{ st.name|class }}(xsd.List):
 {%- endfor %}
 {#- Attribute Groups -#}
 {%- for attrGroup in schema.attributeGroups %}
-class {{ attrGroup.name|class }}(xsd.AttributeGroup):
+class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
     '''
     '''
     {%- for attribute in attrGroup.attributes %}
@@ -52,7 +52,7 @@ class {{ attrGroup.name|class }}(xsd.AttributeGroup):
 {%- endfor %}
 {#- Groups -#}
 {%- for group in schema.groups %}
-class {{ group.name|class }}(xsd.Group):
+class {{ group.name|capitalize }}(xsd.Group):
     '''
     '''
     {%- for element in group.sequence.elements %}
@@ -76,26 +76,26 @@ class {{ group.name|class }}(xsd.Group):
 {% for ct in schema.complexTypes %}
 {%- set content = ct %}
 {%- if not ct.sequence and not ct.complexContent %}
-class {{ ct.name|class }}(xsd.ComplexType):
+class {{ ct.name|capitalize }}(xsd.ComplexType):
     '''
     '''
 {%- endif %}
 {%- if ct.complexContent %}
     {%- if ct.complexContent.restriction %}
-class {{ ct.name|class }}({{ ct.complexContent.restriction.base|type }}):
+class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type }}):
     '''
     '''
     INHERITANCE = xsd.Inheritance.RESTRICTION
     {%- set content = ct.complexContent.restriction %}
     {%- else %}
-class {{ ct.name|class }}({{ ct.complexContent.extension.base|type }}):
+class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type }}):
     '''
     '''
     INHERITANCE = xsd.Inheritance.EXTENSION
     {%- set content = ct.complexContent.extension %}
     {%- endif %}
 {%- elif ct.sequence %}
-class {{ ct.name|class }}(xsd.ComplexType):
+class {{ ct.name|capitalize }}(xsd.ComplexType):
     '''
     '''
     INHERITANCE = None
@@ -178,26 +178,26 @@ class {{ ct.name|class }}(xsd.ComplexType):
 {%- set content = element.complexType %}
 
 {%- if not ct.sequence and not ct.complexContent %}
-class {{ element.name|class }}(xsd.ComplexType):
+class {{ element.name|capitalize }}(xsd.ComplexType):
     '''
     '''
 {%- endif %}
 {%- if ct.complexContent %}
     {%- if ct.complexContent.restriction %}
-class {{ ct.name|class }}({{ ct.complexContent.restriction.base|type }}):
+class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type }}):
     '''
     '''
     INHERITANCE = xsd.Inheritance.RESTRICTION
     {%- set content = ct.complexContent.restriction %}
     {%- else %}
-class {{ ct.name|class }}({{ ct.complexContent.extension.base|type }}):
+class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type }}):
     '''
     '''
     INHERITANCE = xsd.Inheritance.EXTENSION
     {%- set content = ct.complexContent.extension %}
     {%- endif %}
 {%- elif ct.sequence %}
-class {{ element.name|class }}(xsd.ComplexType):
+class {{ element.name|capitalize }}(xsd.ComplexType):
     '''
     '''
     INHERITANCE = None
@@ -279,11 +279,11 @@ Schema_{{ schema_name(schema.targetNamespace) }} = xsd.Schema(
     {%- if location %}
     location='{{ location }}',{% endif %}
     elementFormDefault='{{ schema.elementFormDefault }}',
-    simpleTypes=[{% for st in schema.simpleTypes %}{{ st.name|class }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|class }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    groups=[{% for g in schema.groups %}{{ g.name|class }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    complexTypes=[{% for ct in schema.complexTypes %}{{ ct.name|class }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e.type|type }}{% else %}{{ e.name|class }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
+    simpleTypes=[{% for st in schema.simpleTypes %}{{ st.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    groups=[{% for g in schema.groups %}{{ g.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    complexTypes=[{% for ct in schema.complexTypes %}{{ ct.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e.type|type }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
 )
 {# [blank line] #}
 {# [blank line] #}

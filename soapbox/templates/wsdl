@@ -56,13 +56,13 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
     input='{{ inputMessage.part.element|remove_namespace }}',
     inputPartName='{{ inputMessage.part.name }}',
     {%- else %}
-    input={{ inputMessage.part.type|remove_namespace|class }},
+    input={{ inputMessage.part.type|remove_namespace|capitalize }},
     {%- endif %}
     {%- if inputMessage.part.element %}
     output='{{ outputMessage.part.element|remove_namespace }}',
     outputPartName='{{ outputMessage.part.name }}',
     {%- else %}
-    input={{ outputMessage.part.type|remove_namespace|class }},
+    input={{ outputMessage.part.type|remove_namespace|capitalize }},
     {%- endif %}
     operationName='{{ operation.name }}',
     {%- if operation.operation.style %}
