@@ -1,0 +1,9 @@
+include AUTHORS
+include CHANGES
+include LICENSE
+include README
+include TODO
+include *.py
+include requirements*.txt
+recursive-include doc *
+recursive-include soapbox/templates *

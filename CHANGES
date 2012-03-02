@@ -1,0 +1,25 @@
+Changes
+=======
+
+0.3.0
+-----
+
+- **Features**:
+  - Add option to disable schema validation on parsing:
+    - Set ``xsd.VALIDATE_ON_PARSE`` to ``False``.
+  - Added some initial logging support:
+    - Request logging available at when level set to DEBUG.
+- **Bug Fixes**:
+  - Allow unicode as a valid type for strings.
+  - Check for Python keywords and prefix with underscore.
+- **Miscellaneous**:
+  - Python code templates now loaded from external files.
+  - Generated code is now much cleaner.
+  - Generated code is now timestamped.
+  - Code tidying as reported by pyflakes and pep8.
+  - Fixed a number of typographical errors.
+  - Various name improvements to functions.
+  - Updated .hgignore
+- **Known Issues**:
+  - Generated schema classes can be circular referencing.
+
