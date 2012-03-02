@@ -155,7 +155,7 @@ class Stub(object):
 
         method = self.SERVICE.get_method(operationName)
         headers = SOAP.build_header(method.soapAction)
-        envelope = SOAP.Envelope.reponse(tagname, parameter)
+        envelope = SOAP.Envelope.response(tagname, parameter)
 
         logger.info('Request \'%s\'...' % self.location)
         logger.debug('Request Headers:\n\n%s\n' % headers)
@@ -223,7 +223,7 @@ def get_django_dispatch(service):
             message = envelope.Body.content()
             soap_action = SOAP.determin_soap_action(request)
             tagname, return_object = call_the_method(request, message, soap_action)
-            soap_message = SOAP.Envelope.reponse(tagname, return_object)
+            soap_message = SOAP.Envelope.response(tagname, return_object)
             return HttpResponse(soap_message, content_type=SOAP.CONTENT_TYPE)
         except (ValueError, etree.XMLSyntaxError) as e:
             response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e))

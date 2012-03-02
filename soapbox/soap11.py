@@ -106,7 +106,7 @@ class Envelope(xsd.ComplexType):
     Body = xsd.Element(Body)
 
     @classmethod
-    def reponse(cls, tagname, return_object):
+    def response(cls, tagname, return_object):
         '''
         '''
         envelope = Envelope()
