@@ -7,3 +7,5 @@ include *.py
 include requirements*.txt
 recursive-include doc *
 recursive-include soapbox/templates *
+exclude build
+exclude dist
