@@ -12,6 +12,7 @@
 import argparse
 import hashlib
 import keyword
+import logging
 import textwrap
 
 from jinja2 import Environment, PackageLoader
@@ -33,6 +34,14 @@ from .utils import (
 
 
 TEMPLATE_PACKAGE = 'soapbox.templates'
+
+
+################################################################################
+# Globals
+
+
+logger = logging.getLogger('soapbox')
+logger.addHandler(logging.NullHandler())
 
 
 ################################################################################
@@ -59,6 +68,7 @@ def get_rendering_environment():
 def resolve_import(xsdimport, known_namespaces):
     '''
     '''
+    logger.info('Generating code for XSD import \'%s\'...' % xsdimport.schemaLocation)
     xml = open_document(xsdimport.schemaLocation)
     xmlelement = etree.fromstring(xml)
     return generate_code_from_xsd(xmlelement, known_namespaces, xsdimport.schemaLocation)
@@ -123,6 +133,7 @@ def main():
     '''
     opt = parse_arguments()
 
+    logger.info('Generating code for XSD document \'%s\'...' % opt.xsd)
     xml = open_document(opt.xsd)
     xmlelement = etree.fromstring(xml)
     print textwrap.dedent('''\

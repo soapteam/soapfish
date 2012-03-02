@@ -9,10 +9,19 @@
 
 
 import httplib2
+import logging
 
 from urlparse import urlparse
 
 from . import xsd
+
+
+################################################################################
+# Globals
+
+
+logger = logging.getLogger('soapbox')
+logger.addHandler(logging.NullHandler())
 
 
 ################################################################################
@@ -22,6 +31,7 @@ from . import xsd
 def open_document(path):
     '''
     '''
+    logger.info('Opening document \'%s\'...' % path)
     # Handle documents available on the Internet:
     if path.startswith('http:'):
         http = httplib2.Http()

@@ -12,6 +12,7 @@
 import argparse
 import imp
 import inspect
+import logging
 import textwrap
 
 from lxml import etree
@@ -32,6 +33,14 @@ STRING_TYPES = [xsd.QName, xsd.AnyURI, xsd.Base64Binary, xsd.QName,
         xsd.AnyType, xsd.Duration]
 
 ALL_TYPES = NUMERIC_TYPES + STRING_TYPES
+
+
+################################################################################
+# Globals
+
+
+logger = logging.getLogger('soapbox')
+logger.addHandler(logging.NullHandler())
 
 
 ################################################################################
@@ -241,6 +250,7 @@ def main():
     '''
     opt = parse_arguments()
 
+    logger.info('Generating XSD for module \'%s\'...' % opt.module)
     module = imp.load_source('module.name', opt.module)
     schema = getattr(module, 'Schema')
     tree = generate_xsd(schema)

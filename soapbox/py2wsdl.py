@@ -11,6 +11,7 @@
 
 import argparse
 import imp
+import logging
 import textwrap
 
 from lxml import etree
@@ -20,6 +21,14 @@ from .py2xsd import generate_xsdspec
 from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
 from .wsdl import get_wsdl_classes
+
+
+################################################################################
+# Globals
+
+
+logger = logging.getLogger('soapbox')
+logger.addHandler(logging.NullHandler())
 
 
 ################################################################################
@@ -161,6 +170,7 @@ def main():
     '''
     opt = parse_arguments()
 
+    logger.info('Generating WSDL for module \'%s\'...' % opt.module)
     module = imp.load_source('', opt.module)
     service = getattr(module, 'SERVICE')
     tree = generate_wsdl(service)

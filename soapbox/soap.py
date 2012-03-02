@@ -10,6 +10,7 @@ SOAP protocol implementation, dispatchers and client stub.
 
 
 import httplib2
+import logging
 
 from lxml import etree
 
@@ -22,6 +23,14 @@ from .utils import uncapitalize
 
 
 SOAP_HTTP_Transport = 'http://schemas.xmlsoap.org/soap/http'
+
+
+################################################################################
+# Globals
+
+
+logger = logging.getLogger('soapbox')
+logger.addHandler(logging.NullHandler())
 
 
 ################################################################################
@@ -108,7 +117,9 @@ class Stub(object):
 
         if envelope.Body.Fault:
             code, message = SOAP.parse_fault_message(envelope.Body.Fault)
-            raise SOAPError('Fault Code:%s, Fault Message: %s' % (code, message))
+            error = 'Fault Code: %s, Fault Message: %s' % (code, message)
+            logger.error(error)
+            raise SOAPError(error)
 
         message = envelope.Body.content()
 
@@ -146,8 +157,13 @@ class Stub(object):
         headers = SOAP.build_header(method.soapAction)
         envelope = SOAP.Envelope.reponse(tagname, parameter)
 
+        logger.info('Request \'%s\'...' % self.location)
+        logger.debug('Request Headers:\n\n%s\n' % headers)
+        logger.debug('Request Envelope:\n\n%s\n' % envelope)
         response, content = h.request(self.location, 'POST',
              body=envelope, headers=headers)
+        logger.debug('Response Headers:\n\n%s\n' % response)
+        logger.debug('Response Envelope:\n\n%s\n' % content)
 
         return self._handle_response(method, response, content)
 

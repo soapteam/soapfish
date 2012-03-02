@@ -10,6 +10,7 @@
 
 
 import argparse
+import logging
 import textwrap
 
 from datetime import datetime
@@ -35,6 +36,14 @@ from .xsd2py import schema_to_py, schema_name
 
 
 TEMPLATE_PACKAGE = 'soapbox.templates'
+
+
+################################################################################
+# Globals
+
+
+logger = logging.getLogger('soapbox')
+logger.addHandler(logging.NullHandler())
 
 
 ################################################################################
@@ -110,10 +119,12 @@ def main():
     opt = parse_arguments()
 
     if opt.client:
+        logger.info('Generating client code for WSDL document \'%s\'...' % opt.wsdl)
         xml = open_document(opt.wsdl)
         print generate_code_from_wsdl(xml, 'client')
 
     elif opt.server:
+        logger.info('Generating server code for WSDL document \'%s\'...' % opt.wsdl)
         xml = open_document(opt.wsdl)
         print generate_code_from_wsdl(xml, 'server')
 
