@@ -2,11 +2,15 @@
 ################################################################################
 
 '''
+Soapbox Configuration
 '''
 
 ################################################################################
-# Imports
+# HTTP
 
+
+# Maximum permitted time for a request to complete (seconds):
+REQUEST_TIMEOUT = 30
 
 # Location of the CA certificates to be used by httplib2:
 # Note: This is the system-wide default location on Ubuntu.

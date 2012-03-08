@@ -39,6 +39,7 @@ def open_document(path):
         http = httplib2.Http(
             ca_certs=settings.CA_CERTIFICATE_FILE,
             disable_ssl_certificate_validation=disable_validation,
+            timeout=settings.REQUEST_TIMEOUT,
         )
         _, content = http.request(path)
         return content

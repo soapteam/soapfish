@@ -154,6 +154,7 @@ class Stub(object):
         http = httplib2.Http(
             ca_certs=settings.CA_CERTIFICATE_FILE,
             disable_ssl_certificate_validation=disable_validation,
+            timeout=settings.REQUEST_TIMEOUT,
         )
         if self.username:
             http.add_credentials(self.username, self.password)
