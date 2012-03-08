@@ -10,10 +10,11 @@
 
 import httplib2
 import logging
+import os
 
 from urlparse import urlparse
 
-from . import xsd
+from . import settings, xsd
 
 
 ################################################################################
@@ -34,7 +35,11 @@ def open_document(path):
     logger.info('Opening document \'%s\'...' % path)
     # Handle documents available on the Internet:
     if path.startswith('http:'):
-        http = httplib2.Http()
+        disable_validation = not os.path.exists(settings.CA_CERTIFICATE_FILE)
+        http = httplib2.Http(
+            ca_certs=settings.CA_CERTIFICATE_FILE,
+            disable_ssl_certificate_validation=disable_validation,
+        )
         _, content = http.request(path)
         return content
 

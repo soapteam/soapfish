@@ -51,15 +51,7 @@ from copy import copy
 from datetime import datetime
 from lxml import etree
 
-from . import iso8601
-
-
-################################################################################
-# Flags
-
-
-# For deciding whether to validate against schemas when parsing:
-VALIDATE_ON_PARSE = True
+from . import iso8601, settings
 
 
 ################################################################################
@@ -1023,7 +1015,7 @@ class ComplexType(Type):
     def parsexml(cls, xml, schema=None):
         '''
         '''
-        if schema and VALIDATE_ON_PARSE:
+        if schema and settings.VALIDATE_ON_PARSE:
             xmlelement = cls.__parse_with_validation(xml, schema)
         else:
             xmlelement = etree.fromstring(xml)
@@ -1037,7 +1029,7 @@ class ComplexType(Type):
         xmlelement = etree.Element(tagname)
         self.render(xmlelement, self, namespace, elementFormDefault)
         xml = etree.tostring(xmlelement, pretty_print=True)
-        if schema and VALIDATE_ON_PARSE:
+        if schema and settings.VALIDATE_ON_PARSE:
             self.__parse_with_validation(xml, schema)
         return xml
 

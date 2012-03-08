@@ -11,10 +11,11 @@ SOAP protocol implementation, dispatchers and client stub.
 
 import httplib2
 import logging
+import os
 
 from lxml import etree
 
-from . import soap11, soap12
+from . import settings, soap11, soap12
 from .utils import uncapitalize
 
 
@@ -149,9 +150,13 @@ class Stub(object):
                       namespace=parameter.SCHEMA.targetNamespace,
                       elementFormDefault=parameter.SCHEMA.elementFormDefault)
 
-        h = httplib2.Http()
+        disable_validation = not os.path.exists(settings.CA_CERTIFICATE_FILE)
+        http = httplib2.Http(
+            ca_certs=settings.CA_CERTIFICATE_FILE,
+            disable_ssl_certificate_validation=disable_validation,
+        )
         if self.username:
-            h.add_credentials(self.username, self.password)
+            http.add_credentials(self.username, self.password)
 
         method = self.SERVICE.get_method(operationName)
         headers = SOAP.build_header(method.soapAction)
@@ -160,7 +165,7 @@ class Stub(object):
         logger.info('Request \'%s\'...' % self.location)
         logger.debug('Request Headers:\n\n%s\n' % headers)
         logger.debug('Request Envelope:\n\n%s\n' % envelope)
-        response, content = h.request(self.location, 'POST',
+        response, content = http.request(self.location, 'POST',
              body=envelope, headers=headers)
         logger.debug('Response Headers:\n\n%s\n' % response)
         logger.debug('Response Envelope:\n\n%s\n' % content)
