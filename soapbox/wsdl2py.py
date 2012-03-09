@@ -24,7 +24,9 @@ from .utils import (
     get_get_type,
     open_document,
     remove_namespace,
-    urlcontext,
+    url_component,
+    url_regex,
+    url_template,
     use,
 )
 from .wsdl import get_wsdl_classes, get_by_name
@@ -60,7 +62,9 @@ def get_rendering_environment():
     )
     env.filters['capitalize'] = capitalize
     env.filters['remove_namespace'] = remove_namespace
-    env.filters['urlcontext'] = urlcontext
+    env.filters['url_component'] = url_component
+    env.filters['url_regex'] = url_regex
+    env.filters['url_template'] = url_template
     env.filters['use'] = use
     env.globals['SOAPTransport'] = SOAP_HTTP_Transport
     env.globals['get_by_name'] = get_by_name

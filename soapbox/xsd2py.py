@@ -25,6 +25,7 @@ from .utils import (
     get_get_type,
     open_document,
     remove_namespace,
+    url_template,
     use,
 )
 
@@ -58,6 +59,7 @@ def get_rendering_environment():
     )
     env.filters['capitalize'] = capitalize
     env.filters['remove_namespace'] = remove_namespace
+    env.filters['url_template'] = url_template
     env.filters['use'] = use
     env.globals['keywords'] = keyword.kwlist
     env.globals['resolve_import'] = resolve_import

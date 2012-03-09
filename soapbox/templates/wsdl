@@ -80,7 +80,7 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {{ port.name }}_SERVICE = soap.Service(
     name='{{ port.name }}',
     targetNamespace='{{ definitions.targetNamespace }}',
-    location='{{ port.address.location }}',
+    location='{{ port.address.location|url_template }}',
     schema=Schema_{{ schema_name(definitions.types.schema.targetNamespace) }},
     version=soap.SOAPVersion.SOAP11,
     methods=[{% for o in binding.operations %}{{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}],
@@ -98,7 +98,7 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {# [blank line] #}
 # Put these lines in the urls.py file of your Django project/application:
 #urlpatterns += patterns('',
-#    (r'{{ service.ports.0.address.location|urlcontext }}', '<module>.dispatch'),
+#    (r'{{ service.ports.0.address.location|url_regex }}', '<module>.dispatch'),
 #)
 {%- else %}
 ################################################################################
@@ -109,6 +109,8 @@ class {{ port.name }}ServiceStub(soap.Stub):
     '''
     '''
     SERVICE = {{ port.name }}_SERVICE
+    SCHEME = '{{ port.address.location|url_component('scheme') }}'
+    HOST = '{{ port.address.location|url_component('netloc') }}'
 {% for operation in binding.operations %}
 {%- set inputMessage = operation.get_InputMessage() %}
     def {{ operation.name }}(self, {{ inputMessage.part.element|remove_namespace }}):

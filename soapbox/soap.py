@@ -13,6 +13,8 @@ import httplib2
 import logging
 import os
 
+from urlparse import urlparse
+
 from lxml import etree
 
 from . import settings, soap11, soap12
@@ -101,14 +103,28 @@ class Stub(object):
     Client stub. Handles only document style calls.
     '''
     SERVICE = None
+    SCHEME = 'http'
+    HOST = 'www.example.net'
 
-    def __init__(self, username=None, password=None, service=None, location=None):
+    def __init__(self, username=None, password=None, service=None, location=None, base_url=None):
         '''
         '''
         self.username = username
         self.password = password
         self.service = service if service else self.SERVICE
-        self.location = location if location else self.service.location
+        if location:
+            self.location = location
+        elif base_url:
+            p = urlparse(base_url)
+            self.location = self.service.location % {
+                'scheme': p.scheme,
+                'host': p.netloc,
+            }
+        else:
+            self.location = self.service.location % {
+                'scheme': self.SCHEME,
+                'host': self.HOST,
+            }
 
     def _handle_response(self, method, response, content):
         '''

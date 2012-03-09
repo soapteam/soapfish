@@ -12,7 +12,7 @@ import httplib2
 import logging
 import os
 
-from urlparse import urlparse
+from urlparse import urlparse, urlunparse
 
 from . import settings, xsd
 
@@ -107,12 +107,31 @@ def use(usevalue):
         raise ValueError
 
 
-def urlcontext(url):
+def url_regex(url):
     '''
     http://example.net/ws/endpoint --> ^ws/endpoint$
     '''
     o = urlparse(url)
     return r'^%s$' % o.path.lstrip('/')
+
+
+def url_component(url, item):
+    '''
+    '''
+    parts = urlparse(url)
+    try:
+        return getattr(parts, item)
+    except AttributeError:
+        raise ValueError('Unknown URL component: %s' % item)
+
+
+def url_template(url):
+    '''
+    http://example.net/ws/endpoint --> %s/ws/endpoint
+    '''
+    o = list(urlparse(url))
+    o[0:2] = ['%(scheme)s', '%(host)s']
+    return urlunparse(o)
 
 
 ################################################################################

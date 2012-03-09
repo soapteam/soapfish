@@ -277,7 +277,7 @@ Schema_{{ schema_name(schema.targetNamespace) }} = xsd.Schema(
     imports=[{% for i in schema.imports %}Schema_{{ schema_name(i.namespace) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     targetNamespace='{{ schema.targetNamespace }}',
     {%- if location %}
-    location='{{ location }}',{% endif %}
+    location='{{ location|url_template }}',{% endif %}
     elementFormDefault='{{ schema.elementFormDefault }}',
     simpleTypes=[{% for st in schema.simpleTypes %}{{ st.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
     attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
