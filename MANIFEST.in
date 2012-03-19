@@ -5,7 +5,9 @@ include README
 include TODO
 include *.py
 include requirements*.txt
+prune requirements-jenkins.txt
 recursive-include doc *
+prune doc/_build
 recursive-include soapbox/templates *
 exclude build
 exclude dist

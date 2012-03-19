@@ -33,7 +33,7 @@ setup(
     long_description=open('README').read() + open('CHANGES').read() + open('TODO').read(),
     download_url='',
     license='New BSD License',
-    packages=find_packages(exclude=['examples', 'tests']),
+    packages=find_packages(exclude=("examples", "tests",)),
     include_package_data=True,
     install_requires=requirements.install_requires,
     setup_requires=requirements.setup_requires,
