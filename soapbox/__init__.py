@@ -9,9 +9,9 @@ __author__ = 'Damian Powązka'
 __author_email__ = 'dpowazka@gmail.com'
 __maintainer__ = 'Flight Data Services Ltd'
 __maintainer_email__ = 'developers@flightdataservices.com'
-__url__= 'http://code.google.com/p/soapbox/'
+__url__ = 'http://code.google.com/p/soapbox/'
 __description__ ='A SOAP library for Python.'
-__download_url__= ''
+__download_url__ = ''
 __classifiers__ = [
     'Development Status :: 4 - Beta',
     'Environment :: Console',
@@ -25,9 +25,9 @@ __classifiers__ = [
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Software Development :: Libraries :: Python Modules',
     ]
-__platforms__= ['OS Independent']
+__platforms__ = ['OS Independent']
 __license__ = 'Open Software License (OSL-3.0)'
-__keywords__= ['SOAP', 'WSDL', 'web service']
+__keywords__ = ['SOAP', 'WSDL', 'web service']
 
 ################################################################################
 # vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

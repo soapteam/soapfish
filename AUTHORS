@@ -3,7 +3,7 @@ Flight Data Services, Ltd <developers@flightdataservices.com>.
 
 Other contributors, listed alphabetically, are:
 
-* Martin Wimpress -- packaging imporvements
+* Martin Wimpress -- packaging improvements.
 * Nick Pope -- support for disabling XML schema validation, SSL CA certificates 
                paths, unicode strings, logging support and PEP8 improvements.
 

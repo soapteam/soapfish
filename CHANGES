@@ -6,7 +6,9 @@ Changes
 
 - **Features**
   - Initial support for variable URL scheme and host.
-- **Miscellaneous**:
+- **Bug Fixes**:
+  - Test suite executes.
+- **Miscellaneous**:  
   - License changed from BSD New to OSL-3.0.
   
 0.3.1
