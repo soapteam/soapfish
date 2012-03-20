@@ -4,7 +4,7 @@
 # See the file "LICENSE" for the full license governing this code.
 
 __packagename__ = 'Soapbox'
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 __author__ = 'Damian Powązka'
 __author_email__ = 'dpowazka@gmail.com'
 __maintainer__ = 'Flight Data Services Ltd'
