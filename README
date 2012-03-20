@@ -12,7 +12,7 @@ WSDL documents and providing a dispatcher for the Django framework.
 
 Package requires **pip** for installation.
 
-| pip install soapbox
+    pip install soapbox
 
 Project sponsored by Flight Data Services Ltd: http://www.flightdataservices.com/
 
