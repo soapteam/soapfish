@@ -18,7 +18,7 @@ __classifiers__ = [
     'Environment :: Web Environment',
     'Framework :: Django',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: Open Software License (OSL-3.0)',
+    'License :: OSI Approved',
     'Operating System :: OS Independent',
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python',
