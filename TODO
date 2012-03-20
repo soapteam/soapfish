@@ -1,6 +1,7 @@
 TODO
 ====
 
-- Fix circular dependency of generated schema classes.
+* Fix circular dependency of generated schema classes.
 
 See the **TODO** markers in ``soapbox/*.py`` for a complete list.
+
