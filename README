@@ -3,8 +3,8 @@
 Introduction
 ============
 
-Soapbox is a SOAP library for Python making it easy to quickly set up or use a
-web service based on a WSDL document.
+Soapbox is a SOAP library for Python capable of generating Python modules from
+WSDL documents and providing a dispatcher for the Django framework.
 
 - Generate Python modules based on WSDL and XSD document.
 - Execute SOAP requests from generated client modules.

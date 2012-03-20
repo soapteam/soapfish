@@ -1,2 +1,10 @@
-Damian Powązka
-Nick Pope
+Soapbox was written by Damian Powązka <dpowazka@gmail.com> and is maintained by 
+Flight Data Services, Ltd <developers@flightdataservices.com>.
+
+Other contributors, listed alphabetically, are:
+
+* Martin Wimpress -- packaging imporvements
+* Nick Pope -- support for disabling XML schema validation, SSL CA certificates 
+               paths, unicode strings, logging support and PEP8 improvements.
+
+Many thanks for all contributions!

@@ -1,6 +1,20 @@
 Changes
 =======
 
+0.3.2
+-----
+
+- **Features**
+  - Initial support for variable URL scheme and host.
+- **Miscellaneous**:
+  - License changed from BSD New to OSL-3.0.
+  
+0.3.1
+-----
+
+- **Features**:
+  - SSL certificate verification
+
 0.3.0
 -----
 
@@ -22,4 +36,3 @@ Changes
   - Updated .hgignore
 - **Known Issues**:
   - Generated schema classes can be circular referencing.
-

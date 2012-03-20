@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
-
-'''
-Soapbox is a SOAP library for Python capable of generating Python modules from
-WSDL documents and providing a dispatcher for the Django framework.
-'''
-
+# Copyright (c) Damian Powązka and Flight Data Services, Ltd.
+# See the file "LICENSE" for the full license governing this code.
 
 try:
     from setuptools import setup, find_packages
@@ -15,26 +10,28 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-
-import soapbox
+import soapbox as pkg
 from requirements import RequirementsParser
-
-
 requirements = RequirementsParser()
 
-
 setup(
-    name='soapbox',
-    version=soapbox.__version__,
-    author=soapbox.__author__,
-    author_email=soapbox.__email__,
-    url='http://code.google.com/p/soapbox/',
-    description='A SOAP library for Python',
+    name=pkg.__packagename__,
+    version=pkg.__version__,
+    author=pkg.__author__,
+    author_email=pkg.__author_email__,
+    maintainer=pkg.__maintainer__,
+    maintainer_email=pkg.__maintainer_email__,
+    url=pkg.__url__,
+    description=pkg.__description__,
     long_description=open('README').read() + open('CHANGES').read() + open('TODO').read(),
-    download_url='',
-    license='New BSD License',
+    download_url=pkg.__download_url__,
+    classifiers=pkg.__classifiers__,
+    platforms=pkg.__platforms__,
+    license=pkg.__license__,
+    keywords=pkg.__keywords__,
     packages=find_packages(exclude=("examples", "tests",)),
     include_package_data=True,
+    zip_safe=False,
     install_requires=requirements.install_requires,
     setup_requires=requirements.setup_requires,
     tests_require=requirements.tests_require,
@@ -49,23 +46,7 @@ setup(
             'xsd2py=soapbox.xsd2py:main',
         ],
     },
-    platforms=['OS Independent'],
-    keywords=['SOAP', 'WSDL', 'web service'],
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Environment :: Web Environment',
-        'Framework :: Django',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python',
-        'Topic :: Internet :: WWW/HTTP',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
 )
-
 
 ################################################################################
 # vim:et:ft=python:nowrap:sts=4:sw=4:ts=4
