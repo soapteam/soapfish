@@ -1,18 +1,23 @@
-.. contents:: **Table of Contents**
-
 Introduction
 ============
 
 Soapbox is a SOAP library for Python capable of generating Python modules from
 WSDL documents and providing a dispatcher for the Django framework.
 
-* Generate Python modules based on WSDL and XSD document.
+* Generate Python modules based on WSDL and XSD documents.
 * Execute SOAP requests from generated client modules.
 * Provide a dispatcher for Django and stub server modules.
 
-Package requires **pip** for installation.
+Project sponsored by `Flight Data Services`_.
+
+Installation
+------------
+
+Package requires ``pip`` for installation.
+
+.. code-block:: bash
 
     pip install soapbox
 
-Project sponsored by Flight Data Services Ltd: http://www.flightdataservices.com/
+.. _Flight Data Services: http://www.flightdataservices.com/
 

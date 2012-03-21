@@ -5,7 +5,7 @@
 
 __packagename__ = 'Soapbox'
 __version__ = '0.3.3'
-__author__ = 'Damian Powązka'
+__author__ = u'Damian Powązka'
 __author_email__ = 'dpowazka@gmail.com'
 __maintainer__ = 'Flight Data Services Ltd'
 __maintainer_email__ = 'developers@flightdataservices.com'
