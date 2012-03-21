@@ -7,7 +7,7 @@ include *.py
 include requirements*.txt
 exclude requirements-jenkins.txt
 recursive-include doc *
-prune doc/_build
+prune doc/build
 exclude build
 exclude dist
 exclude jenkins

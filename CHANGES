@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.3.3
+-----
+
+* Added documentation
+
 0.3.2
 -----
 
@@ -29,5 +34,4 @@ Changes
 * Fixed a number of typographical errors.
 * Various name improvements to functions.
 * Updated .hgignore
-* **Generated schema classes can be circular referencing.** 
     
