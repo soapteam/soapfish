@@ -14,8 +14,7 @@ Installation
 ------------
 
 Package requires ``pip`` for installation.
-
-.. code-block:: bash
+::
 
     pip install soapbox
 
