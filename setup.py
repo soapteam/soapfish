@@ -23,7 +23,8 @@ setup(
     maintainer_email=pkg.__maintainer_email__,
     url=pkg.__url__,
     description=pkg.__description__,
-    long_description=open('README').read() + open('CHANGES').read() + open('TODO').read(),
+    long_description=open('README').read() + open('CHANGES').read() + 
+    open('TODO').read() + open('AUTHORS').read(),
     download_url=pkg.__download_url__,
     classifiers=pkg.__classifiers__,
     platforms=pkg.__platforms__,
