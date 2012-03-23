@@ -8,7 +8,8 @@ WSDL documents and providing a dispatcher for the Django framework.
 * Execute SOAP requests from generated client modules.
 * Provide a dispatcher for Django and stub server modules.
 
-Project sponsored by `Flight Data Services`_.
+Project sponsored by `Flight Data Services`_ and released under the Open 
+Software License (OSL-3.0).
 
 Installation
 ------------

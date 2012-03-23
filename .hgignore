@@ -30,7 +30,8 @@ dist
 build
 *.egg
 *.egg-info
-*.py[co]
+*.py[cdo]
+*.so
 
 # Jenkins
 .coverage

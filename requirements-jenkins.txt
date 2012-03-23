@@ -2,4 +2,3 @@ clonedigger
 nosexcover
 pep8
 pyflakes
-pylint

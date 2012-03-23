@@ -24,7 +24,6 @@ fi
 # Init the variables
 VIRTVER=""
 PACKAGE=""
-PYLINT=0    # 0 = Run Pyflakes. 1 = Run Pyflakes & Pyint
 
 # Parse the options
 OPTSTRING=hlp:v:
@@ -77,8 +76,8 @@ if [ ! -f ~/.pydistutils.cfg ]; then
     echo "index_url = http://pypi.flightdataservices.com/simple/"   >> ~/.pydistutils.cfg
 fi    
 
-# Update pip to the latest version
-pip install --upgrade pip
+# Update pip and distribute to the latest versions
+pip install --upgrade pip distribute
 
 # Install requirements
 #  - Shame this doesn't appear to be reliable
@@ -97,29 +96,31 @@ fi
 
 # Install runtime requirements.
 if [ -f setup.py ]; then
+    # Remove 'build' and 'dist' directories to ensure clean builds are made.    
+    rm -rf ${WORKSPACE}/dist
+    rm -rf ${WORKSPACE}/build    
     python setup.py develop
 fi
 
-# Remove existing output files
+# Build Sphinx documentation
+if [ -f ${WORKSPACE}/doc/Makefile ]; then
+    rm -rf ${WORKSPACE}/doc/build/*
+    python setup.py build_sphinx
+fi
+
+# Remove pre-existing metric output files
 rm coverage.xml nosetests.xml pylint.log pep8.log cpd.xml sloccount.log 2>/dev/null
 
-# Run the tests and coverage
-if [ -f setup.py ]; then
+# Run the tests suite and generate coverage reports
+if [ -f setup.py ] && [ -d tests ]; then
     python setup.py jenkins
 fi
 
 # Pyflakes code quality metric, in Pylint format
 pyflakes ${PACKAGE} | awk -F\: '{printf "%s:%s: [E]%s\n", $1, $2, $3}' > pylint.log
 
-# Pylint code quality tests
-if [ ${PYLINT} -eq 1 ]; then
-    pylint --output-format parseable --reports=y \
-    --disable W0142,W0403,R0201,W0212,W0613,W0232,R0903,C0301,R0913,C0103,F0401,W0402,W0614,C0111,W0611 \
-    ${PACKAGE} | tee --append pylint.log
-fi
-
 # PEP8 code quality metric
-pep8 ${PACKAGE} > pep8.log
+pep8 --repeat --ignore=E501 ${PACKAGE} > pep8.log
 
 # Copy and Paste Detector code quality metric
 clonedigger --fast --cpd-output --output=cpd.xml ${PACKAGE}

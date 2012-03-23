@@ -48,12 +48,12 @@ fi
 # Enter the Jenkins workspace
 cd ${WORKSPACE}
 
-# Remove previous builds
-rm -rf ${WORKSPACE}/dist/*
-rm -rf ${WORKSPACE}/doc/build/*
-
 # Make a source distribution
 if [ -f setup.py ] && [ -f setup.cfg ]; then
+
+    # Remove 'build' and 'dist' directories to ensure clean builds are made.
+    rm -rf ${WORKSPACE}/dist
+    rm -rf ${WORKSPACE}/build
 
     # Get the tag.
     TAG_BUILD=`grep tag_build ${WORKSPACE}/setup.cfg | cut -d'=' -f2 | sed 's/ //g'`
@@ -80,9 +80,4 @@ if [ -f setup.py ] && [ -f setup.cfg ]; then
     # Create a build record
     BUILD_RECORD="`ls -1tr ${WORKSPACE}/dist/*.zip | tail -n1`.html"
     echo "<html><head><title>${BUILD_TAG}</title></head><body><h2>${BUILD_ID}</h2><ul><li><a href=\"${BUILD_URL}\" target=\"_blank\">${BUILD_TAG}</a></li></ul><h3>Last Commit Log</h3><pre>${LAST_LOG}</pre></body></html>" > ${BUILD_RECORD}
-
-    # Build sphinx documentation
-    if [ -f ${WORKSPACE}/doc/Makefile ]; then
-        python setup.py build_sphinx
-    fi
 fi

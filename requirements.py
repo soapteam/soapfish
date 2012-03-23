@@ -319,7 +319,7 @@ class RequirementsParser(object):
                 continue
 
             # Extract extras name and operating system name:
-            m = re.match(r'[^+-]*(?:-(\w+))?(?:\+(\w+))?', f)
+            m = re.search(r'(?:-(\w+))?(?:\+(\w+))?\.%s$' % extn, f)
             if not m:
                 continue
             source, system = m.groups()
