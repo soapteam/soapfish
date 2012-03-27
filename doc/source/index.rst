@@ -12,6 +12,7 @@ Contents:
    Changes
    TODO
    Authors
+   API <modules>   
 
 Indices and tables
 ==================

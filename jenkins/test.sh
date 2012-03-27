@@ -79,13 +79,14 @@ fi
 # Update pip and distribute to the latest versions
 pip install --upgrade pip distribute
 
-# Install requirements
-#  - Shame this doesn't appear to be reliable
-#  - eval pip install --upgrade file:///.#egg=${PACKAGE}[jenkins,sphinx]
-for REQUIREMENTS in requirements*.txt
+if [ -f requirements_early.txt ]; then
+    pip install --upgrade --requirements requirements_early.txt
+fi    
+
+for REQUIREMENTS in `ls -1 requirements*.txt | grep -v early`
 do
     if [ -f ${REQUIREMENTS} ]; then
-        pip install --upgrade -r ${REQUIREMENTS}
+        pip install --upgrade --requirements ${REQUIREMENTS}
     fi
 done
 

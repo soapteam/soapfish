@@ -18,9 +18,9 @@ automatically combined from all requirements files found.
 Basic example usage for ``requirements*.txt`` in the same directory:
 
     from requirements import RequirementsParser
-
+    
     requirements = RequirementsParser()
-
+    
     setup(
         ...
         install_requires=requirements.install_requires,
@@ -68,6 +68,8 @@ See more information about requirements files and integration with setup.py:
 import os
 import platform
 import re
+import subprocess
+import sys
 
 from collections import defaultdict
 from glob import glob
@@ -419,6 +421,22 @@ class RequirementsParser(object):
             dependency_links += data.get('f', [])
             dependency_links += data.get('e', [])
         return sorted(list(set(dependency_links)))
+
+    def early_install(self, path=''):
+        '''
+        Installs the packages listed in requirements_early.txt        
+        '''        
+        filename = _build_filename(path, '%s.%s', 'requirements_early', 'txt')
+        if os.path.isfile(filename):
+            try:
+                retcode = subprocess.call('pip install --upgrade --requirement ' \
+                + filename, shell=True)
+                if retcode:
+                    print >>sys.stderr, 'Failed to install requirements_early.txt'
+                    sys.exit(retcode)                
+            except OSError, e:
+                print >>sys.stderr, "Execution failed:", e 
+                sys.exit(101)
 
 
 ################################################################################
