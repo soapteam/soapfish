@@ -429,11 +429,11 @@ class RequirementsParser(object):
         filename = _build_filename(path, '%s.%s', 'requirements_early', 'txt')
         if os.path.isfile(filename):
             try:
-                retcode = subprocess.call('pip install --upgrade --requirement ' \
+                rc = subprocess.call('pip install --upgrade --requirement=' \
                 + filename, shell=True)
-                if retcode:
+                if rc:
                     print >>sys.stderr, 'Failed to install requirements_early.txt'
-                    sys.exit(retcode)                
+                    sys.exit(rc)                
             except OSError, e:
                 print >>sys.stderr, "Execution failed:", e 
                 sys.exit(101)
