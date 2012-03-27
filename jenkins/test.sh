@@ -80,13 +80,13 @@ fi
 pip install --upgrade pip distribute
 
 if [ -f requirements_early.txt ]; then
-    pip install --upgrade --requirements requirements_early.txt
+    pip install --upgrade --requirement=requirements_early.txt
 fi    
 
-for REQUIREMENTS in `ls -1 requirements*.txt | grep -v early`
+for REQUIREMENT in `ls -1 requirements*.txt | grep -v early`
 do
-    if [ -f ${REQUIREMENTS} ]; then
-        pip install --upgrade --requirements ${REQUIREMENTS}
+    if [ -f ${REQUIREMENT} ]; then
+        pip install --upgrade --requirement=${REQUIREMENT}
     fi
 done
 
