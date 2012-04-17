@@ -44,6 +44,13 @@ if "%1" == "clean" (
 	goto end
 )
 
+if "%1" == "pdf" (
+    %SPHINXBUILD% -b pdf %ALLSPHINXOPTS% %BUILDDIR%/pdf
+    echo.
+    echo.Build finished. The PDF files are in %BUILDDIR%/pdf
+    goto end
+)
+
 if "%1" == "html" (
 	%SPHINXBUILD% -b html %ALLSPHINXOPTS% %BUILDDIR%/html
 	if errorlevel 1 exit /b 1
@@ -99,9 +106,9 @@ if "%1" == "qthelp" (
 	echo.
 	echo.Build finished; now you can run "qcollectiongenerator" with the ^
 .qhcp project file in %BUILDDIR%/qthelp, like this:
-	echo.^> qcollectiongenerator %BUILDDIR%\qthelp\Soapbox.qhcp
+	echo.^> qcollectiongenerator %BUILDDIR%\qthelp\SetupFixer.qhcp
 	echo.To view the help file:
-	echo.^> assistant -collectionFile %BUILDDIR%\qthelp\Soapbox.ghc
+	echo.^> assistant -collectionFile %BUILDDIR%\qthelp\SetupFixer.ghc
 	goto end
 )
 
