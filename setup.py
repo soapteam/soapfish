@@ -47,6 +47,9 @@ setup(
             'xsd2py=soapbox.xsd2py:main',
         ],
     },
+    package_data={
+        'soapbox.templates': ['wsdl', 'xsd'],
+    },
 )
 
 ################################################################################
