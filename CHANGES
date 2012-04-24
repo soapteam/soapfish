@@ -1,6 +1,12 @@
 Changes
 =======
 
+0.3.4
+-----
+
+* Fixed packaging errors which meant the templates were not installed.
+  - Many thanks to Santtu Pajukanta.
+
 0.3.3
 -----
 
