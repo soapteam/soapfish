@@ -237,6 +237,8 @@ def get_django_dispatch(service):
 
         if request.method == 'GET' and 'wsdl' in request.GET:
             wsdl = py2wsdl.generate_wsdl(service)
+            wsdl = etree.tostring(wsdl, encoding='utf-8', pretty_print=True,
+                xml_declaration=True)
             return HttpResponse(wsdl, mimetype='text/xml')
 
         try:
