@@ -14,3 +14,5 @@ exclude jenkins
 exclude .coverage
 exclude coverage.xml
 exclude nosetests.xml
+
+recursive-include soapbox/templates *

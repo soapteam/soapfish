@@ -5,6 +5,7 @@ Changes
 -----
 
 * Fix regression breaking WSDL output via Django dispatch.
+* Template packaging issue hopefully now fixed 100% of the time.
 
 0.3.4
 -----
