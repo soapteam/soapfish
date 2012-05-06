@@ -5,7 +5,8 @@ Changes
 -----
 
 * Fix regression breaking WSDL output via Django dispatch.
-* Template packaging issue hopefully now fixed 100% of the time.
+* Fix regression boolean XML output always 'true'. [gc-3]
+* Template packaging issue hopefully now fixed 100% of the time. [gc-4]
 
 0.3.4
 -----

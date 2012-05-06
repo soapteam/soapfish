@@ -280,7 +280,7 @@ class Boolean(SimpleType):
         '''
         '''
         if value == False:
-            return 'true'
+            return 'false'
         elif value == True:
             return 'true'
         elif value is None:
