@@ -16,13 +16,18 @@ from urlparse import urlparse, urlunparse
 
 from . import settings, xsd
 
+try:
+    from logging import NullHandler
+except ImportError:
+    from .compat import NullHandler
+
 
 ################################################################################
 # Globals
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 ################################################################################

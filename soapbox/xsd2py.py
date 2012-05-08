@@ -29,6 +29,11 @@ from .utils import (
     use,
 )
 
+try:
+    from logging import NullHandler
+except ImportError:
+    from .compat import NullHandler
+
 
 ################################################################################
 # Constants
@@ -42,7 +47,7 @@ TEMPLATE_PACKAGE = 'soapbox.templates'
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 ################################################################################

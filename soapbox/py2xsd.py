@@ -20,6 +20,11 @@ from lxml import etree
 from . import xsd, xsdspec
 from .utils import uncapitalize
 
+try:
+    from logging import NullHandler
+except ImportError:
+    from .compat import NullHandler
+
 
 ################################################################################
 # Constants
@@ -40,7 +45,7 @@ ALL_TYPES = NUMERIC_TYPES + STRING_TYPES
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 ################################################################################

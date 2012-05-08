@@ -20,6 +20,11 @@ from lxml import etree
 from . import settings, soap11, soap12
 from .utils import uncapitalize
 
+try:
+    from logging import NullHandler
+except ImportError:
+    from .compat import NullHandler
+
 
 ################################################################################
 # Constants
@@ -33,7 +38,7 @@ SOAP_HTTP_Transport = 'http://schemas.xmlsoap.org/soap/http'
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 ################################################################################

@@ -22,13 +22,18 @@ from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
 from .wsdl import get_wsdl_classes
 
+try:
+    from logging import NullHandler
+except ImportError:
+    from .compat import NullHandler
+
 
 ################################################################################
 # Globals
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 ################################################################################

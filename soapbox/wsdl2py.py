@@ -32,6 +32,11 @@ from .utils import (
 from .wsdl import get_wsdl_classes, get_by_name
 from .xsd2py import schema_to_py, schema_name
 
+try:
+    from logging import NullHandler
+except ImportError:
+    from .compat import NullHandler
+
 
 ################################################################################
 # Constants
@@ -45,7 +50,7 @@ TEMPLATE_PACKAGE = 'soapbox.templates'
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 ################################################################################

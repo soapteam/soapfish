@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.3.7
+-----
+
+* Fix logging.NullHandler incompatibility with Python 2.6 [gc-5]
+
 0.3.6
 -----
 
