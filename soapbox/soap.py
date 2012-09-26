@@ -219,17 +219,16 @@ def get_django_dispatch(service):
 
             return_object = method.function(request, input_object)
             try:
-                tagname = uncapitalize(return_object.__class__.__name__)
+                # if method.output is string, this is used as tag name for validation, because this is rendered.
+                # Relying on the fact, that method.output == return_object.__class__.__name__ is a real show stopper here, because thay can differ.
+                # method.output can be an Element name and is therefore not an real type
+                tagname = method.output if isinstance(method.output, basestring) else uncapitalize(return_object.__class__.__name__)
                 return_object.xml(tagname, namespace=service.schema.targetNamespace,
                                   elementFormDefault=service.schema.elementFormDefault,
                                   schema=service.schema)  # Validation.
             except Exception, e:
                 raise ValueError(e)
 
-            if isinstance(method.output, basestring):
-                tagname = method.output
-            else:
-                tagname = uncapitalize(return_object.__class__.__name__)
             return tagname, return_object
         raise ValueError('Method not found!')
 
