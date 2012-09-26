@@ -84,6 +84,8 @@ def build_portTypes(wsdl, definitions, service):
         operation.name = method.operationName
         operation.input = wsdl.Input(message='tns:' + method.operationName + service.input_message_appendix)
         operation.output = wsdl.Input(message='tns:' + method.operationName + service.output_message_appendix)
+        for fault in method.faults:
+            operation.faults.append(wsdl.Fault(message='tns:' + fault + service.fault_message_appendix, name=fault))
         portType.operations.append(operation)
 
     definitions.portTypes.append(portType)
@@ -95,7 +97,7 @@ def build_messages(wsdl, definitions, service):
     for method in service.methods:
         inputMessage = wsdl.Message(name=method.operationName + service.input_message_appendix)
         inputMessage.part = wsdl.Part()
-        inputMessage.part.name = 'body'
+        inputMessage.part.name = method.inputPartName
         if isinstance(method.input, basestring):
             inputMessage.part.element = 'sns:' + method.input
         else:
@@ -104,12 +106,22 @@ def build_messages(wsdl, definitions, service):
 
         outputMessage = wsdl.Message(name=method.operationName + service.output_message_appendix)
         outputMessage.part = wsdl.Part()
-        outputMessage.part.name = 'body'
+        outputMessage.part.name = method.outputPartName
         if isinstance(method.output, basestring):
             outputMessage.part.element = 'sns:' + method.output
         else:
             outputMessage.part.type = 'sns:' + uncapitalize(method.output.__name__)
         definitions.messages.append(outputMessage)
+
+        for fault in method.faults:
+            faultMessage = wsdl.Message(name=fault + service.fault_message_appendix)
+            faultMessage.part = wsdl.Part()
+            faultMessage.part.name = 'fault'
+            if isinstance(fault, basestring):
+                faultMessage.part.element = 'sns:' + fault
+            else:
+                faultMessage.part.type = 'sns:' + uncapitalize(fault.__name__)
+            definitions.messages.append(faultMessage)
 
 
 def build_types(wsdl, definitions, schema):

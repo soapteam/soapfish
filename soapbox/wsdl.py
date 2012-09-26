@@ -79,6 +79,13 @@ def get_wsdl_classes(soap_namespace):
         message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
         body = xsd.Element(SOAP_Body, namespace=soap_namespace, minOccurs=0)
 
+    class Fault(xsd.ComplexType):
+        '''
+        '''
+        message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
+        name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
+        body = xsd.Element(SOAP_Body, namespace=soap_namespace, minOccurs=0)
+
     class Operation(xsd.ComplexType):
         '''
         '''
@@ -86,6 +93,7 @@ def get_wsdl_classes(soap_namespace):
         name = xsd.Attribute(xsd.String)
         input = xsd.Element(Input)
         output = xsd.Element(Input)
+        faults = xsd.ListElement(Fault, tagname='fault', minOccurs=0, maxOccurs='unbounded')
         body = xsd.Element(SOAP_Body, namespace=soap_namespace)
         binding = xsd.Element('Binding')
         definition = xsd.Element('Definitions')
@@ -217,6 +225,7 @@ def get_wsdl_classes(soap_namespace):
             self.Binding = Binding
             self.Definitions = Definitions
             self.Input = Input
+            self.Fault = Fault
             self.Message = Message
             self.Operation = Operation
             self.Part = Part
