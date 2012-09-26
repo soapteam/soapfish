@@ -82,8 +82,8 @@ def build_portTypes(wsdl, definitions, service):
     for method in service.methods:
         operation = wsdl.Operation()
         operation.name = method.operationName
-        operation.input = wsdl.Input(message='tns:' + method.operationName + 'Input')
-        operation.output = wsdl.Input(message='tns:' + method.operationName + 'Output')
+        operation.input = wsdl.Input(message='tns:' + method.operationName + service.input_message_appendix)
+        operation.output = wsdl.Input(message='tns:' + method.operationName + service.output_message_appendix)
         portType.operations.append(operation)
 
     definitions.portTypes.append(portType)
@@ -93,7 +93,7 @@ def build_messages(wsdl, definitions, service):
     '''
     '''
     for method in service.methods:
-        inputMessage = wsdl.Message(name=method.operationName + 'Input')
+        inputMessage = wsdl.Message(name=method.operationName + service.input_message_appendix)
         inputMessage.part = wsdl.Part()
         inputMessage.part.name = 'body'
         if isinstance(method.input, basestring):
@@ -102,7 +102,7 @@ def build_messages(wsdl, definitions, service):
             inputMessage.part.type = 'sns:' + uncapitalize(method.input.__name__)
         definitions.messages.append(inputMessage)
 
-        outputMessage = wsdl.Message(name=method.operationName + 'Output')
+        outputMessage = wsdl.Message(name=method.operationName + service.output_message_appendix)
         outputMessage.part = wsdl.Part()
         outputMessage.part.name = 'body'
         if isinstance(method.output, basestring):

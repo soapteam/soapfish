@@ -28,6 +28,16 @@ logger.addHandler(logging.NullHandler())
 ################################################################################
 # File Functions
 
+################################################################################
+# Exceptions
+class CustomFaultValueError(ValueError):
+    def __init__(self, error_string, complex_type_instance=None):
+        '''
+        complex_type_instance is an instance of a sub class of xsd.ComplexType.
+        This is rendered in Fault return if this exception is raised
+        '''
+        super(CustomFaultValueError, self).__init__(error_string)
+        self.complex_type_instance = complex_type_instance
 
 def open_document(path):
     '''

@@ -17,8 +17,8 @@ from urlparse import urlparse
 
 from lxml import etree
 
-from . import settings, soap11, soap12
-from .utils import uncapitalize
+from . import settings, soap11, soap12, xsd
+from .utils import CustomFaultValueError, uncapitalize
 
 
 ################################################################################
@@ -78,7 +78,7 @@ class Service(object):
     '''
 
     def __init__(self, targetNamespace, location, schema, methods,
-                 version=SOAPVersion.SOAP11, name='Service'):
+                 version=SOAPVersion.SOAP11, name='Service', input_message_appendix='Input', output_message_appendix='Output'):
         '''
         :param targetNamespace: string
         :param location: string, endpoint url.
@@ -91,6 +91,9 @@ class Service(object):
         self.schema = schema
         self.methods = methods
         self.version = version
+
+        self.input_message_appendix = input_message_appendix
+        self.output_message_appendix = output_message_appendix
 
     def get_method(self, operationName):
         '''
@@ -240,13 +243,65 @@ def get_django_dispatch(service):
             return HttpResponse(wsdl, mimetype='text/xml')
 
         try:
-            xml = request.raw_post_data
-            envelope = SOAP.Envelope.parsexml(xml)
-            message = envelope.Body.content()
-            soap_action = SOAP.determin_soap_action(request)
-            tagname, return_object = call_the_method(request, message, soap_action)
-            soap_message = SOAP.Envelope.response(tagname, return_object)
-            return HttpResponse(soap_message, content_type=SOAP.CONTENT_TYPE)
+            try:
+                xml = request.raw_post_data
+                envelope = SOAP.Envelope.parsexml(xml)
+                message = envelope.Body.content()
+                soap_action = SOAP.determin_soap_action(request)
+                tagname, return_object = call_the_method(request, message, soap_action)
+                soap_message = SOAP.Envelope.response(tagname, return_object)
+                return HttpResponse(soap_message, content_type=SOAP.CONTENT_TYPE)
+            except CustomFaultValueError as e:
+                # okay here it gets hacky
+                # first create an empty response to check at the end, if we found a custom error to return
+                response = None
+                # then check all defined methods
+                for method in service.methods:
+                    # soap_action done is not the current method? One more round!
+                    if soap_action != method.soapAction:
+                        continue
+                    # check if defined faults of method are in a list (we can have more than one fault per method)
+                    if isinstance(method.faults, list):
+                        # now check against the defined faults
+                        for fault in method.faults:
+                            # if fault is defined in elements of schema and the defined response fault type is the one raised in the exception, we got it
+                            if fault in service.schema.elements and service.schema.elements[fault]._type.__class__ == e.complex_type_instance.__class__:
+                                # here is the really hacky part
+                                # because xsd.ComplexType has dynamic Fields, a little messing around with its meta class is needed.
+                                # Here a custom ComplexType sub class is generated with a field named as the found fault and type Element(raised complex type)
+                                class MetaClass(xsd.Complex_PythonType):
+                                    def __new__(cls, name, bases, attrs):
+                                        attrs[fault] = xsd.Element(
+                                            service.schema.elements[fault]._type.__class__,
+                                            namespace=service.schema.elements[fault]._type.__class__.SCHEMA.targetNamespace
+                                        )
+                                        return super(MetaClass, cls).__new__(cls, name, bases, attrs)
+
+                                # This class does not very much, it just gets the meta class
+                                class FaultDetail(xsd.ComplexType):
+                                    __metaclass__ = MetaClass
+
+                                # and here the response is generated. It looks like:
+                                #
+                                # <ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">
+                                #    <ns0:Body>
+                                #       <ns0:Fault>
+                                #          <faultcode>Client</faultcode>
+                                #          <faultstring>{{ exception message (as with ValueError) }}</faultstring>
+                                #          <detail>
+                                #             <ns0:{{ fault element name }} xmlns:ns0="{{ fault element namespace }}">
+                                #                {{ rendered complex type }}
+                                #             </ns0:{{ fault element name }}>
+                                #          </detail>
+                                #       </ns0:Fault>
+                                #    </ns0:Body>
+                                # </ns0:Envelope>
+                                response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e), detail=FaultDetail(**{fault: e.complex_type_instance}))
+                                break
+                    if response is not None:
+                        break
+                if response is None:
+                    raise ValueError(str(e))
         except (ValueError, etree.XMLSyntaxError) as e:
             response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e))
         except Exception, e:

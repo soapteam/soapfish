@@ -37,10 +37,10 @@ def determin_soap_action(request):
         return None
 
 
-def get_error_response(code, message):
+def get_error_response(code, message, detail=None):
     '''
     '''
-    fault = Fault(faultcode='Client', faultstring=message)
+    fault = Fault(faultcode='Client', faultstring=message, detail=detail)
     envelope = Envelope()
     envelope.Body = Body(Fault=fault)
     return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,
@@ -83,6 +83,7 @@ class Fault(xsd.ComplexType):
     '''
     faultcode = xsd.Element(xsd.String, namespace='')
     faultstring = xsd.Element(xsd.String, namespace='')
+    detail = xsd.Element(xsd.ComplexType, namespace='')
 
 
 class Body(xsd.ComplexType):

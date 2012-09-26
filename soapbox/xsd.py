@@ -487,7 +487,7 @@ class Long(Integer):
     '''
 
     def __init__(self, enumeration=None, maxExclusive=None,
-                 maxInclusive=9223372036854775807, minExclusive=None, minInclusive=-9223372036854775808,
+                 maxInclusive=9223372036854775807, minExclusive=None, minInclusive= -9223372036854775808,
                  pattern=None, totalDigits=None):
         '''
         '''
@@ -501,7 +501,7 @@ class Int(Long):
     '''
 
     def __init__(self, enumeration=None, maxExclusive=None,
-                 maxInclusive=2147483647, minExclusive=None, minInclusive=-2147483648,
+                 maxInclusive=2147483647, minExclusive=None, minInclusive= -2147483648,
                  pattern=None, totalDigits=None):
         '''
         '''
@@ -1260,10 +1260,12 @@ class Method(object):
     Method description. The main information is mapping soapAction and
     operationName to function for dispatcher. input and output mapping informs
     how and which objects should be created on incoming/outgoing messages.
+    Faults is a mapping to inform, which objects are created in case of an error in
+    the detail field of fault response.
     '''
 
     def __init__(self, operationName, soapAction, input, output, function=None,
-                 inputPartName="body", outputPartName="body", style=CallStyle.DOCUMENT):
+                 inputPartName="body", outputPartName="body", style=CallStyle.DOCUMENT, faults=[]):
         '''
         :param function: The function that should be called. Required only for server.
         '''
@@ -1274,6 +1276,7 @@ class Method(object):
         self.function = function
         self.inputPartName = inputPartName
         self.outputPartName = outputPartName
+        self.faults = faults
         self.style = style
 
 

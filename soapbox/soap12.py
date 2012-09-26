@@ -103,6 +103,7 @@ class Fault(xsd.ComplexType):
     '''
     Code = xsd.Element(Code)
     Reason = xsd.Element(Reason)
+    Detail = xsd.Element(xsd.ComplexType)
 
 
 class Body(xsd.ComplexType):
