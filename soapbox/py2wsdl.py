@@ -68,6 +68,8 @@ def build_bindings(wsdl, definitions, service):
         operation.input = wsdl.Input(body=wsdl.SOAP_Body(use='literal'))
         operation.output = wsdl.Input(body=wsdl.SOAP_Body(use='literal'))
         operation.operation.style = method.style
+        for fault in method.faults:
+            operation.faults.append(wsdl.Fault(fault=wsdl.SOAP_Body(use='literal')))
         binding.operations.append(operation)
 
     definitions.bindings.append(binding)
@@ -94,6 +96,8 @@ def build_portTypes(wsdl, definitions, service):
 def build_messages(wsdl, definitions, service):
     '''
     '''
+    all_faults = {}
+
     for method in service.methods:
         inputMessage = wsdl.Message(name=method.operationName + service.input_message_appendix)
         inputMessage.part = wsdl.Part()
@@ -114,14 +118,19 @@ def build_messages(wsdl, definitions, service):
         definitions.messages.append(outputMessage)
 
         for fault in method.faults:
-            faultMessage = wsdl.Message(name=fault + service.fault_message_appendix)
-            faultMessage.part = wsdl.Part()
-            faultMessage.part.name = 'fault'
-            if isinstance(fault, basestring):
-                faultMessage.part.element = 'sns:' + fault
-            else:
-                faultMessage.part.type = 'sns:' + uncapitalize(fault.__name__)
-            definitions.messages.append(faultMessage)
+            message_name = fault + service.fault_message_appendix
+            # preventing duplicate fault messages here
+            if message_name not in all_faults:
+                faultMessage = wsdl.Message(name=message_name)
+                faultMessage.part = wsdl.Part()
+                faultMessage.part.name = 'fault'
+                if isinstance(fault, basestring):
+                    faultMessage.part.element = 'sns:' + fault
+                else:
+                    faultMessage.part.type = 'sns:' + uncapitalize(fault.__name__)
+                all_faults[message_name] = faultMessage
+
+    definitions.messages.append(*all_faults.values())
 
 
 def build_types(wsdl, definitions, schema):
