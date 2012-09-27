@@ -69,7 +69,7 @@ def build_bindings(wsdl, definitions, service):
         operation.output = wsdl.Input(body=wsdl.SOAP_Body(use='literal'))
         operation.operation.style = method.style
         for fault in method.faults:
-            operation.faults.append(wsdl.Fault(fault=wsdl.SOAP_Body(use='literal')))
+            operation.faults.append(wsdl.Fault(fault=wsdl.SOAP_Body(use='literal'), name=fault))
         binding.operations.append(operation)
 
     definitions.bindings.append(binding)
