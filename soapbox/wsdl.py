@@ -84,7 +84,7 @@ def get_wsdl_classes(soap_namespace):
         '''
         message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
         name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
-        body = xsd.Element(SOAP_Body, namespace=soap_namespace, minOccurs=0)
+        fault = xsd.Element(SOAP_Body, namespace=soap_namespace, minOccurs=0)
 
     class Operation(xsd.ComplexType):
         '''
