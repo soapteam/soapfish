@@ -82,39 +82,47 @@ def create_xsd_element(element):
     parent_type = element._type.__class__.__bases__[0]
     _type = element._type
 
-    if not inspect.isclass(element._passed_type):
+    if isinstance(_type, list):
         xsd_element.simpleType = xsdspec.SimpleType()
-        xsd_element.simpleType.restriction = xsdspec.Restriction()
-        xsd_element.simpleType.restriction.base = get_xsd_type(element._type)
-
-        if hasattr(element._type, 'enumeration') and element._type.enumeration\
-        and parent_type == xsd.SimpleType:
-            for value in element._type.enumeration:
-                enum = xsdspec.Enumeration.create(value)
-                xsd_element.simpleType.restriction.enumerations.append(enum)
-
-        if hasattr(_type, 'fractionDigits') and _type.fractionDigits:
-            xsd_element.simpleType.restriction.fractionDigits = xsdspec.RestrictionValue(value=str(_type.fractionDigits))
-
-        if hasattr(_type, 'pattern') and _type.pattern:
-            xsd_element.simpleType.restriction.pattern = xsdspec.RestrictionValue(value=str(_type.pattern))
-
-        if hasattr(_type, 'minInclusive') and _type.minInclusive:
-            xsd_element.simpleType.restriction.minInclusive = xsdspec.RestrictionValue(value=str(_type.minInclusive))
-
-        if hasattr(_type, 'minExclusive') and _type.minExclusive:
-            xsd_element.simpleType.restriction.minExclusive = xsdspec.RestrictionValue(value=str(_type.minExclusive))
-
-        if hasattr(_type, 'maxExclusive') and _type.maxExclusive:
-            xsd_element.simpleType.restriction.maxExclusive = xsdspec.RestrictionValue(value=str(_type.maxExclusive))
-
-        if hasattr(_type, 'maxInclusive') and _type.maxInclusive:
-            xsd_element.simpleType.restriction.maxInclusive = xsdspec.RestrictionValue(value=str(_type.maxInclusive))
-
-        if hasattr(_type, 'totalDigits') and _type.totalDigits:
-            xsd_element.simpleType.restriction.totalDigits = xsdspec.RestrictionValue(value=str(_type.totalDigits))
+        xsd_element.simpleType.union = xsdspec.Union()
+        memberTypes = []
+        for sub_type in _type:
+            memberTypes.append(get_xsd_type(sub_type))
+        xsd_element.simpleType.union.memberTypes = ' '.join(memberTypes)
     else:
-        xsd_element.type = get_xsd_type(element._type)
+        if not inspect.isclass(element._passed_type):
+            xsd_element.simpleType = xsdspec.SimpleType()
+            xsd_element.simpleType.restriction = xsdspec.Restriction()
+            xsd_element.simpleType.restriction.base = get_xsd_type(element._type)
+
+            if hasattr(element._type, 'enumeration') and element._type.enumeration\
+            and parent_type == xsd.SimpleType:
+                for value in element._type.enumeration:
+                    enum = xsdspec.Enumeration.create(value)
+                    xsd_element.simpleType.restriction.enumerations.append(enum)
+
+            if hasattr(_type, 'fractionDigits') and _type.fractionDigits:
+                xsd_element.simpleType.restriction.fractionDigits = xsdspec.RestrictionValue(value=str(_type.fractionDigits))
+
+            if hasattr(_type, 'pattern') and _type.pattern:
+                xsd_element.simpleType.restriction.pattern = xsdspec.RestrictionValue(value=str(_type.pattern))
+
+            if hasattr(_type, 'minInclusive') and _type.minInclusive:
+                xsd_element.simpleType.restriction.minInclusive = xsdspec.RestrictionValue(value=str(_type.minInclusive))
+
+            if hasattr(_type, 'minExclusive') and _type.minExclusive:
+                xsd_element.simpleType.restriction.minExclusive = xsdspec.RestrictionValue(value=str(_type.minExclusive))
+
+            if hasattr(_type, 'maxExclusive') and _type.maxExclusive:
+                xsd_element.simpleType.restriction.maxExclusive = xsdspec.RestrictionValue(value=str(_type.maxExclusive))
+
+            if hasattr(_type, 'maxInclusive') and _type.maxInclusive:
+                xsd_element.simpleType.restriction.maxInclusive = xsdspec.RestrictionValue(value=str(_type.maxInclusive))
+
+            if hasattr(_type, 'totalDigits') and _type.totalDigits:
+                xsd_element.simpleType.restriction.totalDigits = xsdspec.RestrictionValue(value=str(_type.totalDigits))
+        else:
+            xsd_element.type = get_xsd_type(element._type)
     return xsd_element
 
 

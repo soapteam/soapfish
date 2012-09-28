@@ -69,6 +69,13 @@ class Restriction(xsd.ComplexType):
         return '[%s]' % ','.join(enum_values)
 
 
+class Union(xsd.ComplexType):
+    '''
+    '''
+    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    memberTypes = xsd.Attribute(xsd.String)
+
+
 class List(xsd.ComplexType):
     '''
     '''
@@ -82,6 +89,7 @@ class SimpleType(xsd.ComplexType):
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     restriction = xsd.Element(Restriction, minOccurs=0)
+    union = xsd.Element(Union, minOccurs=0)
     list = xsd.Element(List, minOccurs=0)
 
 
@@ -205,7 +213,7 @@ SCHEMA = xsd.Schema(
     simpleTypes=[],
     attributeGroups=[],
     groups=[],
-    complexTypes=[Enumeration, Pattern, RestrictionValue, Restriction, List,
+    complexTypes=[Enumeration, Pattern, Union, RestrictionValue, Restriction, List,
                   SimpleType, Element, Sequence, Attribute, AttributeGroup,
                   AttributeGroupReference, Extension, ComplexContent,
                   XSDComplexType, Group, Schema],

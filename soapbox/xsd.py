@@ -549,12 +549,22 @@ class Element(object):
         '''
         '''
         if self._type is None:
-            if isinstance(self._passed_type, basestring):
-                self._passed_type = USER_TYPE_REGISTER.find_type(self._passed_type)
-            if isinstance(self._passed_type, Type):
-                self._type = self._passed_type
+            if isinstance(self._passed_type, list):
+                self._type = []
+                for _passed_type in self._passed_type:
+                    if isinstance(_passed_type, basestring):
+                        _passed_type = USER_TYPE_REGISTER.find_type(_passed_type)
+                    if isinstance(_passed_type, Type):
+                        self._type.append(passed_type)
+                    else:
+                        self._type.append(_passed_type())
             else:
-                self._type = self._passed_type()
+                if isinstance(self._passed_type, basestring):
+                    self._passed_type = USER_TYPE_REGISTER.find_type(self._passed_type)
+                if isinstance(self._passed_type, Type):
+                    self._type = self._passed_type
+                else:
+                    self._type = self._passed_type()
 
     def empty_value(self):
         '''
@@ -575,6 +585,13 @@ class Element(object):
             else:
                 raise ValueError('Nil value for not nillable element.')
         else:
+            if isinstance(self._type, list):
+                result = None
+                for _type in self._type:
+                    result = result or _type.accept(value)
+                    if result is not None:
+                        return result
+                return result
             return self._type.accept(value)
 
     def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
