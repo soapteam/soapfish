@@ -610,7 +610,15 @@ class Element(object):
         if value == NIL:
             xmlelement.set('{http://www.w3.org/2001/XMLSchema-instance}nil', 'true')
         else:
-            self._type.render(xmlelement, value, namespace, elementFormDefault)
+            if isinstance(self._type, list):
+                for _type in self._type:
+                    try:
+                        _type.render(xmlelement, value, namespace, elementFormDefault)
+                        break
+                    except:
+                        pass
+            else:
+                self._type.render(xmlelement, value, namespace, elementFormDefault)
         parent.append(xmlelement)
 
     def parse(self, instance, field_name, xmlelement):
@@ -620,16 +628,28 @@ class Element(object):
         if xmlelement.get('{http://www.w3.org/2001/XMLSchema-instance}nil') == 'true':
             value = NIL
         else:
-            value = self._type.parse_xmlelement(xmlelement)
+            if isinstance(self._type, list):
+                for _type in self._type:
+                    try:
+                        value = _type.parse_xmlelement(xmlelement)
+                        break
+                    except:
+                        pass
+            else:
+                value = self._type.parse_xmlelement(xmlelement)
         setattr(instance, field_name, value)
 
     def __repr__(self):
         '''
         '''
-        if isinstance(self._type, basestring):
-            return '%s<%s>' % (self.__class__.__name__, self._type)
+        if isinstance(self._type, list) and len(self._type) > 0:
+            _type = self._type[0]
         else:
-            return '%s<%s>' % (self.__class__.__name__, self._type.__class__.__name__)
+            _type = self._type
+        if isinstance(_type, basestring):
+            return '%s<%s>' % (self.__class__.__name__, _type)
+        else:
+            return '%s<%s>' % (self.__class__.__name__, _type.__class__.__name__)
 
 
 class ClassNamedElement(Element):
