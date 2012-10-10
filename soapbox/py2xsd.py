@@ -140,9 +140,9 @@ def xsd_complexType(complexType, named=True):
     # Elements can be wrapped with few type of containers:
     # sequence, all, choice or it can be a complexContent with
     # extension or restriction.
-    if hasattr(complexType, 'INDICATOR') and complexType.INDICATOR:
+    if hasattr(complexType, 'INDICATOR') and complexType.INDICATOR is not None:
         xsd_sequence = xsdspec.Sequence()
-        xsd_ct.sequence = xsd_sequence
+        setattr(xsd_ct, complexType.INDICATOR.__name__.lower(), xsd_sequence)
         container = xsd_sequence
     else:
         container = xsd_ct
