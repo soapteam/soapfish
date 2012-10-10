@@ -161,6 +161,7 @@ class XSDComplexType(xsd.ComplexType):
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     sequence = xsd.Element(Sequence)
+    choice = xsd.Element(Sequence)
     all = xsd.Element(Sequence)
     complexContent = xsd.Element(ComplexContent)
     attributes = xsd.ListElement(Attribute, 'attribute')
