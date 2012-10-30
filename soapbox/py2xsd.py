@@ -222,7 +222,7 @@ def generate_xsd(schema):
     '''
     '''
     xsd_schema = generate_xsdspec(schema)
-    print xsd_schema
+
     xmlelement = etree.Element(
         '{http://www.w3.org/2001/XMLSchema}schema',
         nsmap={
