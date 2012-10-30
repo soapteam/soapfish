@@ -190,6 +190,7 @@ def generate_xsdspec(schema):
     '''
     xsd_schema = xsdspec.Schema()
     xsd_schema.targetNamespace = schema.targetNamespace
+    xsd_schema.elementFormDefault = schema.elementFormDefault
 
     build_imports(xsd_schema, schema.imports)
     for st in schema.simpleTypes:
@@ -221,7 +222,7 @@ def generate_xsd(schema):
     '''
     '''
     xsd_schema = generate_xsdspec(schema)
-
+    print xsd_schema
     xmlelement = etree.Element(
         '{http://www.w3.org/2001/XMLSchema}schema',
         nsmap={
