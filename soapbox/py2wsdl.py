@@ -130,7 +130,8 @@ def build_messages(wsdl, definitions, service):
                     faultMessage.part.type = 'sns:' + uncapitalize(fault.__name__)
                 all_faults[message_name] = faultMessage
 
-    definitions.messages.append(*all_faults.values())
+    for fault in all_faults.values():
+        definitions.messages.append(fault)
 
 
 def build_types(wsdl, definitions, schema):
