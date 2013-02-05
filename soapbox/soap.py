@@ -206,15 +206,25 @@ def get_django_dispatch(service):
     def call_the_method(request, message, soap_action):
         '''
         '''
+        from . import xsd
+
         for method in service.methods:
             if soap_action != method.soapAction:
                 continue
 
             if isinstance(method.input, basestring):
                 element = service.schema.elements[method.input]
-                input_object = element._type.parsexml(message, service.schema)
+                # 28/01/2013 SGC
+                if service.schema.elementFormDefault == xsd.ElementFormDefault.QUALIFIED:
+                    input_object = element._type.parsexml(message, service.schema)
+                else:
+                    input_object = element._type.parsexml(message)
             else:
-                input_object = method.input.parsexml(message, service.schema)
+                # 28/01/2013 SGC
+                if service.schema.elementFormDefault == xsd.ElementFormDefault.QUALIFIED:
+                    input_object = method.input.parsexml(message, service.schema)
+                else:
+                    input_object = method.input.parsexml(message)
 
             return_object = method.function(request, input_object)
             try:
@@ -231,6 +241,7 @@ def get_django_dispatch(service):
                 tagname = uncapitalize(return_object.__class__.__name__)
             return tagname, return_object
         raise ValueError('Method not found!')
+
 
     def django_dispatch(request):
         '''
