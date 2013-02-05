@@ -8,7 +8,7 @@ function usage() {
     echo
     echo "Required parameters"
     echo "  -u pypi_username  : Your PyPI account username"
-    echo "  -p pypi_password  : Your PyPI account password"    
+    echo "  -p pypi_password  : Your PyPI account password"
     echo "  -v python version : The virtualenv Python version to use."
     echo "Optional parameters"
     echo "  -h                : This help"

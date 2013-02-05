@@ -1,45 +1,66 @@
-# Use glob syntax
-syntax: glob
-
-# Dot directories
+# Hidden directories:
 .*/
 
-# Transient files
-*.log
-*.tmp
-
-# Operating System cruft
+# Operating system cruft:
 Desktop.ini
 Thumbs.db
 __MACOSX
+._*
+.AppleDouble
 .DS_Store
+.LSOverride
 
-# Sphinx transient files (old style)
-.build
-.static
-
-# Eclipse, WingIDE and Text Editors
-*.sw[nop]
+# Editors (Eclipse, WingIDE, Vim):
+.sw?
+.*.sw?
 *~
+*.bak
 .project
 .pydevproject
-*.wp[ur]
+.wp[ru]
 
-# Python builds and binaries
-dist
-build
-*.egg
-*.egg-info
+# Translation files:
+*.mo
+
+# Java binary files:
+*.class
+
+# Java package files:
+*.ear
+*.jar
+*.war
+
+# Python binary files:
 *.py[cdo]
 *.so
 
-# Jenkins
+# Python package files:
+*.egg
+*.egg-info
+build
+dist
+eggs
+sdist
+develop-eggs
+.installed.cfg
+
+# Jenkins build files:
 .coverage
 coverage.xml
 nosetests.xml
 cpd.xml
 pep8.log
 pylint.log
+
+# Sphinx build files:
+.build
+.static
+
+# Transient files:
+*.log
+*.tmp
+
+# Project specific ignores:
 
 # Keep empty directories:
 !*/.git*
