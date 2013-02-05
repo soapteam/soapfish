@@ -1,0 +1,45 @@
+# Use glob syntax
+syntax: glob
+
+# Dot directories
+.*/
+
+# Transient files
+*.log
+*.tmp
+
+# Operating System cruft
+Desktop.ini
+Thumbs.db
+__MACOSX
+.DS_Store
+
+# Sphinx transient files (old style)
+.build
+.static
+
+# Eclipse, WingIDE and Text Editors
+*.sw[nop]
+*~
+.project
+.pydevproject
+*.wp[ur]
+
+# Python builds and binaries
+dist
+build
+*.egg
+*.egg-info
+*.py[cdo]
+*.so
+
+# Jenkins
+.coverage
+coverage.xml
+nosetests.xml
+cpd.xml
+pep8.log
+pylint.log
+
+# Keep empty directories:
+!*/.git*
