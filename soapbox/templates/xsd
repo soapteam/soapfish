@@ -125,9 +125,9 @@ class {{ ct.name|capitalize }}(xsd.ComplexType):
     {%- if element.type %}
     {%- if element.maxOccurs > 1 %}
     {%- if element.name + 's' in keywords %}
-    _{{ element.name }}s = xsd.ListElement({{ element.type|type }}, '{{ element.name }}', tagname='{{ element.name }}s'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    _{{ element.name }}s = xsd.ListElement({{ element.type|type }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- else %}
-    {{ element.name }}s = xsd.ListElement({{ element.type|type }}, '{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {{ element.name }}s = xsd.ListElement({{ element.type|type }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- endif %}
     {%- else %}
     {%- if element.name in keywords %}
