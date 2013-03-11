@@ -32,7 +32,7 @@ class Flight(xsd.ComplexType):
     landing_airport = xsd.Element(Airport)
     takeoff_pilot = xsd.Element(Pilot, minOccurs=0)
     landing_pilot = xsd.Element(Pilot, minOccurs=0)
-    passangers = xsd.ListElement(xsd.String, "passanger", maxOccurs=10, minOccurs=0)
+    passengers = xsd.ListElement(xsd.String, "passenger", maxOccurs=10, minOccurs=0)
 
 
 class ElementTest(unittest.TestCase):
@@ -76,13 +76,13 @@ class ElementTest(unittest.TestCase):
 class ListElementTest(unittest.TestCase):
 
     def test_rendering_simple_type(self):
-        passangers = xsd.ListElement(xsd.String, "passanger", maxOccurs=10, minOccurs=0)
-        passangers_list = ["abc", "123"]
+        passengers = xsd.ListElement(xsd.String, "passenger", maxOccurs=10, minOccurs=0)
+        passengers_list = ["abc", "123"]
         xmlelement = etree.Element("flight")
-        passangers.render(xmlelement, "passanger", passangers_list)
+        passengers.render(xmlelement, "passenger", passengers_list)
         expected_xml = """<flight>
-  <passanger>abc</passanger>
-  <passanger>123</passanger>
+  <passenger>abc</passenger>
+  <passenger>123</passenger>
 </flight>
 """
         xml = etree.tostring(xmlelement, pretty_print=True)
@@ -447,8 +447,8 @@ class ComplexTest(unittest.TestCase):
         flight.tail_number = "LN-KKA"
         flight.takeoff_airport = Airport.create("IATA", "WAW")
         flight.landing_airport = Airport.create("ICAO", "EGLL")
-        flight.passangers.append("abc")
-        flight.passangers.append("123")
+        flight.passengers.append("abc")
+        flight.passengers.append("123")
 
         xmlelement = etree.Element("flight")
         flight.render(xmlelement, flight)
@@ -463,8 +463,8 @@ class ComplexTest(unittest.TestCase):
     <type>ICAO</type>
     <code>EGLL</code>
   </landing_airport>
-  <passanger>abc</passanger>
-  <passanger>123</passanger>
+  <passenger>abc</passenger>
+  <passenger>123</passenger>
 </flight>
 """
         self.assertEqual(expected_xml, xml)
@@ -529,8 +529,8 @@ class XmlParsingTest(unittest.TestCase):
     <code>EGLL</code>
     <type>ICAO</type>
   </landing_airport>
-  <passanger>abc</passanger>
-  <passanger>123</passanger>
+  <passenger>abc</passenger>
+  <passenger>123</passenger>
   <tail_number>LN-KKA</tail_number>
   <takeoff_airport>
     <code>WAW</code>
@@ -546,7 +546,7 @@ class XmlParsingTest(unittest.TestCase):
         self.assertEqual("IATA", flight.takeoff_airport.type)
         self.assertEqual("EGLL", flight.landing_airport.code)
         self.assertEqual("ICAO", flight.landing_airport.type)
-        self.assertEqual(["abc", "123"], flight.passangers)
+        self.assertEqual(["abc", "123"], flight.passengers)
 
 
 class XSD_Spec_Test(unittest.TestCase):
