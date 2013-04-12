@@ -39,7 +39,7 @@ def open_document(path):
     '''
     logger.info('Opening document \'%s\'...' % path)
     # Handle documents available on the Internet:
-    if path.startswith('http:'):
+    if path.startswith(('http:', 'https:')):
         disable_validation = not os.path.exists(settings.CA_CERTIFICATE_FILE)
         http = httplib2.Http(
             ca_certs=settings.CA_CERTIFICATE_FILE,
