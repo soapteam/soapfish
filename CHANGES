@@ -1,6 +1,17 @@
 Changes
 =======
 
+0.3.2
+-----
+
+* Initial support for variable URL scheme and host
+* Test suite executes
+
+0.3.1
+-----
+
+* SSL certificate verification
+
 0.3.0
 -----
 
