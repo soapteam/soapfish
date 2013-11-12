@@ -114,6 +114,18 @@ class BooleanTypeTest(unittest.TestCase):
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
+    def test_boolean_correctly_renders_false_value_in_xml(self):
+        # regression test for http://code.google.com/p/soapbox/issues/detail?id=3
+        # before xsd.Boolean would render [true, false] Python values *both*
+        # to as 'true' in the xml.
+        parent = etree.Element('parent')
+        xsd.Element(xsd.Boolean).render(parent, 'b', True)
+        self.assertEqual('<parent><b>true</b></parent>', etree.tostring(parent))
+
+        parent = etree.Element('parent')
+        xsd.Element(xsd.Boolean).render(parent, 'b', False)
+        self.assertEqual('<parent><b>false</b></parent>', etree.tostring(parent))
+
     def test_attribute_false(self):
         mixed = xsd.Attribute(xsd.Boolean)
         xmlelement = etree.Element("complexType")
