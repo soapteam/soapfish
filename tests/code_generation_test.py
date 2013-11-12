@@ -1,4 +1,5 @@
 import unittest
+from lxml import etree
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl
 
@@ -228,15 +229,16 @@ WSDL = """<?xml version="1.0"?>
 class CodeGenerationTest(unittest.TestCase):
 
     def test_code_generation_from_xsd(self):
-        code = generate_code_from_xsd(XSD)
+        xmlelement = etree.fromstring(XSD)
+        code = generate_code_from_xsd(xmlelement)
         exec code in {}
 
     def test_code_generation_from_wsdl_client(self):
-        code = generate_code_from_wsdl(False, WSDL)
+        code = generate_code_from_wsdl(WSDL, 'client')
         exec code in {}
 
     def test_code_generation_from_wsdl_server(self):
-        code = generate_code_from_wsdl(True, WSDL)
+        code = generate_code_from_wsdl(WSDL, 'server')
         exec code in {}
 
 if __name__ == "__main__":
