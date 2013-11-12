@@ -24,11 +24,11 @@ requirements = RequirementsParser()
 
 
 setup(
-    name='soapbox',
+    name='soapbox-bsd',
     version=soapbox.__version__,
     author=soapbox.__author__,
     author_email=soapbox.__email__,
-    url='http://code.google.com/p/soapbox/',
+    url='https://github.com/FelixSchwarz/soapbox-bsd',
     description='A SOAP library for Python',
     long_description=open('README').read() + open('CHANGES').read() + open('TODO').read(),
     download_url='',
