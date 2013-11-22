@@ -75,18 +75,12 @@ class TypeRegister(object):
     '''
 
     def __init__(self):
-        '''
-        '''
         self.types = []
 
     def add_type(self, clazz):
-        '''
-        '''
         self.types.append(clazz)
 
     def find_type(self, typeid):
-        '''
-        '''
         for clazz in self.types:
             if clazz.__name__ == typeid:
                 return clazz
@@ -96,69 +90,47 @@ USER_TYPE_REGISTER = TypeRegister()
 
 
 class CallStyle(object):
-    '''
-    '''
     DOCUMENT = 'document'
     RPC = 'RPC'
 
 
 class Use(object):
-    '''
-    '''
     OPTIONAL = 'optional'
     REQUIRED = 'required'
     PROHIBITED = 'prohibited'
 
 
 class Inheritance(object):
-    '''
-    '''
     RESTRICTION = 'RESTRICTION'
     EXTENSION = 'EXTENSION'
 
 
 class ElementFormDefault(object):
-    '''
-    '''
     QUALIFIED = 'qualified'
     UNQUALIFIED = 'unqualified'
 
 
 class Indicator(object):
-    '''
-    '''
 
     def __init__(self, fields):
-        '''
-        '''
         self.fields = fields
 
 
 class Sequence(Indicator):
-    '''
-    '''
     pass
 
 
 class Choice(Indicator):
-    '''
-    '''
     pass
 
 
 class All(Indicator):
-    '''
-    '''
     pass
 
 
 class Type_PythonType(type):
-    '''
-    '''
 
     def __new__(cls, name, bases, attrs):
-        '''
-        '''
         newcls = super(Type_PythonType, cls).__new__(cls, name, bases, attrs)
         USER_TYPE_REGISTER.add_type(newcls)
         return newcls
@@ -172,23 +144,15 @@ class Type(object):
     __metaclass__ = Type_PythonType
 
     def accept(self, value):
-        '''
-        '''
         raise NotImplementedError
 
     def parse_xmlelement(self, xmlelement):
-        '''
-        '''
         raise NotImplementedError
 
     def parsexml(self, xml):
-        '''
-        '''
         raise NotImplementedError
 
     def render(self, parent, value):
-        '''
-        '''
         raise NotImplementedError
 
 
@@ -198,44 +162,30 @@ class SimpleType(Type):
     '''
 
     def render(self, parent, value, namespace, elementFormDefault):
-        '''
-        '''
         parent.text = self.xmlvalue(value)
 
     def parse_xmlelement(self, xmlelement):
-        '''
-        '''
         return self.pythonvalue(xmlelement.text)
 
     def xmlvalue(self, value):
-        '''
-        '''
         raise NotImplementedError
 
     def pythonvalue(self, xmlvalue):
-        '''
-        '''
         raise NotImplementedError
 
 
 class String(SimpleType):
-    '''
-    '''
 
     enumeration = None  # To be defined in child.
     pattern = None      # To be defined in child.
 
     def __init__(self, enumeration=None, pattern=None):
-        '''
-        '''
         if enumeration is not None:
             self.enumeration = enumeration  # Override static value
         if pattern is not None:
             self.pattern = pattern  # Override static value
 
     def accept(self, value):
-        '''
-        '''
         if value is None:
             return value
 
@@ -254,31 +204,21 @@ class String(SimpleType):
         return value
 
     def xmlvalue(self, value):
-        '''
-        '''
         return value
 
     def pythonvalue(self, xmlvalue):
-        '''
-        '''
         return xmlvalue
 
 
 class Boolean(SimpleType):
-    '''
-    '''
 
     def accept(self, value):
-        '''
-        '''
         if value in [True, False, None]:
             return value
         else:
             raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
 
     def xmlvalue(self, value):
-        '''
-        '''
         if value == False:
             return 'false'
         elif value == True:
@@ -289,8 +229,6 @@ class Boolean(SimpleType):
             raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
 
     def pythonvalue(self, value):
-        '''
-        '''
         if value == 'false':
             return False
         elif value == 'true':
@@ -309,8 +247,6 @@ class DateTime(SimpleType):
     FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
     def accept(self, value):
-        '''
-        '''
         if value is None:
             return None
         elif isinstance(value, datetime):
@@ -320,16 +256,12 @@ class DateTime(SimpleType):
         raise ValueError("Incorrect type value '%s' for Datetime field." % value)
 
     def xmlvalue(self, value):
-        '''
-        '''
         if value is None:
             return 'nil'
         else:
             return value.strftime(self.FORMAT)
 
     def pythonvalue(self, value):
-        '''
-        '''
         if value is None or value == 'nil':
             return None
         else:
@@ -337,14 +269,10 @@ class DateTime(SimpleType):
 
 
 class Decimal(SimpleType):
-    '''
-    '''
 
     def __init__(self, enumeration=None, fractionDigits=None, maxExclusive=None,
                  maxInclusive=None, minExclusive=None, minInclusive=None,
                  pattern=None, totalDigits=None):
-        '''
-        '''
         self.enumeration = enumeration
         self.fractionDigits = fractionDigits
         self.maxExclusive = maxExclusive
@@ -355,8 +283,6 @@ class Decimal(SimpleType):
         self.totalDigits = totalDigits
 
     def _check_restrictions(self, value):
-        '''
-        '''
         if self.enumeration is not None and value not in self.enumeration:
             raise ValueError('%s not in enumeration %s' % (value, self.enumeration))
 
@@ -397,8 +323,6 @@ class Decimal(SimpleType):
         return value
 
     def accept(self, value):
-        '''
-        '''
         if value is None:
             return None
         elif isinstance(value, int) or isinstance(value, long) or isinstance(value, float):
@@ -412,13 +336,9 @@ class Decimal(SimpleType):
         return value
 
     def xmlvalue(self, value):
-        '''
-        '''
         return str(value)
 
     def pythonvalue(self, xmlvalue):
-        '''
-        '''
         if xmlvalue == 'nil':
             return None
         else:
@@ -426,13 +346,9 @@ class Decimal(SimpleType):
 
 
 class Double(Decimal):
-    '''
-    '''
 
     def __init__(self, enumeration=None, maxExclusive=None, maxInclusive=None,
                  minExclusive=None, minInclusive=None, pattern=None):
-        '''
-        '''
         super(Double, self).__init__(
             enumeration=enumeration, maxExclusive=maxExclusive,
             maxInclusive=maxInclusive, minExclusive=minExclusive,
@@ -440,13 +356,9 @@ class Double(Decimal):
 
 
 class Float(Decimal):
-    '''
-    '''
 
     def __init__(self, enumeration=None, maxExclusive=None, maxInclusive=None,
                  minExclusive=None, minInclusive=None, pattern=None):
-        '''
-        '''
         super(Float, self).__init__(
             enumeration=enumeration, maxExclusive=maxExclusive,
             maxInclusive=maxInclusive, minExclusive=minExclusive,
@@ -454,21 +366,15 @@ class Float(Decimal):
 
 
 class Integer(Decimal):
-    '''
-    '''
 
     def __init__(self, enumeration=None, maxExclusive=None,
                  maxInclusive=None, minExclusive=None, minInclusive=None,
                  pattern=None, totalDigits=None):
-        '''
-        '''
         super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
                  maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
                  pattern=pattern, totalDigits=totalDigits)
 
     def accept(self, value):
-        '''
-        '''
         if value is None:
             return None
         elif isinstance(value, int) or isinstance(value, long):
@@ -483,28 +389,20 @@ class Integer(Decimal):
 
 
 class Long(Integer):
-    '''
-    '''
 
     def __init__(self, enumeration=None, maxExclusive=None,
                  maxInclusive=9223372036854775807, minExclusive=None, minInclusive=-9223372036854775808,
                  pattern=None, totalDigits=None):
-        '''
-        '''
         super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
                                      pattern=pattern, totalDigits=totalDigits)
 
 
 class Int(Long):
-    '''
-    '''
 
     def __init__(self, enumeration=None, maxExclusive=None,
                  maxInclusive=2147483647, minExclusive=None, minInclusive=-2147483648,
                  pattern=None, totalDigits=None):
-        '''
-        '''
         super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
                                      pattern=pattern, totalDigits=totalDigits)
@@ -546,8 +444,6 @@ class Element(object):
         self.namespace = namespace
 
     def _evaluate_type(self):
-        '''
-        '''
         if self._type is None:
             if isinstance(self._passed_type, basestring):
                 self._passed_type = USER_TYPE_REGISTER.find_type(self._passed_type)
@@ -578,8 +474,6 @@ class Element(object):
             return self._type.accept(value)
 
     def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
-        '''
-        '''
         self._evaluate_type()
         if value is None:
             return
@@ -597,8 +491,6 @@ class Element(object):
         parent.append(xmlelement)
 
     def parse(self, instance, field_name, xmlelement):
-        '''
-        '''
         self._evaluate_type()
         if xmlelement.get('{http://www.w3.org/2001/XMLSchema-instance}nil') == 'true':
             value = NIL
@@ -607,8 +499,6 @@ class Element(object):
         setattr(instance, field_name, value)
 
     def __repr__(self):
-        '''
-        '''
         if isinstance(self._type, basestring):
             return '%s<%s>' % (self.__class__.__name__, self._type)
         else:
@@ -622,13 +512,9 @@ class ClassNamedElement(Element):
     '''
 
     def __init__(self, _type, minOccurs=1, nilable=False):
-        '''
-        '''
         super(ClassNamedElement, self).__init__(_type, minOccurs, None, nilable)
 
     def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
-        '''
-        '''
         if value is None:
             return
         tagname = value.name
@@ -666,8 +552,6 @@ class Attribute(Element):
         self.default = default
 
     def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
-        '''
-        '''
         self._evaluate_type()
         if value is None:
             if self._minOccurs:
@@ -684,8 +568,6 @@ class Attribute(Element):
         parent.set(field_name, xmlvalue)
 
     def parse(self, instance, field_name, xmlelement):
-        '''
-        '''
         self._evaluate_type()
         xmlvalue = xmlelement.get(field_name)
         if xmlvalue is None:
@@ -719,14 +601,10 @@ class Ref(Element):
     '''
 
     def empty_value(self):
-        '''
-        '''
         self._evaluate_type()
         return copy(self._type)
 
     def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
-        '''
-        '''
         if value is None:
             if self._required:
                 raise ValueError('Value None is not acceptable for required field.')
@@ -741,8 +619,6 @@ class Content(Ref):
     '''
 
     def empty_value(self):
-        '''
-        '''
         return None
 
 
@@ -764,27 +640,17 @@ class ListElement(Element):
     '''
 
     def __init__(self, clazz, tagname, minOccurs=None, maxOccurs=None, nillable=False):
-        '''
-        '''
         super(ListElement, self).__init__(clazz, tagname=tagname, nillable=nillable)
         self._maxOccurs = maxOccurs
         self._minOccurs = minOccurs
 
     def accept(self, value):
-        '''
-        '''
         return value
 
     def empty_value(this):
-        '''
-        '''
         class TypedList(list):
-            '''
-            '''
 
             def append(self, value):
-                '''
-                '''
                 this._evaluate_type()
                 if value == NIL:
                     if this.nillable:
@@ -801,8 +667,6 @@ class ListElement(Element):
         return TypedList()
 
     def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
-        '''
-        '''
         self._evaluate_type()
         items = value  # The value must be list of items.
         if self._minOccurs and len(items) < self._minOccurs:
@@ -826,8 +690,6 @@ class ListElement(Element):
             parent.append(xmlelement)
 
     def parse(self, instance, field_name, xmlelement):
-        '''
-        '''
         self._evaluate_type()
         if xmlelement.get('{http://www.w3.org/2001/XMLSchema-instance}nil'):
             value = NIL
@@ -838,12 +700,8 @@ class ListElement(Element):
 
 
 class ComplexTypeMetaInfo(object):
-    '''
-    '''
 
     def __init__(self, cls):
-        '''
-        '''
         self.cls = cls
         self.fields = []
         self.attributes = []
@@ -873,8 +731,6 @@ class Complex_PythonType(Type_PythonType):
     '''
 
     def __new__(cls, name, bases, attrs):
-        '''
-        '''
         newcls = super(Complex_PythonType, cls).__new__(cls, name, bases, attrs)
         if name != 'Complex':
             newcls._meta = ComplexTypeMetaInfo(newcls)
@@ -892,22 +748,16 @@ class ComplexType(Type):
     __metaclass__ = Complex_PythonType
 
     def __new__(cls, *args, **kwargs):
-        '''
-        '''
         instance = super(ComplexType, cls).__new__(cls)
         for field in instance._meta.all:
             setattr(instance, field._name, field.empty_value())
         return instance
 
     def __init__(self, **kwargs):
-        '''
-        '''
         for key, value in kwargs.items():
             setattr(self, key, value)
 
     def __setattr__(self, attr, value):
-        '''
-        '''
         if attr == '_xmlelement':
             super(ComplexType, self).__setattr__(attr, value)
         else:
@@ -929,8 +779,6 @@ class ComplexType(Type):
             raise ValueError('Wrong value object type %s for %s.' % (value, self.__class__.__name__))
 
     def render(self, parent, instance, namespace=None, elementFormDefault=None):
-        '''
-        '''
         if instance is None:
             return None
         if self.SCHEMA:
@@ -945,14 +793,10 @@ class ComplexType(Type):
 
     @classmethod
     def _find_field(cls, fields, name):
-        '''
-        '''
         return filter(lambda f: f._name == name, fields)[0]
 
     @classmethod
     def _get_field_by_name(cls, fields, field_name):
-        '''
-        '''
         for field in fields:
             if field.tagname == field_name or field._name == field_name:
                 return field
@@ -960,8 +804,6 @@ class ComplexType(Type):
 
     @classmethod
     def _find_subelement(cls, field, xmlelement):
-        '''
-        '''
         def gettagns(tag):
             '''
             Translates tag string in format {namespace} tag to tuple
@@ -983,8 +825,6 @@ class ComplexType(Type):
 
     @classmethod
     def parse_xmlelement(cls, xmlelement):
-        '''
-        '''
         instance = cls()
         instance._xmlelement = xmlelement
         for attribute in instance._meta.attributes:
@@ -1002,8 +842,6 @@ class ComplexType(Type):
 
     @classmethod
     def __parse_with_validation(cls, xml, schema):
-        '''
-        '''
         from py2xsd import generate_xsd
         schema = generate_xsd(schema)
         schemaelement = etree.XMLSchema(schema)
@@ -1013,8 +851,6 @@ class ComplexType(Type):
 
     @classmethod
     def parsexml(cls, xml, schema=None):
-        '''
-        '''
         if schema and settings.VALIDATE_ON_PARSE:
             xmlelement = cls.__parse_with_validation(xml, schema)
         else:
@@ -1022,8 +858,6 @@ class ComplexType(Type):
         return cls.parse_xmlelement(xmlelement)
 
     def xml(self, tagname, namespace=None, elementFormDefault=None, schema=None):
-        '''
-        '''
         if namespace:
             tagname = '{%s}%s' % (namespace, tagname)
         xmlelement = etree.Element(tagname)
@@ -1065,22 +899,14 @@ class Document(ComplexType):
     NAMESPACE = None
 
     class MockElement(object):
-        '''
-        '''
 
         def __init__(self):
-            '''
-            '''
             self.element = None
 
         def append(self, element):
-            '''
-            '''
             self.element = element
 
     def render(self):
-        '''
-        '''
         field = self._meta.fields[0]  # The only field.
         mockelement = Document.MockElement()
         instance = getattr(self, field._name)
@@ -1090,94 +916,64 @@ class Document(ComplexType):
     # TODO: Add schema support.
     @classmethod
     def parsexml(cls, xml):
-        '''
-        '''
         field = cls._meta.fields[0]  # The only field.
         xmlelement = etree.fromstring(xml)
         field.parse(cls, field._name, xmlelement)
 
 
 class UnsignedLong(Long):
-    '''
-    '''
     pass
 
 
 class UnsignedInt(Int):
-    '''
-    '''
     pass
 
 
 class List(SimpleType):
-    '''
-    '''
     pass
 
 
 class AnyURI(String):
-    '''
-    '''
     pass
 
 
 class QName(String):
-    '''
-    '''
     pass
 
 
 class NMTOKEN(String):
-    '''
-    '''
     pass
 
 
 class NMTOKENS(String):
-    '''
-    '''
     pass
 
 
 class AnyType(Type):
-    '''
-    '''
     pass
 
 
 class Base64Binary(String):
-    '''
-    '''
     pass
 
 
 class Duration(String):
-    '''
-    '''
     pass
 
 
 class UnsignedShort(Int):
-    '''
-    '''
     pass
 
 
 class UnsignedByte(UnsignedShort):
-    '''
-    '''
     pass
 
 
 class Short(Int):
-    '''
-    '''
     pass
 
 
 class Byte(Short):
-    '''
-    '''
     pass
 
 
@@ -1230,20 +1026,14 @@ class Schema(object):
             element._evaluate_type()
 
     def __init_schema(self, types):
-        '''
-        '''
         for _type in types:
             _type.SCHEMA = self
 
     def _force_elements_type_evalution(self, types):
-        '''
-        '''
         for t in types:
             t._force_elements_type_evalution()
 
     def get_element_by_name(self, name):
-        '''
-        '''
         if name in self.elements:
             return self.elements[name]
 
@@ -1278,14 +1068,10 @@ class Method(object):
 
 
 class NamedType(ComplexType):
-    '''
-    '''
     name = Element(String)
     value = Element(ComplexType)
 
     def __init__(self, name=None, value=None):
-        '''
-        '''
         self.name = name
         self.value = value
 

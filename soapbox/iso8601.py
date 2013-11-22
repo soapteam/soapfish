@@ -64,18 +64,12 @@ class Utc(tzinfo):
     '''
 
     def utcoffset(self, dt):
-        '''
-        '''
         return ZERO
 
     def tzname(self, dt):
-        '''
-        '''
         return 'UTC'
 
     def dst(self, dt):
-        '''
-        '''
         return ZERO
 
 
@@ -88,29 +82,19 @@ class FixedOffset(tzinfo):
     '''
 
     def __init__(self, offset_hours, offset_minutes, name):
-        '''
-        '''
         self.__offset = timedelta(hours=offset_hours, minutes=offset_minutes)
         self.__name = name
 
     def utcoffset(self, dt):
-        '''
-        '''
         return self.__offset
 
     def tzname(self, dt):
-        '''
-        '''
         return self.__name
 
     def dst(self, dt):
-        '''
-        '''
         return ZERO
 
     def __repr__(self):
-        '''
-        '''
         return '<FixedOffset %r>' % self.__name
 
 

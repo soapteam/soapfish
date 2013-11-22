@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -27,8 +25,6 @@ CONTENT_TYPE = 'text/xml'
 
 
 def determin_soap_action(request):
-    '''
-    '''
     if request.META.get('HTTP_SOAPACTION'):
         return request.META.get('HTTP_SOAPACTION').replace('"', '')
     elif request.META.get('HTTP_ACTION'):
@@ -38,8 +34,6 @@ def determin_soap_action(request):
 
 
 def get_error_response(code, message):
-    '''
-    '''
     fault = Fault(faultcode='Client', faultstring=message)
     envelope = Envelope()
     envelope.Body = Body(Fault=fault)
@@ -48,14 +42,10 @@ def get_error_response(code, message):
 
 
 def parse_fault_message(fault):
-    '''
-    '''
     return fault.faultcode, fault.faultstring
 
 
 def build_header(soapAction):
-    '''
-    '''
     return {'content-type': CONTENT_TYPE, 'SOAPAction': soapAction}
 
 
@@ -64,8 +54,6 @@ def build_header(soapAction):
 
 
 class Code:
-    '''
-    '''
     CLIENT = 'Client'
     SERVER = 'Server'
 
@@ -93,8 +81,6 @@ class Body(xsd.ComplexType):
     Fault = xsd.Element(Fault, minOccurs=0)
 
     def content(self):
-        '''
-        '''
         return etree.tostring(self._xmlelement[0], pretty_print=True)
 
 
@@ -107,8 +93,6 @@ class Envelope(xsd.ComplexType):
 
     @classmethod
     def response(cls, tagname, return_object):
-        '''
-        '''
         envelope = Envelope()
         envelope.Body = Body()
         envelope.Body.message = xsd.NamedType(name=tagname, value=return_object)

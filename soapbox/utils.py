@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -30,8 +28,6 @@ logger.addHandler(logging.NullHandler())
 
 
 def open_document(path):
-    '''
-    '''
     logger.info('Opening document \'%s\'...' % path)
     # Handle documents available on the Internet:
     if path.startswith('http:'):
@@ -54,33 +50,23 @@ def open_document(path):
 
 
 def remove_namespace(full_typename):
-    '''
-    '''
     if not full_typename:
         return None
     return full_typename.split(':')[-1]
 
 
 def capitalize(value):
-    '''
-    '''
     return value[0].upper() + value[1:]
 
 
 def uncapitalize(value):
-    '''
-    '''
     if value == 'QName':
         return value
     return value[0].lower() + value[1:]
 
 
 def get_get_type(xsd_namespaces):
-    '''
-    '''
     def get_type(full_typename):
-        '''
-        '''
         if not full_typename:
             return None
         typename = full_typename.split(':')
@@ -95,8 +81,6 @@ def get_get_type(xsd_namespaces):
 
 
 def use(usevalue):
-    '''
-    '''
     if usevalue == xsd.Use.OPTIONAL:
         return 'xsd.Use.OPTIONAL'
     elif usevalue == xsd.Use.REQUIRED:
@@ -116,8 +100,6 @@ def url_regex(url):
 
 
 def url_component(url, item):
-    '''
-    '''
     parts = urlparse(url)
     try:
         return getattr(parts, item)
@@ -139,8 +121,6 @@ def url_template(url):
 
 
 def find_xsd_namespaces(nsmap):
-    '''
-    '''
     xsd_namespaces = [
         'http://www.w3.org/2000/10/XMLSchema',
         'http://www.w3.org/2001/XMLSchema',

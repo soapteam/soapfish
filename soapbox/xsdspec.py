@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -23,36 +21,26 @@ XSD_NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
 
 
 class Enumeration(xsd.ComplexType):
-    '''
-    '''
     value = xsd.Attribute(xsd.String)
 
     @classmethod
     def create(cls, value):
-        '''
-        '''
         enum = Enumeration()
         enum.value = value
         return enum
 
 
 class Pattern(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     value = xsd.Attribute(xsd.String)
 
 
 class RestrictionValue(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     value = xsd.Attribute(xsd.String)
 
 
 class Restriction(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     base = xsd.Attribute(xsd.String)
     enumerations = xsd.ListElement(Enumeration, 'enumeration')
@@ -70,15 +58,11 @@ class Restriction(xsd.ComplexType):
 
 
 class List(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     pass
 
 
 class SimpleType(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     restriction = xsd.Element(Restriction, minOccurs=0)
@@ -86,8 +70,6 @@ class SimpleType(xsd.ComplexType):
 
 
 class Element(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     type = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
@@ -100,15 +82,11 @@ class Element(xsd.ComplexType):
 
 
 class Sequence(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     elements = xsd.ListElement(Element, 'element')
 
 
 class Attribute(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String)
     ref = xsd.Attribute(xsd.String)
@@ -117,16 +95,12 @@ class Attribute(xsd.ComplexType):
 
 
 class AttributeGroup(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String)
     attributes = xsd.ListElement(Attribute, 'attribute')
 
 
 class AttributeGroupReference(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     ref = xsd.Attribute(xsd.String)
 
@@ -137,8 +111,6 @@ class AttributeGroupReference(xsd.ComplexType):
 
 
 class Extension(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     base = xsd.Attribute(xsd.String)
     sequence = xsd.Element(Sequence)
@@ -147,8 +119,6 @@ class Extension(xsd.ComplexType):
 
 
 class ComplexContent(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     mixed = xsd.Attribute(xsd.Boolean)
     extension = xsd.Element(Extension)
@@ -156,8 +126,6 @@ class ComplexContent(xsd.ComplexType):
 
 
 class XSDComplexType(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     sequence = xsd.Element(Sequence)
@@ -168,23 +136,17 @@ class XSDComplexType(xsd.ComplexType):
 
 
 class Group(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     name = xsd.Attribute(xsd.String)
     sequence = xsd.Element(Sequence)
 
 
 class Import(xsd.ComplexType):
-    '''
-    '''
     schemaLocation = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     namespace = xsd.Attribute(xsd.String)
 
 
 class Schema(xsd.ComplexType):
-    '''
-    '''
     NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
     targetNamespace = xsd.Attribute(xsd.String)
     elementFormDefault = xsd.Attribute(

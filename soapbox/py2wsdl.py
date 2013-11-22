@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -36,8 +34,6 @@ logger.addHandler(logging.NullHandler())
 
 
 def build_service(wsdl, definitions, service):
-    '''
-    '''
     wsdl_port = wsdl.Port()
     wsdl_port.name = service.name + 'Port'
     wsdl_port.binding = 'tns:' + service.name + 'Binding'
@@ -51,8 +47,6 @@ def build_service(wsdl, definitions, service):
 
 
 def build_bindings(wsdl, definitions, service):
-    '''
-    '''
     binding = wsdl.Binding()
     binding.name = service.name + 'Binding'
     binding.type = 'tns:' + service.name + 'PortType'
@@ -74,8 +68,6 @@ def build_bindings(wsdl, definitions, service):
 
 
 def build_portTypes(wsdl, definitions, service):
-    '''
-    '''
     portType = wsdl.PortType()
     portType.name = service.name + 'PortType'
 
@@ -90,8 +82,6 @@ def build_portTypes(wsdl, definitions, service):
 
 
 def build_messages(wsdl, definitions, service):
-    '''
-    '''
     for method in service.methods:
         inputMessage = wsdl.Message(name=method.operationName + 'Input')
         inputMessage.part = wsdl.Part()
@@ -113,15 +103,11 @@ def build_messages(wsdl, definitions, service):
 
 
 def build_types(wsdl, definitions, schema):
-    '''
-    '''
     xsd_schema = generate_xsdspec(schema)
     definitions.types = wsdl.Types(schema=xsd_schema)
 
 
 def generate_wsdl(service):
-    '''
-    '''
     wsdl = get_wsdl_classes(service.version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions(targetNamespace=service.targetNamespace)
     build_types(wsdl, definitions, service.schema)
@@ -154,8 +140,6 @@ def generate_wsdl(service):
 
 
 def parse_arguments():
-    '''
-    '''
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent('''\
@@ -166,8 +150,6 @@ def parse_arguments():
 
 
 def main():
-    '''
-    '''
     opt = parse_arguments()
 
     logger.info('Generating WSDL for module \'%s\'...' % opt.module)

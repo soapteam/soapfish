@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -50,8 +48,6 @@ logger.addHandler(logging.NullHandler())
 
 
 def get_rendering_environment():
-    '''
-    '''
     pkg = TEMPLATE_PACKAGE.split('.')
     env = Environment(
         extensions=['jinja2.ext.loopcontrols'],
@@ -68,8 +64,6 @@ def get_rendering_environment():
 
 
 def resolve_import(xsdimport, known_namespaces):
-    '''
-    '''
     logger.info('Generating code for XSD import \'%s\'...' % xsdimport.schemaLocation)
     xml = open_document(xsdimport.schemaLocation)
     xmlelement = etree.fromstring(xml)
@@ -77,14 +71,10 @@ def resolve_import(xsdimport, known_namespaces):
 
 
 def schema_name(namespace):
-    '''
-    '''
     return hashlib.sha512(namespace).hexdigest()[0:5]
 
 
 def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None):
-    '''
-    '''
     if known_namespaces is None:
         known_namespaces = []
     xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
@@ -99,8 +89,6 @@ def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None):
 
 
 def schema_to_py(schema, xsd_namespace, known_namespaces=None, location=None):
-    '''
-    '''
     if known_namespaces is None:
         known_namespaces = []
     known_namespaces.append(schema.targetNamespace)
@@ -119,8 +107,6 @@ def schema_to_py(schema, xsd_namespace, known_namespaces=None, location=None):
 
 
 def parse_arguments():
-    '''
-    '''
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent('''\
@@ -131,8 +117,6 @@ def parse_arguments():
 
 
 def main():
-    '''
-    '''
     opt = parse_arguments()
 
     logger.info('Generating code for XSD document \'%s\'...' % opt.xsd)

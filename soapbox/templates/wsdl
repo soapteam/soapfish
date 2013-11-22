@@ -34,8 +34,6 @@ from soapbox.xsd import UNBOUNDED
 {%- set outputMessage = operation.get_OutputMessage() -%}
 {# [blank line] #}
 def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace }}):
-    '''
-    '''
     # TODO: Put your implementation here.
     return {{ outputMessage.part.element|remove_namespace }}
 {# [blank line] #}
@@ -106,16 +104,12 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {# [blank line] #}
 {# [blank line] #}
 class {{ port.name }}ServiceStub(soap.Stub):
-    '''
-    '''
     SERVICE = {{ port.name }}_SERVICE
     SCHEME = '{{ port.address.location|url_component('scheme') }}'
     HOST = '{{ port.address.location|url_component('netloc') }}'
 {% for operation in binding.operations %}
 {%- set inputMessage = operation.get_InputMessage() %}
     def {{ operation.name }}(self, {{ inputMessage.part.element|remove_namespace }}):
-        '''
-        '''
         return self.call('{{ operation.name}}', {{ inputMessage.part.element|remove_namespace }})
 {% endfor %}
 {%- endif %}

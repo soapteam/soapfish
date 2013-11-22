@@ -41,15 +41,11 @@ logger.addHandler(logging.NullHandler())
 
 
 class SOAPVersion:
-    '''
-    '''
     SOAP12 = soap12
     SOAP11 = soap11
 
     @classmethod
     def get_version(cls, namespace):
-        '''
-        '''
         if namespace == cls.SOAP11.ENVELOPE or namespace == cls.SOAP11.BINDING:
             return cls.SOAP11
         elif  namespace == cls.SOAP12.ENVELOPE or namespace == cls.SOAP12.BINDING:
@@ -59,15 +55,11 @@ class SOAPVersion:
 
     @classmethod
     def get_version_name(cls, namespace):
-        '''
-        '''
         version = cls.get_version(namespace)
         return version.__name__
 
 
 class SOAPError(Exception):
-    '''
-    '''
     pass
 
 
@@ -93,8 +85,6 @@ class Service(object):
         self.version = version
 
     def get_method(self, operationName):
-        '''
-        '''
         return filter(lambda m: m.operationName == operationName, self.methods)[0]
 
 
@@ -107,8 +97,6 @@ class Stub(object):
     HOST = 'www.example.net'
 
     def __init__(self, username=None, password=None, service=None, location=None, base_url=None):
-        '''
-        '''
         self.username = username
         self.password = password
         self.service = service if service else self.SERVICE
@@ -127,8 +115,6 @@ class Stub(object):
             }
 
     def _handle_response(self, method, response, content):
-        '''
-        '''
         SOAP = self.SERVICE.version
         envelope = SOAP.Envelope.parsexml(content)
 
@@ -195,12 +181,8 @@ class Stub(object):
 
 
 def get_django_dispatch(service):
-    '''
-    '''
 
     def call_the_method(request, message, soap_action):
-        '''
-        '''
         for method in service.methods:
             if soap_action != method.soapAction:
                 continue
@@ -228,8 +210,6 @@ def get_django_dispatch(service):
         raise ValueError('Method not found!')
 
     def django_dispatch(request):
-        '''
-        '''
         from django.http import HttpResponse
         from . import py2wsdl
 

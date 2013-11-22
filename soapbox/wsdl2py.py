@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -53,8 +51,6 @@ logger.addHandler(logging.NullHandler())
 
 
 def get_rendering_environment():
-    '''
-    '''
     pkg = TEMPLATE_PACKAGE.split('.')
     env = Environment(
         extensions=['jinja2.ext.loopcontrols'],
@@ -74,8 +70,6 @@ def get_rendering_environment():
 
 
 def generate_code_from_wsdl(xml, target):
-    '''
-    '''
     env = get_rendering_environment()
     xmlelement = etree.fromstring(xml)
     XSD_NAMESPACE = find_xsd_namespaces(xmlelement.nsmap)
@@ -100,8 +94,6 @@ def generate_code_from_wsdl(xml, target):
 
 
 def parse_arguments():
-    '''
-    '''
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent('''\
@@ -118,8 +110,6 @@ def parse_arguments():
 
 
 def main():
-    '''
-    '''
     opt = parse_arguments()
 
     if opt.client:

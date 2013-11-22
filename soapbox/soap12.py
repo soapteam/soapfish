@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -27,8 +25,6 @@ CONTENT_TYPE = 'application/soap+xml'
 
 
 def determin_soap_action(request):
-    '''
-    '''
     content_types = request.META['CONTENT_TYPE'].split(';')
     for content_type in content_types:
         if content_type.strip(' ').startswith('action='):
@@ -38,14 +34,10 @@ def determin_soap_action(request):
 
 
 def build_header(soapAction):
-    '''
-    '''
     return {'content-type': CONTENT_TYPE + 'action=%s' % soapAction}
 
 
 def get_error_response(code, message):
-    '''
-    '''
     code = Code(Value=code)
     reason = Reason(Text=message)
     fault = Fault(Code=code, Reason=reason)
@@ -56,8 +48,6 @@ def get_error_response(code, message):
 
 
 def parse_fault_message(fault):
-    '''
-    '''
     return fault.Code.Value, fault.Reason.Text
 
 
@@ -73,27 +63,19 @@ class Header(xsd.ComplexType):
 
 
 class Code(xsd.ComplexType):
-    '''
-    '''
     CLIENT = 'ns0:Sender'
     SERVER = 'ns0:Receiver'
     Value = xsd.Element(xsd.String)
 
 
 class LanguageString(xsd.String):
-    '''
-    '''
 
     def render(self, parent, value, namespace, elementFormDefault):
-        '''
-        '''
         parent.text = self.xmlvalue(value)
         parent.set('{http://www.w3.org/XML/1998/namespace}lang', 'en')
 
 
 class Reason(xsd.ComplexType):
-    '''
-    '''
     Text = xsd.Element(LanguageString)
 
 
@@ -113,8 +95,6 @@ class Body(xsd.ComplexType):
     Fault = xsd.Element(Fault, minOccurs=0)
 
     def content(self):
-        '''
-        '''
         return etree.tostring(self._xmlelement[0], pretty_print=True)
 
 
@@ -127,8 +107,6 @@ class Envelope(xsd.ComplexType):
 
     @classmethod
     def response(cls, tagname, return_object):
-        '''
-        '''
         envelope = Envelope()
         envelope.Body = Body()
         envelope.Body.message = xsd.NamedType(name=tagname, value=return_object)

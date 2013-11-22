@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 
-'''
-'''
 
 ################################################################################
 # Imports
@@ -59,8 +57,6 @@ def get_xsd_type(_type):
 
 
 def xsd_attribute(attribute):
-    '''
-    '''
     xsdattr = xsdspec.Attribute()
     xsdattr.name = attribute._name
     xsdattr.use = attribute.use
@@ -69,8 +65,6 @@ def xsd_attribute(attribute):
 
 
 def create_xsd_element(element):
-    '''
-    '''
     xsd_element = xsdspec.Element()
     xsd_element.name = element.tagname if element.tagname else element._name
     xsd_element.nillable = element.nillable
@@ -119,8 +113,6 @@ def create_xsd_element(element):
 
 
 def xsd_complexType(complexType, named=True):
-    '''
-    '''
     xsd_ct = xsdspec.XSDComplexType()
     if named:
         xsd_ct.name = uncapitalize(complexType.__name__)
@@ -146,8 +138,6 @@ def xsd_complexType(complexType, named=True):
 
 
 def xsd_simpleType(st):
-    '''
-    '''
     xsd_simpleType = xsdspec.SimpleType()
     xsd_simpleType.name = uncapitalize(st.__name__)
     xsd_restriction = xsdspec.Restriction()
@@ -164,8 +154,6 @@ def xsd_simpleType(st):
 
 
 def build_imports(xsd_schema, imports):
-    '''
-    '''
     counter = 0
     if imports:
         for _import in imports:
@@ -178,8 +166,6 @@ def build_imports(xsd_schema, imports):
 
 
 def generate_xsdspec(schema):
-    '''
-    '''
     xsd_schema = xsdspec.Schema()
     xsd_schema.targetNamespace = schema.targetNamespace
 
@@ -197,8 +183,6 @@ def generate_xsdspec(schema):
 
 
 def generate_elements(xsd_schema, schema):
-    '''
-    '''
     for name, element in schema.elements.iteritems():
         xsd_element = xsdspec.Element()
         xsd_element.name = name
@@ -210,8 +194,6 @@ def generate_elements(xsd_schema, schema):
 
 
 def generate_xsd(schema):
-    '''
-    '''
     xsd_schema = generate_xsdspec(schema)
 
     xmlelement = etree.Element(
@@ -234,8 +216,6 @@ def generate_xsd(schema):
 
 
 def parse_arguments():
-    '''
-    '''
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent('''\
@@ -246,8 +226,6 @@ def parse_arguments():
 
 
 def main():
-    '''
-    '''
     opt = parse_arguments()
 
     logger.info('Generating XSD for module \'%s\'...' % opt.module)

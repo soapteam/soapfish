@@ -9,8 +9,6 @@
 {%- for st in schema.simpleTypes %}
 {%- if st.restriction %}
 class {{ st.name|capitalize }}({{ st.restriction.base|type }}):
-    '''
-    '''
 {%- if st.restriction.enumerations %}
     enumeration = [{% for enum in st.restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endif %}
@@ -36,16 +34,12 @@ class {{ st.name|capitalize }}({{ st.restriction.base|type }}):
 {% endif %}
 {%- if st.list %}
 class {{ st.name|capitalize }}(xsd.List):
-    '''
-    '''
     pass
 {%- endif %}
 {%- endfor %}
 {#- Attribute Groups -#}
 {%- for attrGroup in schema.attributeGroups %}
 class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
-    '''
-    '''
     {%- for attribute in attrGroup.attributes %}
     {{ attribute.name }} = xsd.Attribute({{ attribute.type|type }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
     {%- endfor %}
@@ -53,8 +47,6 @@ class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
 {#- Groups -#}
 {%- for group in schema.groups %}
 class {{ group.name|capitalize }}(xsd.Group):
-    '''
-    '''
     {%- for element in group.sequence.elements %}
     {%- if element.ref %}
     {{ element.ref|remove_namespace }} = xsd.Element({{ element.ref|type }})
@@ -77,27 +69,19 @@ class {{ group.name|capitalize }}(xsd.Group):
 {%- set content = ct %}
 {%- if not ct.sequence and not ct.complexContent %}
 class {{ ct.name|capitalize }}(xsd.ComplexType):
-    '''
-    '''
 {%- endif %}
 {%- if ct.complexContent %}
     {%- if ct.complexContent.restriction %}
 class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type }}):
-    '''
-    '''
     INHERITANCE = xsd.Inheritance.RESTRICTION
     {%- set content = ct.complexContent.restriction %}
     {%- else %}
 class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type }}):
-    '''
-    '''
     INHERITANCE = xsd.Inheritance.EXTENSION
     {%- set content = ct.complexContent.extension %}
     {%- endif %}
 {%- elif ct.sequence %}
 class {{ ct.name|capitalize }}(xsd.ComplexType):
-    '''
-    '''
     INHERITANCE = None
     {%- set content = ct %}
 {%- endif %}
@@ -179,27 +163,20 @@ class {{ ct.name|capitalize }}(xsd.ComplexType):
 
 {%- if not ct.sequence and not ct.complexContent %}
 class {{ element.name|capitalize }}(xsd.ComplexType):
-    '''
-    '''
+    ''
 {%- endif %}
 {%- if ct.complexContent %}
     {%- if ct.complexContent.restriction %}
 class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type }}):
-    '''
-    '''
     INHERITANCE = xsd.Inheritance.RESTRICTION
     {%- set content = ct.complexContent.restriction %}
     {%- else %}
 class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type }}):
-    '''
-    '''
     INHERITANCE = xsd.Inheritance.EXTENSION
     {%- set content = ct.complexContent.extension %}
     {%- endif %}
 {%- elif ct.sequence %}
 class {{ element.name|capitalize }}(xsd.ComplexType):
-    '''
-    '''
     INHERITANCE = None
     {%- set content = ct %}
 {%- endif %}
