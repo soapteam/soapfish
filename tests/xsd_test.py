@@ -156,7 +156,7 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_fractionDigits(self):
 
@@ -170,7 +170,7 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_Inclusive(self):
 
@@ -186,13 +186,13 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
         try:
             test.value = 101
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_Exclusive(self):
 
@@ -208,25 +208,25 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
         try:
             test.value = 0
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
         try:
             test.value = 1
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
         try:
             test.value = -101
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_pattern(self):
 
@@ -241,7 +241,7 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_totalDigits(self):
 
@@ -257,13 +257,13 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
         try:
             test.value = 12345
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_rendring(self):
 
@@ -310,14 +310,14 @@ class IntegerTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
         try:
             test.value = -2147483649
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_Long(self):
 
@@ -332,13 +332,13 @@ class IntegerTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
         try:
             test.value = -9223372036854775808 - 1
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
 
 class DatetimeTest(unittest.TestCase):
@@ -800,7 +800,7 @@ class NillableTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_nillable_element_parsing(self):
 
@@ -832,7 +832,7 @@ class NillableTest(unittest.TestCase):
         except:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
     def test_nillable_list_parsing(self):
 
@@ -892,7 +892,7 @@ class PatternTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False, "Should not get here.")
+            self.fail("Should not get here.")
 
 
 if __name__ == "__main__":
