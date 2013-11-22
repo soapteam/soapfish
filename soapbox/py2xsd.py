@@ -30,7 +30,8 @@ logger.addHandler(logging.NullHandler())
 # --- Helpers -----------------------------------------------------------------
 def get_xsd_type(_type):
     '''
-    Check is basic type from XSD scope, else it must be user defined type.
+    Check if type_ is a basic type in the XSD scope otherwise it must be user
+    defined type.
     '''
     base_class = _type.__class__.__bases__[0]
     if base_class == xsd.SimpleType or _type.__class__  in ALL_TYPES:

@@ -407,18 +407,18 @@ class Element(object):
                  default=None, namespace=None):
         '''
         :param _type: Class or instance of class that inherits from Type,
-                      usually a child of SimpleType from xsd package, or user
-                      defined class that inherits from ComplexType.
+                      usually a child of SimpleType from the xsd package, or
+                      a user defined class that inherits from ComplexType.
         :param minOccurs: int, how many times this object can appear in valid
                           XML can be 0 or 1. See: difference between Element
                           and ListElement.
         :param tagname: str, name of tag when different to field declared in
-                        ComplexType, important when tag name is python reserved
-                        work e.g. import
+                        ComplexType, important when the tag name is a Python
+                        keyword e.g. "import"
         :param nillable: bool, is object nilable.
         '''
         if not minOccurs in [0, 1]:
-            raise 'minOccurs for Element can by only 0 or 1, use ListElement instead.'
+            raise 'minOccurs for Element can be only 0 or 1, use ListElement instead.'
         self._creation_number = Element._creation_counter
         Element._creation_counter += 1
         self._passed_type = _type
@@ -440,9 +440,9 @@ class Element(object):
 
     def empty_value(self):
         '''
-        Empty value methods is used when new object is constructed for field
+        This method is used when a new object is constructed for a field.
         initialization in most cases this should be None, but for lists and
-        other types of aggregates this should by an empty aggregate.
+        other types of aggregates this should be an empty aggregate.
         '''
         return self.default
 
@@ -564,8 +564,8 @@ class Attribute(Element):
 
 class Ref(Element):
     '''
-    References are not fields, they point to type that has them - usually groups.
-    With Ref fields will be rendered directly into parent object. e.g.
+    References are not fields, they point to a type that has them - usually groups.
+    Ref fields will be rendered directly into the parent object. e.g.
 
         class Person(xsd.Group):
             name = xsd.Element(xsd.String)
@@ -583,7 +583,7 @@ class Ref(Element):
             <surname>Brown</surname>
         </job>
 
-    Note that name and surname are not wrapped with <person> tag.
+    Note that name and surname are not wrapped with a <person> tag.
     '''
 
     def empty_value(self):
@@ -712,7 +712,7 @@ class ComplexTypeMetaInfo(object):
 
 class Complex_PythonType(Type_PythonType):
     '''
-    Python type for ComplexType, builds _meta object for every class that
+    Python type for ComplexType, builds a _meta object for every class that
     inherit from ComplexType.
     '''
 
@@ -755,7 +755,7 @@ class ComplexType(Type):
 
     def accept(self, value):
         '''
-        Instance methods that validate other instance.
+        Instance methods that validate other instances.
         '''
         if value is None:
             return None
@@ -792,7 +792,7 @@ class ComplexType(Type):
     def _find_subelement(cls, field, xmlelement):
         def gettagns(tag):
             '''
-            Translates tag string in format {namespace} tag to tuple
+            Translates a tag string in a format {namespace} tag to a tuple
             (namespace, tag).
             '''
             if tag[0] == '{':
@@ -856,7 +856,7 @@ class ComplexType(Type):
     @classmethod
     def _force_elements_type_evalution(cls):
         '''
-        Allows schema object to force elements type evalution for XSD
+        Allows a schema object to force elements type evalution for XSD
         generation.
         '''
         for element in cls._meta.all:
@@ -865,21 +865,21 @@ class ComplexType(Type):
 
 class Group(ComplexType):
     '''
-    Parent object for XSD Groups. Marker. Must be use with Ref.
+    Parent object for XSD Groups. Marker. Must be used with Ref.
     '''
     pass
 
 
 class AttributeGroup(Group):
     '''
-    Parent object for XSD Attribute Groups. Marker. Must be use with Ref.
+    Parent object for XSD Attribute Groups. Marker. Must be used with Ref.
     '''
     pass
 
 
 class Document(ComplexType):
     '''
-    Represents whole xml, is expected to have only one field the root.
+    Represents the whole xml, is expected to have only one field (root element).
     '''
 
     NAMESPACE = None
@@ -965,8 +965,8 @@ class Byte(Short):
 
 class Schema(object):
     '''
-    Main object for XSD schema. This object is required for XSD and
-    WSDLgeneration and correct namespaces as it propagates targetNamespace to
+    Main object for XSD schema. This object is required for XSD and WSDL
+    generation and needs correct namespaces as it propagates targetNamespace to
     all objects.  Instance of this is expected to be named Schema.
     '''
 
@@ -975,10 +975,9 @@ class Schema(object):
                  imports=None, location=None):
         '''
         :param targetNamespace: string, xsd namespace URL.
-        :param elementFormDefault: unqualified/qualified Defines should
-                                   namespace be used in child elements.
-                                   Suggested: qualified. Default: unqualified
-                                   as it is default in XSD.
+        :param elementFormDefault: unqualified/qualified. Defines if namespaces
+            be used in child elements.
+            Suggested: qualified. Default: unqualified (same default as in XSD).
         :param simpleTypes: List of objects that extend xsd.SimpleType.
         :param attributeGroups: List of objects that extend xsd.AttributeGroup.
         :param groups: List of objects that extend xsd.Group.
@@ -1034,14 +1033,16 @@ class Schema(object):
 class Method(object):
     '''
     Method description. The main information is mapping soapAction and
-    operationName to function for dispatcher. input and output mapping informs
-    how and which objects should be created on incoming/outgoing messages.
+    operationName to a function for the dispatcher. input and output mapping
+    informs how and which objects should be created on incoming/outgoing
+    messages.
     '''
 
     def __init__(self, operationName, soapAction, input, output, function=None,
                  inputPartName="body", outputPartName="body", style=CallStyle.DOCUMENT):
         '''
-        :param function: The function that should be called. Required only for server.
+        :param function: The function that should be called. Required only for
+            server implementations.
         '''
         self.operationName = operationName
         self.soapAction = soapAction

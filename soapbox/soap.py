@@ -47,7 +47,7 @@ class SOAPError(Exception):
 
 class Service(object):
     '''
-    Describes service aggregating informations required for dispatching and
+    Describes service aggregating information required for dispatching and
     WSDL generation.
     '''
 
