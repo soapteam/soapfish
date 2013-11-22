@@ -11,7 +11,7 @@ CONTENT_TYPE = 'text/xml'
 
 
 # --- Functions ---------------------------------------------------------------
-def determin_soap_action(request):
+def determine_soap_action(request):
     if request.META.get('HTTP_SOAPACTION'):
         return request.META.get('HTTP_SOAPACTION').replace('"', '')
     elif request.META.get('HTTP_ACTION'):

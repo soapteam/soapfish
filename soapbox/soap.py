@@ -202,7 +202,7 @@ def get_django_dispatch(service):
             xml = request.raw_post_data
             envelope = SOAP.Envelope.parsexml(xml)
             message = envelope.Body.content()
-            soap_action = SOAP.determin_soap_action(request)
+            soap_action = SOAP.determine_soap_action(request)
             tagname, return_object = call_the_method(request, message, soap_action)
             soap_message = SOAP.Envelope.response(tagname, return_object)
             return HttpResponse(soap_message, content_type=SOAP.CONTENT_TYPE)

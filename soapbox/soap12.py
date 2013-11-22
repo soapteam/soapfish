@@ -11,7 +11,7 @@ CONTENT_TYPE = 'application/soap+xml'
 
 
 # --- Functions ---------------------------------------------------------------
-def determin_soap_action(request):
+def determine_soap_action(request):
     content_types = request.META['CONTENT_TYPE'].split(';')
     for content_type in content_types:
         if content_type.strip(' ').startswith('action='):
