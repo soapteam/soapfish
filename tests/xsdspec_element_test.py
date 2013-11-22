@@ -29,3 +29,26 @@ class XSDSpecElementTest(PythonicTestCase):
             '  </simpleType>\n'
             '</element>\n')
         assert_equals(expected_xml, element.xml('element'))
+    
+    def test_element_with_ref_attribute_rejects_forbidden_attributes(self):
+        self.skipTest('Elements with "ref" attribute currently do not restrict setting other attributes.')
+        element = xsdspec.Element()
+        element.ref = 'foo'
+        element.minOccurs = 3
+        element.maxOccurs = '6'
+        # element.id (not present in xsdspec.Element)
+        
+        def set_(attribute, value):
+            return lambda: setattr(element, attribute, value)
+        assert_raises(ValueError, set_('name', u'bar'))
+        assert_raises(ValueError, set_('type', u'xs:string'))
+        assert_raises(ValueError, set_('nillable', u'True'))
+        
+        simple_type = xsdspec.SimpleType(restriction=xsdspec.Restriction(base='string'))
+        assert_raises(ValueError, set_('simpleType', simple_type))
+        #assert_raises(ValueError, set_('complexType', u'True'))
+        
+        element.ref = None
+        # doesn't raise anymore because we deleted the "ref" attribute
+        element.name = u'bar'
+
