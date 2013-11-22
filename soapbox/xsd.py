@@ -418,7 +418,7 @@ class Element(object):
         :param nillable: bool, is object nilable.
         '''
         if not minOccurs in [0, 1]:
-            raise 'minOccurs for Element can be only 0 or 1, use ListElement instead.'
+            raise ValueError('minOccurs for Element can be only 0 or 1, use ListElement instead.')
         self._creation_number = Element._creation_counter
         Element._creation_counter += 1
         self._passed_type = _type
