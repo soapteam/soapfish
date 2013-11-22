@@ -1,18 +1,8 @@
 # -*- coding: utf-8 -*-
-################################################################################
-
-
-################################################################################
-# Imports
-
 
 from lxml import etree
 
 from . import xsd
-
-
-################################################################################
-# Constants
 
 
 ENVELOPE_NAMESPACE = 'http://schemas.xmlsoap.org/soap/envelope/'
@@ -20,10 +10,7 @@ BINDING_NAMESPACE = 'http://schemas.xmlsoap.org/wsdl/soap/'
 CONTENT_TYPE = 'text/xml'
 
 
-################################################################################
-# Functions
-
-
+# --- Functions ---------------------------------------------------------------
 def determin_soap_action(request):
     if request.META.get('HTTP_SOAPACTION'):
         return request.META.get('HTTP_SOAPACTION').replace('"', '')
@@ -47,10 +34,6 @@ def parse_fault_message(fault):
 
 def build_header(soapAction):
     return {'content-type': CONTENT_TYPE, 'SOAPAction': soapAction}
-
-
-################################################################################
-# Classes
 
 
 class Code:
@@ -105,7 +88,3 @@ SCHEMA = xsd.Schema(
     elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
     complexTypes=[Header, Body, Envelope, Fault],
 )
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-################################################################################
-
 '''
 Design Decision Log
 -------------------
@@ -41,10 +39,6 @@ For information on XML schema validation:
 - http://lxml.de/validation.html#xmlschema
 '''
 
-################################################################################
-# Imports
-
-
 import re
 
 from copy import copy
@@ -54,17 +48,9 @@ from lxml import etree
 from . import iso8601, settings
 
 
-################################################################################
-# Globals
-
-
 NIL = object()
 
 UNBOUNDED = 'unbounded'
-
-
-################################################################################
-# Classes
 
 
 class TypeRegister(object):
@@ -1074,7 +1060,3 @@ class NamedType(ComplexType):
     def __init__(self, name=None, value=None):
         self.name = name
         self.value = value
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

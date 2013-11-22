@@ -61,10 +61,6 @@ See more information about requirements files and integration with setup.py:
 - http://cburgmer.posterous.com/pip-requirementstxt-and-setuppy
 '''
 
-################################################################################
-# Imports
-
-
 import os
 import platform
 import re
@@ -73,15 +69,8 @@ from collections import defaultdict
 from glob import glob
 
 
-################################################################################
-# Exports
-
-
+# --- Exports -------------------------------------------------------------------- 
 __all__ = ['RequirementsParser']
-
-
-################################################################################
-# Constants
 
 
 # Regular expression for stripping out flags used in requirements files:
@@ -96,10 +85,7 @@ _re_ps = re.compile(r'^([^<>= \[]+)(?: *([<>]=?|==) *([^\[]+))?(?: *\[([^\]]+)\]
 _re_en = re.compile(r'^.*#egg=(.*)$')
 
 
-################################################################################
-# Helpers
-
-
+# --- Helpers -------------------------------------------------------------------- 
 def _build_filename(path, pattern, name, extn):
     '''
     Builds filenames from separate components.
@@ -278,10 +264,7 @@ def _read_requirements_file(filename, data=None):
     return data
 
 
-################################################################################
-# Parser
-
-
+# --- Parser -------------------------------------------------------------------- 
 class RequirementsParser(object):
     '''
     Parser for requirements files providing helpful properties for populating
@@ -419,7 +402,3 @@ class RequirementsParser(object):
             dependency_links += data.get('f', [])
             dependency_links += data.get('e', [])
         return sorted(list(set(dependency_links)))
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

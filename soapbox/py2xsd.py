@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
-
-
-################################################################################
-# Imports
-
 
 import argparse
 import imp
@@ -19,10 +13,6 @@ from . import xsd, xsdspec
 from .utils import uncapitalize
 
 
-################################################################################
-# Constants
-
-
 NUMERIC_TYPES = [xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long, xsd.Short,
         xsd.UnsignedByte, xsd.UnsignedInt, xsd.UnsignedLong, xsd.UnsignedShort,
         xsd.Double, xsd.Float, xsd.Byte]
@@ -33,18 +23,11 @@ STRING_TYPES = [xsd.QName, xsd.AnyURI, xsd.Base64Binary, xsd.QName,
 ALL_TYPES = NUMERIC_TYPES + STRING_TYPES
 
 
-################################################################################
-# Globals
-
-
 logger = logging.getLogger('soapbox')
 logger.addHandler(logging.NullHandler())
 
 
-################################################################################
-# Helpers
-
-
+# --- Helpers -----------------------------------------------------------------
 def get_xsd_type(_type):
     '''
     Check is basic type from XSD scope, else it must be user defined type.
@@ -211,10 +194,7 @@ def generate_xsd(schema):
     return xmlelement
 
 
-################################################################################
-# Program
-
-
+# --- Program -----------------------------------------------------------------
 def parse_arguments():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -238,7 +218,3 @@ def main():
 if __name__ == '__main__':
 
     main()
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

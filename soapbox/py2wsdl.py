@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
-
-
-################################################################################
-# Imports
-
 
 import argparse
 import imp
@@ -21,18 +15,11 @@ from .utils import uncapitalize
 from .wsdl import get_wsdl_classes
 
 
-################################################################################
-# Globals
-
-
 logger = logging.getLogger('soapbox')
 logger.addHandler(logging.NullHandler())
 
 
-################################################################################
-# Helpers
-
-
+# --- Helpers -----------------------------------------------------------------
 def build_service(wsdl, definitions, service):
     wsdl_port = wsdl.Port()
     wsdl_port.name = service.name + 'Port'
@@ -135,10 +122,7 @@ def generate_wsdl(service):
     return xmlelement
 
 
-################################################################################
-# Program
-
-
+# --- Program -----------------------------------------------------------------
 def parse_arguments():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -162,7 +146,3 @@ def main():
 if __name__ == '__main__':
 
     main()
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

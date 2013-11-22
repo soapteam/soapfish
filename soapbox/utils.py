@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-################################################################################
-
-
-################################################################################
-# Imports
-
 
 import httplib2
 import logging
@@ -15,18 +9,11 @@ from urlparse import urlparse, urlunparse
 from . import settings, xsd
 
 
-################################################################################
-# Globals
-
-
 logger = logging.getLogger('soapbox')
 logger.addHandler(logging.NullHandler())
 
 
-################################################################################
-# File Functions
-
-
+# --- File Functions ----------------------------------------------------------
 def open_document(path):
     logger.info('Opening document \'%s\'...' % path)
     # Handle documents available on the Internet:
@@ -45,10 +32,7 @@ def open_document(path):
         return open(path, 'r').read()
 
 
-################################################################################
-# Template Filters
-
-
+# --- Template Filters --------------------------------------------------------
 def remove_namespace(full_typename):
     if not full_typename:
         return None
@@ -116,10 +100,7 @@ def url_template(url):
     return urlunparse(o)
 
 
-################################################################################
-# Other Functions
-
-
+# --- Other Functions ---------------------------------------------------------
 def find_xsd_namespaces(nsmap):
     xsd_namespaces = [
         'http://www.w3.org/2000/10/XMLSchema',
@@ -130,7 +111,3 @@ def find_xsd_namespaces(nsmap):
         if value in xsd_namespaces:
             namespaces.append(key)
     return namespaces
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

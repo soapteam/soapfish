@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
-
 '''
 Soapbox is a SOAP library for Python capable of generating Python modules from
 WSDL documents and providing a dispatcher for the Django framework.
@@ -65,7 +63,3 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

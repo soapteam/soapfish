@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
-
-
-################################################################################
-# Imports
-
 
 import argparse
 import logging
@@ -31,25 +25,14 @@ from .wsdl import get_wsdl_classes, get_by_name
 from .xsd2py import schema_to_py, schema_name
 
 
-################################################################################
-# Constants
-
-
 TEMPLATE_PACKAGE = 'soapbox.templates'
-
-
-################################################################################
-# Globals
 
 
 logger = logging.getLogger('soapbox')
 logger.addHandler(logging.NullHandler())
 
 
-################################################################################
-# Helpers
-
-
+# --- Helpers -----------------------------------------------------------------
 def get_rendering_environment():
     pkg = TEMPLATE_PACKAGE.split('.')
     env = Environment(
@@ -89,10 +72,7 @@ def generate_code_from_wsdl(xml, target):
     )
 
 
-################################################################################
-# Program
-
-
+# --- Program -----------------------------------------------------------------
 def parse_arguments():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -126,7 +106,3 @@ def main():
 if __name__ == '__main__':
 
     main()
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4

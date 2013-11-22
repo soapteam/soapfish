@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-################################################################################
-
 '''
 Soapbox Configuration
 '''
 
-################################################################################
-# HTTP
-
-
+# --- HTTP --------------------------------------------------------------------
 # Maximum permitted time for a request to complete (seconds):
 REQUEST_TIMEOUT = 30
 
@@ -17,13 +12,6 @@ REQUEST_TIMEOUT = 30
 CA_CERTIFICATE_FILE = '/etc/ssl/certs/ca-certificates.crt'
 
 
-################################################################################
-# Flags
-
-
+# --- Flags -------------------------------------------------------------------
 # For deciding whether to validate against schemas when parsing:
 VALIDATE_ON_PARSE = True
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4 Flags

@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
-################################################################################
-
 '''
 SOAP protocol implementation, dispatchers and client stub.
 '''
-
-################################################################################
-# Imports
-
 
 import httplib2
 import logging
@@ -21,23 +15,11 @@ from . import settings, soap11, soap12
 from .utils import uncapitalize
 
 
-################################################################################
-# Constants
-
-
 SOAP_HTTP_Transport = 'http://schemas.xmlsoap.org/soap/http'
-
-
-################################################################################
-# Globals
 
 
 logger = logging.getLogger('soapbox')
 logger.addHandler(logging.NullHandler())
-
-
-################################################################################
-# Classes
 
 
 class SOAPVersion:
@@ -176,10 +158,7 @@ class Stub(object):
         return self._handle_response(method, response, content)
 
 
-################################################################################
-# Dispatcher
-
-
+# --- Dispatcher --------------------------------------------------------------
 def get_django_dispatch(service):
 
     def call_the_method(request, message, soap_action):
@@ -234,7 +213,3 @@ def get_django_dispatch(service):
         return HttpResponse(response, content_type=SOAP.CONTENT_TYPE)
 
     return django_dispatch
-
-
-################################################################################
-# vim:et:ft=python:nowrap:sts=4:sw=4:ts=4
