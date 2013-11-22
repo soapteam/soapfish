@@ -583,7 +583,8 @@ class Ref(Element):
             <surname>Brown</surname>
         </job>
 
-    Note that name and surname are not wrapped with a <person> tag.
+    Note that name and surname are not wrapped with a <person> tag (because
+    Person is a xsd.Group).
     '''
 
     def empty_value(self):
@@ -596,7 +597,18 @@ class Ref(Element):
                 raise ValueError('Value None is not acceptable for required field.')
             else:
                 return
-        self._type.render(parent, value, namespace, elementFormDefault)
+        
+        if isinstance(value, Group):
+            self._type.render(parent, value, namespace, elementFormDefault)
+            return
+        
+        if namespace:
+            tagname = '{%s}%s' % (namespace, field_name)
+        else:
+            tagname = field_name
+        ref_element = etree.Element(tagname)
+        self._type.render(ref_element, value, namespace, elementFormDefault)
+        parent.append(ref_element)
 
 
 class Content(Ref):

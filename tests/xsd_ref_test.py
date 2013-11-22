@@ -40,4 +40,23 @@ class XSDRefTest(PythonicTestCase):
             '</job>\n'
         )
         assert_equals(expected_xml, job.xml('job'))
+    
+    def test_can_render_references_to_complex_types(self):
+        class Person(xsd.ComplexType):
+            name = xsd.Element(xsd.String)
+        
+        class Job(xsd.ComplexType):
+            title = xsd.Element(xsd.String)
+            person = xsd.Ref(Person)
+        
+        job = Job()
+        job.person = Person(name=u'Foo Bar')
+        assert_equals(u'Foo Bar', job.person.name)
+        expected_xml = unicode('<job>\n'
+            '  <person>\n'
+            '    <name>Foo Bar</name>\n'
+            '  </person>\n'
+            '</job>\n'
+        )
+        assert_equals(expected_xml, job.xml('job'))
 
