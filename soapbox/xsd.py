@@ -24,13 +24,13 @@ Design Decision Log
 3. Due to render taking a value as parameter it could be implemented as a
    static/class method, but it is not.  xsd.Element takes a class or an
    instance, but if class was passed it will create an instance - so a
-   parameter-less constructor is required Reason for that is to keep API
+   parameter-less constructor is required. Reason for that is to keep API
    consistent. There are two syntaxes:
 
    a. xsd.Element(xsd.String)
    b. xsd.Element(xsd.String(enumeration=['A', 'B']))
 
-   because instance if required in case (b) creating it from class in case (a)
+   because instance is required in case (b). creating it from class in case (a)
    makes other methods independent from this two syntaxes.
 
 Notes
