@@ -358,12 +358,7 @@ class DatetimeTest(unittest.TestCase):
     def test_wrong_type(self):
         mixed = xsd.Element(xsd.DateTime)
         xmlelement = etree.Element("flight")
-        try:
-            mixed.render(xmlelement, "takeoff_datetime", 1)
-        except Exception:
-            pass
-        else:
-            self.assertTrue(False)
+        self.assertRaises(Exception, lambda: mixed.render(xmlelement, "takeoff_datetime", 1))
 
     def test_parsing_utctimezone(self):
         class Test(xsd.ComplexType):
@@ -421,7 +416,7 @@ class ComplexTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.assertTrue(False)  # Should't get here.
+            self.fail()
         flight.takeoff_pilot = "CAPTAIN"
 
         xmlelement = etree.Element("flight")
@@ -827,12 +822,7 @@ class NillableTest(unittest.TestCase):
 </test>\n"""
         self.assertEqual(xml, EXPECTED_XML)
 
-        try:
-            test.notnillable.append(xsd.NIL)
-        except:
-            pass
-        else:
-            self.fail("Should not get here.")
+        self.assertRaises(Exception, lambda: test.notnillable.append(xsd.NIL))
 
     def test_nillable_list_parsing(self):
 
