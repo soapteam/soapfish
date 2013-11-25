@@ -355,6 +355,12 @@ class DatetimeTest(unittest.TestCase):
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
+    def test_rendering_timezones(self):
+        fake_tz = iso8601.FixedOffset(1, 15, 'dummy zone')
+        dt = datetime(2001, 10, 26, 21, 32, 52, tzinfo=fake_tz)
+        rendered_xml = xsd.DateTime().xmlvalue(dt)
+        self.assertEqual('2001-10-26T21:32:52+01:15', rendered_xml)
+
     def test_wrong_type(self):
         mixed = xsd.Element(xsd.DateTime)
         xmlelement = etree.Element("flight")

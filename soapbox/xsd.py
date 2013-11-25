@@ -42,7 +42,7 @@ For information on XML schema validation:
 import re
 
 from copy import copy
-from datetime import datetime
+from datetime import datetime, timedelta
 from lxml import etree
 
 from . import iso8601, settings
@@ -230,8 +230,6 @@ class DateTime(SimpleType):
     Example text value: 2001-10-26T21:32:52
     '''
 
-    FORMAT = '%Y-%m-%dT%H:%M:%S%z'
-
     def accept(self, value):
         if value is None:
             return None
@@ -245,7 +243,16 @@ class DateTime(SimpleType):
         if value is None:
             return 'nil'
         else:
-            return value.strftime(self.FORMAT)
+            timestring_without_tz = value.strftime('%Y-%m-%dT%H:%M:%S')
+            tz = value.tzinfo
+            if not tz:
+                return timestring_without_tz
+            utc_offset = tz.utcoffset(datetime.now())
+            sign = '+' if (utc_offset >= timedelta(0)) else '-'
+            offset_hours = utc_offset.seconds // 3600
+            offset_minutes = (utc_offset.seconds % 3600) // 60
+            formatted_tz = '%s%02d:%02d' % (sign, offset_hours, offset_minutes)
+            return timestring_without_tz + formatted_tz
 
     def pythonvalue(self, value):
         if value is None or value == 'nil':
