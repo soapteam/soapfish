@@ -1,0 +1,87 @@
+
+== Specific limitations ==
+
+xsd.Ref is not serialized at all
+--------------------------------------
+
+xsd.References are not serialized at all.
+,-----------------------------------------------------------------------------
+from soapbox import xsd
+
+class Person(xsd.Group):
+    name = xsd.Element(xsd.String)
+    surname = xsd.Element(xsd.String)
+
+class Job(xsd.ComplexType):
+    title = xsd.Element(xsd.String)
+    person = xsd.Ref(Person)
+
+
+schema = xsd.Schema(
+    imports=[],
+    targetNamespace='http://site.example/ws/spec',
+    elementFormDefault='qualified',
+    simpleTypes=[],
+    attributeGroups=[],
+    groups=[],
+    complexTypes=[],
+    elements={'job': xsd.Element(Job())},
+)
+
+from soapbox.py2xsd import generate_xsd
+xsd_ = generate_xsd(schema)
+from lxml import etree
+print etree.tostring(xsd_, pretty_print=True)
+`-----------------------------------------------------------------------------
+
+Result:
+<xsd:schema xmlns:sns="http://site.example/ws/spec" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://site.example/ws/spec" elementFormDefault="unqualified">
+  <xsd:element name="job">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="title" type="xsd:string" minOccurs="1" nillable="false"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
+
+
+Expected result:
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema targetNamespace="http://site.example/ws/spec"
+	xmlns:site="http://site.example/ws/spec"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<xs:element name="person">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="xs:string" />
+				<xs:element name="surname" type="xs:string" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="job">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="title" type="xs:string" />
+				<xs:element ref="site:person" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
+
+
+Valid xml for expected schema:
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<job xmlns="http://site.example/ws/spec">
+    <title>developer</title>
+    <person>
+        <name>Bar</name>
+        <surname>Foo</surname>
+    </person>
+</job>
+
+===============================================================================
+
