@@ -73,7 +73,11 @@ class SOAPVersion:
 class SOAPError(Exception):
     '''
     '''
-    pass
+    def __init__(self, message, faultcode, faultstring, faultactor=None):
+        super(SOAPError, self).__init__(message)
+        self.faultcode = faultcode
+        self.faultstring = faultstring
+        self.faultactor = faultactor
 
 
 class Service(object):
@@ -138,10 +142,12 @@ class Stub(object):
         envelope = SOAP.Envelope.parsexml(content)
 
         if envelope.Body.Fault:
-            code, message = SOAP.parse_fault_message(envelope.Body.Fault)
+            code, message,actor = SOAP.parse_fault_message(envelope.Body.Fault)
             error = 'Fault Code: %s, Fault Message: %s' % (code, message)
+            if actor is not None:
+                error += ", Fault Actor: %s" % actor
             logger.error(error)
-            raise SOAPError(error)
+            raise SOAPError(error, faultcode=code, faultstring=message, faultactor=actor)
 
         message = envelope.Body.content()
 
