@@ -29,7 +29,7 @@ def get_error_response(code, message):
 
 
 def parse_fault_message(fault):
-    return fault.faultcode, fault.faultstring
+    return fault.faultcode, fault.faultstring, fault.faultactor
 
 
 def build_header(soapAction):
@@ -54,6 +54,7 @@ class Fault(xsd.ComplexType):
     '''
     faultcode = xsd.Element(xsd.String, namespace='')
     faultstring = xsd.Element(xsd.String, namespace='')
+    faultactor = xsd.Element(xsd.String, namespace='', minOccurs=0)
 
 
 class Body(xsd.ComplexType):
