@@ -58,7 +58,7 @@ def get_error_response(code, message):
 def parse_fault_message(fault):
     '''
     '''
-    return fault.Code.Value, fault.Reason.Text
+    return fault.Code.Value, fault.Reason.Text, fault.Role
 
 
 ################################################################################
@@ -103,6 +103,7 @@ class Fault(xsd.ComplexType):
     '''
     Code = xsd.Element(Code)
     Reason = xsd.Element(Reason)
+    Role = xsd.Element(xsd.String, minOccurs=0)
 
 
 class Body(xsd.ComplexType):
