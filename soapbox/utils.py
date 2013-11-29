@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta as TimeDelta
 import httplib2
 import logging
 import os
@@ -112,3 +113,25 @@ def find_xsd_namespaces(nsmap):
         if value in xsd_namespaces:
             namespaces.append(key)
     return namespaces
+
+def timezone_offset_to_string(offset):
+    '''
+    Returns a XSD-compatible string representation of a time zone UTC offset
+    (timedelta).
+    e.g. timedelta(hours=1, minutes=30) -> '+01:30'
+    '''
+    # Please note that this code never uses 'Z' for UTC but returns always the
+    # full offset (which is completely valid as far as the XSD spec goes).
+    # The main reason for that (besides slightly simpler code) is that checking
+    # for "UTC" is more complicated than one might suspect. A common failure is
+    # to check for a UTC offset of 0 and the absence of winter/summer time.
+    # However there are time zones (e.g. Africa/Ghana) which satisfy these
+    # criteria as well but are NOT UTC. In particular the local government may
+    # decide to introduce some kind of winter/summer time while UTC is
+    # guaranteed to have no such things.
+    sign = '+' if (offset >= TimeDelta(0)) else '-'
+    offset_seconds = abs((offset.days * 24 * 60 * 60) + offset.seconds)
+    hours = offset_seconds // 3600
+    minutes = (offset_seconds % 3600) // 60
+    return '%s%02d:%02d' % (sign, hours, minutes)
+

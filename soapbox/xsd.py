@@ -46,6 +46,7 @@ from datetime import datetime, timedelta
 from lxml import etree
 
 from . import iso8601, settings
+from .utils import timezone_offset_to_string
 
 
 NIL = object()
@@ -248,10 +249,7 @@ class DateTime(SimpleType):
             if not tz:
                 return timestring_without_tz
             utc_offset = tz.utcoffset(datetime.now())
-            sign = '+' if (utc_offset >= timedelta(0)) else '-'
-            offset_hours = utc_offset.seconds // 3600
-            offset_minutes = (utc_offset.seconds % 3600) // 60
-            formatted_tz = '%s%02d:%02d' % (sign, offset_hours, offset_minutes)
+            formatted_tz = timezone_offset_to_string(utc_offset)
             return timestring_without_tz + formatted_tz
 
     def pythonvalue(self, value):
