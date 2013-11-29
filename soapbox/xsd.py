@@ -248,7 +248,7 @@ class DateTime(SimpleType):
             tz = value.tzinfo
             if not tz:
                 return timestring_without_tz
-            utc_offset = tz.utcoffset(datetime.now())
+            utc_offset = tz.utcoffset(value)
             formatted_tz = timezone_offset_to_string(utc_offset)
             return timestring_without_tz + formatted_tz
 
