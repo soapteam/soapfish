@@ -6,7 +6,7 @@ import os
 
 from urlparse import urlparse, urlunparse
 
-from . import settings, xsd
+from . import settings
 
 
 logger = logging.getLogger('soapbox')
@@ -65,11 +65,12 @@ def get_get_type(xsd_namespaces):
 
 
 def use(usevalue):
-    if usevalue == xsd.Use.OPTIONAL:
+    from .xsd import Use
+    if usevalue == Use.OPTIONAL:
         return 'xsd.Use.OPTIONAL'
-    elif usevalue == xsd.Use.REQUIRED:
+    elif usevalue == Use.REQUIRED:
         return 'xsd.Use.REQUIRED'
-    elif usevalue == xsd.Use.PROHIBITED:
+    elif usevalue == Use.PROHIBITED:
         return 'xsd.Use.PROHIBITED'
     else:
         raise ValueError
