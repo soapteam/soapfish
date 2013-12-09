@@ -9,9 +9,10 @@ from soapbox.soap12 import get_error_response, Code
 
 class SOAP11Test(PythonicTestCase):
     def test_get_error_response(self):
-        response = get_error_response(Code.SERVER, u'some error')
+        response = get_error_response(Code.SERVER, u'some error', actor='me')
         xml = self._xml_strip(response)
         assert_contains('<ns0:Code><ns0:Value>ns0:Receiver</ns0:Value></ns0:Code>', xml)
+        assert_contains('<ns0:Role>me</ns0:Role>', xml)
     
     def _xml_strip(self, xml):
         parser = etree.XMLParser(remove_blank_text=True)

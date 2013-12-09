@@ -20,8 +20,8 @@ def determine_soap_action(request):
         return None
 
 
-def get_error_response(code, message):
-    fault = Fault(faultcode=code, faultstring=message)
+def get_error_response(code, message, actor=None):
+    fault = Fault(faultcode=code, faultstring=message, faultactor=actor)
     envelope = Envelope()
     envelope.Body = Body(Fault=fault)
     return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,

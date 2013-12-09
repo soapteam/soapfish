@@ -24,10 +24,10 @@ def build_header(soapAction):
     return {'content-type': CONTENT_TYPE + 'action=%s' % soapAction}
 
 
-def get_error_response(code, message):
+def get_error_response(code, message, actor=None):
     code = Code(Value=code)
     reason = Reason(Text=message)
-    fault = Fault(Code=code, Reason=reason)
+    fault = Fault(Code=code, Reason=reason, Role=actor)
     envelope = Envelope()
     envelope.Body = Body(Fault=fault)
     return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,
