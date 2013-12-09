@@ -49,7 +49,7 @@ class SoapDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request, request_message)
         assert_false(handler_state.was_called)
         self.assert_is_soap_fault(response,
-            error_fragment=u"Element 'invalid': This element is not expected. Expected is ( value ).")
+            partial_fault_string=u"Element 'invalid': This element is not expected. Expected is ( value ).")
     
     def test_can_reject_malformed_xml_soap_message(self):
         request = SoapboxRequest(None, dict(), 'POST')
@@ -58,7 +58,7 @@ class SoapDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request, 'garbage')
         assert_equals(500, response.status)
         assert_equals('text/xml', response.content_type)
-        self.assert_is_soap_fault(response, error_fragment=u"Start tag expected, '<' not found")
+        self.assert_is_soap_fault(response, partial_fault_string=u"Start tag expected, '<' not found")
     
     def test_can_dispatch_requests_based_on_soap_body(self):
         handler, handler_state = self._echo_handler()
@@ -84,7 +84,7 @@ class SoapDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request, request_message)
         assert_equals('text/xml', response.content_type)
         assert_equals(500, response.status)
-        self.assert_is_soap_fault(response, error_fragment=u"internal data error")
+        self.assert_is_soap_fault(response, partial_fault_string=u"internal data error")
     
     # --- custom assertions ---------------------------------------------------
     
@@ -94,7 +94,7 @@ class SoapDispatcherTest(PythonicTestCase):
         if handler_state:
             assert_true(handler_state.was_called)
     
-    def assert_is_soap_fault(self, response, error_fragment=None):
+    def assert_is_soap_fault(self, response, partial_fault_string=None):
         assert_equals(500, response.status)
         assert_equals('text/xml', response.content_type)
         
@@ -108,8 +108,8 @@ class SoapDispatcherTest(PythonicTestCase):
         
         fault_code, fault_string = children
         assert_equals('Client', fault_code.text)
-        if error_fragment:
-            assert_contains(error_fragment, fault_string.text)
+        if partial_fault_string:
+            assert_contains(partial_fault_string, fault_string.text)
     
     # --- internal helpers ----------------------------------------------------
     
