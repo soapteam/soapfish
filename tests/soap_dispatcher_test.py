@@ -7,6 +7,7 @@ from soapbox import soap, xsd
 from soapbox.soap_dispatch import SOAPDispatcher, SoapboxRequest
 from soapbox.lib.pythonic_testcase import *
 from soapbox.lib.attribute_dict import AttrDict
+from soapbox.soap import SOAPError
 
 
 class SoapDispatcherTest(PythonicTestCase):
@@ -70,6 +71,20 @@ class SoapDispatcherTest(PythonicTestCase):
         request_message = self._wrap_with_soap_envelope(soap_message)
         response = dispatcher.dispatch(request, request_message)
         self.assert_is_successful_response(response, handler_state)
+    
+    def test_can_use_soap_error_from_handler(self):
+        request = SoapboxRequest(None, dict(), 'POST')
+        faulty_handler = self._faulty_handler()
+        dispatcher = SOAPDispatcher(self._echo_service(handler=faulty_handler))
+        
+        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+            '<value>foobar</value>'
+        '</ns1:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        response = dispatcher.dispatch(request, request_message)
+        assert_equals('text/xml', response.content_type)
+        assert_equals(500, response.status)
+        self.assert_is_soap_fault(response, error_fragment=u"internal data error")
     
     # --- custom assertions ---------------------------------------------------
     
@@ -157,4 +172,7 @@ class SoapDispatcherTest(PythonicTestCase):
             version=soap.SOAPVersion.SOAP11,
             methods=[echo_method]
         )
-
+    
+    def _faulty_handler(self):
+        soap_error = SOAPError('some error', 'foobar', 'internal data error')
+        return lambda request, input_: soap_error

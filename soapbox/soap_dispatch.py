@@ -7,6 +7,7 @@ from lxml import etree
 from .lib.attribute_dict import AttrDict
 from .lib.result import ValidationResult
 from .utils import uncapitalize
+from soapbox.soap import SOAPError
 
 
 __all__ = ['SOAPDispatcher', 'SoapboxRequest']
@@ -91,7 +92,12 @@ class SOAPDispatcher(object):
                           schema=self.service.schema)  # Validation.
 
     def _call_handler(self, soapbox_request, method, input_object):
+        SOAP = self.service.version
         return_object = method.function(soapbox_request.request, input_object)
+        if isinstance(return_object, SOAPError):
+            error = return_object
+            error_response = SOAP.get_error_response(error.faultcode, error.faultstring)
+            return (error_response, True)
 
         tagname = uncapitalize(return_object.__class__.__name__)
         #self._validate_response(return_object, tagname)
@@ -99,8 +105,7 @@ class SOAPDispatcher(object):
 
         if isinstance(method.output, basestring):
             tagname = method.output
-        SOAP = self.service.version
-        return SOAP.Envelope.response(tagname, return_object)
+        return (SOAP.Envelope.response(tagname, return_object), False)
 
     def response(self, message, is_error=False):
         SOAP = self.service.version
@@ -141,7 +146,7 @@ class SOAPDispatcher(object):
             return self.error_response(SOAP.Code.CLIENT, input_validation.errors)
         validated_input = input_validation.validated_document
 
-        soap_response_message = self._call_handler(soapbox_request, handler, validated_input)
+        soap_response_message, is_error = self._call_handler(soapbox_request, handler, validated_input)
         # if not soap_response_message -> server error
         # SOAP.get_error_response(SOAP.Code.SERVER, str(e))
-        return self.response(soap_response_message, is_error=False)
+        return self.response(soap_response_message, is_error=is_error)
