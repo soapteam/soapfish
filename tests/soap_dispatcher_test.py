@@ -84,7 +84,10 @@ class SoapDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request, request_message)
         assert_equals('text/xml', response.content_type)
         assert_equals(500, response.status)
-        self.assert_is_soap_fault(response, partial_fault_string=u"internal data error")
+        self.assert_is_soap_fault(response,
+            fault_code='foobar',
+            partial_fault_string=u'internal data error'
+        )
     
     # --- custom assertions ---------------------------------------------------
     
@@ -94,7 +97,7 @@ class SoapDispatcherTest(PythonicTestCase):
         if handler_state:
             assert_true(handler_state.was_called)
     
-    def assert_is_soap_fault(self, response, partial_fault_string=None):
+    def assert_is_soap_fault(self, response, fault_code=None, partial_fault_string=None):
         assert_equals(500, response.status)
         assert_equals('text/xml', response.content_type)
         
@@ -106,8 +109,10 @@ class SoapDispatcherTest(PythonicTestCase):
         children = list(fault_nodes[0])
         assert_length(2, children)
         
-        fault_code, fault_string = children
-        assert_equals('Client', fault_code.text)
+        xml_fault_code, fault_string = children
+        if fault_code is None:
+            fault_code = 'Client'
+        assert_equals(fault_code, xml_fault_code.text)
         if partial_fault_string:
             assert_contains(partial_fault_string, fault_string.text)
     
