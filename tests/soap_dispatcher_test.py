@@ -36,29 +36,6 @@ class SoapDispatcherTest(PythonicTestCase):
         )
         assert_equals(expected_xml, response_xml)
     
-    def assert_is_successful_response(self, response, handler_state=None):
-        assert_equals(200, response.status)
-        assert_equals('text/xml', response.content_type)
-        if handler_state:
-            assert_true(handler_state.was_called)
-    
-    def assert_is_soap_fault(self, response, error_fragment=None):
-        assert_equals(500, response.status)
-        assert_equals('text/xml', response.content_type)
-        
-        fault_document = etree.fromstring(response.message)
-        soap_envelope = fault_document.getroottree()
-        namespaces = {'s': 'http://schemas.xmlsoap.org/soap/envelope/'}
-        fault_nodes = soap_envelope.xpath('/s:Envelope/s:Body/s:Fault', namespaces=namespaces)
-        assert_length(1, fault_nodes, message='expected exactly one SOAP fault')
-        children = list(fault_nodes[0])
-        assert_length(2, children)
-        
-        fault_code, fault_string = children
-        assert_equals('Client', fault_code.text)
-        if error_fragment:
-            assert_contains(error_fragment, fault_string.text)
-    
     def test_can_validate_soap_message(self):
         handler, handler_state = self._echo_handler()
         request = SoapboxRequest(None, dict(SOAPACTION='echo'), 'POST')
@@ -93,6 +70,31 @@ class SoapDispatcherTest(PythonicTestCase):
         request_message = self._wrap_with_soap_envelope(soap_message)
         response = dispatcher.dispatch(request, request_message)
         self.assert_is_successful_response(response, handler_state)
+    
+    # --- custom assertions ---------------------------------------------------
+    
+    def assert_is_successful_response(self, response, handler_state=None):
+        assert_equals(200, response.status)
+        assert_equals('text/xml', response.content_type)
+        if handler_state:
+            assert_true(handler_state.was_called)
+    
+    def assert_is_soap_fault(self, response, error_fragment=None):
+        assert_equals(500, response.status)
+        assert_equals('text/xml', response.content_type)
+        
+        fault_document = etree.fromstring(response.message)
+        soap_envelope = fault_document.getroottree()
+        namespaces = {'s': 'http://schemas.xmlsoap.org/soap/envelope/'}
+        fault_nodes = soap_envelope.xpath('/s:Envelope/s:Body/s:Fault', namespaces=namespaces)
+        assert_length(1, fault_nodes, message='expected exactly one SOAP fault')
+        children = list(fault_nodes[0])
+        assert_length(2, children)
+        
+        fault_code, fault_string = children
+        assert_equals('Client', fault_code.text)
+        if error_fragment:
+            assert_contains(error_fragment, fault_string.text)
     
     # --- internal helpers ----------------------------------------------------
     
