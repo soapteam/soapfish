@@ -10,6 +10,7 @@ import textwrap
 from jinja2 import Environment, PackageLoader
 from lxml import etree
 
+from .compat import NullHandler
 from .xsdspec import Schema
 from .utils import (
     capitalize,
@@ -26,7 +27,7 @@ TEMPLATE_PACKAGE = 'soapbox.templates'
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 # --- Helpers -----------------------------------------------------------------

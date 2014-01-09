@@ -12,6 +12,7 @@ from urlparse import urlparse
 from lxml import etree
 
 from . import settings, soap11, soap12
+from .compat import NullHandler
 from .utils import uncapitalize
 
 
@@ -19,7 +20,7 @@ SOAP_HTTP_Transport = 'http://schemas.xmlsoap.org/soap/http'
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(NullHandler())
 
 
 class SOAPVersion:

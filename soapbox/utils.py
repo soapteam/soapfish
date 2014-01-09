@@ -8,11 +8,11 @@ import os
 from urlparse import urlparse, urlunparse
 
 from . import settings
+from .compat import NullHandler
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(logging.NullHandler())
-
+logger.addHandler(NullHandler())
 
 # --- File Functions ----------------------------------------------------------
 def open_document(path):
