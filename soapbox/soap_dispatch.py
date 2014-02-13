@@ -49,6 +49,14 @@ class SOAPDispatcher(object):
             envelope = SOAP.Envelope.parsexml(xml)
         except etree.XMLSyntaxError as e:
             return ValidationResult(False, errors=(e,))
+        # Actually this is more a stopgap measure than a real fix. The real
+        # fix is to change SOAP.Envelope/ComplexType so it raise some kind of
+        # validation error. A missing SOAP body is not allowed by the SOAP
+        # specs (according to my interpretation):
+        # SOAP 1.1: http://schemas.xmlsoap.org/soap/envelope/
+        # SOAP 1.2: http://www.w3.org/2003/05/soap-envelope/
+        if envelope.Body is None:
+            return ValidationResult(False, errors=['Missing SOAP body'])
         return ValidationResult(True, validated_document=envelope)
 
     def _find_handler_for_request(self, request, message):

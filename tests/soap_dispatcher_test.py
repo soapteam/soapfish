@@ -60,6 +60,16 @@ class SoapDispatcherTest(PythonicTestCase):
         assert_equals('text/xml', response.content_type)
         self.assert_is_soap_fault(response, partial_fault_string=u"Start tag expected, '<' not found")
     
+    def test_can_reject_non_soap_xml_body(self):
+        request = SoapboxRequest(None, dict(), 'POST')
+        dispatcher = SOAPDispatcher(self._echo_service())
+        
+        # previously this raised an AttributeError due to an unhandled exception
+        response = dispatcher.dispatch(request, '<some>xml</some>')
+        assert_equals(500, response.status)
+        assert_equals('text/xml', response.content_type)
+        self.assert_is_soap_fault(response, partial_fault_string=u'Missing SOAP body')
+    
     def test_can_dispatch_requests_based_on_soap_body(self):
         handler, handler_state = self._echo_handler()
         request = SoapboxRequest(None, dict(SOAPACTION='""'), 'POST')
