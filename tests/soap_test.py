@@ -87,9 +87,9 @@ class ErrorHandling(unittest.TestCase):
         try:
             stub._handle_response(None, None, SOAP11_ERROR_MESSAGE)
         except soap.SOAPError,e:
-              self.assertEqual(e.faultcode, "Result")
-              self.assertEqual(e.faultstring, None)
-              self.assertEqual(e.faultactor, "Resultset empty2.")
+            self.assertEqual(e.faultcode, "Result")
+            self.assertEqual(e.faultstring, None)
+            self.assertEqual(e.faultactor, "Resultset empty2.")
         else:
             self.assertFalse("true", "should not get here")
         
@@ -120,9 +120,9 @@ class ErrorHandling(unittest.TestCase):
         try:
             stub._handle_response(None, None, SOAP12_ERROR_ROLE)
         except soap.SOAPError,e:
-             self.assertEqual(e.faultcode,"env:Sender")
-             self.assertEqual(e.faultstring, "\nMessage does not have necessary info\n")
-             self.assertEqual(e.faultactor, "http://gizmos.com/order")
+            self.assertEqual(e.faultcode,"env:Sender")
+            self.assertEqual(e.faultstring, "\nMessage does not have necessary info\n")
+            self.assertEqual(e.faultactor, "http://gizmos.com/order")
         else:
             self.assertFalse("true", "should not get here")
         
