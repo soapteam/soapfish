@@ -49,6 +49,14 @@ class SOAPError(Exception):
         self.faultstring = faultstring
         self.faultactor = faultactor
 
+    def copy(self):
+        return SOAPError(
+            self.message,
+            self.faultcode,
+            self.faultstring,
+            faultactor=self.faultactor
+        )
+
 
 class Service(object):
     '''
