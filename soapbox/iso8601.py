@@ -17,13 +17,16 @@ from decimal import Decimal
 import logging
 import sys
 import re
-import six
 
 __all__ = ["parse_date", "ParseError"]
 
 LOG = logging.getLogger(__name__)
 
-_basestring = six.string_types
+if sys.version_info >= (3, 0, 0):
+    _basestring = str
+else:
+    _basestring = basestring
+
 
 # Adapted from http://delete.me.uk/2005/03/iso8601.html
 ISO8601_REGEX = re.compile(
