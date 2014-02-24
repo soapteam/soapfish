@@ -1,7 +1,11 @@
-.. contents:: **Table of Contents**
+Soapbox BSD
+===========
+
+[![Build Status](https://travis-ci.org/FelixSchwarz/soapbox-bsd.png?branch=master)](https://travis-ci.org/FelixSchwarz/soapbox-bsd)
+
 
 Introduction
-============
+------------
 
 Soapbox is a SOAP library for Python making it easy to quickly set up or use a
 web service based on a WSDL document.
@@ -12,7 +16,7 @@ web service based on a WSDL document.
 
 Package requires **pip** for installation.
 
-| pip install soapbox
+`pip install soapbox`
 
 Project sponsored by Flight Data Services Ltd: http://www.flightdataservices.com/
 
