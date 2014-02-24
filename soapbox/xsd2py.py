@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import argparse
 import hashlib
 import keyword
@@ -55,7 +57,7 @@ def resolve_import(xsdimport, known_namespaces):
 
 
 def schema_name(namespace):
-    return hashlib.sha512(namespace).hexdigest()[0:5]
+    return hashlib.sha512(namespace.encode()).hexdigest()[0:5]
 
 
 def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None):
@@ -103,11 +105,11 @@ def main():
     logger.info('Generating code for XSD document \'%s\'...' % opt.xsd)
     xml = open_document(opt.xsd)
     xmlelement = etree.fromstring(xml)
-    print textwrap.dedent('''\
+    print(textwrap.dedent('''\
     from soapbox import xsd
     from soapbox.xsd import UNBOUNDED
-    ''')
-    print generate_code_from_xsd(xmlelement)
+    '''))
+    print(generate_code_from_xsd(xmlelement))
 
 
 if __name__ == '__main__':

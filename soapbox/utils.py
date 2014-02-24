@@ -4,8 +4,12 @@ from datetime import timedelta as TimeDelta
 import httplib2
 import logging
 import os
+import six
 
-from urlparse import urlparse, urlunparse
+if six.PY3:
+    from urllib.parse import urlparse, urlunparse
+else:
+    from urlparse import urlparse, urlunparse
 
 from . import settings
 from .compat import NullHandler
@@ -109,7 +113,7 @@ def find_xsd_namespaces(nsmap):
         'http://www.w3.org/2001/XMLSchema',
     ]
     namespaces = []
-    for key, value in nsmap.iteritems():
+    for key, value in six.iteritems(nsmap):
         if value in xsd_namespaces:
             namespaces.append(key)
     return namespaces

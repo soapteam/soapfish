@@ -39,7 +39,10 @@ For information on XML schema validation:
 - http://lxml.de/validation.html#xmlschema
 '''
 
+#from __future__ import unicode_literals
+
 import re
+import six
 
 from copy import copy
 from datetime import datetime, timedelta
@@ -47,6 +50,8 @@ from lxml import etree
 
 from . import iso8601, settings
 from .utils import timezone_offset_to_string
+
+basestring = six.string_types
 
 
 NIL = object()
@@ -123,12 +128,10 @@ class Type_PythonType(type):
         return newcls
 
 
-class Type(object):
+class Type(six.with_metaclass(Type_PythonType, object)):
     '''
     Abstract.
     '''
-
-    __metaclass__ = Type_PythonType
 
     def accept(self, value):
         raise NotImplementedError
@@ -177,7 +180,7 @@ class String(SimpleType):
             return value
 
         if not isinstance(value, basestring):
-            raise ValueError("Value '%s' for class '%s'." % (unicode(value), self.__class__.__name__))
+            raise ValueError("Value '%s' for class '%s'." % (value, self.__class__.__name__))
 
         if self.pattern:
             cp = re.compile(self.pattern)
@@ -186,7 +189,7 @@ class String(SimpleType):
 
         if self.enumeration:
             if not (value in self.enumeration):
-                raise ValueError("Value '%s' not in list %s." % (unicode(value), self.enumeration))
+                raise ValueError("Value '%s' not in list %s." % (value, self.enumeration))
 
         return value
 
@@ -316,7 +319,7 @@ class Decimal(SimpleType):
     def accept(self, value):
         if value is None:
             return None
-        elif isinstance(value, int) or isinstance(value, long) or isinstance(value, float):
+        elif isinstance(value, six.integer_types) or isinstance(value, float):
             pass  # value is just value
         elif isinstance(value, basestring):
             value = float(value)
@@ -368,7 +371,7 @@ class Integer(Decimal):
     def accept(self, value):
         if value is None:
             return None
-        elif isinstance(value, int) or isinstance(value, long):
+        elif isinstance(value, six.integer_types):
             pass  # value is just value continue.
         elif isinstance(value, basestring):
             value = int(value)
@@ -740,15 +743,13 @@ class Complex_PythonType(Type_PythonType):
         return newcls
 
 
-class ComplexType(Type):
+class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
     '''
     Parent for XML elements that have sub-elements.
     '''
     INDICATOR = Sequence  # Indicator see: class Indicators. To be defined in sub-type.
     INHERITANCE = None    # Type of inheritance see: class Inheritance, to be defined in sub-type.
     SCHEMA = None
-
-    __metaclass__ = Complex_PythonType
 
     def __new__(cls, *args, **kwargs):
         instance = super(ComplexType, cls).__new__(cls)
@@ -796,7 +797,7 @@ class ComplexType(Type):
 
     @classmethod
     def _find_field(cls, fields, name):
-        return filter(lambda f: f._name == name, fields)[0]
+        return next(iter(filter(lambda f: f._name == name, fields)))
 
     @classmethod
     def _get_field_by_name(cls, fields, field_name):
@@ -845,7 +846,7 @@ class ComplexType(Type):
 
     @classmethod
     def __parse_with_validation(cls, xml, schema):
-        from py2xsd import generate_xsd
+        from .py2xsd import generate_xsd
         schema = generate_xsd(schema)
         schemaelement = etree.XMLSchema(schema)
         parser = etree.XMLParser(schema=schemaelement)

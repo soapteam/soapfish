@@ -5,7 +5,7 @@ from soapbox.lib.pythonic_testcase import *
 
 class XSDSpecSchemaTest(PythonicTestCase):
     def test_can_parse_references(self):
-        xml = unicode('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
+        xml = ('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
             '    xmlns:example="http://site.example/ws/spec" \n'
             '    xmlns:xs="http://www.w3.org/2001/XMLSchema" \n'
             '    elementFormDefault="qualified">\n'
