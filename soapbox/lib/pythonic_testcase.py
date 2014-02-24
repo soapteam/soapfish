@@ -49,7 +49,7 @@ __all__ = ['assert_almost_equals', 'assert_callable', 'assert_contains',
 def assert_raises(exception, callable, message=None):
     try:
         callable()
-    except exception, e:
+    except exception as e:
         return e
     default_message = u'%s not raised!' % exception.__name__
     if message is None:

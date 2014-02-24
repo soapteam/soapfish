@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 from lxml import etree
 
@@ -8,7 +9,7 @@ from soapbox.lib.pythonic_testcase import *
 
 class XSDCodeGenerationTest(PythonicTestCase):
     def test_can_generate_code_for_simple_element(self):
-        xml = unicode('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
+        xml = ('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
             '    xmlns:example="http://site.example/ws/spec" \n'
             '    xmlns:xs="http://www.w3.org/2001/XMLSchema" \n'
             '    elementFormDefault="qualified" attributeFormDefault="unqualified">\n'
@@ -27,7 +28,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
     
     def test_can_generate_code_with_xsd_refs_to_simple_elements(self):
         self.skipTest('References to simple elements not yet implemented')
-        xml = unicode('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
+        xml = ('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
             '    xmlns:example="http://site.example/ws/spec" \n'
             '    xmlns:xs="http://www.w3.org/2001/XMLSchema" \n'
             '    elementFormDefault="qualified">\n'
@@ -73,7 +74,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # xs:elements in a schema without using ComplexTypes.
         # Maybe we should have a special type like AnonymousComplexType and
         # put that directly into schema.elements?
-        xml = unicode('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
+        xml = ('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
             '    xmlns:example="http://site.example/ws/spec" \n'
             '    xmlns:xs="http://www.w3.org/2001/XMLSchema" \n'
             '    elementFormDefault="qualified">\n'
@@ -121,17 +122,15 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # imports not present in generated code
         from soapbox import xsd
         from soapbox.xsd import UNBOUNDED
-        locals_ = set(locals())
-        locals_.add('locals_')
+        new_locals = dict(locals())
         
         try:
             # Let's trust our own code generation...
-            exec code_string
+            exec(code_string, {}, new_locals)
         except Exception:
-            print code_string
+            print(code_string)
             raise
-        new_locals = locals()
-        new_variables = set(new_locals).difference(locals_)
+        new_variables = set(new_locals).difference(locals())
         
         schema = None
         new_symbols = dict()

@@ -130,7 +130,7 @@ def _split_package(package):
     if not matches:
         return None
     components = list(matches.groups())
-    components = map(lambda x: '' if x is None else x.strip(), components)
+    components = list(map(lambda x: '' if x is None else x.strip(), components))
     if components[-1]:
         components[-1] = sorted(map(str.strip, components[-1].split(',')))
     else:
@@ -377,7 +377,7 @@ class RequirementsParser(object):
         :rtype: dict
         '''
         extras_require = {}
-        for source, data in self.data.iteritems():
+        for source, data in self.data.items():
             if source == '*':
                 continue
             packages = []

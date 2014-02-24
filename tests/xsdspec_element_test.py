@@ -9,7 +9,7 @@ class XSDSpecElementTest(PythonicTestCase):
         element.name = 'Name'
         element.type = 'xs:string'
         
-        expected_xml = u'<element name="Name" type="xs:string"/>\n'
+        expected_xml = b'<element name="Name" type="xs:string"/>\n'
         assert_equals(expected_xml, element.xml('element'))
     
     def test_can_render_elements_with_anonymous_simple_types(self):
@@ -21,13 +21,13 @@ class XSDSpecElementTest(PythonicTestCase):
                 pattern=xsdspec.Pattern(value='\d{2}\.\d{1,2}')
             )
         )
-        expected_xml = unicode('<element name="versionNumber">\n'
-            '  <simpleType>\n'
-            '    <restriction base="string">\n'
-            '      <pattern value="\d{2}\.\d{1,2}"/>\n'
-            '    </restriction>\n'
-            '  </simpleType>\n'
-            '</element>\n')
+        expected_xml = (b'<element name="versionNumber">\n'
+            b'  <simpleType>\n'
+            b'    <restriction base="string">\n'
+            b'      <pattern value="\d{2}\.\d{1,2}"/>\n'
+            b'    </restriction>\n'
+            b'  </simpleType>\n'
+            b'</element>\n')
         assert_equals(expected_xml, element.xml('element'))
     
     def test_element_with_ref_attribute_rejects_forbidden_attributes(self):

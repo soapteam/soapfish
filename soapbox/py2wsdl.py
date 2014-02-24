@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import argparse
 import imp
 import logging
@@ -141,7 +143,7 @@ def main():
     module = imp.load_source('', opt.module)
     service = getattr(module, 'SERVICE')
     tree = generate_wsdl(service)
-    print etree.tostring(tree, pretty_print=True)
+    print(etree.tostring(tree, pretty_print=True))
 
 
 if __name__ == '__main__':
