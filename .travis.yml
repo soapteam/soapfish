@@ -3,7 +3,6 @@ python:
     - 2.6
     - 2.7
     - 3.3
-    - 3.4
 before_script:
-    - pip install requirements-tests.txt
+    - pip install -r requirements-tests.txt
 script: nosetests
