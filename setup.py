@@ -6,19 +6,10 @@ WSDL documents and providing a dispatcher for the Django framework.
 '''
 
 
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from distribute_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
-
+from setuptools import setup, find_packages
 
 import soapbox
-from requirements import RequirementsParser
 
-
-requirements = RequirementsParser()
 
 
 setup(
@@ -33,11 +24,8 @@ setup(
     license='New BSD License',
     packages=find_packages(exclude=("examples", "tests",)),
     include_package_data=True,
-    install_requires=requirements.install_requires,
-    setup_requires=requirements.setup_requires,
-    tests_require=requirements.tests_require,
-    extras_require=requirements.extras_require,
-    dependency_links=requirements.dependency_links,
+    install_requires=open('requirements.txt').readlines(),
+    tests_require=[line for line in open('requirements-tests.txt').readlines() if line[:3] != '-r '],
     test_suite='nose.collector',
     entry_points={
         'console_scripts': [
@@ -57,7 +45,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
