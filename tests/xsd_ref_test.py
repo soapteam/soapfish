@@ -16,10 +16,9 @@ class XSDRefTest(PythonicTestCase):
         job.person = Person(name=u'Foo Bar')
         assert_equals(u'Foo Bar', job.person.name)
         # TODO: actually I think the current state is invalid as title is missing?
-        expected_xml = unicode('<job>\n'
-            '  <name>Foo Bar</name>\n'
-            '</job>\n'
-        )
+        expected_xml = (b'<job>\n'
+            b'  <name>Foo Bar</name>\n'
+            b'</job>\n')
         assert_equals(expected_xml, job.xml('job'))
     
     def test_can_render_references_to_simple_types(self):
@@ -35,10 +34,9 @@ class XSDRefTest(PythonicTestCase):
         job = Job()
         job.person = u'Foo Bar'
         assert_equals(u'Foo Bar', job.person)
-        expected_xml = unicode('<job>\n'
-            '  <name>Foo Bar</name>\n'
-            '</job>\n'
-        )
+        expected_xml = (b'<job>\n'
+            b'  <name>Foo Bar</name>\n'
+            b'</job>\n')
         assert_equals(expected_xml, job.xml('job'))
     
     def test_can_render_references_to_complex_types(self):
@@ -52,11 +50,10 @@ class XSDRefTest(PythonicTestCase):
         job = Job()
         job.person = Person(name=u'Foo Bar')
         assert_equals(u'Foo Bar', job.person.name)
-        expected_xml = unicode('<job>\n'
-            '  <person>\n'
-            '    <name>Foo Bar</name>\n'
-            '  </person>\n'
-            '</job>\n'
-        )
+        expected_xml = (b'<job>\n'
+            b'  <person>\n'
+            b'    <name>Foo Bar</name>\n'
+            b'  </person>\n'
+            b'</job>\n')
         assert_equals(expected_xml, job.xml('job'))
 

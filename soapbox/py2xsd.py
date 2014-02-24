@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import argparse
 import imp
 import inspect
 import logging
+import six
 import textwrap
 
 from lxml import etree
@@ -13,6 +16,7 @@ from . import xsd, xsdspec
 from .compat import NullHandler
 from .utils import uncapitalize
 
+basestring = six.string_types
 
 NUMERIC_TYPES = [xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long, xsd.Short,
         xsd.UnsignedByte, xsd.UnsignedInt, xsd.UnsignedLong, xsd.UnsignedShort,
@@ -168,7 +172,7 @@ def generate_xsdspec(schema):
 
 
 def generate_elements(xsd_schema, schema):
-    for name, element in schema.elements.iteritems():
+    for name, element in six.iteritems(schema.elements):
         xsd_element = xsdspec.Element()
         xsd_element.name = name
         if isinstance(element._passed_type, basestring) or inspect.isclass(element._passed_type):
@@ -214,7 +218,7 @@ def main():
     module = imp.load_source('module.name', opt.module)
     schema = getattr(module, 'Schema')
     tree = generate_xsd(schema)
-    print etree.tostring(tree, pretty_print=True)
+    print(etree.tostring(tree, pretty_print=True))
 
 
 if __name__ == '__main__':

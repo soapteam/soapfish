@@ -15,7 +15,7 @@ class DatetimeTest(unittest.TestCase):
         mixed = xsd.Element(xsd.DateTime)
         xmlelement = etree.Element("flight")
         mixed.render(xmlelement, "takeoff_datetime", dt)
-        expected_xml = """<flight>
+        expected_xml = b"""<flight>
   <takeoff_datetime>2001-10-26T21:32:52</takeoff_datetime>
 </flight>
 """

@@ -6,8 +6,12 @@ SOAP protocol implementation, dispatchers and client stub.
 import httplib2
 import logging
 import os
+import six
 
-from urlparse import urlparse
+if six.PY3:
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
 
 from lxml import etree
 
@@ -17,6 +21,8 @@ from .utils import uncapitalize
 
 
 SOAP_HTTP_Transport = 'http://schemas.xmlsoap.org/soap/http'
+
+basestring = six.string_types
 
 
 logger = logging.getLogger('soapbox')
@@ -48,6 +54,12 @@ class SOAPError(Exception):
         self.faultcode = faultcode
         self.faultstring = faultstring
         self.faultactor = faultactor
+
+    def get_message(self):
+        return self.args[0]
+    def set_message(self, m):
+        self.args[0] = m
+    message = property(get_message, set_message)
 
     def copy(self):
         return SOAPError(
@@ -193,7 +205,7 @@ def get_django_dispatch(service):
                 return_object.xml(tagname, namespace=service.schema.targetNamespace,
                                   elementFormDefault=service.schema.elementFormDefault,
                                   schema=service.schema)  # Validation.
-            except Exception, e:
+            except Exception as e:
                 raise ValueError(e)
 
             if isinstance(method.output, basestring):
@@ -223,7 +235,7 @@ def get_django_dispatch(service):
             return HttpResponse(soap_message, content_type=SOAP.CONTENT_TYPE)
         except (ValueError, etree.XMLSyntaxError) as e:
             response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e))
-        except Exception, e:
+        except Exception as e:
             response = SOAP.get_error_response(SOAP.Code.SERVER, str(e))
         return HttpResponse(response, content_type=SOAP.CONTENT_TYPE)
 

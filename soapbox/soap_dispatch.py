@@ -3,12 +3,14 @@
 from __future__ import absolute_import
 
 from lxml import etree
+import six
 
 from .lib.attribute_dict import AttrDict
 from .lib.result import ValidationResult
 from .utils import uncapitalize
-from soapbox.soap import SOAPError
+from .soap import SOAPError
 
+basestring = six.string_types
 
 __all__ = ['SOAPDispatcher', 'SoapboxRequest']
 
@@ -43,8 +45,8 @@ class SOAPDispatcher(object):
     def _parse_soap_content(self, xml):
         SOAP = self.service.version
         # quick fix for "lxml does not support unicode strings with xml encoding declaration"
-        if isinstance(xml, unicode):
-            xml = xml.encode('utf-8')
+        #if isinstance(xml, unicode):
+        #    xml = xml.encode('utf-8')
         try:
             envelope = SOAP.Envelope.parsexml(xml)
         except etree.XMLSyntaxError as e:
@@ -127,7 +129,7 @@ class SOAPDispatcher(object):
     def error_response(self, soap_code, errors):
         SOAP = self.service.version
         first_error = errors[0]
-        error_text = unicode(first_error)
+        error_text = str(first_error)
         fault_message = SOAP.get_error_response(SOAP.Code.CLIENT, error_text)
         return self.response(fault_message, is_error=True)
 

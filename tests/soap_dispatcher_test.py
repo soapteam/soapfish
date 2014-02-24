@@ -27,13 +27,13 @@ class SoapDispatcherTest(PythonicTestCase):
         response_document = etree.fromstring(response.message)
         response_xml = etree.tostring(response_document, pretty_print=True)
         expected_xml = (
-            '<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">\n'
-            '  <ns0:Body>\n'
-            '    <ns0:echoResponse xmlns:ns0="http://soap.example/echo/types">\n'
-            '      <value>foobar</value>\n'
-            '    </ns0:echoResponse>\n'
-            '  </ns0:Body>\n'
-            '</ns0:Envelope>\n'
+            b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">\n'
+            b'  <ns0:Body>\n'
+            b'    <ns0:echoResponse xmlns:ns0="http://soap.example/echo/types">\n'
+            b'      <value>foobar</value>\n'
+            b'    </ns0:echoResponse>\n'
+            b'  </ns0:Body>\n'
+            b'</ns0:Envelope>\n'
         )
         assert_equals(expected_xml, response_xml)
     
@@ -42,9 +42,9 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(None, dict(SOAPACTION='echo'), 'POST')
         dispatcher = SOAPDispatcher(self._echo_service(handler))
         
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
-            '<invalid>foobar</invalid>'
-        '</ns1:echoRequest>')
+        soap_message = (b'<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+            b'<invalid>foobar</invalid>'
+            b'</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
         response = dispatcher.dispatch(request, request_message)
         assert_false(handler_state.was_called)
@@ -129,11 +129,12 @@ class SoapDispatcherTest(PythonicTestCase):
     # --- internal helpers ----------------------------------------------------
     
     def _wrap_with_soap_envelope(self, payload):
-        return ('<?xml version="1.0" encoding="UTF-8"?>'
+        envelope = ('<?xml version="1.0" encoding="UTF-8"?>'
             '<senv:Envelope xmlns:senv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soap.example/echo/types">'
             '<senv:Body>%(payload)s</senv:Body>'
             '</senv:Envelope>'
         ) % dict(payload=payload)
+        return envelope.encode('utf-8')
     
     # --- define test service -------------------------------------------------
     class EchoType(xsd.ComplexType):

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import argparse
 import logging
 import textwrap
@@ -96,12 +98,12 @@ def main():
     if opt.client:
         logger.info('Generating client code for WSDL document \'%s\'...' % opt.wsdl)
         xml = open_document(opt.wsdl)
-        print generate_code_from_wsdl(xml, 'client')
+        print(generate_code_from_wsdl(xml, 'client'))
 
     elif opt.server:
         logger.info('Generating server code for WSDL document \'%s\'...' % opt.wsdl)
         xml = open_document(opt.wsdl)
-        print generate_code_from_wsdl(xml, 'server')
+        print(generate_code_from_wsdl(xml, 'server'))
 
 
 if __name__ == '__main__':
