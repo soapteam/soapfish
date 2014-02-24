@@ -1,4 +1,6 @@
 
+from nose import SkipTest
+
 from soapbox import xsdspec
 from soapbox.lib.pythonic_testcase import *
 
@@ -31,7 +33,7 @@ class XSDSpecElementTest(PythonicTestCase):
         assert_equals(expected_xml, element.xml('element'))
     
     def test_element_with_ref_attribute_rejects_forbidden_attributes(self):
-        self.skipTest('Elements with "ref" attribute currently do not restrict setting other attributes.')
+        raise SkipTest('Elements with "ref" attribute currently do not restrict setting other attributes.')
         element = xsdspec.Element()
         element.ref = 'foo'
         element.minOccurs = 3

@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from lxml import etree
+from nose import SkipTest
 
 from soapbox import xsd, xsdspec
 from soapbox import xsd2py
@@ -27,7 +28,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         assert_isinstance(simple_element._type, xsd.String)
     
     def test_can_generate_code_with_xsd_refs_to_simple_elements(self):
-        self.skipTest('References to simple elements not yet implemented')
+        raise SkipTest('References to simple elements not yet implemented')
         xml = ('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
             '    xmlns:example="http://site.example/ws/spec" \n'
             '    xmlns:xs="http://www.w3.org/2001/XMLSchema" \n'
@@ -68,7 +69,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # probably we need to check some more stuff here
     
     def test_can_generate_code_with_xsd_refs_to_elements_with_anoynmous_complex_types(self):
-        self.skipTest('References to elements with anonymous complex types are not yet implemented')
+        raise SkipTest('References to elements with anonymous complex types are not yet implemented')
         # The final test should have an object graph representation of the
         # schema below. Currently I don't know how to represent multiple
         # xs:elements in a schema without using ComplexTypes.

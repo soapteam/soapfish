@@ -3,6 +3,7 @@ from lxml import etree
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl
 
+from nose import SkipTest
 
 XSD = """
 <xsd:schema xmlns:sns="http://flightdataservices.com/ops.xsd"
@@ -229,18 +230,18 @@ WSDL = """<?xml version="1.0"?>
 class CodeGenerationTest(unittest.TestCase):
 
     def test_code_generation_from_xsd(self):
-        self.skipTest('Test is known to fail - generates invalid code')
+        raise SkipTest('Test is known to fail - generates invalid code')
         xmlelement = etree.fromstring(XSD)
         code = generate_code_from_xsd(xmlelement)
         exec(code, {}, {})
 
     def test_code_generation_from_wsdl_client(self):
-        self.skipTest('Test is known to fail - generates invalid code')
+        raise SkipTest('Test is known to fail - generates invalid code')
         code = generate_code_from_wsdl(WSDL, 'client')
         exec(code, {}, {})
 
     def test_code_generation_from_wsdl_server(self):
-        self.skipTest('Test is known to fail - generates invalid code')
+        raise SkipTest('Test is known to fail - generates invalid code')
         code = generate_code_from_wsdl(WSDL, 'server')
         exec(code, {}, {})
 
