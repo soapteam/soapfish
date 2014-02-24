@@ -21,9 +21,9 @@ On the upside that means there are a lot of ways to improve the code and your
 contribution and make a big difference.
 
 Here some bigger areas which need work:
-- Python 3 support
 - much more comprehensive unit tests
-- SOAP support for web frameworks other than Django
+- SOAP support for web frameworks other than Django (Pyramid already works
+  with the new SOAPDispatcher class)
 - XSD schema generation (object graph to XSD file) has most of its logic in a
   very complex Jinja2 template which shows it limits. For example features like
   named xs:Elements with embedded anonymous ComplexTypes can not be serialized
@@ -38,6 +38,7 @@ Here some bigger areas which need work:
   errors. Some of them are fixable on their own but often this is because of
   other missing features (see above). The output should be usable as
   scaffolding though.
+- Convert the ad-hoc fork to real project with its own name, website and docs
 
 Don't worry if the items on the list above seem to big for you. Just start out
 with something small, write tests and contribute them. Even a small (failing)
