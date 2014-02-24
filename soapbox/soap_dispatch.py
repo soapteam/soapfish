@@ -44,9 +44,6 @@ class SOAPDispatcher(object):
 
     def _parse_soap_content(self, xml):
         SOAP = self.service.version
-        # quick fix for "lxml does not support unicode strings with xml encoding declaration"
-        #if isinstance(xml, unicode):
-        #    xml = xml.encode('utf-8')
         try:
             envelope = SOAP.Envelope.parsexml(xml)
         except etree.XMLSyntaxError as e:

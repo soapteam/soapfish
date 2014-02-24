@@ -39,14 +39,12 @@ For information on XML schema validation:
 - http://lxml.de/validation.html#xmlschema
 '''
 
-#from __future__ import unicode_literals
-
 import re
-import six
 
 from copy import copy
 from datetime import datetime, timedelta
 from lxml import etree
+import six
 
 from . import iso8601, settings
 from .utils import timezone_offset_to_string

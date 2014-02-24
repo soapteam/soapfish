@@ -6,13 +6,8 @@ import logging
 import os
 import six
 
-if six.PY3:
-    from urllib.parse import urlparse, urlunparse
-else:
-    from urlparse import urlparse, urlunparse
-
 from . import settings
-from .compat import NullHandler
+from .compat import NullHandler, urlparse, urlunparse
 
 
 logger = logging.getLogger('soapbox')
