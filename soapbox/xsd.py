@@ -44,6 +44,7 @@ import re
 from copy import copy
 from datetime import datetime, timedelta
 import logging
+import decimal
 from lxml import etree
 import six
 
@@ -55,7 +56,7 @@ basestring = six.string_types
 logger = logging.getLogger(__name__)
 NIL = object()
 
-UNBOUNDED = 'unbounded'
+UNBOUNDED = decimal.Decimal('infinity')
 
 
 class TypeRegister(object):
@@ -402,6 +403,26 @@ class Int(Long):
                                      pattern=pattern, totalDigits=totalDigits)
 
 
+class MaxOccurs(SimpleType):
+
+    def accept(self, value):
+        if value is None:
+            return None
+        elif value in ('unbounded', UNBOUNDED):
+            return UNBOUNDED
+        else:
+            return int(value)
+
+    def xmlvalue(self, value):
+        if value == UNBOUNDED:
+            return 'unbounded'
+        else:
+            return str(value)
+
+    def pythonvalue(self, xmlvalue):
+        return self.accept(xmlvalue)
+
+
 class Element(object):
     '''
     Basic building block, represents a XML element that can appear one or zero
@@ -665,9 +686,8 @@ class ListElement(Element):
                         raise ValueError("Nil value in not nillable list.")
                 else:
                     accepted_value = this._type.accept(value)
-                if this._maxOccurs is not None and this._maxOccurs != UNBOUNDED:
-                    if (len(self) + 1) > this._maxOccurs:
-                        raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" % (len(self), this._maxOccurs))
+                if this._maxOccurs is not None and len(self) > this._maxOccurs:
+                    raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" % (len(self), this._maxOccurs))
                 super(TypedList, self).append(accepted_value)
 
         return TypedList()
@@ -678,7 +698,7 @@ class ListElement(Element):
         if self._minOccurs and len(items) < self._minOccurs:
             raise ValueError('For %s minOccurs=%d but list length %d.' % (field_name, self._minOccurs, len(items)))
         if self._maxOccurs and len(items) > self._maxOccurs:
-            raise ValueError('For %s maxOccurs=%d but list length %d.' % (field_name, self._maxOccurs))
+            raise ValueError('For %s maxOccurs=%d but list length %d.' % (field_name, self._maxOccurs, len(items)))
 
         if self.namespace is not None:
             namespace = self.namespace
