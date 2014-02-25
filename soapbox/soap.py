@@ -187,6 +187,9 @@ class Stub(object):
 
 # --- Dispatcher --------------------------------------------------------------
 def get_django_dispatch(service):
+    from django.http import HttpResponse
+    from . import py2wsdl
+    import django
 
     def call_the_method(request, message, soap_action):
         for method in service.methods:
@@ -216,9 +219,6 @@ def get_django_dispatch(service):
         raise ValueError('Method not found!')
 
     def django_dispatch(request):
-        from django.http import HttpResponse
-        from . import py2wsdl
-
         SOAP = service.version
 
         if request.method == 'GET' and 'wsdl' in request.GET:
@@ -226,7 +226,10 @@ def get_django_dispatch(service):
             return HttpResponse(wsdl, mimetype='text/xml')
 
         try:
-            xml = request.raw_post_data
+            if django.VERSION < (1, 4):
+                xml = request.raw_post_data
+            else:
+                xml = request.body
             envelope = SOAP.Envelope.parsexml(xml)
             message = envelope.Body.content()
             soap_action = SOAP.determine_soap_action(request)
