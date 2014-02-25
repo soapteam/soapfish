@@ -19,7 +19,7 @@ setup(
     author_email=soapbox.__email__,
     url='https://github.com/FelixSchwarz/soapbox-bsd',
     description='A SOAP library for Python',
-    long_description=open('README').read() + open('CHANGES').read() + open('TODO').read(),
+    long_description=open('README.md').read() + open('CHANGES').read() + open('TODO').read(),
     download_url='',
     license='New BSD License',
     packages=find_packages(exclude=("examples", "tests",)),
