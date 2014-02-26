@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 
+import logging
 from lxml import etree
 import six
 
@@ -13,6 +14,9 @@ from .soap import SOAPError
 basestring = six.string_types
 
 __all__ = ['SOAPDispatcher', 'SoapboxRequest']
+
+logger = logging.getLogger(__name__)
+
 
 class DjangoCompatHeaders(object):
     def __init__(self, headers):
@@ -153,7 +157,10 @@ class SOAPDispatcher(object):
             return self.error_response(SOAP.Code.CLIENT, input_validation.errors)
         validated_input = input_validation.validated_document
 
-        soap_response_message, is_error = self._call_handler(soapbox_request, handler, validated_input)
-        # if not soap_response_message -> server error
-        # SOAP.get_error_response(SOAP.Code.SERVER, str(e))
+        try:
+            soap_response_message, is_error = self._call_handler(soapbox_request, handler, validated_input)
+        except Exception as ex:
+            logger.exception('Error during SOAP handling')
+            return self.error_response(SOAP.Code.SERVER, (str(ex),))
+
         return self.response(soap_response_message, is_error=is_error)
