@@ -16,7 +16,6 @@ else:
 from lxml import etree
 
 from . import settings, soap11, soap12
-from .compat import NullHandler
 from .utils import uncapitalize
 
 
@@ -26,7 +25,6 @@ basestring = six.string_types
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(NullHandler())
 
 
 class SOAPVersion:

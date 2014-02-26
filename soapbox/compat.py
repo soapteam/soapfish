@@ -1,15 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-__all__ = ['NullHandler', 'urlparse', 'urlunparse']
+__all__ = ['urlparse', 'urlunparse']
 
-import logging
-try:
-    from logging import NullHandler
-except ImportError:
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
 
 
 import six

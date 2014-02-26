@@ -13,7 +13,6 @@ import textwrap
 from lxml import etree
 
 from . import xsd, xsdspec
-from .compat import NullHandler
 from .utils import uncapitalize
 
 basestring = six.string_types
@@ -29,7 +28,6 @@ ALL_TYPES = NUMERIC_TYPES + STRING_TYPES
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(NullHandler())
 
 
 # --- Helpers -----------------------------------------------------------------

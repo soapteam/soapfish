@@ -11,7 +11,6 @@ import textwrap
 from lxml import etree
 
 from . import xsd
-from .compat import NullHandler
 from .py2xsd import generate_xsdspec
 from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
@@ -19,7 +18,6 @@ from .wsdl import get_wsdl_classes
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(NullHandler())
 
 
 # --- Helpers -----------------------------------------------------------------
