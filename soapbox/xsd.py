@@ -42,9 +42,9 @@ For information on XML schema validation:
 import re
 
 from copy import copy
+from decimal import Decimal
 from datetime import datetime, timedelta
 import logging
-import decimal
 from lxml import etree
 import six
 
@@ -52,11 +52,10 @@ from . import iso8601, settings
 from .utils import timezone_offset_to_string
 
 basestring = six.string_types
-
 logger = logging.getLogger(__name__)
 NIL = object()
 
-UNBOUNDED = decimal.Decimal('infinity')
+UNBOUNDED = Decimal('infinity')
 
 
 class TypeRegister(object):

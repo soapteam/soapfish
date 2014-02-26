@@ -7,10 +7,6 @@ from soapbox import  xsd
 
 
 class XSDSpecElementTest(PythonicTestCase):
-
-    def setUp(self):
-        self.xsd_element = xsdspec.Element()
-
     def test_can_render_simple_element(self):
         element = xsdspec.Element()
         element.name = 'Name'
@@ -59,11 +55,13 @@ class XSDSpecElementTest(PythonicTestCase):
         # doesn't raise anymore because we deleted the "ref" attribute
         element.name = u'bar'
 
-    def test_can_getset_max_occurs_with_simple_value(self):
-        self.xsd_element.maxOccurs = 1
-        self.assertEqual(1, self.xsd_element.maxOccurs)
+    def test_can_get_set_max_occurs_with_simple_value(self):
+        xsd_element = xsdspec.Element()
+        xsd_element.maxOccurs = 1
+        assert_equals(1, xsd_element.maxOccurs)
 
-    def test_can_getset_max_occurs_with_unbounded(self):
-        self.xsd_element.maxOccurs = xsd.UNBOUNDED
-        self.assertEqual(xsd.UNBOUNDED, self.xsd_element.maxOccurs)
+    def test_can_get_set_max_occurs_with_unbounded(self):
+        xsd_element = xsdspec.Element()
+        xsd_element.maxOccurs = xsd.UNBOUNDED
+        assert_equals(xsd.UNBOUNDED, xsd_element.maxOccurs)
 
