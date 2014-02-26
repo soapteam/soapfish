@@ -99,6 +99,16 @@ class ListElementTest(unittest.TestCase):
         self.assertEqual(2, len(test.values))
         self.assertEqual(1, test.values[0])
 
+    def test_append_restriction(self):
+        l = xsd.ListElement(xsd.String, maxOccurs=1, tagname='toto').empty_value()
+        l.append('a')
+        self.assertRaises(ValueError, l.append, ('a',))
+
+    def test_append_with_max_occurs_unbounded(self):
+        l = xsd.ListElement(xsd.String, maxOccurs=xsd.UNBOUNDED, tagname='toto').empty_value()
+        l.append('a')
+        l.append('a')
+
 
 class BooleanTypeTest(unittest.TestCase):
 
@@ -848,6 +858,33 @@ class PatternTest(unittest.TestCase):
             pass
         else:
             self.fail("Should not get here.")
+
+
+class MaxOccursTest(unittest.TestCase):
+
+    def test_xmlvalue_simple(self):
+        max_occurs = xsd.MaxOccurs()
+        value = max_occurs.xmlvalue(1)
+        self.assertEqual('1', value)
+        value = max_occurs.xmlvalue(5)
+        self.assertEqual('5', value)
+
+    def test_xmlvalue_unbounded(self):
+        max_occurs = xsd.MaxOccurs()
+        value = max_occurs.xmlvalue(xsd.UNBOUNDED)
+        self.assertEqual('unbounded', value)
+
+    def test_pythonvalue_simple(self):
+        max_occurs = xsd.MaxOccurs()
+        value = max_occurs.pythonvalue('1')
+        self.assertEqual(1, value)
+        value = max_occurs.pythonvalue('5')
+        self.assertEqual(5, value)
+
+    def test_pythonvalue_unbounded(self):
+        max_occurs = xsd.MaxOccurs()
+        value = max_occurs.pythonvalue('unbounded')
+        self.assertEqual(xsd.UNBOUNDED, value)
 
 
 if __name__ == "__main__":
