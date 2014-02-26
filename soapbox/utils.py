@@ -7,11 +7,11 @@ import os
 import six
 
 from . import settings
-from .compat import NullHandler, urlparse, urlunparse
+from .compat import urlparse, urlunparse
 
 
 logger = logging.getLogger('soapbox')
-logger.addHandler(NullHandler())
+
 
 # --- File Functions ----------------------------------------------------------
 def open_document(path):
