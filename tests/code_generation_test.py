@@ -1,9 +1,14 @@
 import unittest
+import tempfile
+
 from lxml import etree
+from nose import SkipTest
+
+from soapbox.utils import open_document
+from soapbox import xsd
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl
 
-from nose import SkipTest
 
 XSD = """
 <xsd:schema xmlns:sns="http://flightdataservices.com/ops.xsd"
@@ -227,23 +232,37 @@ WSDL = """<?xml version="1.0"?>
 </wsdl:definitions>"""
 
 
+# New line "\n" required for 2.6 exec call
 class CodeGenerationTest(unittest.TestCase):
+
+    def setUp(self):
+        self.types = xsd.USER_TYPE_REGISTER.types.copy()
+
+    def tearDown(self):
+        xsd.USER_TYPE_REGISTER.types = self.types
 
     def test_code_generation_from_xsd(self):
         raise SkipTest('Test is known to fail - generates invalid code')
         xmlelement = etree.fromstring(XSD)
         code = generate_code_from_xsd(xmlelement)
-        exec(code, {}, {})
+        exec(code.encode('utf8') + b'\n', {})
 
     def test_code_generation_from_wsdl_client(self):
-        raise SkipTest('Test is known to fail - generates invalid code')
         code = generate_code_from_wsdl(WSDL, 'client')
-        exec(code, {}, {})
+        exec(code.encode('utf8') + b'\n', {})
 
     def test_code_generation_from_wsdl_server(self):
-        raise SkipTest('Test is known to fail - generates invalid code')
         code = generate_code_from_wsdl(WSDL, 'server')
-        exec(code, {}, {})
+        exec(code.encode('utf8') + b'\n', {})
+
+    def test_command(self):
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(WSDL.encode('utf8'))
+            temp.flush()
+            wsdl = open_document(temp.name)
+            code = generate_code_from_wsdl(wsdl, 'client')
+            exec(code.encode('utf8') + '\n', {})
+
 
 if __name__ == "__main__":
     unittest.main()
