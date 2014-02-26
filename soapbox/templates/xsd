@@ -106,18 +106,23 @@ class {{ ct.name|capitalize }}(xsd.ComplexType):
     {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type }})
 {%- endfor %}
 {%- for element in elements %}
-    {%- if element.type %}
-    {%- if element.maxOccurs > 1 %}
-    {%- if element.name + 's' in keywords %}
-    _{{ element.name }}s = xsd.ListElement({{ element.type|type }}, '{{ element.name }}', tagname='{{ element.name }}s'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {%- if element.maxOccurs and element.maxOccurs > 1 %}
+        {%- set field_type = 'ListElement' %}
     {%- else %}
-    {{ element.name }}s = xsd.ListElement({{ element.type|type }}, '{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+        {%- set field_type = 'Element' %}
+    {%- endif %}
+    {%- if element.type %}
+    {%- if element.maxOccurs and element.maxOccurs > 1 %}
+    {%- if element.name + 's' in keywords %}
+    _{{ element.name }}s = xsd.{{ field_type }}({{ element.type|type }}, '{{ element.name }}', tagname='{{ element.name }}s'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {%- else %}
+    {{ element.name }}s = xsd.{{ field_type }}({{ element.type|type }}, '{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- endif %}
     {%- else %}
     {%- if element.name in keywords %}
-    _{{ element.name }} = xsd.Element({{ element.type|type }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    _{{ element.name }} = xsd.{{ field_type }}({{ element.type|type }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- else %}
-    {{ element.name }} = xsd.Element({{ element.type|type }}{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {{ element.name }} = xsd.{{ field_type }}({{ element.type|type }}{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- endif %}
     {%- endif %}
     {%- endif %}
