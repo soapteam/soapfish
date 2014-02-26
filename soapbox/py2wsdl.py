@@ -7,6 +7,7 @@ import argparse
 import imp
 import logging
 import textwrap
+import six
 
 from lxml import etree
 
@@ -17,6 +18,7 @@ from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
 from .wsdl import get_wsdl_classes
 
+basestring = six.string_types
 
 logger = logging.getLogger('soapbox')
 logger.addHandler(NullHandler())
