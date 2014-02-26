@@ -29,7 +29,7 @@ def open_document(path):
 
     # Attempt to open the document from the filesystem:
     else:
-        return open(path, 'r').read()
+        return open(path, 'rb').read()
 
 
 # --- Template Filters --------------------------------------------------------

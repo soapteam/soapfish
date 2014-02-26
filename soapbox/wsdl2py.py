@@ -53,7 +53,7 @@ def get_rendering_environment():
     return env
 
 
-def generate_code_from_wsdl(xml, target):
+def generate_code_from_wsdl(xml, target, encoding='utf8'):
     env = get_rendering_environment()
     xmlelement = etree.fromstring(xml)
     XSD_NAMESPACE = find_xsd_namespaces(xmlelement.nsmap)
@@ -70,7 +70,7 @@ def generate_code_from_wsdl(xml, target):
         definitions=definitions,
         schema=schemaxml,
         is_server=bool(target == 'server'),
-    )
+    ).encode(encoding)
 
 
 # --- Program -----------------------------------------------------------------
