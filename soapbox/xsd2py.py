@@ -58,7 +58,7 @@ def schema_name(namespace):
     return hashlib.sha512(namespace.encode()).hexdigest()[0:5]
 
 
-def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None):
+def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None, encoding='utf8'):
     if known_namespaces is None:
         known_namespaces = []
     xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
@@ -69,7 +69,7 @@ def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None):
     if schema.targetNamespace in known_namespaces:
         return ''
 
-    return schema_to_py(schema, xsd_namespace, known_namespaces, location)
+    return schema_to_py(schema, xsd_namespace, known_namespaces, location).encode(encoding)
 
 
 def schema_to_py(schema, xsd_namespace, known_namespaces=None, location=None):

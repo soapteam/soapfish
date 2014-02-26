@@ -1,9 +1,14 @@
 import unittest
+import tempfile
+
 from lxml import etree
+from nose import SkipTest
+
+from soapbox.utils import open_document
+from soapbox import xsd
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl
 
-from nose import SkipTest
 
 XSD = """
 <xsd:schema xmlns:sns="http://flightdataservices.com/ops.xsd"
@@ -99,7 +104,7 @@ xmlns="http://flightdataservices.com/ops.xsd">
 </xsd:schema>
 """
 
-WSDL = """<?xml version="1.0"?>
+WSDL = b"""<?xml version="1.0" encoding="utf-8"?>
 <wsdl:definitions xmlns:tns="http://flightdataservices.com/ops.wsdl" xmlns:xs="http://www.w3.org/2000/10/XMLSchema" xmlns:fds="http://flightdataservices.com/ops.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OPS" targetNamespace="http://flightdataservices.com/ops.wsdl" xmlns="http://flightdataservices.com/ops.xsd">
     <wsdl:types>
         <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://flightdataservices.com/ops.xsd">
@@ -227,23 +232,29 @@ WSDL = """<?xml version="1.0"?>
 </wsdl:definitions>"""
 
 
+# New line "\n" required for 2.6 exec call
 class CodeGenerationTest(unittest.TestCase):
 
+    def setUp(self):
+        self.types = xsd.USER_TYPE_REGISTER.types.copy()
+
+    def tearDown(self):
+        xsd.USER_TYPE_REGISTER.types = self.types
+
     def test_code_generation_from_xsd(self):
-        raise SkipTest('Test is known to fail - generates invalid code')
         xmlelement = etree.fromstring(XSD)
-        code = generate_code_from_xsd(xmlelement)
-        exec(code, {}, {})
+        # Add mandatory imports to test the generated code
+        code = b'from soapbox import soap, xsd\n' + generate_code_from_xsd(xmlelement)
+        exec(code + b'\n', {})
 
     def test_code_generation_from_wsdl_client(self):
-        raise SkipTest('Test is known to fail - generates invalid code')
         code = generate_code_from_wsdl(WSDL, 'client')
-        exec(code, {}, {})
+        exec(code + b'\n', {})
 
     def test_code_generation_from_wsdl_server(self):
-        raise SkipTest('Test is known to fail - generates invalid code')
         code = generate_code_from_wsdl(WSDL, 'server')
-        exec(code, {}, {})
+        exec(code + b'\n', {})
+
 
 if __name__ == "__main__":
     unittest.main()
