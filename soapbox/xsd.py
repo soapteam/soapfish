@@ -43,6 +43,7 @@ import re
 
 from copy import copy
 from datetime import datetime, timedelta
+import logging
 from lxml import etree
 import six
 
@@ -51,7 +52,7 @@ from .utils import timezone_offset_to_string
 
 basestring = six.string_types
 
-
+logger = logging.getLogger(__name__)
 NIL = object()
 
 UNBOUNDED = 'unbounded'
@@ -65,16 +66,17 @@ class TypeRegister(object):
     '''
 
     def __init__(self):
-        self.types = []
+        self.types = {}
 
     def add_type(self, clazz):
-        self.types.append(clazz)
+        if clazz.__name__ in self.types:
+            warn_msg = "Warning: {0} already exists!".format(clazz.__name__)
+            logger.warning(warn_msg)
+        else:
+            self.types[clazz.__name__] = clazz
 
     def find_type(self, typeid):
-        for clazz in self.types:
-            if clazz.__name__ == typeid:
-                return clazz
-
+        return self.types[typeid]
 
 USER_TYPE_REGISTER = TypeRegister()
 
