@@ -25,7 +25,7 @@ setup(
     packages=find_packages(exclude=("examples", "tests",)),
     include_package_data=True,
     install_requires=open('requirements.txt').readlines(),
-    tests_require=[line for line in open('requirements-tests.txt').readlines() if line[:3] != '-r '],
+    tests_require=[line for line in open('dev_requirements.txt').readlines() if line[:3] != '-r '],
     test_suite='nose.collector',
     entry_points={
         'console_scripts': [
