@@ -1,7 +1,10 @@
 import unittest
+
 from lxml import etree
+
 from soapbox import xsd, xsdspec
 from soapbox import iso8601
+from soapbox.lib.pythonic_testcase import *
 
 
 class Aircraft(xsd.ComplexType):
@@ -102,7 +105,8 @@ class ListElementTest(unittest.TestCase):
     def test_append_restriction(self):
         l = xsd.ListElement(xsd.String, maxOccurs=1, tagname='toto').empty_value()
         l.append('a')
-        self.assertRaises(ValueError, l.append, ('a',))
+        e = assert_raises(ValueError, lambda: l.append('a'))
+        assert_contains('would be bigger than maxOccurs', str(e))
 
     def test_append_with_max_occurs_unbounded(self):
         l = xsd.ListElement(xsd.String, maxOccurs=xsd.UNBOUNDED, tagname='toto').empty_value()

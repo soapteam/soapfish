@@ -686,7 +686,7 @@ class ListElement(Element):
                         raise ValueError("Nil value in not nillable list.")
                 else:
                     accepted_value = this._type.accept(value)
-                if this._maxOccurs is not None and len(self) > this._maxOccurs:
+                if this._maxOccurs is not None and (len(self) + 1 > this._maxOccurs):
                     raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" % (len(self), this._maxOccurs))
                 super(TypedList, self).append(accepted_value)
 
