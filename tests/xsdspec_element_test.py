@@ -1,9 +1,8 @@
 
 from nose import SkipTest
 
-from soapbox import xsdspec
+from soapbox import xsd, xsdspec
 from soapbox.lib.pythonic_testcase import *
-from soapbox import  xsd
 
 
 class XSDSpecElementTest(PythonicTestCase):

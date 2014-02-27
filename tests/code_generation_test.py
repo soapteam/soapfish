@@ -1,10 +1,7 @@
 import unittest
-import tempfile
 
 from lxml import etree
-from nose import SkipTest
 
-from soapbox.utils import open_document
 from soapbox import xsd
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl

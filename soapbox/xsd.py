@@ -39,12 +39,13 @@ For information on XML schema validation:
 - http://lxml.de/validation.html#xmlschema
 '''
 
-import re
 
 from copy import copy
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
+import re
+
 from lxml import etree
 import six
 
