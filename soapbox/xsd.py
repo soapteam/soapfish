@@ -649,6 +649,26 @@ class Content(Ref):
         return None
 
 
+
+class TypedList(list):
+    def __init__(self, element):
+        super(TypedList, self).__init__()
+        self._list = element
+
+    def append(self, value):
+        self._list._evaluate_type()
+        if value == NIL:
+            if self._list.nillable:
+                accepted_value = NIL
+            else:
+                raise ValueError("Nil value in not nillable list.")
+        else:
+            accepted_value = self._list._type.accept(value)
+        if self._list._maxOccurs is not None and (len(self) + 1 > self._list._maxOccurs):
+            raise ValueError("You must not add more than %s items to this list." % self._list._maxOccurs)
+        super(TypedList, self).append(accepted_value)
+
+
 class ListElement(Element):
     '''
     Tag element that can appear many times in valid XML. e.g.
@@ -674,23 +694,8 @@ class ListElement(Element):
     def accept(self, value):
         return value
 
-    def empty_value(this):
-        class TypedList(list):
-
-            def append(self, value):
-                this._evaluate_type()
-                if value == NIL:
-                    if this.nillable:
-                        accepted_value = NIL
-                    else:
-                        raise ValueError("Nil value in not nillable list.")
-                else:
-                    accepted_value = this._type.accept(value)
-                if this._maxOccurs is not None and (len(self) + 1 > this._maxOccurs):
-                    raise ValueError("You must not add more than %s items to this list." % this._maxOccurs)
-                super(TypedList, self).append(accepted_value)
-
-        return TypedList()
+    def empty_value(self):
+        return TypedList(self)
 
     def render(self, parent, field_name, value, namespace=None, elementFormDefault=None):
         self._evaluate_type()
