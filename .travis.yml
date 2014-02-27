@@ -1,8 +1,22 @@
 language: python
+
 python:
     - 2.6
     - 2.7
     - 3.3
-before_script:
-    - pip install -r requirements-tests.txt
-script: nosetests
+
+install:
+    - python setup.py build install
+    - pip install -r dev_requirements.txt
+
+script: make test-with-coverage
+
+notifications:
+    email: true
+    irc:
+        channels:
+            - "chat.freenode.net#soapbox-bsd"
+        on_success: always
+        on_failure: always
+        use_notice: true
+        skip_join: true
