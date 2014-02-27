@@ -106,7 +106,7 @@ class ListElementTest(unittest.TestCase):
         l = xsd.ListElement(xsd.String, maxOccurs=1, tagname='toto').empty_value()
         l.append('a')
         e = assert_raises(ValueError, lambda: l.append('a'))
-        assert_contains('would be bigger than maxOccurs', str(e))
+        assert_equals('You must not add more than 1 items to this list.', str(e))
 
     def test_append_with_max_occurs_unbounded(self):
         l = xsd.ListElement(xsd.String, maxOccurs=xsd.UNBOUNDED, tagname='toto').empty_value()

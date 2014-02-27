@@ -687,7 +687,7 @@ class ListElement(Element):
                 else:
                     accepted_value = this._type.accept(value)
                 if this._maxOccurs is not None and (len(self) + 1 > this._maxOccurs):
-                    raise ValueError("Number of items in list %s is would be bigger than maxOccurs %s" % (len(self), this._maxOccurs))
+                    raise ValueError("You must not add more than %s items to this list." % this._maxOccurs)
                 super(TypedList, self).append(accepted_value)
 
         return TypedList()
