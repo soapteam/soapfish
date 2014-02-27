@@ -157,10 +157,11 @@ class SOAPDispatcher(object):
             return self.error_response(SOAP.Code.CLIENT, input_validation.errors)
         validated_input = input_validation.validated_document
 
-        try:
-            soap_response_message, is_error = self._call_handler(soapbox_request, handler, validated_input)
-        except Exception as ex:
-            logger.exception('Error during SOAP handling')
-            return self.error_response(SOAP.Code.SERVER, (str(ex),))
+        # LATER: the dispatcher should be able to also catch arbitrary
+        # exceptions from the handler. At the same time the caller should be
+        # able to install custom hooks for these exceptions (e.g. custom
+        # traceback logging) and we should support popular debugging middlewares
+        # somehow.
+        soap_response_message, is_error = self._call_handler(soapbox_request, handler, validated_input)
 
         return self.response(soap_response_message, is_error=is_error)
