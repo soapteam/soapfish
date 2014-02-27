@@ -5,11 +5,13 @@ from __future__ import print_function
 
 import argparse
 import logging
+import sys
 import textwrap
 
 from datetime import datetime
 from jinja2 import Environment, PackageLoader
 from lxml import etree
+import six
 
 from .soap import SOAP_HTTP_Transport, SOAPVersion
 from .utils import (
@@ -96,12 +98,17 @@ def main():
     if opt.client:
         logger.info('Generating client code for WSDL document \'%s\'...' % opt.wsdl)
         xml = open_document(opt.wsdl)
-        print(generate_code_from_wsdl(xml, 'client'))
+        code = generate_code_from_wsdl(xml, 'client')
 
     elif opt.server:
         logger.info('Generating server code for WSDL document \'%s\'...' % opt.wsdl)
         xml = open_document(opt.wsdl)
-        print(generate_code_from_wsdl(xml, 'server'))
+        code = generate_code_from_wsdl(xml, 'server')
+
+    if six.PY3:
+        sys.stdout.buffer.write(code)
+    else:
+        print(code)
 
 
 if __name__ == '__main__':
