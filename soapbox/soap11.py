@@ -14,10 +14,10 @@ NAME = 'soap11'
 
 # --- Functions ---------------------------------------------------------------
 def determine_soap_action(request):
-    if request.META.get('HTTP_SOAPACTION'):
-        return request.META.get('HTTP_SOAPACTION').replace('"', '')
-    elif request.META.get('HTTP_ACTION'):
-        return request.META.get('HTTP_ACTION').replace('"', '')
+    if request.environ.get('SOAPACTION'):
+        return request.environ.get('SOAPACTION').replace('"', '')
+    elif request.environ.get('ACTION'):
+        return request.environ.get('ACTION').replace('"', '')
     else:
         return None
 
@@ -34,7 +34,7 @@ def parse_fault_message(fault):
     return fault.faultcode, fault.faultstring, fault.faultactor
 
 
-def build_header(soapAction):
+def build_http_request_headers(soapAction):
     return {'content-type': CONTENT_TYPE, 'SOAPAction': soapAction}
 
 

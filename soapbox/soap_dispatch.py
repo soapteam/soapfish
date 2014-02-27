@@ -18,25 +18,10 @@ __all__ = ['SOAPDispatcher', 'SoapboxRequest']
 logger = logging.getLogger(__name__)
 
 
-class DjangoCompatHeaders(object):
-    def __init__(self, headers):
-        self.headers = headers
-
-    def get(self, key):
-        assert key.startswith('HTTP_')
-        header_key = key[5:]
-        return self.headers.get(header_key)
-
-
 class SoapboxRequest(object):
-    def __init__(self, request, headers, method):
-        self.request = request
-        self.headers = headers
-        self.method = method.upper()
-
-    @property
-    def META(self):
-        return DjangoCompatHeaders(self.headers)
+    def __init__(self, environ, content):
+        self.environ = environ
+        self.content = content
 
 
 class SOAPDispatcher(object):
@@ -68,6 +53,9 @@ class SOAPDispatcher(object):
         root_tag = None
         if not soap_action:
             root_tag = self._find_root_tag(message)
+            logger.warning('Soap action not found in http headers, use root tag "%s".', root_tag)
+        else:
+            logger.info('Soap action found in http headers: %s', soap_action)
         # TODO: handle invalid xml
         for method in self.service.methods:
             if soap_action:
@@ -102,9 +90,12 @@ class SOAPDispatcher(object):
                           elementFormDefault=self.service.schema.elementFormDefault,
                           schema=self.service.schema)  # Validation.
 
+    def call_wrapper(self, method, soapbox_request, input_object):
+        return method.function(soapbox_request, input_object)
+
     def _call_handler(self, soapbox_request, method, input_object):
         SOAP = self.service.version
-        return_object = method.function(soapbox_request.request, input_object)
+        return_object = self.call_wrapper(method, soapbox_request, input_object)
         if isinstance(return_object, SOAPError):
             error = return_object
             error_response = SOAP.get_error_response(error.faultcode, error.faultstring)
@@ -134,16 +125,16 @@ class SOAPDispatcher(object):
         fault_message = SOAP.get_error_response(SOAP.Code.CLIENT, error_text)
         return self.response(fault_message, is_error=True)
 
-    def dispatch(self, soapbox_request, body_contents):
-        if soapbox_request.method != 'POST':
+    def dispatch(self, soapbox_request):
+        if soapbox_request.environ['REQUEST_METHOD'] != 'POST':
             return AttrDict(
                 status=400,
                 content_type='text/plain',
                 message='bad request',
             )
         SOAP = self.service.version
-        message_validation = self._parse_soap_content(body_contents)
-        if message_validation.value != True:
+        message_validation = self._parse_soap_content(soapbox_request.content)
+        if not message_validation.value:
             return self.error_response(SOAP.Code.CLIENT, message_validation.errors)
         soap_envelope = message_validation.validated_document
         soap_request_message = soap_envelope.Body.content()
@@ -153,7 +144,7 @@ class SOAPDispatcher(object):
         #  response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e))
 
         input_validation = self._parse_input(handler, soap_request_message)
-        if input_validation.value != True:
+        if not input_validation.value:
             return self.error_response(SOAP.Code.CLIENT, input_validation.errors)
         validated_input = input_validation.validated_document
 
@@ -165,3 +156,40 @@ class SOAPDispatcher(object):
         soap_response_message, is_error = self._call_handler(soapbox_request, handler, validated_input)
 
         return self.response(soap_response_message, is_error=is_error)
+
+
+class WsgiSoapApplication(object):
+    HTTP_500 = '500 Internal server error'
+    HTTP_200 = '200 OK'
+    HTTP_405 = '405 Method Not Allowed'
+
+    def __init__(self, dispatchers):
+        '''
+        Args:
+            dispatcher: mapping of url to dispatcher. ex: {'/service1': <class SOAPDispatcher>}
+        '''
+        self.dispatchers = dispatchers
+
+    def __call__(self, req_env, start_response, wsgi_url=None):
+        dispatcher = self.dispatchers[req_env['PATH_INFO']]
+        content_length = int(req_env.get('CONTENT_LENGTH', 0))
+        content = req_env['wsgi.input'].read(content_length)
+        soap_request = SoapboxRequest(req_env, content)
+        response = dispatcher.dispatch(soap_request)
+        response_headers = [
+            ("content-type", response['content_type']),
+        ]
+        start_response(self._get_http_status(response.status), response_headers)
+        return [response.message]
+
+    def _get_http_status(self, response_status):
+        if response_status == 200:
+            return self.HTTP_200
+        elif response_status == 500:
+            return self.HTTP_500
+        elif response_status == 405:
+            return self.HTTP_405
+        else:
+            # wsgi wants an http status of len >= 4
+            # TODO do a better status code transformation
+            return str(response_status) + ' '

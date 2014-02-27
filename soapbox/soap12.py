@@ -14,7 +14,7 @@ NAME = 'soap12'
 
 # --- Functions ---------------------------------------------------------------
 def determine_soap_action(request):
-    content_types = request.META['CONTENT_TYPE'].split(';')
+    content_types = request.http_headers.get('CONTENT_TYPE','').split(';')
     for content_type in content_types:
         if content_type.strip(' ').startswith('action='):
             action = content_type.split('=')[1]
@@ -22,8 +22,8 @@ def determine_soap_action(request):
     return None
 
 
-def build_header(soapAction):
-    return {'content-type': CONTENT_TYPE + 'action=%s' % soapAction}
+def build_http_request_headers(soapAction):
+    return {'content-type': CONTENT_TYPE + ';action=%s' % soapAction}
 
 
 def get_error_response(code, message, actor=None):
