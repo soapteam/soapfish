@@ -178,7 +178,7 @@ class Stub(object):
             http.add_credentials(self.username, self.password)
 
         method = self.SERVICE.get_method(operationName)
-        headers = SOAP.build_header(method.soapAction)
+        headers = SOAP.build_http_request_headers(method.soapAction)
         envelope = SOAP.Envelope.response(tagname, parameter)
 
         logger.info('Request \'%s\'...' % self.location)
