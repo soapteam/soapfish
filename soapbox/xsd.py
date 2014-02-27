@@ -658,10 +658,9 @@ class TypedList(list):
     def append(self, value):
         self._list._evaluate_type()
         if value == NIL:
-            if self._list.nillable:
-                accepted_value = NIL
-            else:
+            if not self._list.nillable:
                 raise ValueError("Nil value in not nillable list.")
+            accepted_value = NIL
         else:
             accepted_value = self._list._type.accept(value)
         if self._list._maxOccurs is not None and (len(self) + 1 > self._list._maxOccurs):
