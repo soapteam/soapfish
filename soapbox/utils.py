@@ -61,7 +61,7 @@ def get_get_type(xsd_namespaces):
         if ns in xsd_namespaces:
             return 'xsd.%s' % capitalize(typename)
         else:
-            return '\'%s\'' % capitalize(typename)
+            return "__name__ + '.%s'" % capitalize(typename)
     return get_type
 
 
