@@ -3,10 +3,11 @@
 from lxml import etree
 
 from . import xsd
+from . import namespaces as ns
 
 
-ENVELOPE_NAMESPACE = 'http://schemas.xmlsoap.org/soap/envelope/'
-BINDING_NAMESPACE = 'http://schemas.xmlsoap.org/wsdl/soap/'
+ENVELOPE_NAMESPACE = ns.soap11_envelope
+BINDING_NAMESPACE = ns.wsdl_soap
 CONTENT_TYPE = 'text/xml'
 
 

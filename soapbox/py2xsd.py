@@ -12,6 +12,7 @@ import textwrap
 
 from lxml import etree
 
+from . import namespaces as ns
 from . import xsd, xsdspec
 from .utils import uncapitalize
 
@@ -185,7 +186,7 @@ def generate_xsd(schema):
     xsd_schema = generate_xsdspec(schema)
 
     xmlelement = etree.Element(
-        '{http://www.w3.org/2001/XMLSchema}schema',
+        '{%s}schema' % ns.xsd,
         nsmap={
             'sns': schema.targetNamespace,
             'xsd': xsdspec.XSD_NAMESPACE,

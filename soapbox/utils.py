@@ -6,6 +6,7 @@ import logging
 import os
 import six
 
+from . import namespaces as ns
 from . import settings
 from .compat import urlparse, urlunparse
 
@@ -104,8 +105,8 @@ def url_template(url):
 # --- Other Functions ---------------------------------------------------------
 def find_xsd_namespaces(nsmap):
     xsd_namespaces = [
-        'http://www.w3.org/2000/10/XMLSchema',
-        'http://www.w3.org/2001/XMLSchema',
+        ns.xsd2000,
+        ns.xsd,
     ]
     namespaces = []
     for key, value in six.iteritems(nsmap):

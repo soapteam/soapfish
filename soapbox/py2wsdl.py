@@ -16,6 +16,7 @@ from .py2xsd import generate_xsdspec
 from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
 from .wsdl import get_wsdl_classes
+from . import namespaces as ns
 
 basestring = six.string_types
 
@@ -107,19 +108,19 @@ def generate_wsdl(service):
     build_messages(wsdl, definitions, service)
 
     xmlelement = etree.Element(
-        '{http://schemas.xmlsoap.org/wsdl/}definitions',
+        '{%s}definitions' % ns.wsdl,
         nsmap={
             'sns': service.schema.targetNamespace,
             'soap': service.version.BINDING_NAMESPACE,
             'tns': service.targetNamespace,
-            'wsdl': 'http://schemas.xmlsoap.org/wsdl/',
-            'xsd': 'http://www.w3.org/2001/XMLSchema',
+            'wsdl': ns.wsdl,
+            'xsd': ns.xsd,
         },
     )
 
     definitions.render(xmlelement,
                        definitions,
-                       namespace='http://schemas.xmlsoap.org/wsdl/',
+                       namespace=ns.wsdl,
                        elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
 
     return xmlelement

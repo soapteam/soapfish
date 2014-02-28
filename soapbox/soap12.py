@@ -2,11 +2,12 @@
 
 from lxml import etree
 
+from . import namespaces as ns
 from . import xsd
 
 
-ENVELOPE_NAMESPACE = 'http://www.w3.org/2003/05/soap-envelope'
-BINDING_NAMESPACE = 'http://schemas.xmlsoap.org/wsdl/soap12/'
+ENVELOPE_NAMESPACE = ns.soap12_envelope
+BINDING_NAMESPACE = ns.wsdl_soap12
 CONTENT_TYPE = 'application/soap+xml'
 
 
@@ -55,7 +56,7 @@ class LanguageString(xsd.String):
 
     def render(self, parent, value, namespace, elementFormDefault):
         parent.text = self.xmlvalue(value)
-        parent.set('{http://www.w3.org/XML/1998/namespace}lang', 'en')
+        parent.set('{%s}lang' % ns.xml, 'en')
 
 
 class Reason(xsd.ComplexType):

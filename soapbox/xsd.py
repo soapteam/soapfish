@@ -49,6 +49,7 @@ import re
 from lxml import etree
 import six
 
+from . import namespaces as ns
 from . import iso8601, settings
 from .utils import timezone_offset_to_string
 
@@ -500,14 +501,14 @@ class Element(object):
 
         xmlelement = etree.Element(field_name)
         if value == NIL:
-            xmlelement.set('{http://www.w3.org/2001/XMLSchema-instance}nil', 'true')
+            xmlelement.set('{%s}nil' % ns.xsi, 'true')
         else:
             self._type.render(xmlelement, value, namespace, elementFormDefault)
         parent.append(xmlelement)
 
     def parse(self, instance, field_name, xmlelement):
         self._evaluate_type()
-        if xmlelement.get('{http://www.w3.org/2001/XMLSchema-instance}nil') == 'true':
+        if xmlelement.get('{%s}nil' % ns.xsi) == 'true':
             value = NIL
         else:
             value = self._type.parse_xmlelement(xmlelement)
@@ -714,14 +715,14 @@ class ListElement(Element):
         for item in items:
             xmlelement = etree.Element(tagname)
             if item == NIL:
-                xmlelement.set('{http://www.w3.org/2001/XMLSchema-instance}nil', 'true')
+                xmlelement.set('{%s}nil' % ns.xsi, 'true')
             else:
                 self._type.render(xmlelement, item, namespace, elementFormDefault)
             parent.append(xmlelement)
 
     def parse(self, instance, field_name, xmlelement):
         self._evaluate_type()
-        if xmlelement.get('{http://www.w3.org/2001/XMLSchema-instance}nil'):
+        if xmlelement.get('{%s}nil' % ns.xsi):
             value = NIL
         else:
             value = self._type.parse_xmlelement(xmlelement)

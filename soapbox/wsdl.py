@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import namespaces as ns
 from . import xsd, xsdspec
 
 
@@ -133,7 +134,7 @@ def get_wsdl_classes(soap_namespace):
         services = xsd.ListElement(Service, 'service')
 
     SCHEMA = xsd.Schema(
-        targetNamespace='http://schemas.xmlsoap.org/wsdl/',
+        targetNamespace=ns.wsdl,
         elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
         simpleTypes=[],
         attributeGroups=[],
