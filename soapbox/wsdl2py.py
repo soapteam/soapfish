@@ -60,8 +60,10 @@ def generate_code_from_wsdl(xml, target, encoding='utf8'):
     xmlelement = etree.fromstring(xml)
     XSD_NAMESPACE = find_xsd_namespaces(xmlelement.nsmap)
     env.filters['type'] = get_get_type(XSD_NAMESPACE)
+    soap_version = SOAPVersion.get_version_from_xml(xmlelement)
+    logger.info('Detect version %s', soap_version.NAME)
 
-    wsdl = get_wsdl_classes(SOAPVersion.SOAP11.BINDING_NAMESPACE)
+    wsdl = get_wsdl_classes(soap_version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xmlelement)
     schema = definitions.types.schema
     xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
@@ -69,6 +71,7 @@ def generate_code_from_wsdl(xml, target, encoding='utf8'):
 
     tpl = env.get_template('wsdl')
     return tpl.render(
+        soap_version=soap_version,
         definitions=definitions,
         schema=schemaxml,
         is_server=bool(target == 'server'),

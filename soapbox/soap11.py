@@ -9,6 +9,7 @@ from . import namespaces as ns
 ENVELOPE_NAMESPACE = ns.soap11_envelope
 BINDING_NAMESPACE = ns.wsdl_soap
 CONTENT_TYPE = 'text/xml'
+NAME = 'soap11'
 
 
 # --- Functions ---------------------------------------------------------------

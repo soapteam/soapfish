@@ -9,6 +9,7 @@ from . import xsd
 ENVELOPE_NAMESPACE = ns.soap12_envelope
 BINDING_NAMESPACE = ns.wsdl_soap12
 CONTENT_TYPE = 'application/soap+xml'
+NAME = 'soap12'
 
 
 # --- Functions ---------------------------------------------------------------
