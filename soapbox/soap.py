@@ -16,10 +16,11 @@ else:
 from lxml import etree
 
 from . import settings, soap11, soap12
+from . import namespaces as ns
 from .utils import uncapitalize
 
 
-SOAP_HTTP_Transport = 'http://schemas.xmlsoap.org/soap/http'
+SOAP_HTTP_Transport = ns.wsdl_soap_http
 
 basestring = six.string_types
 

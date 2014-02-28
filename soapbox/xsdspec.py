@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from . import namespaces as ns
 from . import xsd
 
 
-XSD_NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+XSD_NAMESPACE = ns.xsd
 
 
 class Enumeration(xsd.ComplexType):
@@ -17,17 +18,17 @@ class Enumeration(xsd.ComplexType):
 
 
 class Pattern(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     value = xsd.Attribute(xsd.String)
 
 
 class RestrictionValue(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     value = xsd.Attribute(xsd.String)
 
 
 class Restriction(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     base = xsd.Attribute(xsd.String)
     enumerations = xsd.ListElement(Enumeration, 'enumeration')
     pattern = xsd.Element(Pattern)
@@ -44,19 +45,19 @@ class Restriction(xsd.ComplexType):
 
 
 class List(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     pass
 
 
 class SimpleType(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     restriction = xsd.Element(Restriction, minOccurs=0)
     list = xsd.Element(List, minOccurs=0)
 
 
 class Element(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     type = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     ref = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
@@ -68,12 +69,12 @@ class Element(xsd.ComplexType):
 
 
 class Sequence(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     elements = xsd.ListElement(Element, 'element')
 
 
 class Attribute(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     name = xsd.Attribute(xsd.String)
     ref = xsd.Attribute(xsd.String)
     type = xsd.Attribute(xsd.String)
@@ -81,13 +82,13 @@ class Attribute(xsd.ComplexType):
 
 
 class AttributeGroup(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     name = xsd.Attribute(xsd.String)
     attributes = xsd.ListElement(Attribute, 'attribute')
 
 
 class AttributeGroupReference(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     ref = xsd.Attribute(xsd.String)
 
     def to_python(self):
@@ -97,7 +98,7 @@ class AttributeGroupReference(xsd.ComplexType):
 
 
 class Extension(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     base = xsd.Attribute(xsd.String)
     sequence = xsd.Element(Sequence)
     attributes = xsd.ListElement(Attribute, 'attribute')
@@ -105,14 +106,14 @@ class Extension(xsd.ComplexType):
 
 
 class ComplexContent(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     mixed = xsd.Attribute(xsd.Boolean)
     extension = xsd.Element(Extension)
     restriction = xsd.Element(Extension)
 
 
 class XSDComplexType(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     sequence = xsd.Element(Sequence)
     all = xsd.Element(Sequence)
@@ -122,7 +123,7 @@ class XSDComplexType(xsd.ComplexType):
 
 
 class Group(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     name = xsd.Attribute(xsd.String)
     sequence = xsd.Element(Sequence)
 
@@ -133,7 +134,7 @@ class Import(xsd.ComplexType):
 
 
 class Schema(xsd.ComplexType):
-    NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+    NAMESPACE = ns.xsd
     targetNamespace = xsd.Attribute(xsd.String)
     elementFormDefault = xsd.Attribute(
         xsd.String(enumeration=['qualified', 'unqualified']),
@@ -148,7 +149,7 @@ class Schema(xsd.ComplexType):
 
 
 SCHEMA = xsd.Schema(
-    targetNamespace='http://www.w3.org/2001/XMLSchema',
+    targetNamespace=ns.xsd,
     elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
     simpleTypes=[],
     attributeGroups=[],
