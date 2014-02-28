@@ -837,13 +837,12 @@ class ElementTypeEvaluation(unittest.TestCase):
     def test_string_type_evalutation(self):
 
         class B1(xsd.ComplexType):
-            a = xsd.Element("A1")
-
-        class A1(xsd.ComplexType):
-            pass
+            a = xsd.Element("soapbox.xsd.String")
+            b = xsd.Element("soapbox.xsd.Integer")
 
         b = B1()
-        b.a = A1()
+        b.a = "test"
+        b.b = 123
 
 
 class PatternTest(unittest.TestCase):

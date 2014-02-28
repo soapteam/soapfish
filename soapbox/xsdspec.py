@@ -65,7 +65,7 @@ class Element(xsd.ComplexType):
     maxOccurs = xsd.Attribute(xsd.MaxOccurs, use=xsd.Use.OPTIONAL)
     nillable = xsd.Attribute(xsd.Boolean, use=xsd.Use.OPTIONAL)
     simpleType = xsd.Element(SimpleType, minOccurs=0)
-    complexType = xsd.Element('XSDComplexType')
+    complexType = xsd.Element('soapbox.xsdspec.XSDComplexType')
 
 
 class Sequence(xsd.ComplexType):

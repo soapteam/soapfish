@@ -55,8 +55,8 @@ class Operation(xsd.ComplexType):
     input = xsd.Element(Input)
     output = xsd.Element(Input)
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap)
-    binding = xsd.Element('Binding')
-    definition = xsd.Element('Definitions')
+    binding = xsd.Element('soapbox.wsdl11.Binding')
+    definition = xsd.Element('soapbox.wsdl11.Definitions')
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
@@ -97,7 +97,7 @@ class Binding(xsd.ComplexType):
     type = xsd.Attribute(xsd.String)
     binding = xsd.Element(SOAP_Binding, namespace=ns.wsdl_soap)
     operations = xsd.ListElement(Operation, 'operation')
-    definition = xsd.Element('Definitions')
+    definition = xsd.Element('soapbox.wsdl11.Definitions')
 
     def render(self, *args, **kwargs):
         self.definition = None
