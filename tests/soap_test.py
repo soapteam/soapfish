@@ -1,4 +1,7 @@
 import unittest
+
+from lxml import etree
+
 from soapbox import soap, soap11, soap12
 
 SOAP11_ERROR_MESSAGE = """
@@ -125,10 +128,28 @@ class ErrorHandling(unittest.TestCase):
             self.assertEqual(e.faultactor, "http://gizmos.com/order")
         else:
             self.assertFalse("true", "should not get here")
-        
-        
-        
-   
-        
+
+
+class SoapVersionTest(unittest.TestCase):
+    WSDL = '''<?xml version="1.0" encoding="utf-8"?>
+        <definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://tempuri.org/encodedTypes" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://tempuri.org/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+            <binding name="HelloWorldSoap" type="tns:HelloWorldSoap">
+                <{soap_version}:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+            </binding>
+        </definitions>'''
+
+    def test_detect_soap12_form_xml(self):
+        WSDL = self.WSDL.format(soap_version='soap12').encode('utf8')
+        xml = etree.fromstring(WSDL)
+        soap_version = soap.SOAPVersion.get_version_from_xml(xml)
+        self.assertEqual(soap.SOAPVersion.SOAP12, soap_version)
+
+    def test_detect_soap11_from_xml(self):
+        WSDL = self.WSDL.format(soap_version='soap').encode('utf8')
+        xml = etree.fromstring(WSDL)
+        soap_version = soap.SOAPVersion.get_version_from_xml(xml)
+        self.assertEqual(soap.SOAPVersion.SOAP11, soap_version)
+
+
 if __name__ == "__main__":
     unittest.main()

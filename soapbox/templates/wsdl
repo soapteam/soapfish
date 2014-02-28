@@ -80,7 +80,11 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
     targetNamespace='{{ definitions.targetNamespace }}',
     location='{{ port.address.location|url_template }}',
     schema=Schema_{{ schema_name(definitions.types.schema.targetNamespace) }},
+    {%- if soap_version.NAME == 'soap11' %}
     version=soap.SOAPVersion.SOAP11,
+    {%- else %}
+    version=soap.SOAPVERSION.SOAP12,
+    {%- endif %}
     methods=[{% for o in binding.operations %}{{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}],
 )
 {# [blank line] #}

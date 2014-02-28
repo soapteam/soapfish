@@ -46,6 +46,14 @@ class SOAPVersion:
         version = cls.get_version(namespace)
         return version.__name__
 
+    @classmethod
+    def get_version_from_xml(cls, xml):
+        namespaces = {'wsdl': ns.wsdl, 'soap12': ns.wsdl_soap12}
+        if xml.xpath('wsdl:binding/soap12:binding', namespaces=namespaces):
+            return cls.SOAP12
+        else:
+            return cls.SOAP11
+
 
 class SOAPError(Exception):
     def __init__(self, message, faultcode, faultstring, faultactor=None):
