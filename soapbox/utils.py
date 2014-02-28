@@ -51,7 +51,7 @@ def uncapitalize(value):
 
 
 def get_get_type(xsd_namespaces):
-    def get_type(full_typename):
+    def get_type(full_typename, known_types = None):
         if not full_typename:
             return None
         typename = full_typename.split(':')
@@ -61,7 +61,10 @@ def get_get_type(xsd_namespaces):
         if ns in xsd_namespaces:
             return 'xsd.%s' % capitalize(typename)
         else:
-            return "__name__ + '.%s'" % capitalize(typename)
+            if known_types is not None and typename in known_types:
+                return "%s" % capitalize(typename)
+            else:
+                return "__name__ + '.%s'" % capitalize(typename)
     return get_type
 
 

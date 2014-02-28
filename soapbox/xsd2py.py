@@ -34,7 +34,8 @@ logger = logging.getLogger('soapbox')
 def get_rendering_environment():
     pkg = TEMPLATE_PACKAGE.split('.')
     env = Environment(
-        extensions=['jinja2.ext.loopcontrols'],
+        extensions=['jinja2.ext.loopcontrols',
+                    'jinja2.ext.do'],
         loader=PackageLoader(*pkg),
     )
     env.filters['capitalize'] = capitalize
