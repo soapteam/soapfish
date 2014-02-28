@@ -59,29 +59,6 @@ NIL = object()
 UNBOUNDED = Decimal('infinity')
 
 
-class TypeRegister(object):
-    '''
-    Allows tracking user defined class and their names, to be able to resolve
-    string references e.g. a = xsd.Element('A'). Note that class names must be
-    unique due to fact that search engine uses just class names.
-    '''
-
-    def __init__(self):
-        self.types = {}
-
-    def add_type(self, clazz):
-        if clazz.__name__ in self.types:
-            warn_msg = "Warning: {0} already exists!".format(clazz.__name__)
-            logger.warning(warn_msg)
-        else:
-            self.types[clazz.__name__] = clazz
-
-    def find_type(self, typeid):
-        return self.types[typeid]
-
-USER_TYPE_REGISTER = TypeRegister()
-
-
 class CallStyle(object):
     DOCUMENT = 'document'
     RPC = 'RPC'
@@ -121,15 +98,7 @@ class All(Indicator):
     pass
 
 
-class Type_PythonType(type):
-
-    def __new__(cls, name, bases, attrs):
-        newcls = super(Type_PythonType, cls).__new__(cls, name, bases, attrs)
-        USER_TYPE_REGISTER.add_type(newcls)
-        return newcls
-
-
-class Type(six.with_metaclass(Type_PythonType, object)):
+class Type(object):
     '''
     Abstract.
     '''
@@ -423,6 +392,14 @@ class MaxOccurs(SimpleType):
         return self.accept(xmlvalue)
 
 
+def import_type(type_name):
+    if '.' not in type_name:
+        raise ValueError('We need the full namepath to be able to import it: %s' % type_name)
+    module, name = type_name.rsplit('.', 1)
+    module = __import__(module, globals(), {}, [name])
+    return getattr(module, name)
+
+
 class Element(object):
     '''
     Basic building block, represents a XML element that can appear one or zero
@@ -461,7 +438,7 @@ class Element(object):
     def _evaluate_type(self):
         if self._type is None:
             if isinstance(self._passed_type, basestring):
-                self._passed_type = USER_TYPE_REGISTER.find_type(self._passed_type)
+                self._passed_type = import_type(self._passed_type)
             if isinstance(self._passed_type, Type):
                 self._type = self._passed_type
             else:
@@ -754,7 +731,7 @@ class ComplexTypeMetaInfo(object):
         self.all = sorted(self.fields + self.groups + self.attributes, key=lambda f: f._creation_number)
 
 
-class Complex_PythonType(Type_PythonType):
+class Complex_PythonType(type):
     '''
     Python type for ComplexType, builds a _meta object for every class that
     inherit from ComplexType.

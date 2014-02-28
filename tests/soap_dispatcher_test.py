@@ -140,7 +140,7 @@ class SoapDispatcherTest(PythonicTestCase):
     class EchoType(xsd.ComplexType):
         INHERITANCE = None
         INDICATOR = xsd.Sequence
-        value = xsd.Element('String', nillable=False)
+        value = xsd.Element(xsd.String, nillable=False)
         
         @classmethod
         def create(cls, value):
@@ -168,8 +168,8 @@ class SoapDispatcherTest(PythonicTestCase):
             elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
             complexTypes=(self.EchoType,),
             elements={
-                'echoRequest': xsd.Element('EchoType'),
-                'echoResponse': xsd.Element('EchoType'),
+                'echoRequest': xsd.Element(self.EchoType),
+                'echoResponse': xsd.Element(self.EchoType),
             },
         )
         echo_method = xsd.Method(function=handler,
