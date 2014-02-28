@@ -49,8 +49,8 @@ class Operation(wsdl11.Operation):
     input = xsd.Element(Input)
     output = xsd.Element(Input)
     body = xsd.Element(SOAP_Body, namespace=wsdl11_soap12_ns)
-    binding = xsd.Element('Binding')
-    definition = xsd.Element('Definitions')
+    binding = xsd.Element('soapbox.wsdl12.Binding')
+    definition = xsd.Element('soapbox.wsdl12.Definitions')
 
 
 class PortType(wsdl11.PortType):
@@ -60,7 +60,7 @@ class PortType(wsdl11.PortType):
 class Binding(wsdl11.Binding):
     binding = xsd.Element(SOAP_Binding, namespace=wsdl11_soap12_ns)
     operations = xsd.ListElement(Operation, 'operation')
-    definition = xsd.Element('Definitions')
+    definition = xsd.Element('soapbox.wsdl12.Definitions')
 
 
 class Port(wsdl11.Port):

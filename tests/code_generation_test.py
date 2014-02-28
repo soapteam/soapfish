@@ -2,7 +2,6 @@ import unittest
 
 from lxml import etree
 
-from soapbox import xsd
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl
 
@@ -229,28 +228,22 @@ WSDL = b"""<?xml version="1.0" encoding="utf-8"?>
 </wsdl:definitions>"""
 
 
-# New line "\n" required for 2.6 exec call
 class CodeGenerationTest(unittest.TestCase):
-
-    def setUp(self):
-        self.types = xsd.USER_TYPE_REGISTER.types.copy()
-
-    def tearDown(self):
-        xsd.USER_TYPE_REGISTER.types = self.types
 
     def test_code_generation_from_xsd(self):
         xmlelement = etree.fromstring(XSD)
         # Add mandatory imports to test the generated code
         code = b'from soapbox import soap, xsd\n' + generate_code_from_xsd(xmlelement)
-        exec(code + b'\n', {})
+        compile(code, '<string>', 'exec')
 
     def test_code_generation_from_wsdl_client(self):
         code = generate_code_from_wsdl(WSDL, 'client')
-        exec(code + b'\n', {})
+        # Empty last line is mandatory for python2.6
+        compile(code + b'\n', '<string>', 'exec')
 
     def test_code_generation_from_wsdl_server(self):
         code = generate_code_from_wsdl(WSDL, 'server')
-        exec(code + b'\n', {})
+        compile(code, '<string>', 'exec')
 
 
 if __name__ == "__main__":
