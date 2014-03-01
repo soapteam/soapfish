@@ -127,6 +127,12 @@ def generate_wsdl(service):
 
 
 # --- Program -----------------------------------------------------------------
+
+def tostring(service):
+    tree = generate_wsdl(service)
+    return etree.tostring(tree, pretty_print=True)
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -143,8 +149,7 @@ def main():
     logger.info('Generating WSDL for module \'%s\'...' % opt.module)
     module = imp.load_source('', opt.module)
     service = getattr(module, 'SERVICE')
-    tree = generate_wsdl(service)
-    print(etree.tostring(tree, pretty_print=True))
+    print(tostring(service))
 
 
 if __name__ == '__main__':

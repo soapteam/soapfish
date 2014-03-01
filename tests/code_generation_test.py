@@ -1,9 +1,11 @@
 import unittest
 
 from lxml import etree
+import tempfile
 
 from soapbox.xsd2py import generate_code_from_xsd
 from soapbox.wsdl2py import generate_code_from_wsdl
+from soapbox import  py2wsdl
 
 
 XSD = """
@@ -234,16 +236,46 @@ class CodeGenerationTest(unittest.TestCase):
         xmlelement = etree.fromstring(XSD)
         # Add mandatory imports to test the generated code
         code = b'from soapbox import soap, xsd\n' + generate_code_from_xsd(xmlelement)
-        compile(code, '<string>', 'exec')
+        self._exec(code, {})
 
     def test_code_generation_from_wsdl_client(self):
         code = generate_code_from_wsdl(WSDL, 'client')
-        # Empty last line is mandatory for python2.6
-        compile(code + b'\n', '<string>', 'exec')
+        m = {}
+        self._exec(code, m)
+        self.check_reparse_wsdl(m, 'client')
 
     def test_code_generation_from_wsdl_server(self):
         code = generate_code_from_wsdl(WSDL, 'server')
-        compile(code, '<string>', 'exec')
+        m = {}
+        self._exec(code, m)
+        self.check_reparse_wsdl(m, 'server')
+
+    def _exec(self, code, globalz):
+        _, fname = tempfile.mkstemp(suffix='.py')
+        file_header = ('# -*- coding: utf-8 -*-\n'
+            'import sys\n'
+            'import os\n'
+            'sys.path.append(os.path.dirname("{0}"))\n').format(fname).encode('utf8')
+        code = file_header + b'\n' + code + b'\n'
+        #print(code.decode('utf8'))
+        with open(fname, 'wb') as f:
+            # Empty last line is mandatory for python2.6
+            f.write(code)
+        compiled_code = compile(code, fname, 'exec')
+        globalz['__name__'] = fname.rsplit('/', 1)[-1].rsplit('.', 1)[0]
+        exec(code, globalz)
+
+    def check_reparse_wsdl(self, base, target):
+        xml = py2wsdl.tostring(base['PutOpsPort_SERVICE'])
+        code = generate_code_from_wsdl(xml, target)
+        m = {}
+        self._exec(code, m)
+        # XXX too much autonaming magic
+        m['PutOpsPort_SERVICE'] = m.pop('PutOpsPortPort_SERVICE')
+        if target == 'client':
+            m['PutOpsPortServiceStub'] = m.pop('PutOpsPortPortServiceStub')
+        self.assertEqual(sorted(m), sorted(base))
+
 
 
 if __name__ == "__main__":
