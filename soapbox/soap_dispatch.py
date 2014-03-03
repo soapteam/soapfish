@@ -18,10 +18,18 @@ __all__ = ['SOAPDispatcher', 'SoapboxRequest']
 logger = logging.getLogger(__name__)
 
 
+class SoapboxResponse(object):
+    def __init__(self, content, soap_header=None):
+        self.content = content
+        self.soap_header = soap_header
+
+
 class SoapboxRequest(object):
     def __init__(self, environ, content):
         self.environ = environ
         self.content = content
+        self.soap_header = None
+        self.response = SoapboxResponse(self)
 
 
 class SOAPDispatcher(object):
@@ -95,19 +103,21 @@ class SOAPDispatcher(object):
 
     def _call_handler(self, soapbox_request, method, input_object):
         SOAP = self.service.version
-        return_object = self.call_wrapper(method, soapbox_request, input_object)
-        if isinstance(return_object, SOAPError):
-            error = return_object
-            error_response = SOAP.get_error_response(error.faultcode, error.faultstring)
+        response = self.call_wrapper(method, soapbox_request, input_object)
+        if not isinstance(response, SoapboxResponse):
+            response = SoapboxResponse(response)
+        if isinstance(response.content, SOAPError):
+            error = response.content
+            error_response = SOAP.get_error_response(error.faultcode, error.faultstring, header=response.soap_header)
             return (error_response, True)
 
-        tagname = uncapitalize(return_object.__class__.__name__)
-        #self._validate_response(return_object, tagname)
+        tagname = uncapitalize(response.content.__class__.__name__)
+        #self._validate_response(response.content, tagname)
         # TODO: handle validation results
 
         if isinstance(method.output, basestring):
             tagname = method.output
-        return (SOAP.Envelope.response(tagname, return_object), False)
+        return (SOAP.Envelope.response(tagname, response.content, header=response.soap_header), False)
 
     def response(self, message, is_error=False):
         SOAP = self.service.version
@@ -142,6 +152,13 @@ class SOAPDispatcher(object):
         handler = self._find_handler_for_request(soapbox_request, soap_request_message)
         # if not handler -> client error
         #  response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e))
+
+        # TODO return soap fault if header is required but missing in the input
+        if soap_envelope.Header is not None:
+            if handler.inputHeader:
+                soapbox_request.soap_header = soap_envelope.Header.parse_as(handler.inputHeader)
+            elif self.service.inputHeader:
+                soapbox_request.soap_header = soap_envelope.Header.parse_as(self.service.inputHeader)
 
         input_validation = self._parse_input(handler, soap_request_message)
         if not input_validation.value:

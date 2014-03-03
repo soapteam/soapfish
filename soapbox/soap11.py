@@ -22,8 +22,8 @@ def determine_soap_action(request):
         return None
 
 
-def get_error_response(code, message, actor=None):
-    return Envelope.error_response(code, message, actor=actor)
+def get_error_response(code, message, actor=None, header=None):
+    return Envelope.error_response(code, message, actor=actor, header=None)
 
 
 def parse_fault_message(fault):
