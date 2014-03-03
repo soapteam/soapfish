@@ -24,7 +24,7 @@ soap_encoding = 'http://schemas.xmlsoap.org/soap/encoding/'
 # Envelope namespace as defined by SOAP 1.1
 soap11_envelope = 'http://schemas.xmlsoap.org/soap/envelope/'
 # Envelope namespace as defined by SOAP 1.2
-soap12_envelope = 'http://www.w3.org/2003/05/soap-envelope/'
+soap12_envelope = 'http://www.w3.org/2003/05/soap-envelope'
 # WSDL 1.1 binding for the SOAP 1.1 HTTP binding
 wsdl_soap_http = 'http://schemas.xmlsoap.org/soap/http'
 # WSDL 1.1 binding extension for SOAP 1.2
