@@ -59,9 +59,9 @@ def _echo_service(handler=None, input_header=None, output_header=None):
         soapAction='echo',
         input='echoRequest',
         inputPartName='input_',
-        inputHeader=input_header,
+        input_header=input_header,
         output='echoResponse',
-        outputHeader=output_header,
+        output_header=output_header,
         outputPartName='result',
         operationName='echoOperation',
     )

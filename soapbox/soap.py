@@ -17,6 +17,7 @@ from lxml import etree
 
 from . import settings, soap11, soap12
 from . import namespaces as ns
+from . import wsa
 from .utils import uncapitalize
 
 
@@ -85,7 +86,7 @@ class Service(object):
 
     def __init__(self, targetNamespace, location, schema, methods,
                  version=SOAPVersion.SOAP11, name='Service',
-                 inputHeader=None, outputHeader=None):
+                 input_header=None, output_header=None, use_wsa=False):
         '''
         :param targetNamespace: string
         :param location: string, endpoint url.
@@ -98,8 +99,13 @@ class Service(object):
         self.schema = schema
         self.methods = methods
         self.version = version
-        self.inputHeader = inputHeader
-        self.outputHeader= outputHeader
+        self.use_wsa = use_wsa
+        if use_wsa and input_header is None:
+            input_header = wsa.WSAsaHeader
+        if use_wsa and output_header is None:
+            output_header = wsa.WSAHeader
+        self.input_header = input_header
+        self.output_header= output_header
 
     def get_method(self, operationName):
         return self.methods[operationName]
@@ -144,8 +150,8 @@ class Stub(object):
             raise SOAPError(error, faultcode=code, faultstring=message, faultactor=actor)
 
         self.response_header = None
-        if envelope.Header and method.outputHeader:
-            self.response_header = envelope.Header.parse_as(method.outputHeader)
+        if envelope.Header and method.output_header:
+            self.response_header = envelope.Header.parse_as(method.output_header)
 
         if isinstance(method.output, basestring):
             element = self.SERVICE.schema.get_element_by_name(method.output)
