@@ -99,7 +99,7 @@ class Service(object):
         self.version = version
 
     def get_method(self, operationName):
-        return filter(lambda m: m.operationName == operationName, self.methods)[0]
+        return self.methods[operationName]
 
 
 class Stub(object):

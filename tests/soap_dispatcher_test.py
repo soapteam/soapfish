@@ -62,7 +62,7 @@ def _echo_service(handler=None):
         location='http://soap.example/ws',
         schema=EchoSchema,
         version=soap.SOAPVersion.SOAP11,
-        methods=[echo_method]
+        methods={'echo': echo_method},
     )
 
 def _faulty_handler():

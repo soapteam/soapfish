@@ -57,7 +57,7 @@ class SOAPDispatcher(object):
         else:
             logger.info('Soap action found in http headers: %s', soap_action)
         # TODO: handle invalid xml
-        for method in self.service.methods:
+        for method in self.service.methods.values():
             if soap_action:
                 if soap_action == method.soapAction:
                     return method
