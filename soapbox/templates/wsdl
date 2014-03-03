@@ -83,7 +83,7 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
     {%- if soap_version.NAME == 'soap11' %}
     version=soap.SOAPVersion.SOAP11,
     {%- else %}
-    version=soap.SOAPVERSION.SOAP12,
+    version=soap.SOAPVersion.SOAP12,
     {%- endif %}
     methods=[{% for o in binding.operations %}{{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}],
 )
