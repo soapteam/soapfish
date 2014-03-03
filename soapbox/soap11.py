@@ -23,11 +23,7 @@ def determine_soap_action(request):
 
 
 def get_error_response(code, message, actor=None):
-    fault = Fault(faultcode=code, faultstring=message, faultactor=actor)
-    envelope = Envelope()
-    envelope.Body = Body(Fault=fault)
-    return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,
-                        elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
+    return Envelope.error_response(code, message, actor=actor)
 
 
 def parse_fault_message(fault):
@@ -66,6 +62,9 @@ class Body(xsd.ComplexType):
     message = xsd.ClassNamedElement(xsd.NamedType, minOccurs=0)
     Fault = xsd.Element(Fault, minOccurs=0)
 
+    def parse_as(self, ContentType):
+        return ContentType.parse_xmlelement(self._xmlelement[0])
+
     def content(self):
         return etree.tostring(self._xmlelement[0], pretty_print=True)
 
@@ -78,12 +77,24 @@ class Envelope(xsd.ComplexType):
     Body = xsd.Element(Body)
 
     @classmethod
-    def response(cls, tagname, return_object):
-        envelope = Envelope()
+    def response(cls, tagname, return_object, header=None):
+        envelope = cls()
+        if header is not None:
+            envelope.Header = header
         envelope.Body = Body()
         envelope.Body.message = xsd.NamedType(name=tagname, value=return_object)
         return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,
-                elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
+            elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
+
+    @classmethod
+    def error_response(cls, code, message, header=None, actor=None):
+        envelope = cls()
+        if header is not None:
+            envelope.Header = header
+        envelope.Body = Body()
+        envelope.Body.Fault = Fault(faultcode=code, faultstring=message, faultactor=actor)
+        return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,
+            elementFormDefault=xsd.ElementFormDefault.QUALIFIED)
 
 
 SCHEMA = xsd.Schema(
