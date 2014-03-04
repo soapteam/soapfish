@@ -153,20 +153,25 @@ class Stub(object):
         else:
             return _type.parsexml(message)
 
-    def call(self, operationName, parameter):
+    def call(self, operationName, **kw):
         '''
         :raises: lxml.etree.XMLSyntaxError -- validation problems.
         '''
         SOAP = self.SERVICE.version
         method = self.SERVICE.get_method(operationName)
+        schema = self.SERVICE.schema
+
         if isinstance(method.input, basestring):
             tagname = method.input
+            element = schema.get_element_by_name(method.input)
+            _type = element._type.__class__
         else:
-            tagname = uncapitalize(parameter.__class__.__name__)
-        parameter.xml(tagname,
-                      schema=self.SERVICE.schema,
-                      namespace=parameter.SCHEMA.targetNamespace,
-                      elementFormDefault=parameter.SCHEMA.elementFormDefault)
+            raise ValueError(method.input)
+
+        parameter = _type(**kw)
+        parameter.xml(tagname, schema=schema,
+            namespace=parameter.SCHEMA.targetNamespace,
+            elementFormDefault=parameter.SCHEMA.elementFormDefault)
 
         disable_validation = not os.path.exists(settings.CA_CERTIFICATE_FILE)
         http = httplib2.Http(
