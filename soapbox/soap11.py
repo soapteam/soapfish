@@ -43,7 +43,15 @@ class Header(xsd.ComplexType):
     '''
     SOAP Envelope Header.
     '''
-    pass
+    def accept(self, value):
+        return value
+
+    def parse_as(self, ContentType):
+        return ContentType.parse_xmlelement(self._xmlelement)
+
+    def render(self, parent, instance, namespace=None, elementFormDefault=None):
+        return super(Header, self).render(parent, instance,
+            namespace=instance.SCHEMA.targetNamespace, elementFormDefault=elementFormDefault)
 
 
 class Fault(xsd.ComplexType):
@@ -61,6 +69,9 @@ class Body(xsd.ComplexType):
     '''
     message = xsd.ClassNamedElement(xsd.NamedType, minOccurs=0)
     Fault = xsd.Element(Fault, minOccurs=0)
+
+    def parse_as(self, ContentType):
+        return ContentType.parse_xmlelement(self._xmlelement[0])
 
     def parse_as(self, ContentType):
         return ContentType.parse_xmlelement(self._xmlelement[0])

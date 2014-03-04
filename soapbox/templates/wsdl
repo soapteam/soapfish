@@ -43,24 +43,60 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 # Methods
 {# [blank line] #}
 {# [blank line] #}
-{% for operation in binding.operations -%}
+{%- for operation in binding.operations -%}
 {%- set XXX = operation.set_definition(definitions) -%}
 {%- set inputMessage = operation.get_InputMessage() -%}
+{%- set inputMessageHeaders = operation.get_InputMessageHeaders() -%}
 {%- set outputMessage = operation.get_OutputMessage() -%}
+{%- set outputMessageHeaders = operation.get_OutputMessageHeaders() -%}
+{%- if inputMessageHeaders %}
+class {{ inputMessage.name }}Headers(xsd.ComplexType):
+    SCHEMA = Schema_{{ schema_name(definitions.types.schema.targetNamespace) }}
+    {%- for part in inputMessageHeaders -%}
+    {%- if part.element %}
+    {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
+    {%- else -%}
+    {{ part.name }} = xsd.Element({{ part.type|remove_namespace|capitalize }}())
+    {%- endif -%}
+    {%- endfor %}
+{# [blank line] #}
+{%- endif -%}
+{%- if outputMessageHeaders %}
+class {{ outputMessage.name }}Headers(xsd.ComplexType):
+    SCHEMA = Schema_{{ schema_name(definitions.types.schema.targetNamespace) }}
+    {%- for part in outputMessageHeaders -%}
+    {%- if part.element %}
+    {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
+    {%- else -%}
+    {{ part.name }} = xsd.Element({{ part.type|remove_namespace|capitalize }}())
+    {%- endif -%}
+    {%- endfor %}
+{# [blank line] #}
+{%- endif %}
 {{ operation.name }}_method = xsd.Method(
     {%- if is_server %}function={{ operation.name }},{% endif %}
     soapAction='{{ operation.operation.soapAction }}',
+    {%- if inputMessage.parts -%}
     {%- if inputMessage.part.element %}
     input='{{ inputMessage.part.element|remove_namespace }}',
     inputPartName='{{ inputMessage.part.name }}',
-    {%- else %}
+    {%- else -%}
     input={{ inputMessage.part.type|remove_namespace|capitalize }},
-    {%- endif %}
-    {%- if inputMessage.part.element %}
+    {%- endif -%}
+    {%- endif -%}
+    {%- if inputMessageHeaders %}
+    inputHeader={{ inputMessage.name }}Headers,
+    {%- endif -%}
+    {%- if outputMessage.parts -%}
+    {%- if outputMessage.part.element %}
     output='{{ outputMessage.part.element|remove_namespace }}',
     outputPartName='{{ outputMessage.part.name }}',
-    {%- else %}
-    input={{ outputMessage.part.type|remove_namespace|capitalize }},
+    {%- else -%}
+    output={{ outputMessage.part.type|remove_namespace|capitalize }},
+    {%- endif -%}
+    {%- endif -%}
+    {%- if outputMessageHeaders %}
+    outputHeader={{ outputMessage.name }}Headers,
     {%- endif %}
     operationName='{{ operation.name }}',
     {%- if operation.operation.style %}
@@ -112,8 +148,8 @@ class {{ port.name }}ServiceStub(soap.Stub):
     HOST = '{{ port.address.location|url_component('netloc') }}'
 {% for operation in binding.operations %}
 {%- set inputMessage = operation.get_InputMessage() %}
-    def {{ operation.name }}(self, {{ inputMessage.part.element|remove_namespace }}):
-        return self.call('{{ operation.name}}', {{ inputMessage.part.element|remove_namespace }})
+    def {{ operation.name }}(self, {{ inputMessage.part.element|remove_namespace }}, header=None):
+        return self.call('{{ operation.name}}', {{ inputMessage.part.element|remove_namespace }}, header=header)
 {% endfor %}
 {%- endif %}
 {%- endfor %}{# ports #}

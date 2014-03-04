@@ -75,21 +75,21 @@ def build_portTypes(wsdl, definitions, service):
 def build_messages(wsdl, definitions, service):
     for method in service.methods.values():
         inputMessage = wsdl.Message(name=method.operationName + 'Input')
-        inputMessage.part = wsdl.Part()
-        inputMessage.part.name = 'body'
+        part = wsdl.Part(name='body')
         if isinstance(method.input, basestring):
-            inputMessage.part.element = 'sns:' + method.input
+            part.element = 'sns:' + method.input
         else:
-            inputMessage.part.type = 'sns:' + uncapitalize(method.input.__name__)
+            part.type = 'sns:' + uncapitalize(method.input.__name__)
+        inputMessage.parts = [part]
         definitions.messages.append(inputMessage)
 
         outputMessage = wsdl.Message(name=method.operationName + 'Output')
-        outputMessage.part = wsdl.Part()
-        outputMessage.part.name = 'body'
+        part = wsdl.Part(name='body')
         if isinstance(method.output, basestring):
-            outputMessage.part.element = 'sns:' + method.output
+            part.element = 'sns:' + method.output
         else:
-            outputMessage.part.type = 'sns:' + uncapitalize(method.output.__name__)
+            part.type = 'sns:' + uncapitalize(method.output.__name__)
+        outputMessage.parts = [part]
         definitions.messages.append(outputMessage)
 
 

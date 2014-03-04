@@ -201,7 +201,7 @@ WSDL = b"""<?xml version="1.0" encoding="utf-8"?>
         <wsdl:part name="body" element="fds:ops"/>
     </wsdl:message>
     <wsdl:message name="PutOpsOutput">
-        <part name="body" element="fds:status"/>
+        <wsdl:part name="body" element="fds:status"/>
     </wsdl:message>
     <wsdl:portType name="PutOpsPortType">
         <wsdl:operation name="PutOps">
@@ -275,7 +275,6 @@ class CodeGenerationTest(unittest.TestCase):
         if target == 'client':
             m['PutOpsPortServiceStub'] = m.pop('PutOpsPortPortServiceStub')
         self.assertEqual(sorted(m), sorted(base))
-
 
 
 if __name__ == "__main__":
