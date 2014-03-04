@@ -799,7 +799,11 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
 
     @classmethod
     def _find_field(cls, fields, name):
-        return next(iter(filter(lambda f: f._name == name, fields)))
+        try:
+            return next(iter(filter(lambda f: f._name == name, fields)))
+        except StopIteration:
+            pass
+        raise ValueError("%s has no field '%s'" % (cls.__name__, name))
 
     @classmethod
     def _get_field_by_name(cls, fields, field_name):
