@@ -14,7 +14,7 @@ NAME = 'soap12'
 
 # --- Functions ---------------------------------------------------------------
 def determine_soap_action(request):
-    content_types = request.http_headers.get('CONTENT_TYPE','').split(';')
+    content_types = request.environ.get('CONTENT_TYPE','').split(';')
     for content_type in content_types:
         if content_type.strip(' ').startswith('action='):
             action = content_type.split('=')[1]
