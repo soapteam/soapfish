@@ -85,7 +85,7 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
     {%- else %}
     version=soap.SOAPVersion.SOAP12,
     {%- endif %}
-    methods=[{% for o in binding.operations %}{{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}],
+    methods={{ '{' }}{% for o in binding.operations %}'{{ o.name }}': {{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
 )
 {# [blank line] #}
 {# [blank line] #}
@@ -113,8 +113,8 @@ class {{ port.name }}ServiceStub(soap.Stub):
     HOST = '{{ port.address.location|url_component('netloc') }}'
 {% for operation in binding.operations %}
 {%- set inputMessage = operation.get_InputMessage() %}
-    def {{ operation.name }}(self, {{ inputMessage.part.element|remove_namespace }}):
-        return self.call('{{ operation.name}}', {{ inputMessage.part.element|remove_namespace }})
+    def {{ operation.name }}(self, **kw):
+        return self.call('{{ operation.name}}', **kw)
 {% endfor %}
 {%- endif %}
 {%- endfor %}{# ports #}
