@@ -12,6 +12,7 @@ import textwrap
 from jinja2 import Environment, PackageLoader
 from lxml import etree
 
+from . import xsd
 from .xsdspec import Schema
 from .utils import (
     capitalize,
@@ -42,6 +43,8 @@ def get_rendering_environment():
     env.filters['remove_namespace'] = remove_namespace
     env.filters['url_template'] = url_template
     env.filters['use'] = use
+    env.filters['max_occurs_to_code'] = lambda x: 'xsd.UNBOUNDED' if x is xsd.UNBOUNDED else str(x)
+
     env.globals['keywords'] = keyword.kwlist
     env.globals['resolve_import'] = resolve_import
     env.globals['schema_name'] = schema_name

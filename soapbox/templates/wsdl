@@ -6,7 +6,6 @@
 {# [blank line] #}
 {# [blank line] #}
 from soapbox import soap, xsd
-from soapbox.xsd import UNBOUNDED
 {# [blank line] #}
 {# [blank line] #}
 ################################################################################
