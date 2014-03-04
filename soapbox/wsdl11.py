@@ -17,6 +17,12 @@ class SOAP_Operation(xsd.ComplexType):
     style = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
 
 
+class SOAP_Header(xsd.ComplexType):
+    message = xsd.Attribute(xsd.String)
+    part = xsd.Attribute(xsd.String)
+    use = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
+
+
 class SOAP_Body(xsd.ComplexType):
     ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
     use = xsd.Attribute(xsd.String)
@@ -39,7 +45,13 @@ class Part(xsd.ComplexType):
 
 class Message(xsd.ComplexType):
     name = xsd.Attribute(xsd.String)
-    part = xsd.Element(Part)
+    parts = xsd.ListElement(Part, tagname='part', minOccurs=1)
+
+    @property
+    def part(self):
+        if len(self.parts) != 1:
+            raise ValueError('expected exactly one part', self.name, self.parts)
+        return self.parts[0]
 
 
 # WSDL 1.1 SOAP 1.1
@@ -47,6 +59,7 @@ class Message(xsd.ComplexType):
 class Input(xsd.ComplexType):
     message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap, minOccurs=0)
+    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0)
 
 
 class Operation(xsd.ComplexType):
@@ -74,17 +87,39 @@ class Operation(xsd.ComplexType):
     def set_binding(self, binding):
         self.binding = binding
 
-    def get_InputMessage(self):
+    def _get_Message(self, direction):
         portType = self.binding.getPortType()
         portTypeOperation = wsdl.get_by_name(portType.operations, self.name)
-        messageName = portTypeOperation.input.message
+        messageName = getattr(portTypeOperation, direction).message
         return wsdl.get_by_name(self.definition.messages, messageName)
+
+    def get_InputMessage(self):
+        return self._get_Message('input')
+
+    def get_OutputMessage(self):
+        return self._get_Message('output')
+
+    def get_InputMessageHeaders(self):
+        operation = wsdl.get_by_name(self.binding.operations, self.name)
+        return self._get_parts(operation.input.headers)
 
     def get_OutputMessage(self):
         portType = self.binding.getPortType()
         portTypeOperation = wsdl.get_by_name(portType.operations, self.name)
         messageName = portTypeOperation.output.message
         return wsdl.get_by_name(self.definition.messages, messageName)
+
+    def get_OutputMessageHeaders(self):
+        operation = wsdl.get_by_name(self.binding.operations, self.name)
+        return self._get_parts(operation.output.headers)
+
+    def _get_parts(self, references):
+        parts = []
+        for ref in references:
+            message = wsdl.get_by_name(self.definition.messages, ref.message)
+            parts.append(wsdl.get_by_name(message.parts, ref.part))
+        return parts
+
 
 
 class PortType(xsd.ComplexType):

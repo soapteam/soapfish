@@ -663,8 +663,9 @@ class ListElement(Element):
     be in plural form, and tag usually is not.
     '''
 
-    def __init__(self, clazz, tagname, minOccurs=None, maxOccurs=None, nillable=False):
-        super(ListElement, self).__init__(clazz, tagname=tagname, nillable=nillable)
+    def __init__(self, clazz, tagname, minOccurs=None, maxOccurs=None, nillable=False, namespace=None):
+        super(ListElement, self).__init__(
+            clazz, tagname=tagname, nillable=nillable, namespace=namespace)
         self._maxOccurs = maxOccurs
         self._minOccurs = minOccurs
 
@@ -1062,8 +1063,9 @@ class Method(object):
     messages.
     '''
 
-    def __init__(self, operationName, soapAction, input, output, function=None,
-                 inputPartName="body", outputPartName="body", style=CallStyle.DOCUMENT):
+    def __init__(self, operationName, soapAction, input=None, output=None, function=None,
+                 inputPartName="body", outputPartName="body",
+                 inputHeader=None, outputHeader=None, style=CallStyle.DOCUMENT):
         '''
         :param function: The function that should be called. Required only for
             server implementations.
@@ -1075,6 +1077,8 @@ class Method(object):
         self.function = function
         self.inputPartName = inputPartName
         self.outputPartName = outputPartName
+        self.inputHeader = inputHeader
+        self.outputHeader = outputHeader
         self.style = style
 
 

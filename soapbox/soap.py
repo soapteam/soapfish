@@ -140,33 +140,29 @@ class Stub(object):
             logger.error(error)
             raise SOAPError(error, faultcode=code, faultstring=message, faultactor=actor)
 
-        message = envelope.Body.content()
+        self.response_header = None
+        if envelope.Header and method.outputHeader:
+            self.response_header = envelope.Header.parse_as(method.outputHeader)
 
         if isinstance(method.output, basestring):
             element = self.SERVICE.schema.get_element_by_name(method.output)
-            _type = element._type
+            _type = element._type.__class__
         else:
             _type = method.output
 
-        if self.SERVICE.schema:
-            return _type.parsexml(message, self.SERVICE.schema)
-        else:
-            return _type.parsexml(message)
+        return envelope.Body.parse_as(_type)
 
-    def call(self, operationName, parameter):
+    def call(self, operationName, parameter, header=None):
         '''
         :raises: lxml.etree.XMLSyntaxError -- validation problems.
         '''
         SOAP = self.SERVICE.version
         method = self.SERVICE.get_method(operationName)
+
         if isinstance(method.input, basestring):
             tagname = method.input
         else:
             tagname = uncapitalize(parameter.__class__.__name__)
-        parameter.xml(tagname,
-                      schema=self.SERVICE.schema,
-                      namespace=parameter.SCHEMA.targetNamespace,
-                      elementFormDefault=parameter.SCHEMA.elementFormDefault)
 
         disable_validation = not os.path.exists(settings.CA_CERTIFICATE_FILE)
         http = httplib2.Http(
@@ -179,7 +175,7 @@ class Stub(object):
 
         method = self.SERVICE.get_method(operationName)
         headers = SOAP.build_http_request_headers(method.soapAction)
-        envelope = SOAP.Envelope.response(tagname, parameter)
+        envelope = SOAP.Envelope.response(tagname, parameter, header=header)
 
         logger.info('Request \'%s\'...' % self.location)
         logger.debug('Request Headers:\n\n%s\n' % headers)
