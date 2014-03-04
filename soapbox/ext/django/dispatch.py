@@ -1,6 +1,7 @@
 from soapbox.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 
-from wsgiutil import embed_wsgi
+# https://github.com/Polyconseil/django-viewsgi
+from viewsgi import embed_wsgi
 
 
 def get_django_dispatch(url, service):
