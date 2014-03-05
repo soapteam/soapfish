@@ -95,11 +95,11 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {# [blank line] #}
 # Uncomment these lines to turn on dispatching:
 #from soapbox.ext.django.dispatch import DjangoSOAPDispatcher
-#dispatcher = DjangoSOAPDispatcher({{ port.name }}_SERVICE))
+#dispatcher = get_django_dispatch('{{ service.ports.0.address.location|url_regex }}', {{ port.name }}_SERVICE))
 {# [blank line] #}
 # Put these lines in the urls.py file of your Django project/application:
 #urlpatterns += patterns('',
-#    (r'{{ service.ports.0.address.location|url_regex }}', '<module>.dispatch'),
+#    (r'{{ service.ports.0.address.location|url_regex }}', csrf_exempt('<module>.dispatcher')),
 #)
 {%- else %}
 ################################################################################
