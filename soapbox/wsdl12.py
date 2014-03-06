@@ -16,6 +16,10 @@ class SOAP_Operation(wsdl11.SOAP_Operation):
     pass
 
 
+class SOAP_Header(wsdl11.SOAP_Header):
+    pass
+
+
 class SOAP_Body(wsdl11.SOAP_Body):
     pass
 
@@ -39,6 +43,7 @@ class Message(wsdl11.Message):
 
 class Input(wsdl11.Input):
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12, minOccurs=0)
+    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0)
 
 
 class Operation(wsdl11.Operation):

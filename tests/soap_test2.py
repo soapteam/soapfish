@@ -3,6 +3,7 @@ import unittest
 from soapbox import xsd
 from soapbox import soap11
 from soapbox import soap12
+from soapbox.lib.pythonic_testcase import *
 
 SOAP11_ENVELOPE = """\
 <?xml version="1.0" encoding="utf-8"?>
@@ -37,12 +38,17 @@ class Place(xsd.ComplexType):
 class GetWeatherByPlaceName(xsd.ComplexType):
     Place = xsd.Element(Place)
 
+class AppHeader(xsd.ComplexType):
+    Version = xsd.Element(xsd.String)
+    Message = xsd.Element(GetWeatherByPlaceName)
+
 Schema_qualified = xsd.Schema(
     targetNamespace='http://www.example.org',
     elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
-    complexTypes=[GetWeatherByPlaceName, Place],
+    complexTypes=[GetWeatherByPlaceName, AppHeader, Place],
     elements={
         'GetWeatherByPlaceName': xsd.Element(GetWeatherByPlaceName),
+        'AppHeader': xsd.Element(AppHeader),
     },
 )
 
@@ -52,11 +58,16 @@ class PlaceU(xsd.ComplexType):
 class GetWeatherByPlaceNameU(xsd.ComplexType):
     Place = xsd.Element(PlaceU)
 
+class AppHeaderU(xsd.ComplexType):
+    Version = xsd.Element(xsd.String)
+    Message = xsd.Element(GetWeatherByPlaceNameU)
+
 Schema_unqualified = xsd.Schema(
     targetNamespace='http://www.example.org',
-    complexTypes=[GetWeatherByPlaceNameU, PlaceU],
+    complexTypes=[GetWeatherByPlaceNameU, AppHeaderU, PlaceU],
     elements={
         'GetWeatherByPlaceName': xsd.Element(GetWeatherByPlaceNameU),
+        'AppHeader': xsd.Element(AppHeaderU),
     },
 )
 
@@ -90,6 +101,31 @@ class SOAP_TBase(object):
         self.assertEqual(message.Place.Name, 'Skypia')
         message = envelope.Body.parse_as(MessageType)
         self.assertEqual(message.Place.Name, 'Skypia')
+
+    def test_header_qualified(self):
+        self._test_header(GetWeatherByPlaceName, Place, AppHeader)
+
+    def test_header_unqualified(self):
+        self._test_header(GetWeatherByPlaceNameU, PlaceU, AppHeaderU)
+
+    def _test_header(self, MessageType, PlaceType, HeaderType):
+        message = MessageType(Place=PlaceType(Name='Skypia'))
+        header = HeaderType(Version='1.0', Message=message)
+        xml = self.SOAP.Envelope.response('GetWeatherByPlaceName', message, header)
+        envelope = self.SOAP.Envelope.parsexml(xml)
+        message = envelope.Header.parse_as(HeaderType)
+        self.assertEqual(message.Version, '1.0')
+        self.assertEqual(message.Message.Place.Name, 'Skypia')
+
+    def test_empty_header(self):
+        xml = self.SOAP.Envelope.response('Get', Place(), self.SOAP.Header())
+        assert_contains(b'<ns0:Header/>', xml)
+
+    def test_no_header_in_xml(self):
+        xml = (b'<ns0:Envelope xmlns:ns0="http://www.w3.org/2003/05/soap-envelope">'
+            b'<ns0:Body></ns0:Body>'
+            b'</ns0:Envelope>')
+        envelope = self.SOAP.Envelope.parsexml(xml)
 
 
 class SOAP11_Test(SOAP_TBase, unittest.TestCase):
