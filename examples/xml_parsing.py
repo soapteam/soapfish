@@ -1,4 +1,7 @@
 #Example 2. Parsing XML to object.
+
+from __future__ import print_function
+
 from soapbox import xsd
 
 
@@ -14,5 +17,5 @@ XML = """<takeoff_airport>
 
 
 airport = Airport.parsexml(XML)
-print "Type:", airport.type
-print "Code:", airport.code
+print("Type:", airport.type)
+print("Code:", airport.code)

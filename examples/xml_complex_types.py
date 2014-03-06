@@ -1,4 +1,7 @@
 #Example 3. Nested ComplexTypes with attributes.
+
+from __future__ import print_function
+
 from datetime import datetime
 from soapbox import xsd
 
@@ -21,8 +24,8 @@ flight = Flight(tail_number="G-DEMO")  # Constructor handles field inititailizat
 flight.takeoff_airport = Airport(type="IATA", code="WAW")
 flight.landing_airport = Airport(type="ICAO", code="EGLL")
 
-print flight.xml("flight")
+print(flight.xml("flight"))
 #datetime field types will accept, datetime object or string,
 #that parses correctly to such object.
 flight.takeoff_datetime = datetime.now()
-print flight.xml("flight")
+print(flight.xml("flight"))
