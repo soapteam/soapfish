@@ -8,3 +8,6 @@ dist
 *.swp
 .coverage
 .tox/
+doc/_build
+doc/_static
+doc/_templates
