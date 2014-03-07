@@ -11,7 +11,10 @@ class SoapboxRequest(object):
     def __init__(self, environ, content):
         self.environ = environ
         self.content = content
+        self.dispatcher = None
         self.soap_header = None
+        self.soap_body = None
+        self.method = None
 
 
 class SOAPError(Exception):
@@ -20,13 +23,6 @@ class SOAPError(Exception):
         self.code = code
         self.message = message
         self.actor = actor
-
-    def copy(self):
-        return SOAPError(
-            self.code,
-            self.message,
-            self.actor,
-        )
 
     def __str__(self):
         return "(%s) %s, actor=%s" % (self.code, self.message, self.actor)

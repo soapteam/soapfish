@@ -9,6 +9,7 @@ from soapbox import core, soap, xsd
 from soapbox.core import SoapboxRequest, SoapboxResponse
 from soapbox.lib.pythonic_testcase import *
 from soapbox.lib.attribute_dict import AttrDict
+from soapbox.middlewares import ExceptionToSoapFault
 from soapbox.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 
 
@@ -220,6 +221,24 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
+
+    def test_return_soap_fault_on_exception(self):
+        def handler(request, _input):
+            raise Exception('unexpected exception')
+        service = _echo_service(handler)
+        dispatcher = SOAPDispatcher(service, [ExceptionToSoapFault()])
+        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+            '<value>foobar</value>'
+        '</tns:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        response = dispatcher.dispatch(request)
+        self.assert_is_soap_fault(response,
+            fault_code=service.version.Code.SERVER,
+            partial_fault_string=u'unexpected exception',
+        )
+        assert_equals('text/xml', response.content_type)
+        assert_equals(500, response.status)
 
     # --- custom assertions ---------------------------------------------------
 

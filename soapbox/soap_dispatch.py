@@ -1,12 +1,14 @@
-# encoding: utf8
+# -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
 
+import functools
 import logging
 from lxml import etree
 import six
 
 from . import core
+from . import middlewares as mw
 from . import soap
 from .lib.attribute_dict import AttrDict
 from .lib.result import ValidationResult
@@ -19,10 +21,26 @@ __all__ = ['SOAPDispatcher']
 logger = logging.getLogger(__name__)
 
 
+def call_method(request):
+    response = request.method.function(request, request.soap_body)
+    if not isinstance(response, core.SoapboxResponse):
+        response = SoapboxResponse(response)
+    return response
+
 
 class SOAPDispatcher(object):
-    def __init__(self, service):
+
+    def __init__(self, service, middlewares=None):
         self.service = service
+        if middlewares is None:
+            middlewares = []
+        self.middlewares = middlewares
+
+    def middleware(self, i=0):
+        if i == len(self.middlewares):
+            # at the end call the method
+            return call_method
+        return functools.partial(self.middlewares[i], next_call=self.middleware(i+1))
 
     def handle_request_for_wsdl(self, request):
         pass
@@ -86,27 +104,6 @@ class SOAPDispatcher(object):
                           elementFormDefault=self.service.schema.elementFormDefault,
                           schema=self.service.schema)  # Validation.
 
-    def call_wrapper(self, method, soapbox_request, input_object):
-        return method.function(soapbox_request, input_object)
-
-    def _call_handler(self, soapbox_request, method, input_object):
-        SOAP = self.service.version
-        response = self.call_wrapper(method, soapbox_request, input_object)
-        if not isinstance(response, core.SoapboxResponse):
-            response = core.SoapboxResponse(response)
-        if isinstance(response.content, core.SOAPError):
-            error = response.content
-            error_response = SOAP.get_error_response(error.code, error.message, header=response.soap_header)
-            return (error_response, True)
-
-        tagname = uncapitalize(response.content.__class__.__name__)
-        #self._validate_response(response.content, tagname)
-        # TODO: handle validation results
-
-        if isinstance(method.output, basestring):
-            tagname = method.output
-        return (SOAP.Envelope.response(tagname, response.content, header=response.soap_header), False)
-
     def response(self, message, is_error=False):
         SOAP = self.service.version
         http_status_code = 200 if (not is_error) else 500
@@ -123,44 +120,69 @@ class SOAPDispatcher(object):
         fault_message = SOAP.get_error_response(SOAP.Code.CLIENT, error_text)
         return self.response(fault_message, is_error=True)
 
-    def dispatch(self, soapbox_request):
-        if soapbox_request.environ['REQUEST_METHOD'] != 'POST':
+    def dispatch(self, request):
+        if request.environ['REQUEST_METHOD'] != 'POST':
             return AttrDict(
                 status=400,
                 content_type='text/plain',
                 message='bad request',
             )
+        request.dispatcher = self
         SOAP = self.service.version
-        message_validation = self._parse_soap_content(soapbox_request.content)
+        message_validation = self._parse_soap_content(request.content)
         if not message_validation.value:
             return self.error_response(SOAP.Code.CLIENT, message_validation.errors)
         soap_envelope = message_validation.validated_document
         soap_request_message = soap_envelope.Body.content()
 
-        handler = self._find_handler_for_request(soapbox_request, soap_request_message)
+        handler = self._find_handler_for_request(request, soap_request_message)
         # if not handler -> client error
         #  response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e))
 
         # TODO return soap fault if header is required but missing in the input
         if soap_envelope.Header is not None:
             if handler.input_header:
-                soapbox_request.soap_header = soap_envelope.Header.parse_as(handler.input_header)
+                request.soap_header = soap_envelope.Header.parse_as(handler.input_header)
             elif self.service.input_header:
-                soapbox_request.soap_header = soap_envelope.Header.parse_as(self.service.input_header)
+                request.soap_header = soap_envelope.Header.parse_as(self.service.input_header)
+
+        request.method = handler
 
         input_validation = self._parse_input(handler, soap_request_message)
         if not input_validation.value:
             return self.error_response(SOAP.Code.CLIENT, input_validation.errors)
         validated_input = input_validation.validated_document
 
+        request.soap_body = validated_input
+
         # LATER: the dispatcher should be able to also catch arbitrary
         # exceptions from the handler. At the same time the caller should be
         # able to install custom hooks for these exceptions (e.g. custom
         # traceback logging) and we should support popular debugging middlewares
         # somehow.
-        soap_response_message, is_error = self._call_handler(soapbox_request, handler, validated_input)
+        response = self.middleware()(request)
 
-        return self.response(soap_response_message, is_error=is_error)
+        SOAP = self.service.version
+
+        if not isinstance(response, core.SoapboxResponse):
+            response = core.SoapboxResponse(response)
+        if isinstance(response.content, core.SOAPError):
+            error = response.content
+            error_response = SOAP.get_error_response(error.code, error.message, header=response.soap_header)
+            return self.response(error_response, is_error=True)
+
+        tagname = uncapitalize(response.content.__class__.__name__)
+        #self._validate_response(response.content, tagname)
+        # TODO: handle validation results
+
+        if isinstance(request.method.output, basestring):
+            tagname = request.method.output
+        else:
+            tagname = uncapitalize(response.content.__class__.__name__)
+
+        response_xml = SOAP.Envelope.response(tagname, response.content, header=response.soap_header)
+
+        return self.response(response_xml, is_error=False)
 
 
 class WsgiSoapApplication(object):
