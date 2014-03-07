@@ -6,10 +6,11 @@ from lxml import etree
 import six
 
 from soapbox import soap, xsd
-from soapbox.soap_dispatch import SOAPDispatcher, SoapboxRequest, SoapboxResponse, WsgiSoapApplication
+from soapbox.core import SoapboxRequest, SoapboxResponse
 from soapbox.lib.pythonic_testcase import *
 from soapbox.lib.attribute_dict import AttrDict
 from soapbox.soap import SOAPError
+from soapbox.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 
 
 # --- define test service -------------------------------------------------

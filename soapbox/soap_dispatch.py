@@ -6,6 +6,7 @@ import logging
 from lxml import etree
 import six
 
+from . import core
 from . import soap
 from .lib.attribute_dict import AttrDict
 from .lib.result import ValidationResult
@@ -14,23 +15,10 @@ from .soap import SOAPError
 
 basestring = six.string_types
 
-__all__ = ['SOAPDispatcher', 'SoapboxRequest']
+__all__ = ['SOAPDispatcher']
 
 logger = logging.getLogger(__name__)
 
-
-class SoapboxResponse(object):
-    def __init__(self, content, soap_header=None):
-        self.content = content
-        self.soap_header = soap_header
-
-
-class SoapboxRequest(object):
-    def __init__(self, environ, content):
-        self.environ = environ
-        self.content = content
-        self.soap_header = None
-        self.response = SoapboxResponse(self)
 
 
 class SOAPDispatcher(object):
@@ -105,8 +93,8 @@ class SOAPDispatcher(object):
     def _call_handler(self, soapbox_request, method, input_object):
         SOAP = self.service.version
         response = self.call_wrapper(method, soapbox_request, input_object)
-        if not isinstance(response, SoapboxResponse):
-            response = SoapboxResponse(response)
+        if not isinstance(response, core.SoapboxResponse):
+            response = core.SoapboxResponse(response)
         if isinstance(response.content, SOAPError):
             error = response.content
             error_response = SOAP.get_error_response(error.faultcode, error.faultstring, header=response.soap_header)
@@ -192,7 +180,7 @@ class WsgiSoapApplication(object):
         dispatcher = self.dispatchers[req_env['PATH_INFO']]
         content_length = int(req_env.get('CONTENT_LENGTH', 0))
         content = req_env['wsgi.input'].read(content_length)
-        soap_request = SoapboxRequest(req_env, content)
+        soap_request = core.SoapboxRequest(req_env, content)
         response = dispatcher.dispatch(soap_request)
         response_headers = [
             ("content-type", response['content_type']),
