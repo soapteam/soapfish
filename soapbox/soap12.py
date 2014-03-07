@@ -3,6 +3,7 @@
 from lxml import etree
 
 from . import namespaces as ns
+from . import soap11
 from . import xsd
 
 
@@ -34,19 +35,8 @@ def parse_fault_message(fault):
     return fault.Code.Value, fault.Reason.Text, fault.Role
 
 
-class Header(xsd.ComplexType):
-    '''
-    SOAP Envelope Header.
-    '''
-    def accept(self, value):
-        return value
-
-    def parse_as(self, ContentType):
-        return ContentType.parse_xmlelement(self._xmlelement)
-
-    def render(self, parent, instance, namespace=None, elementFormDefault=None):
-        return super(Header, self).render(parent, instance,
-            namespace=instance.SCHEMA.targetNamespace, elementFormDefault=elementFormDefault)
+class Header(soap11.Header):
+    pass
 
 
 class Code(xsd.ComplexType):
@@ -75,18 +65,12 @@ class Fault(xsd.ComplexType):
     Role = xsd.Element(xsd.String, minOccurs=0)
 
 
-class Body(xsd.ComplexType):
+class Body(soap11.Body):
     '''
     SOAP Envelope Body.
     '''
-    message = xsd.ClassNamedElement(xsd.ComplexType, minOccurs=0)
+    message = xsd.ClassNamedElement(xsd.NamedType, minOccurs=0)
     Fault = xsd.Element(Fault, minOccurs=0)
-
-    def parse_as(self, ContentType):
-        return ContentType.parse_xmlelement(self._xmlelement[0])
-
-    def content(self):
-        return etree.tostring(self._xmlelement[0], pretty_print=True)
 
 
 class Envelope(xsd.ComplexType):
