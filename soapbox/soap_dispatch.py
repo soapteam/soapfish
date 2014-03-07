@@ -11,7 +11,6 @@ from . import soap
 from .lib.attribute_dict import AttrDict
 from .lib.result import ValidationResult
 from .utils import uncapitalize
-from .soap import SOAPError
 
 basestring = six.string_types
 
@@ -95,9 +94,9 @@ class SOAPDispatcher(object):
         response = self.call_wrapper(method, soapbox_request, input_object)
         if not isinstance(response, core.SoapboxResponse):
             response = core.SoapboxResponse(response)
-        if isinstance(response.content, SOAPError):
+        if isinstance(response.content, core.SOAPError):
             error = response.content
-            error_response = SOAP.get_error_response(error.faultcode, error.faultstring, header=response.soap_header)
+            error_response = SOAP.get_error_response(error.code, error.message, header=response.soap_header)
             return (error_response, True)
 
         tagname = uncapitalize(response.content.__class__.__name__)

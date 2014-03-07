@@ -5,11 +5,10 @@ import io
 from lxml import etree
 import six
 
-from soapbox import soap, xsd
+from soapbox import core, soap, xsd
 from soapbox.core import SoapboxRequest, SoapboxResponse
 from soapbox.lib.pythonic_testcase import *
 from soapbox.lib.attribute_dict import AttrDict
-from soapbox.soap import SOAPError
 from soapbox.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 
 
@@ -78,7 +77,7 @@ def _echo_service(handler=None, input_header=None, output_header=None):
     )
 
 def _faulty_handler():
-    soap_error = SOAPError('some error', 'foobar', 'internal data error')
+    soap_error = core.SOAPError('code', 'internal data error', 'actor')
     return lambda request, input_: SoapboxResponse(soap_error)
 
 
@@ -165,7 +164,7 @@ class SoapDispatcherTest(PythonicTestCase):
         assert_equals('text/xml', response.content_type)
         assert_equals(500, response.status)
         self.assert_is_soap_fault(response,
-            fault_code='foobar',
+            fault_code='code',
             partial_fault_string=u'internal data error'
         )
 

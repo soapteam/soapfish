@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from soapbox import soap, soap11, soap12
+from soapbox import core, soap, soap11, soap12
 
 SOAP11_ERROR_MESSAGE = """
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -89,12 +89,12 @@ class ErrorHandling(unittest.TestCase):
         
         try:
             stub._handle_response(None, None, SOAP11_ERROR_MESSAGE)
-        except soap.SOAPError as e:
-            self.assertEqual(e.faultcode, "Result")
-            self.assertEqual(e.faultstring, None)
-            self.assertEqual(e.faultactor, "Resultset empty2.")
+        except core.SOAPError as e:
+            self.assertEqual(e.code, "Result")
+            self.assertEqual(e.message, None)
+            self.assertEqual(e.actor, "Resultset empty2.")
         else:
-            self.assertFalse("true", "should not get here")
+            self.fail()
         
     def test_soap12_actor_parsing(self):
         envelope = soap12.Envelope.parsexml(SOAP12_ERROR_ROLE)
@@ -122,10 +122,10 @@ class ErrorHandling(unittest.TestCase):
         
         try:
             stub._handle_response(None, None, SOAP12_ERROR_ROLE)
-        except soap.SOAPError as e:
-            self.assertEqual(e.faultcode,"env:Sender")
-            self.assertEqual(e.faultstring, "\nMessage does not have necessary info\n")
-            self.assertEqual(e.faultactor, "http://gizmos.com/order")
+        except core.SOAPError as e:
+            self.assertEqual(e.code,"env:Sender")
+            self.assertEqual(e.message, "\nMessage does not have necessary info\n")
+            self.assertEqual(e.actor, "http://gizmos.com/order")
         else:
             self.assertFalse("true", "should not get here")
 
