@@ -6,7 +6,7 @@ from lxml import etree
 import six
 
 from soapbox import soap, xsd
-from soapbox.soap_dispatch import SOAPDispatcher, SoapboxRequest, WsgiSoapApplication
+from soapbox.soap_dispatch import SOAPDispatcher, SoapboxRequest, SoapboxResponse, WsgiSoapApplication
 from soapbox.lib.pythonic_testcase import *
 from soapbox.lib.attribute_dict import AttrDict
 from soapbox.soap import SOAPError
@@ -30,19 +30,26 @@ def _echo_handler():
         state.update(dict(
             was_called = True,
             request = request,
-            input_ = input_
+            input_ = input_,
+            input_header = request.soap_header,
         ))
-        return EchoType.create(input_.value)
+        return SoapboxResponse(EchoType.create(input_.value))
     return _handler, state
 
-def _echo_service(handler=None):
+class InputHeader(xsd.ComplexType):
+    InputVersion = xsd.Element(xsd.String)
+
+class OutputHeader(xsd.ComplexType):
+    OutputVersion = xsd.Element(xsd.String)
+
+def _echo_service(handler=None, input_header=None, output_header=None):
     if handler is None:
         handler, handler_state = _echo_handler()
 
     EchoSchema = xsd.Schema(
         'http://soap.example/echo/types',
         elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
-        complexTypes=(EchoType,),
+        complexTypes=(EchoType, InputHeader, OutputHeader),
         elements={
             'echoRequest': xsd.Element(EchoType),
             'echoResponse': xsd.Element(EchoType),
@@ -52,7 +59,9 @@ def _echo_service(handler=None):
         soapAction='echo',
         input='echoRequest',
         inputPartName='input_',
+        inputHeader=input_header,
         output='echoResponse',
+        outputHeader=output_header,
         outputPartName='result',
         operationName='echoOperation',
     )
@@ -62,12 +71,14 @@ def _echo_service(handler=None):
         location='http://soap.example/ws',
         schema=EchoSchema,
         version=soap.SOAPVersion.SOAP11,
-        methods={'echo': echo_method},
+        methods={
+            'echo': echo_method,
+        },
     )
 
 def _faulty_handler():
     soap_error = SOAPError('some error', 'foobar', 'internal data error')
-    return lambda request, input_: soap_error
+    return lambda request, input_: SoapboxResponse(soap_error)
 
 
 class SoapDispatcherTest(PythonicTestCase):
@@ -157,6 +168,59 @@ class SoapDispatcherTest(PythonicTestCase):
             partial_fault_string=u'internal data error'
         )
 
+    def test_can_propagete_custom_input_header(self):
+        handler, handler_state = _echo_handler()
+        dispatcher = SOAPDispatcher(_echo_service(handler, input_header=InputHeader))
+        soap_header = ('<tns:InputVersion>42</tns:InputVersion>')
+        soap_message = ('<tns:echoRequest>'
+            '<value>foobar</value>'
+        '</tns:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
+        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        response = dispatcher.dispatch(request)
+        self.assert_is_successful_response(response, handler_state)
+        assert_not_none(handler_state.input_header)
+        self.assertEqual('42', handler_state.input_header.InputVersion)
+
+    def test_can_handle_empty_input_header(self):
+        handler, handler_state = _echo_handler()
+        dispatcher = SOAPDispatcher(_echo_service(handler, input_header=InputHeader))
+        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+            '<value>foobar</value>'
+        '</tns:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        response = dispatcher.dispatch(request)
+        self.assert_is_successful_response(response, handler_state)
+
+    def test_can_propagete_custom_output_header(self):
+        handler, handler_state = _echo_handler()
+        def _handler(request, _input):
+            resp = handler(request, _input)
+            resp.soap_header = OutputHeader(OutputVersion = '42')
+            return resp
+        dispatcher = SOAPDispatcher(_echo_service(_handler, output_header=OutputHeader))
+        soap_header = ('<tns:InputVersion>42</tns:InputVersion>')
+        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+            '<value>foobar</value>'
+        '</tns:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
+        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        response = dispatcher.dispatch(request)
+        self.assert_is_successful_response(response, handler_state)
+        assert_contains(b'<ns0:OutputVersion>42</ns0:OutputVersion>', response.message)
+
+    def test_can_handle_empty_output_header(self):
+        handler, handler_state = _echo_handler()
+        dispatcher = SOAPDispatcher(_echo_service(handler, output_header=OutputHeader))
+        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+            '<value>foobar</value>'
+        '</tns:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        response = dispatcher.dispatch(request)
+        self.assert_is_successful_response(response, handler_state)
+
     # --- custom assertions ---------------------------------------------------
 
     def assert_is_successful_response(self, response, handler_state=None):
@@ -186,12 +250,15 @@ class SoapDispatcherTest(PythonicTestCase):
 
     # --- internal helpers ----------------------------------------------------
 
-    def _wrap_with_soap_envelope(self, payload):
+    def _wrap_with_soap_envelope(self, payload, header=''):
+        if header:
+            header = '<senv:Header>{header}</senv:Header>'.format(header=header)
         envelope = ('<?xml version="1.0" encoding="UTF-8"?>'
             '<senv:Envelope xmlns:senv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soap.example/echo/types">'
+            '%(header)s'
             '<senv:Body>%(payload)s</senv:Body>'
             '</senv:Envelope>'
-        ) % dict(payload=payload)
+        ) % dict(payload=payload, header=header)
         return envelope.encode('utf-8')
 
 
@@ -217,6 +284,7 @@ class WsgiTest(PythonicTestCase):
             b'</senv:Body>'
             b'</senv:Envelope>')
         response_xml = b''.join(app({
+            'SOAPACTION': 'echo',
             'PATH_INFO': '/service',
             'CONTENT_LENGTH': len(soap_message),
             'QUERY_STRING': '',

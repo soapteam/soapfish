@@ -84,7 +84,8 @@ class Service(object):
     '''
 
     def __init__(self, targetNamespace, location, schema, methods,
-                 version=SOAPVersion.SOAP11, name='Service'):
+                 version=SOAPVersion.SOAP11, name='Service',
+                 inputHeader=None, outputHeader=None):
         '''
         :param targetNamespace: string
         :param location: string, endpoint url.
@@ -97,6 +98,8 @@ class Service(object):
         self.schema = schema
         self.methods = methods
         self.version = version
+        self.inputHeader = inputHeader
+        self.outputHeader= outputHeader
 
     def get_method(self, operationName):
         return self.methods[operationName]
