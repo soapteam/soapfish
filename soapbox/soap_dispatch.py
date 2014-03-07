@@ -6,6 +6,7 @@ import logging
 from lxml import etree
 import six
 
+from . import soap
 from .lib.attribute_dict import AttrDict
 from .lib.result import ValidationResult
 from .utils import uncapitalize
@@ -155,10 +156,10 @@ class SOAPDispatcher(object):
 
         # TODO return soap fault if header is required but missing in the input
         if soap_envelope.Header is not None:
-            if handler.inputHeader:
-                soapbox_request.soap_header = soap_envelope.Header.parse_as(handler.inputHeader)
-            elif self.service.inputHeader:
-                soapbox_request.soap_header = soap_envelope.Header.parse_as(self.service.inputHeader)
+            if handler.input_header:
+                soapbox_request.soap_header = soap_envelope.Header.parse_as(handler.input_header)
+            elif self.service.input_header:
+                soapbox_request.soap_header = soap_envelope.Header.parse_as(self.service.input_header)
 
         input_validation = self._parse_input(handler, soap_request_message)
         if not input_validation.value:

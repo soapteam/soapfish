@@ -5,7 +5,15 @@
 ################################################################################
 {# [blank line] #}
 {# [blank line] #}
-from soapbox import soap, xsd
+from soapbox import soap, xsd, wsa
+{# [blank line] #}
+{# [blank line] #}
+{%- if use_wsa %}
+    {%- set BaseHeader = 'wsa.Header' %}
+{%- else %}
+    {%- set BaseHeader = 'xsd.ComplexType' %}
+{%- endif %}
+BaseHeader = {{ BaseHeader }}
 {# [blank line] #}
 {# [blank line] #}
 ################################################################################
@@ -50,7 +58,7 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {%- set outputMessage = operation.get_OutputMessage() -%}
 {%- set outputMessageHeaders = operation.get_OutputMessageHeaders() -%}
 {%- if inputMessageHeaders %}
-class {{ inputMessage.name }}Headers(xsd.ComplexType):
+class {{ inputMessage.name }}Headers(BaseHeader):
     SCHEMA = Schema_{{ schema_name(definitions.types.schema.targetNamespace) }}
     {%- for part in inputMessageHeaders -%}
     {%- if part.element %}
@@ -62,7 +70,7 @@ class {{ inputMessage.name }}Headers(xsd.ComplexType):
 {# [blank line] #}
 {%- endif -%}
 {%- if outputMessageHeaders %}
-class {{ outputMessage.name }}Headers(xsd.ComplexType):
+class {{ outputMessage.name }}Headers(BaseHeader):
     SCHEMA = Schema_{{ schema_name(definitions.types.schema.targetNamespace) }}
     {%- for part in outputMessageHeaders -%}
     {%- if part.element %}
@@ -85,7 +93,7 @@ class {{ outputMessage.name }}Headers(xsd.ComplexType):
     {%- endif -%}
     {%- endif -%}
     {%- if inputMessageHeaders %}
-    inputHeader={{ inputMessage.name }}Headers,
+    input_header={{ inputMessage.name }}Headers,
     {%- endif -%}
     {%- if outputMessage.parts -%}
     {%- if outputMessage.part.element %}
@@ -96,7 +104,7 @@ class {{ outputMessage.name }}Headers(xsd.ComplexType):
     {%- endif -%}
     {%- endif -%}
     {%- if outputMessageHeaders %}
-    outputHeader={{ outputMessage.name }}Headers,
+    output_header={{ outputMessage.name }}Headers,
     {%- endif %}
     operationName='{{ operation.name }}',
     {%- if operation.operation.style %}

@@ -29,3 +29,6 @@ soap12_envelope = 'http://www.w3.org/2003/05/soap-envelope'
 wsdl_soap_http = 'http://schemas.xmlsoap.org/soap/http'
 # WSDL 1.1 binding extension for SOAP 1.2
 wsdl_soap12 = 'http://schemas.xmlsoap.org/wsdl/soap12/'
+
+# WS-Addressing
+wsa = 'http://www.w3.org/2005/08/addressing'

@@ -1065,7 +1065,7 @@ class Method(object):
 
     def __init__(self, operationName, soapAction, input=None, output=None, function=None,
                  inputPartName="body", outputPartName="body",
-                 inputHeader=None, outputHeader=None, style=CallStyle.DOCUMENT):
+                 input_header=None, output_header=None, style=CallStyle.DOCUMENT):
         '''
         :param function: The function that should be called. Required only for
             server implementations.
@@ -1077,8 +1077,8 @@ class Method(object):
         self.function = function
         self.inputPartName = inputPartName
         self.outputPartName = outputPartName
-        self.inputHeader = inputHeader
-        self.outputHeader = outputHeader
+        self.input_header = input_header
+        self.output_header = output_header
         self.style = style
 
 
