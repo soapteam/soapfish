@@ -121,9 +121,10 @@ class Stub(object):
         SOAP = self.SERVICE.version
         envelope = SOAP.Envelope.parsexml(content)
 
-        self.response_header = None
         if envelope.Header and method and method.output_header:
-            self.response_header = envelope.Header.parse_as(method.output_header)
+            response_header = envelope.Header.parse_as(method.output_header)
+        else:
+            response_header = None
 
         if envelope.Body.Fault:
             code, message, actor = SOAP.parse_fault_message(envelope.Body.Fault)
@@ -136,7 +137,8 @@ class Stub(object):
         else:
             _type = method.output
 
-        return envelope.Body.parse_as(_type)
+        body = envelope.Body.parse_as(_type)
+        return core.SoapboxResponse(body, soap_header=response_header)
 
     def call(self, operationName, parameter, header=None):
         '''
