@@ -23,7 +23,7 @@ def determine_soap_action(request):
 
 
 def get_error_response(code, message, actor=None, header=None):
-    return Envelope.error_response(code, message, actor=actor, header=None)
+    return Envelope.error_response(code, message, actor=actor, header=header)
 
 
 def parse_fault_message(fault):
