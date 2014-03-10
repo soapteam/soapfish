@@ -18,7 +18,7 @@ class Header(xsd.ComplexType):
     MessageID = xsd.Element(xsd.String, tagname='MessageID', namespace=ns.wsa)
     To = xsd.Element(xsd.String, tagname='To', namespace=ns.wsa)
     ReplyTo = xsd.Element(ReplyTo, tagname='ReplyTo', namespace=ns.wsa, minOccurs=0)
-    RelatesTo = xsd.Element(xsd.String, minOccurs=0)
+    RelatesTo = xsd.Element(xsd.String, namespace=ns.wsa, minOccurs=0)
 
 
 WSA_SCHEMA = xsd.Schema(
