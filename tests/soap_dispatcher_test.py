@@ -286,7 +286,7 @@ class WsgiTest(PythonicTestCase):
     def test_wsgi(self):
         service = _echo_service()
         dispatcher = SOAPDispatcher(service)
-        app = WsgiSoapApplication({'/service': dispatcher})
+        app = WsgiSoapApplication(dispatcher)
         class StartResponse():
             self.code = None
             self.headers = None

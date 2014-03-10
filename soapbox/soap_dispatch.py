@@ -190,19 +190,14 @@ class WsgiSoapApplication(object):
     HTTP_200 = '200 OK'
     HTTP_405 = '405 Method Not Allowed'
 
-    def __init__(self, dispatchers):
-        '''
-        Args:
-            dispatcher: mapping of url to dispatcher. ex: {'/service1': <class SOAPDispatcher>}
-        '''
-        self.dispatchers = dispatchers
+    def __init__(self, dispatcher):
+        self.dispatcher = dispatcher
 
     def __call__(self, req_env, start_response, wsgi_url=None):
-        dispatcher = self.dispatchers[req_env['PATH_INFO']]
         content_length = int(req_env.get('CONTENT_LENGTH', 0))
         content = req_env['wsgi.input'].read(content_length)
         soap_request = core.SoapboxRequest(req_env, content)
-        response = dispatcher.dispatch(soap_request)
+        response = self.dispatcher.dispatch(soap_request)
         response_headers = [
             ("content-type", response['content_type']),
         ]
