@@ -26,6 +26,6 @@ class ExceptionLogger():
     def __call__(self, request, next_call):
         try:
             return next_call(request)
-        except exceptions as ex:
+        except self.exceptions as ex:
             self.logger.exception(ex)
             raise
