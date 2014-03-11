@@ -117,7 +117,6 @@ class SoapDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
-
         response = dispatcher.dispatch(request)
         assert_false(handler_state.was_called)
         self.assert_is_soap_fault(response,

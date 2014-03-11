@@ -61,12 +61,12 @@ class SOAPDispatcher(object):
             return ValidationResult(False, errors=['Missing SOAP body'])
         return ValidationResult(True, validated_document=envelope)
 
-    def _find_handler_for_request(self, request, message):
+    def _find_handler_for_request(self, request, body_document):
         SOAP = self.service.version
         soap_action = SOAP.determine_soap_action(request)
         root_tag = None
         if not soap_action:
-            root_tag = self._find_root_tag(message)
+            root_tag = self._find_root_tag(body_document)
             logger.warning('Soap action not found in http headers, use root tag "%s".', root_tag)
         else:
             logger.info('Soap action found in http headers: %s', soap_action)
@@ -82,10 +82,8 @@ class SOAPDispatcher(object):
         else:
             raise core.SOAPError(SOAP.Code.CLIENT, "Missing soap action and invalid root tag '%s'" % root_tag)
 
-    def _find_root_tag(self, message):
-        body_document = etree.fromstring(message)
-        # TODO: catch invalid xml
-        root = body_document.getroottree().getroot()
+    def _find_root_tag(self, body_document):
+        root = body_document
         ns = root.nsmap[root.prefix]
         return root.tag[len('{%s}' % ns):]
 
@@ -98,7 +96,7 @@ class SOAPDispatcher(object):
         schema = self.service.schema
         try:
             validate_input = input_parser.parsexml(message, schema=schema)
-        except etree.XMLSyntaxError as e:
+        except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
             return ValidationResult(False, errors=(e,))
         return ValidationResult(True, validated_document=validate_input)
 
@@ -119,9 +117,9 @@ class SOAPDispatcher(object):
             if not message_validation.value:
                 raise core.SOAPError(SOAP.Code.CLIENT, str(message_validation.errors[0]))
             soap_envelope = message_validation.validated_document
-            soap_request_message = soap_envelope.Body.content()
+            soap_body_content = soap_envelope.Body.content()
 
-            handler = self._find_handler_for_request(request, soap_request_message)
+            handler = self._find_handler_for_request(request, soap_body_content)
 
             # TODO return soap fault if header is required but missing in the input
             if soap_envelope.Header is not None:
@@ -132,7 +130,7 @@ class SOAPDispatcher(object):
 
             request.method = handler
 
-            input_validation = self._parse_input(handler, soap_request_message)
+            input_validation = self._parse_input(handler, soap_body_content)
             if not input_validation.value:
                 raise core.SOAPError(SOAP.Code.CLIENT, str(input_validation.errors[0]))
             validated_input = input_validation.validated_document

@@ -73,11 +73,8 @@ class Body(xsd.ComplexType):
     def parse_as(self, ContentType):
         return ContentType.parse_xmlelement(self._xmlelement[0])
 
-    def parse_as(self, ContentType):
-        return ContentType.parse_xmlelement(self._xmlelement[0])
-
     def content(self):
-        return etree.tostring(self._xmlelement[0], pretty_print=True)
+        return self._xmlelement[0]
 
 
 class Envelope(xsd.ComplexType):

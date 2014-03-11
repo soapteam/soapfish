@@ -856,16 +856,22 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         from .py2xsd import generate_xsd
         schema = generate_xsd(schema)
         schemaelement = etree.XMLSchema(schema)
-        parser = etree.XMLParser(schema=schemaelement)
-        xmlelement = etree.fromstring(xml, parser)
+        if isinstance(xml, basestring):
+            parser = etree.XMLParser(schema=schemaelement)
+            xmlelement = etree.fromstring(xml, parser)
+        else:
+            schemaelement.assertValid(xml)
+            xmlelement = xml
         return xmlelement
 
     @classmethod
     def parsexml(cls, xml, schema=None):
         if schema and settings.VALIDATE_ON_PARSE:
             xmlelement = cls.__parse_with_validation(xml, schema)
-        else:
+        elif isinstance(xml, basestring):
             xmlelement = etree.fromstring(xml)
+        else:
+            xmlelement = xml
         return cls.parse_xmlelement(xmlelement)
 
     def xml(self, tagname, namespace=None, elementFormDefault=None, schema=None):
