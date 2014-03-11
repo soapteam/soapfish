@@ -77,7 +77,10 @@ class SOAPDispatcher(object):
                     return method
             elif root_tag == method.input:
                 return method
-        return None
+        if soap_action is not None:
+            raise core.SOAPError(SOAP.Code.CLIENT, "Invalid soap action '%s'" % soap_action)
+        else:
+            raise core.SOAPError(SOAP.Code.CLIENT, "Missing soap action and invalid root tag '%s'" % root_tag)
 
     def _find_root_tag(self, message):
         body_document = etree.fromstring(message)
@@ -135,34 +138,28 @@ class SOAPDispatcher(object):
         soap_envelope = message_validation.validated_document
         soap_request_message = soap_envelope.Body.content()
 
-        handler = self._find_handler_for_request(request, soap_request_message)
-        # if not handler -> client error
-        #  response = SOAP.get_error_response(SOAP.Code.CLIENT, str(e))
+        try:
+            handler = self._find_handler_for_request(request, soap_request_message)
 
-        # TODO return soap fault if header is required but missing in the input
-        if soap_envelope.Header is not None:
-            if handler.input_header:
-                request.soap_header = soap_envelope.Header.parse_as(handler.input_header)
-            elif self.service.input_header:
-                request.soap_header = soap_envelope.Header.parse_as(self.service.input_header)
+            # TODO return soap fault if header is required but missing in the input
+            if soap_envelope.Header is not None:
+                if handler.input_header:
+                    request.soap_header = soap_envelope.Header.parse_as(handler.input_header)
+                elif self.service.input_header:
+                    request.soap_header = soap_envelope.Header.parse_as(self.service.input_header)
 
-        request.method = handler
+            request.method = handler
 
-        input_validation = self._parse_input(handler, soap_request_message)
-        if not input_validation.value:
-            return self.error_response(SOAP.Code.CLIENT, input_validation.errors)
-        validated_input = input_validation.validated_document
+            input_validation = self._parse_input(handler, soap_request_message)
+            if not input_validation.value:
+                return self.error_response(SOAP.Code.CLIENT, input_validation.errors)
+            validated_input = input_validation.validated_document
 
-        request.soap_body = validated_input
-
-        # LATER: the dispatcher should be able to also catch arbitrary
-        # exceptions from the handler. At the same time the caller should be
-        # able to install custom hooks for these exceptions (e.g. custom
-        # traceback logging) and we should support popular debugging middlewares
-        # somehow.
-        response = self.middleware()(request)
-
-        SOAP = self.service.version
+            request.soap_body = validated_input
+        except core.SOAPError as ex:
+            response = ex
+        else:
+            response = self.middleware()(request)
 
         if not isinstance(response, core.SoapboxResponse):
             response = core.SoapboxResponse(response)

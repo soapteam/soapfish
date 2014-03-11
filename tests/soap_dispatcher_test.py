@@ -141,6 +141,24 @@ class SoapDispatcherTest(PythonicTestCase):
         assert_equals('text/xml', response.content_type)
         self.assert_is_soap_fault(response, partial_fault_string=u'Missing SOAP body')
 
+    def test_can_reject_invalid_action(self):
+        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+            '<value>foobar</value>'
+            '</ns1:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        request = SoapboxRequest(dict(SOAPACTION='invalid', REQUEST_METHOD='POST'), request_message)
+        dispatcher = SOAPDispatcher(_echo_service())
+        response = dispatcher.dispatch(request)
+        self.assert_is_soap_fault(response, partial_fault_string=u"Invalid soap action 'invalid'")
+
+    def test_can_reject_invalid_root_tag(self):
+        soap_message = ('<ns0:invalid xmlns:ns0="invalid"/>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        request = SoapboxRequest(dict(REQUEST_METHOD='POST'), request_message)
+        dispatcher = SOAPDispatcher(_echo_service())
+        response = dispatcher.dispatch(request)
+        self.assert_is_soap_fault(response, partial_fault_string=u"invalid root tag")
+
     def test_can_dispatch_requests_based_on_soap_body(self):
         handler, handler_state = _echo_handler()
         dispatcher = SOAPDispatcher(_echo_service(handler))
