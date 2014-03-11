@@ -96,7 +96,7 @@ class SoapDispatcherTest(PythonicTestCase):
         self.assert_is_successful_response(response, handler_state)
         assert_equals('foobar', handler_state.input_.value)
 
-        response_document = etree.fromstring(response.message)
+        response_document = etree.fromstring(response.http_content)
         response_xml = etree.tostring(response_document, pretty_print=True)
         expected_xml = (
             b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">\n'
@@ -127,8 +127,8 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), 'garbage')
         dispatcher = SOAPDispatcher(_echo_service())
         response = dispatcher.dispatch(request)
-        assert_equals(500, response.status)
-        assert_equals('text/xml', response.content_type)
+        assert_equals(500, response.http_status_code)
+        assert_equals('text/xml', response.http_headers['content-type'])
         self.assert_is_soap_fault(response, partial_fault_string=u"Start tag expected, '<' not found")
 
     def test_can_reject_non_soap_xml_body(self):
@@ -137,8 +137,8 @@ class SoapDispatcherTest(PythonicTestCase):
 
         # previously this raised an AttributeError due to an unhandled exception
         response = dispatcher.dispatch(request)
-        assert_equals(500, response.status)
-        assert_equals('text/xml', response.content_type)
+        assert_equals(500, response.http_status_code)
+        assert_equals('text/xml', response.http_headers['content-type'])
         self.assert_is_soap_fault(response, partial_fault_string=u'Missing SOAP body')
 
     def test_can_reject_invalid_action(self):
@@ -180,8 +180,8 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(REQUEST_METHOD='POST'), request_message)
 
         response = dispatcher.dispatch(request)
-        assert_equals('text/xml', response.content_type)
-        assert_equals(500, response.status)
+        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals(500, response.http_status_code)
         self.assert_is_soap_fault(response,
             fault_code='code',
             partial_fault_string=u'internal data error'
@@ -227,7 +227,7 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
-        assert_contains(b'<ns0:OutputVersion>42</ns0:OutputVersion>', response.message)
+        assert_contains(b'<ns0:OutputVersion>42</ns0:OutputVersion>', response.http_content)
 
     def test_can_handle_empty_output_header(self):
         handler, handler_state = _echo_handler()
@@ -255,22 +255,22 @@ class SoapDispatcherTest(PythonicTestCase):
             fault_code=service.version.Code.SERVER,
             partial_fault_string=u'unexpected exception',
         )
-        assert_equals('text/xml', response.content_type)
-        assert_equals(500, response.status)
+        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals(500, response.http_status_code)
 
     # --- custom assertions ---------------------------------------------------
 
     def assert_is_successful_response(self, response, handler_state=None):
-        assert_equals(200, response.status)
-        assert_equals('text/xml', response.content_type)
+        assert_equals(200, response.http_status_code)
+        assert_equals('text/xml', response.http_headers['content-type'])
         if handler_state:
             assert_true(handler_state.was_called)
 
     def assert_is_soap_fault(self, response, fault_code=None, partial_fault_string=None):
-        assert_equals(500, response.status)
-        assert_equals('text/xml', response.content_type)
+        assert_equals(500, response.http_status_code)
+        assert_equals('text/xml', response.http_headers['content-type'])
 
-        fault_document = etree.fromstring(response.message)
+        fault_document = etree.fromstring(response.http_content)
         soap_envelope = fault_document.getroottree()
         namespaces = {'s': 'http://schemas.xmlsoap.org/soap/envelope/'}
         fault_nodes = soap_envelope.xpath('/s:Envelope/s:Body/s:Fault', namespaces=namespaces)

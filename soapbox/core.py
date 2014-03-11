@@ -2,9 +2,13 @@
 
 
 class SoapboxResponse(object):
-    def __init__(self, content, soap_header=None):
+    def __init__(self, content, soap_header=None, http_status_code=200, http_content=None,
+                 http_headers=None):
         self.content = content
         self.soap_header = soap_header
+        self.http_status_code = 200
+        self.http_content = http_content
+        self.http_headers = {} if http_headers is None else http_headers
 
 
 class SoapboxRequest(object):
