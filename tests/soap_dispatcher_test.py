@@ -165,7 +165,7 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(REQUEST_METHOD='POST'), request_message)
         dispatcher = SOAPDispatcher(_echo_service())
         response = dispatcher.dispatch(request)
-        self.assert_is_soap_fault(response, partial_fault_string=u"invalid root tag")
+        self.assert_is_soap_fault(response, partial_fault_string="DocumentInvalid")
 
     def test_can_dispatch_requests_based_on_soap_body(self):
         handler, handler_state = _echo_handler()
@@ -219,6 +219,18 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
+
+    def test_can_validate_soap_header(self):
+        handler, handler_state = _echo_handler()
+        dispatcher = SOAPDispatcher(_echo_service(handler, input_header=InputHeader))
+        soap_header = ('<tns:invalid>42</tns:invalid>')
+        soap_message = ('<tns:echoRequest>'
+            '<value>foobar</value>'
+        '</tns:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
+        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        response = dispatcher.dispatch(request)
+        self.assert_is_soap_fault(response, partial_fault_string="DocumentInvalid")
 
     def test_can_propagete_custom_output_header(self):
         handler, handler_state = _echo_handler()

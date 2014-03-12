@@ -11,7 +11,6 @@ from . import core
 from . import middlewares as mw
 from . import soap
 from .lib.attribute_dict import AttrDict
-from .lib.result import ValidationResult
 from .py2xsd import generate_xsd
 from .utils import uncapitalize
 
@@ -36,6 +35,8 @@ class SOAPDispatcher(object):
         if middlewares is None:
             middlewares = []
         self.middlewares = middlewares
+        schema = generate_xsd(self.service.schema)
+        self.xmlschema = etree.XMLSchema(schema)
 
     def middleware(self, i=0):
         if i == len(self.middlewares):
@@ -49,9 +50,10 @@ class SOAPDispatcher(object):
     def _parse_soap_content(self, xml):
         SOAP = self.service.version
         try:
+            # note : no validation is performed
             envelope = SOAP.Envelope.parsexml(xml)
         except etree.XMLSyntaxError as e:
-            return ValidationResult(False, errors=(e,))
+            raise core.SOAPError(SOAP.Code.CLIENT, repr(e))
         # Actually this is more a stopgap measure than a real fix. The real
         # fix is to change SOAP.Envelope/ComplexType so it raise some kind of
         # validation error. A missing SOAP body is not allowed by the SOAP
@@ -59,8 +61,8 @@ class SOAPDispatcher(object):
         # SOAP 1.1: http://schemas.xmlsoap.org/soap/envelope/
         # SOAP 1.2: http://www.w3.org/2003/05/soap-envelope/
         if envelope.Body is None:
-            return ValidationResult(False, errors=['Missing SOAP body'])
-        return ValidationResult(True, validated_document=envelope)
+            raise core.SOAPError(SOAP.Code.CLIENT, "Missing SOAP body")
+        return envelope
 
     def _find_handler_for_request(self, request, body_document):
         SOAP = self.service.version
@@ -88,20 +90,20 @@ class SOAPDispatcher(object):
         ns = root.nsmap[root.prefix]
         return root.tag[len('{%s}' % ns):]
 
+    def _parse_header(self, handler, soap_header):
+        # TODO return soap fault if header is required but missing in the input
+        if soap_header is not None:
+            if handler.input_header:
+                return soap_header.parse_as(handler.input_header)
+            elif self.service.input_header:
+                return soap_header.parse_as(self.service.input_header)
+
     def _parse_input(self, method, message):
         input_parser = method.input
         if isinstance(method.input, basestring):
             element = self.service.schema.elements[method.input]
             input_parser = element._type
-
-        schema = generate_xsd(self.service.schema)
-        xmlschema = etree.XMLSchema(schema)
-        try:
-            xmlschema.assertValid(message)
-        except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
-            return ValidationResult(False, errors=(e,))
-        validate_input = input_parser.parse_xmlelement(message)
-        return ValidationResult(True, validated_document=validate_input)
+        return input_parser.parse_xmlelement(message)
 
     def _validate_response(self, return_object, tagname):
         return_object.xml(tagname, namespace=self.service.schema.targetNamespace,
@@ -115,30 +117,24 @@ class SOAPDispatcher(object):
 
         request.dispatcher = self
         SOAP = self.service.version
+
         try:
-            message_validation = self._parse_soap_content(request.content)
-            if not message_validation.value:
-                raise core.SOAPError(SOAP.Code.CLIENT, str(message_validation.errors[0]))
-            soap_envelope = message_validation.validated_document
+            soap_envelope = self._parse_soap_content(request.content)
             soap_body_content = soap_envelope.Body.content()
+            soap_header = soap_envelope.Header
 
-            handler = self._find_handler_for_request(request, soap_body_content)
+            # perform validations
+            try:
+                self.xmlschema.assertValid(soap_body_content)
+                if soap_header is not None:
+                    for children in soap_header._xmlelement.getchildren():
+                        self.xmlschema.assertValid(children)
+            except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
+                raise core.SOAPError(SOAP.Code.CLIENT, repr(e))
 
-            # TODO return soap fault if header is required but missing in the input
-            if soap_envelope.Header is not None:
-                if handler.input_header:
-                    request.soap_header = soap_envelope.Header.parse_as(handler.input_header)
-                elif self.service.input_header:
-                    request.soap_header = soap_envelope.Header.parse_as(self.service.input_header)
-
-            request.method = handler
-
-            input_validation = self._parse_input(handler, soap_body_content)
-            if not input_validation.value:
-                raise core.SOAPError(SOAP.Code.CLIENT, str(input_validation.errors[0]))
-            validated_input = input_validation.validated_document
-
-            request.soap_body = validated_input
+            request.method = self._find_handler_for_request(request, soap_body_content)
+            request.soap_header = self._parse_header(request.method, soap_header)
+            request.soap_body = self._parse_input(request.method, soap_body_content)
         except core.SOAPError as ex:
             response = ex
         else:
