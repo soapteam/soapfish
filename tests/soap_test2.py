@@ -1,9 +1,12 @@
 import unittest
 
+from lxml import etree
+
 from soapbox import xsd
 from soapbox import soap11
 from soapbox import soap12
 from soapbox.lib.pythonic_testcase import *
+from soapbox.py2xsd import generate_xsd
 
 SOAP11_ENVELOPE = """\
 <?xml version="1.0" encoding="utf-8"?>
@@ -51,6 +54,7 @@ Schema_qualified = xsd.Schema(
         'AppHeader': xsd.Element(AppHeader),
     },
 )
+XmlSchema_qualified = etree.XMLSchema(generate_xsd(Schema_qualified))
 
 class PlaceU(xsd.ComplexType):
     Name = xsd.Element(xsd.String)
@@ -70,34 +74,37 @@ Schema_unqualified = xsd.Schema(
         'AppHeader': xsd.Element(AppHeaderU),
     },
 )
+XmlSchema_unqualified = etree.XMLSchema(generate_xsd(Schema_unqualified))
 
 
 class SOAP_TBase(object):
 
     def test_parse_message_qualified(self):
-        self._test_parse_message(MESSAGE_QUALIFIED, GetWeatherByPlaceName, Schema_qualified)
+        self._test_parse_message(MESSAGE_QUALIFIED, GetWeatherByPlaceName, XmlSchema_qualified)
 
     def test_parse_message_unqualified(self):
-        self._test_parse_message(MESSAGE_UNQUALIFIED, GetWeatherByPlaceNameU, Schema_unqualified)
+        self._test_parse_message(MESSAGE_UNQUALIFIED, GetWeatherByPlaceNameU, XmlSchema_unqualified)
 
     def _test_parse_message(self, xml, MessageType, schema):
         envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', xml).encode('utf8'))
-        message = MessageType.parsexml(envelope.Body.content(), schema)
+        self.assertTrue(schema.validate(envelope.Body.content()))
+        message = MessageType.parse_xmlelement(envelope.Body.content())
         self.assertEqual(message.Place.Name, 'Weatharia')
         message = envelope.Body.parse_as(MessageType)
         self.assertEqual(message.Place.Name, 'Weatharia')
 
     def test_render_message_qualified(self):
-        self._test_render_message(GetWeatherByPlaceName, Place, Schema_qualified)
+        self._test_render_message(GetWeatherByPlaceName, Place, XmlSchema_qualified)
 
     def test_render_message_unqualified(self):
-        self._test_render_message(GetWeatherByPlaceNameU, PlaceU, Schema_unqualified)
+        self._test_render_message(GetWeatherByPlaceNameU, PlaceU, XmlSchema_unqualified)
 
     def _test_render_message(self, MessageType, PlaceType, schema):
         return_object = MessageType(Place=PlaceType(Name='Skypia'))
         xml = self.SOAP.Envelope.response('GetWeatherByPlaceName', return_object)
         envelope = self.SOAP.Envelope.parsexml(xml)
-        message = MessageType.parsexml(envelope.Body.content(), schema)
+        self.assertTrue(schema.validate(envelope.Body.content()))
+        message = MessageType.parse_xmlelement(envelope.Body.content())
         self.assertEqual(message.Place.Name, 'Skypia')
         message = envelope.Body.parse_as(MessageType)
         self.assertEqual(message.Place.Name, 'Skypia')

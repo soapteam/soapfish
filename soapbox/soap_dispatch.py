@@ -12,6 +12,7 @@ from . import middlewares as mw
 from . import soap
 from .lib.attribute_dict import AttrDict
 from .lib.result import ValidationResult
+from .py2xsd import generate_xsd
 from .utils import uncapitalize
 
 basestring = six.string_types
@@ -93,11 +94,13 @@ class SOAPDispatcher(object):
             element = self.service.schema.elements[method.input]
             input_parser = element._type
 
-        schema = self.service.schema
+        schema = generate_xsd(self.service.schema)
+        xmlschema = etree.XMLSchema(schema)
         try:
-            validate_input = input_parser.parsexml(message, schema=schema)
+            xmlschema.assertValid(message)
         except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
             return ValidationResult(False, errors=(e,))
+        validate_input = input_parser.parse_xmlelement(message)
         return ValidationResult(True, validated_document=validate_input)
 
     def _validate_response(self, return_object, tagname):

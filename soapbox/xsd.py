@@ -43,6 +43,7 @@ For information on XML schema validation:
 from copy import copy
 from decimal import Decimal
 from datetime import datetime
+import functools
 import logging
 import re
 
@@ -866,12 +867,12 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
 
     @classmethod
     def parsexml(cls, xml, schema=None):
-        if schema and settings.VALIDATE_ON_PARSE:
-            xmlelement = cls.__parse_with_validation(xml, schema)
-        elif isinstance(xml, basestring):
-            xmlelement = etree.fromstring(xml)
+        if schema is None:
+            parser = etree.fromstring
         else:
-            xmlelement = xml
+            xmlparser = etree.XMLParser(schema=schema)
+            parser = functools.partial(etree.fromstring, parser=xmlparser)
+        xmlelement = parser(xml)
         return cls.parse_xmlelement(xmlelement)
 
     def xml(self, tagname, namespace=None, elementFormDefault=None, schema=None):
@@ -879,9 +880,9 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
             tagname = '{%s}%s' % (namespace, tagname)
         xmlelement = etree.Element(tagname)
         self.render(xmlelement, self, namespace, elementFormDefault)
+        if schema is not None:
+            schema.assertValid(xmlelement)
         xml = etree.tostring(xmlelement, pretty_print=True)
-        if schema and settings.VALIDATE_ON_PARSE:
-            self.__parse_with_validation(xml, schema)
         return xml
 
     @classmethod

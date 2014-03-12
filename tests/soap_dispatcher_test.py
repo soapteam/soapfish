@@ -37,11 +37,17 @@ def _echo_handler():
         return SoapboxResponse(EchoType.create(input_.value))
     return _handler, state
 
+class InputVersion(xsd.String):
+    pass
+
+class OutputVersion(xsd.String):
+    pass
+
 class InputHeader(xsd.ComplexType):
-    InputVersion = xsd.Element(xsd.String)
+    InputVersion = xsd.Element(InputVersion)
 
 class OutputHeader(xsd.ComplexType):
-    OutputVersion = xsd.Element(xsd.String)
+    OutputVersion = xsd.Element(OutputVersion)
 
 def _echo_service(handler=None, input_header=None, output_header=None):
     if handler is None:
@@ -50,10 +56,13 @@ def _echo_service(handler=None, input_header=None, output_header=None):
     EchoSchema = xsd.Schema(
         'http://soap.example/echo/types',
         elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
+        simpleTypes=(InputVersion, OutputVersion),
         complexTypes=(EchoType, InputHeader, OutputHeader),
         elements={
             'echoRequest': xsd.Element(EchoType),
             'echoResponse': xsd.Element(EchoType),
+            'InputVersion': xsd.Element(InputVersion),
+            'OutputVersion': xsd.Element(OutputVersion),
         },
     )
     echo_method = xsd.Method(function=handler,

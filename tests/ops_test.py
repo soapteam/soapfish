@@ -1,4 +1,7 @@
 import unittest
+from lxml import etree
+
+from soapbox.py2xsd import generate_xsd
 from soapbox import xsd
 from soapbox import iso8601
 
@@ -87,7 +90,8 @@ XML_REQUIRED_ONLY = """
 
 class OPS_Test(unittest.TestCase):
     def test_required_only(self):
-        ops = Ops.parsexml(XML_REQUIRED_ONLY, Schema)
+        XmlSchema = etree.XMLSchema(generate_xsd(Schema))
+        ops = Ops.parsexml(XML_REQUIRED_ONLY, XmlSchema)
         self.assertEqual("N608WB", ops.aircraft)
         self.assertEqual("123123", ops.flight_number)
         self.assertEqual("COMMERCIAL", ops.type)
