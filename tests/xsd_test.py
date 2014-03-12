@@ -74,6 +74,30 @@ class ElementTest(unittest.TestCase):
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
+    def test_tagname_parsexml(self):
+        class TestType(xsd.ComplexType):
+            foo = xsd.Element(xsd.String, tagname='bar')
+        xml = b"<T><bar>coucou</bar></T>"
+        obj = TestType.parsexml(xml)
+        self.assertEquals('coucou', obj.foo)
+
+    def test_tagname_parse_xmlelement(self):
+        class TestType(xsd.ComplexType):
+            foo = xsd.Element(xsd.String, tagname='bar')
+        xml = b"<T><bar>coucou</bar></T>"
+        xmlelement = etree.fromstring(xml)
+        obj = TestType.parse_xmlelement(xmlelement)
+        self.assertEquals('coucou', obj.foo)
+
+    def test_tagname_render(self):
+        class TestType(xsd.ComplexType):
+            foo = xsd.Element(xsd.String, tagname='bar')
+        obj = TestType(foo='coucou')
+        xmlelement = etree.Element("T")
+        obj.render(xmlelement, obj)
+        xml = etree.tostring(xmlelement)
+        self.assertEquals("<T><bar>coucou</bar></T>", xml)
+
 
 class ListElementTest(unittest.TestCase):
 

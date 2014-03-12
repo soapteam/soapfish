@@ -794,7 +794,7 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         for field in instance._meta.all:
             field.render(
                 parent=parent,
-                field_name=field._name,
+                field_name=field.tagname or field._name,
                 value=getattr(instance, field._name),
                 namespace=namespace,
                 elementFormDefault=elementFormDefault)
