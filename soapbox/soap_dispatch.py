@@ -110,6 +110,20 @@ class SOAPDispatcher(object):
                           elementFormDefault=self.service.schema.elementFormDefault,
                           schema=self.service.schema)  # Validation.
 
+    def _validate_header(self, soap_header):
+        SOAP = self.service.version
+        if soap_header is not None:
+            for children in soap_header._xmlelement.getchildren():
+                self.xmlschema.assertValid(children)
+
+    def _validate_body(self, soap_body):
+        SOAP = self.service.version
+        self.xmlschema.assertValid(soap_body.content())
+
+    def _validate_input(self, envelope):
+        self._validate_header(envelope.Header)
+        self._validate_body(envelope.Body)
+
     def dispatch(self, request):
         if request.environ['REQUEST_METHOD'] != 'POST':
             return core.SoapboxResponse('bad request', http_status_code=400,
@@ -123,12 +137,8 @@ class SOAPDispatcher(object):
             soap_body_content = soap_envelope.Body.content()
             soap_header = soap_envelope.Header
 
-            # perform validations
             try:
-                self.xmlschema.assertValid(soap_body_content)
-                if soap_header is not None:
-                    for children in soap_header._xmlelement.getchildren():
-                        self.xmlschema.assertValid(children)
+                self._validate_input(soap_envelope)
             except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
                 raise core.SOAPError(SOAP.Code.CLIENT, repr(e))
 
