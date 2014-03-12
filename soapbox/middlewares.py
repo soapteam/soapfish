@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import traceback
 
 from . import core
 
@@ -15,7 +16,8 @@ class ExceptionToSoapFault():
         try:
             return next_call(request)
         except Exception as ex:
-            return core.SOAPError(request.dispatcher.service.version.Code.SERVER, str(ex))
+            message = "Internal Error" if not self.return_tb else traceback.format_exc()
+            return core.SOAPError(request.dispatcher.service.version.Code.SERVER, message)
 
 
 class ExceptionLogger():
