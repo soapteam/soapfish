@@ -10,6 +10,7 @@ import six
 from . import core
 from . import middlewares as mw
 from . import soap
+from . import wsa
 from .lib.attribute_dict import AttrDict
 from .py2xsd import generate_xsd
 from .utils import uncapitalize
@@ -114,7 +115,11 @@ class SOAPDispatcher(object):
         SOAP = self.service.version
         if soap_header is not None:
             for children in soap_header._xmlelement.getchildren():
-                self.xmlschema.assertValid(children)
+                namespace = children.nsmap[children.prefix]
+                if namespace== wsa.NAMESPACE:
+                    wsa.XML_SCHEMA.assertValid(children)
+                else:
+                    self.xmlschema.assertValid(children)
 
     def _validate_body(self, soap_body):
         SOAP = self.service.version

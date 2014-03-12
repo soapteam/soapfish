@@ -5,7 +5,7 @@ import io
 from lxml import etree
 import six
 
-from soapbox import core, soap, xsd
+from soapbox import core, soap, wsa, xsd
 from soapbox.core import SoapboxRequest, SoapboxResponse
 from soapbox.lib.pythonic_testcase import *
 from soapbox.lib.attribute_dict import AttrDict
@@ -277,6 +277,18 @@ class SoapDispatcherTest(PythonicTestCase):
         )
         assert_equals('text/xml', response.http_headers['content-type'])
         assert_equals(500, response.http_status_code)
+
+    def test_can_validate_wsa_header(self):
+        service = _echo_service()
+        dispatcher = SOAPDispatcher(service)
+        header = wsa.Header.parsexml('<Header><Action xmlns="http://www.w3.org/2005/08/addressing">/Action</Action></Header>')
+        dispatcher._validate_header(header)
+
+    def test_can_invalidate_wsa_header(self):
+        service = _echo_service()
+        dispatcher = SOAPDispatcher(service)
+        header = wsa.Header.parsexml('<Header><Invalid xmlns="http://www.w3.org/2005/08/addressing">/Action</Invalid></Header>')
+        self.assertRaises(etree.DocumentInvalid, dispatcher._validate_header, header)
 
     # --- custom assertions ---------------------------------------------------
 

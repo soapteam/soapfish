@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import os
+import sys
 import uuid
+
+from lxml import etree
 
 from . import namespaces as ns
 from . import xsd
 
 
+NAMESPACE = ns.wsa
 ANONYMOUS = 'http://www.w3.org/2005/08/addressing/anonymous'
+SCHEMA_IMPORT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'raw', 'wsa.xsd'))
 
 
 class ReplyTo(xsd.ComplexType):
@@ -21,7 +27,7 @@ class Header(xsd.ComplexType):
     RelatesTo = xsd.Element(xsd.String, namespace=ns.wsa, minOccurs=0)
 
 
-WSA_SCHEMA = xsd.Schema(
+SCHEMA = xsd.Schema(
     targetNamespace=ns.wsa,
     elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
     simpleTypes=[],
@@ -29,6 +35,9 @@ WSA_SCHEMA = xsd.Schema(
     groups=[],
     complexTypes=[ReplyTo, Header],
     elements={})
+XSD_SCHEMA = etree.parse(SCHEMA_IMPORT_PATH)
+XML_SCHEMA = etree.XMLSchema(XSD_SCHEMA)
+
 
 def fill_header(dst_header, src_header=None):
     """Fille dst_header with the basic information based on src_header"""
