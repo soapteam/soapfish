@@ -132,7 +132,7 @@ class SOAPDispatcher(object):
     def dispatch(self, request):
         if request.environ['REQUEST_METHOD'] != 'POST':
             return core.SoapboxResponse('bad request', http_status_code=400,
-                http_content='bad_request', http_headers={'CONTENT_TYPE': 'text/plain'})
+                http_content='bad_request', http_headers={'Content-Type': 'text/plain'})
 
         request.dispatcher = self
         SOAP = self.service.version
@@ -158,7 +158,7 @@ class SOAPDispatcher(object):
         if not isinstance(response, core.SoapboxResponse):
             response = core.SoapboxResponse(response)
 
-        response.http_headers['content-type'] = SOAP.CONTENT_TYPE
+        response.http_headers['Content-Type'] = SOAP.CONTENT_TYPE
 
         if isinstance(response.content, core.SOAPError):
             error = response.content

@@ -136,7 +136,7 @@ class SoapDispatcherTest(PythonicTestCase):
         dispatcher = SOAPDispatcher(_echo_service())
         response = dispatcher.dispatch(request)
         assert_equals(500, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals('text/xml', response.http_headers['Content-Type'])
         self.assert_is_soap_fault(response, partial_fault_string=u"Start tag expected, '<' not found")
 
     def test_can_reject_non_soap_xml_body(self):
@@ -146,7 +146,7 @@ class SoapDispatcherTest(PythonicTestCase):
         # previously this raised an AttributeError due to an unhandled exception
         response = dispatcher.dispatch(request)
         assert_equals(500, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals('text/xml', response.http_headers['Content-Type'])
         self.assert_is_soap_fault(response, partial_fault_string=u'Missing SOAP body')
 
     def test_can_reject_invalid_action(self):
@@ -188,7 +188,7 @@ class SoapDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(REQUEST_METHOD='POST'), request_message)
 
         response = dispatcher.dispatch(request)
-        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals('text/xml', response.http_headers['Content-Type'])
         assert_equals(500, response.http_status_code)
         self.assert_is_soap_fault(response,
             fault_code='code',
@@ -275,7 +275,7 @@ class SoapDispatcherTest(PythonicTestCase):
             fault_code=service.version.Code.SERVER,
             partial_fault_string=u'Internal Error',
         )
-        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals('text/xml', response.http_headers['Content-Type'])
         assert_equals(500, response.http_status_code)
 
     def test_can_validate_wsa_header(self):
@@ -294,13 +294,13 @@ class SoapDispatcherTest(PythonicTestCase):
 
     def assert_is_successful_response(self, response, handler_state=None):
         assert_equals(200, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals('text/xml', response.http_headers['Content-Type'])
         if handler_state:
             assert_true(handler_state.was_called)
 
     def assert_is_soap_fault(self, response, fault_code=None, partial_fault_string=None):
         assert_equals(500, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['content-type'])
+        assert_equals('text/xml', response.http_headers['Content-Type'])
 
         fault_document = etree.fromstring(response.http_content)
         soap_envelope = fault_document.getroottree()
@@ -375,7 +375,7 @@ class WsgiTest(PythonicTestCase):
         )
         self.assertEqual(expected_xml, response_xml)
         self.assertEqual(WsgiSoapApplication.HTTP_200, start_response.code)
-        self.assertEqual('text/xml', dict_headers['content-type'])
+        self.assertEqual('text/xml', dict_headers['Content-Type'])
 
 
 
