@@ -9,6 +9,7 @@ import six
 
 from . import core
 from . import middlewares as mw
+from . import py2wsdl
 from . import soap
 from . import wsa
 from .lib.attribute_dict import AttrDict
@@ -31,22 +32,23 @@ def call_method(request):
 
 class SOAPDispatcher(object):
 
-    def __init__(self, service, middlewares=None):
+    def __init__(self, service, middlewares=None, wsdl=None):
         self.service = service
         if middlewares is None:
             middlewares = []
         self.middlewares = middlewares
-        schema = generate_xsd(self.service.schema)
-        self.xmlschema = etree.XMLSchema(schema)
+        self.xsdschema = generate_xsd(self.service.schema)
+        self.xmlschema = etree.XMLSchema(self.xsdschema)
+        if wsdl is None:
+            wsdlelement = py2wsdl.generate_wsdl(self.service)
+            wsdl = etree.tostring(wsdlelement, pretty_print=True)
+        self.wsdl = wsdl
 
     def middleware(self, i=0):
         if i == len(self.middlewares):
             # at the end call the method
             return call_method
         return functools.partial(self.middlewares[i], next_call=self.middleware(i+1))
-
-    def handle_request_for_wsdl(self, request):
-        pass
 
     def _parse_soap_content(self, xml):
         SOAP = self.service.version
@@ -130,10 +132,16 @@ class SOAPDispatcher(object):
         self._validate_body(envelope.Body)
 
     def dispatch(self, request):
-        if request.environ['REQUEST_METHOD'] != 'POST':
+        request_method = request.environ.get('REQUEST_METHOD', '')
+        if request_method == 'GET' and 'wsdl' in request.environ.get('QUERY_STRING', ''):
+            return self.handle_wsdl_request(request)
+        elif request_method == 'POST':
+            return self.handle_soap_request(request)
+        else:
             return core.SoapboxResponse('bad request', http_status_code=400,
                 http_content='bad_request', http_headers={'Content-Type': 'text/plain'})
 
+    def handle_soap_request(self, request):
         request.dispatcher = self
         SOAP = self.service.version
 
@@ -175,6 +183,9 @@ class SOAPDispatcher(object):
             response.http_content = SOAP.Envelope.response(tagname, response.content, header=response.soap_header)
         return response
 
+    def handle_wsdl_request(self, request):
+        return core.SoapboxResponse('wsdl', http_content=self.wsdl, http_headers={'Content-Type': 'text/xml'})
+
 
 class WsgiSoapApplication(object):
     HTTP_500 = '500 Internal server error'
@@ -185,7 +196,7 @@ class WsgiSoapApplication(object):
         self.dispatcher = dispatcher
 
     def __call__(self, req_env, start_response, wsgi_url=None):
-        content_length = int(req_env.get('CONTENT_LENGTH', 0))
+        content_length = int(req_env.get('CONTENT_LENGTH', '') or 0)
         content = req_env['wsgi.input'].read(content_length)
         soap_request = core.SoapboxRequest(req_env, content)
         response = self.dispatcher.dispatch(soap_request)
