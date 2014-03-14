@@ -117,7 +117,10 @@ class SOAPDispatcher(object):
         SOAP = self.service.version
         if soap_header is not None:
             for children in soap_header._xmlelement.getchildren():
-                namespace = children.nsmap[children.prefix]
+                try:
+                    namespace = children.nsmap[children.prefix]
+                except KeyError:
+                    namespace = None
                 if namespace== wsa.NAMESPACE:
                     wsa.XML_SCHEMA.assertValid(children)
                 else:
