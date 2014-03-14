@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import six
 import traceback
 
 from . import core
@@ -17,6 +18,8 @@ class ExceptionToSoapFault():
             return next_call(request)
         except Exception as ex:
             message = "Internal Error" if not self.return_tb else traceback.format_exc()
+            if six.PY2:
+                message = message.decode("utf8")
             return core.SOAPError(request.dispatcher.service.version.Code.SERVER, message)
 
 
