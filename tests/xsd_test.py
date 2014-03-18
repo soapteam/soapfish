@@ -96,7 +96,7 @@ class ElementTest(unittest.TestCase):
         xmlelement = etree.Element("T")
         obj.render(xmlelement, obj)
         xml = etree.tostring(xmlelement)
-        self.assertEquals("<T><bar>coucou</bar></T>", xml)
+        self.assertEquals(b"<T><bar>coucou</bar></T>", xml)
 
 
 class ListElementTest(unittest.TestCase):
