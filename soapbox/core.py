@@ -2,9 +2,9 @@
 
 
 class SoapboxResponse(object):
-    def __init__(self, content, soap_header=None, http_status_code=200, http_content=None,
+    def __init__(self, soap_body, soap_header=None, http_status_code=200, http_content=None,
                  http_headers=None):
-        self.content = content
+        self.soap_body = soap_body
         self.soap_header = soap_header
         self.http_status_code = 200
         self.http_content = http_content
@@ -12,12 +12,12 @@ class SoapboxResponse(object):
 
 
 class SoapboxRequest(object):
-    def __init__(self, environ, content):
+    def __init__(self, environ, http_content):
         self.environ = environ
-        self.content = content
-        self.dispatcher = None
+        self.http_content = http_content
         self.soap_header = None
         self.soap_body = None
+        self.dispatcher = None
         self.method = None
 
 

@@ -149,7 +149,7 @@ class SOAPDispatcher(object):
         SOAP = self.service.version
 
         try:
-            soap_envelope = self._parse_soap_content(request.content)
+            soap_envelope = self._parse_soap_content(request.http_content)
             soap_body_content = soap_envelope.Body.content()
             soap_header = soap_envelope.Header
 
@@ -171,19 +171,19 @@ class SOAPDispatcher(object):
 
         response.http_headers['Content-Type'] = SOAP.CONTENT_TYPE
 
-        if isinstance(response.content, core.SOAPError):
-            error = response.content
+        if isinstance(response.soap_body, core.SOAPError):
+            error = response.soap_body
             response.http_content = SOAP.get_error_response(error.code, error.message, header=response.soap_header)
             response.http_status_code = 500
         else:
-            tagname = uncapitalize(response.content.__class__.__name__)
-            #self._validate_response(response.content, tagname)
+            tagname = uncapitalize(response.soap_body.__class__.__name__)
+            #self._validate_response(response.soap_body, tagname)
             # TODO: handle validation results
             if isinstance(request.method.output, basestring):
                 tagname = request.method.output
             else:
                 tagname = uncapitalize(response.content.__class__.__name__)
-            response.http_content = SOAP.Envelope.response(tagname, response.content, header=response.soap_header)
+            response.http_content = SOAP.Envelope.response(tagname, response.soap_body, header=response.soap_header)
         return response
 
     def handle_wsdl_request(self, request):
