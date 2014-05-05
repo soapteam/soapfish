@@ -40,7 +40,7 @@ XML_SCHEMA = etree.XMLSchema(XSD_SCHEMA)
 
 
 def fill_header(dst_header, src_header=None):
-    """Fille dst_header with the basic information based on src_header"""
+    """Fill dst_header with the basic information based on src_header"""
     if src_header:
         dst_header.Action = src_header.Action + 'Response'
         dst_header.RelatesTo = src_header.MessageID
