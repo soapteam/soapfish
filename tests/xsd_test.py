@@ -98,6 +98,9 @@ class ElementTest(unittest.TestCase):
         xml = etree.tostring(xmlelement)
         self.assertEquals(b"<T><bar>coucou</bar></T>", xml)
 
+    def test_stringify_complextype(self):
+        flight = Flight(takeoff_airport=Airport())
+        str(flight)
 
 class ListElementTest(unittest.TestCase):
 
