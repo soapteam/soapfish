@@ -11,6 +11,9 @@ from setuptools import setup, find_packages
 import soapbox
 
 
+def get_requires(filename):
+    return [r.strip() for r in open(filename).readlines() if r[:3] != '-r ' and r.strip()]
+
 
 setup(
     name='soapbox-bsd',
@@ -24,8 +27,8 @@ setup(
     license='New BSD License',
     packages=find_packages(exclude=("examples", "tests",)),
     include_package_data=True,
-    install_requires=open('requirements.txt').readlines(),
-    tests_require=[line for line in open('dev_requirements.txt').readlines() if line[:3] != '-r '],
+    install_requires=get_requires('requirements.txt'),
+    tests_require=get_requires('dev_requirements.txt'),
     test_suite='nose.collector',
     entry_points={
         'console_scripts': [
