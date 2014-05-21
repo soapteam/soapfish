@@ -117,7 +117,7 @@ class Stub(object):
                 'host': self.HOST,
             }
 
-    def _handle_response(self, method, response, content):
+    def _handle_response(self, method, http_headers, content):
         SOAP = self.SERVICE.version
         envelope = SOAP.Envelope.parsexml(content)
 
@@ -165,12 +165,12 @@ class Stub(object):
         headers = SOAP.build_http_request_headers(method.soapAction)
         envelope = SOAP.Envelope.response(tagname, parameter, header=header)
 
-        logger.info('Request \'%s\'...' % self.location)
-        logger.debug('Request Headers:\n\n%s\n' % headers)
-        logger.debug('Request Envelope:\n\n%s\n' % envelope)
-        response, content = http.request(self.location, 'POST',
+        logger.info("Call %r on %r", operationName, self.location)
+        logger.debug("Request Headers: %s", headers)
+        logger.debug("Request Envelope: %s", envelope)
+        headers, content = http.request(self.location, 'POST',
              body=envelope, headers=headers)
-        logger.debug('Response Headers:\n\n%s\n' % response)
-        logger.debug('Response Envelope:\n\n%s\n' % content)
+        logger.debug("Response Headers: %s", headers)
+        logger.debug("Response Envelope: %s", content)
 
-        return self._handle_response(method, response, content)
+        return self._handle_response(method, headers, content)
