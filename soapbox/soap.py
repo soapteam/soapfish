@@ -264,7 +264,10 @@ def get_django_dispatch(service):
             return HttpResponse(wsdl, mimetype='text/xml')
 
         try:
-            xml = request.raw_post_data
+            if django.VERSION < (1, 4):
+                xml = request.raw_post_data
+            else:
+                xml = request.body
             envelope = SOAP.Envelope.parsexml(xml)
             message = envelope.Body.content()
             soap_action = SOAP.determin_soap_action(request)
