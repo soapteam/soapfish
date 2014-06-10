@@ -8,7 +8,7 @@ SOAP protocol implementation, dispatchers and client stub.
 ################################################################################
 # Imports
 
-
+import django
 import httplib2
 import logging
 import os
