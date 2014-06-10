@@ -8,7 +8,7 @@ SOAP protocol implementation, dispatchers and client stub.
 ################################################################################
 # Imports
 
-import django
+
 import httplib2
 import logging
 import os
@@ -252,6 +252,7 @@ def get_django_dispatch(service):
     def django_dispatch(request):
         '''
         '''
+        import django
         from django.http import HttpResponse
         from . import py2wsdl
 
