@@ -1039,6 +1039,8 @@ class Schema(object):
         for element in self.elements.values():
             if isinstance(element._passed_type, ComplexType):
                 element._passed_type.__class__.SCHEMA = self
+            if element.namespace is None:
+                element.namespace = targetNamespace
 
         self._force_elements_type_evalution(self.complexTypes)
         self._force_elements_type_evalution(self.attributeGroups)

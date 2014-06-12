@@ -3,6 +3,7 @@ import unittest
 from lxml import etree
 
 from soapbox import xsd
+from soapbox import wsa
 from soapbox import soap11
 from soapbox import soap12
 from soapbox.lib.pythonic_testcase import *
@@ -52,9 +53,14 @@ Schema_qualified = xsd.Schema(
     elements={
         'GetWeatherByPlaceName': xsd.Element(GetWeatherByPlaceName),
         'AppHeader': xsd.Element(AppHeader),
+        'Identity': xsd.Element(xsd.String),
     },
 )
 XmlSchema_qualified = etree.XMLSchema(generate_xsd(Schema_qualified))
+
+class WsaAppHeader(wsa.Header):
+    SCHEMA = Schema_qualified
+    Identity = SCHEMA.get_element_by_name('Identity')
 
 class PlaceU(xsd.ComplexType):
     Name = xsd.Element(xsd.String)
@@ -133,6 +139,26 @@ class SOAP_TBase(object):
             b'<ns0:Body></ns0:Body>'
             b'</ns0:Envelope>')
         envelope = self.SOAP.Envelope.parsexml(xml)
+
+    def test_wsa_inherited_header(self):
+        message = GetWeatherByPlaceName(Place=Place(Name='Skypia'))
+        header = WsaAppHeader(MessageID='1234', Identity="coucou")
+        xml = self.SOAP.Envelope.response('GetWeatherByPlaceName', message, header)
+        expected_xml = """<ns0:Envelope xmlns:ns0="{soap_ns}">
+  <ns0:Header>
+    <ns0:MessageID xmlns:ns0="http://www.w3.org/2005/08/addressing">1234</ns0:MessageID>
+    <ns0:Identity xmlns:ns0="http://www.example.org">coucou</ns0:Identity>
+  </ns0:Header>
+  <ns0:Body>
+    <ns0:GetWeatherByPlaceName xmlns:ns0="http://www.example.org">
+      <ns0:Place>
+        <ns0:Name>Skypia</ns0:Name>
+      </ns0:Place>
+    </ns0:GetWeatherByPlaceName>
+  </ns0:Body>
+</ns0:Envelope>
+""".format(soap_ns=self.SOAP.ENVELOPE_NAMESPACE)
+        self.assertEqual(expected_xml, xml.decode('utf8'))
 
 
 class SOAP11_Test(SOAP_TBase, unittest.TestCase):
