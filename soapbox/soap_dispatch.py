@@ -82,9 +82,9 @@ class SOAPDispatcher(object):
         root_tag = None
         if not soap_action:
             root_tag = self._find_root_tag(body_document)
-            logger.warning('Soap action not found in http headers, use root tag "%s".', root_tag)
+            logger.debug('Soap action not found in http headers, use root tag "%s".', root_tag)
         else:
-            logger.info('Soap action found in http headers: %s', soap_action)
+            logger.debug('Soap action found in http headers: %s', soap_action)
         # TODO: handle invalid xml
         for method in self.service.methods.values():
             if soap_action:
