@@ -3,14 +3,8 @@
 # Copyright (c) Damian Powązka and Flight Data Services, Ltd.
 # See the file "LICENSE" for the full license governing this code.
 
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from distribute_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
-
 import soapbox as pkg
+from setuptools import setup, find_packages
 from requirements import RequirementsParser
 requirements = RequirementsParser()
 
