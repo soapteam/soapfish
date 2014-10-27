@@ -101,11 +101,12 @@ class SOAPDispatcher(object):
 
     def _parse_header(self, handler, soap_header):
         # TODO return soap fault if header is required but missing in the input
-        if soap_header is not None:
-            if handler.input_header:
-                return soap_header.parse_as(handler.input_header)
-            elif self.service.input_header:
-                return soap_header.parse_as(self.service.input_header)
+        if soap_header is None:
+            return
+        if handler.input_header:
+            return soap_header.parse_as(handler.input_header)
+        elif self.service.input_header:
+            return soap_header.parse_as(self.service.input_header)
 
     def _parse_input(self, method, message):
         input_parser = method.input
@@ -120,20 +121,21 @@ class SOAPDispatcher(object):
                           schema=self.service.schema)  # Validation.
 
     def _validate_header(self, soap_header):
-        if soap_header is not None:
-            for children in soap_header._xmlelement.getchildren():
+        if soap_header is None:
+            return
+        for children in soap_header._xmlelement.getchildren():
+            try:
+                namespace = children.nsmap[children.prefix]
+            except KeyError:
+                namespace = None
+            if namespace== wsa.NAMESPACE:
+                wsa.XML_SCHEMA.assertValid(children)
+            else:
                 try:
-                    namespace = children.nsmap[children.prefix]
-                except KeyError:
-                    namespace = None
-                if namespace== wsa.NAMESPACE:
-                    wsa.XML_SCHEMA.assertValid(children)
-                else:
-                    try:
-                        self.xmlschema.assertValid(children)
-                    except (etree.XMLSyntaxError, etree.DocumentInvalid):
-                        if self.strict_soap_header:
-                            raise
+                    self.xmlschema.assertValid(children)
+                except (etree.XMLSyntaxError, etree.DocumentInvalid):
+                    if self.strict_soap_header:
+                        raise
 
     def _validate_body(self, soap_body):
         self.xmlschema.assertValid(soap_body.content())
