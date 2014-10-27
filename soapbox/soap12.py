@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from lxml import etree
-
 from . import namespaces as ns
 from . import soap11
 from . import xsd

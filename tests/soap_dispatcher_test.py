@@ -3,7 +3,6 @@ from __future__ import absolute_import
 
 import io
 from lxml import etree
-import six
 
 from soapbox import core, soap, wsa, xsd
 from soapbox.core import SoapboxRequest, SoapboxResponse

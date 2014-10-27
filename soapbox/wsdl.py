@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from . import namespaces as ns
-from . import xsd, xsdspec
 
 
 # --- Functions ---------------------------------------------------------------

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from lxml import etree
-
 from . import xsd
 from . import namespaces as ns
 

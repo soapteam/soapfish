@@ -13,8 +13,6 @@ if six.PY3:
 else:
     from urlparse import urlparse
 
-from lxml import etree
-
 from . import core
 from . import settings, soap11, soap12
 from . import namespaces as ns

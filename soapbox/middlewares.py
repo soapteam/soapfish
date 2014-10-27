@@ -16,7 +16,7 @@ class ExceptionToSoapFault():
     def __call__(self, request, next_call):
         try:
             return next_call(request)
-        except Exception as ex:
+        except Exception:
             message = "Internal Error" if not self.return_tb else traceback.format_exc()
             if six.PY2:
                 message = message.decode("utf8")

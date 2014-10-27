@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from . import xsd, xsdspec
-from . import wsdl, wsdl11
+from . import xsd
+from . import wsdl11
 from . import namespaces as ns
 
 

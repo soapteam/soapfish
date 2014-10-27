@@ -8,11 +8,8 @@ from lxml import etree
 import six
 
 from . import core
-from . import middlewares as mw
 from . import py2wsdl
-from . import soap
 from . import wsa
-from .lib.attribute_dict import AttrDict
 from .py2xsd import generate_xsd
 from .utils import uncapitalize
 
@@ -123,7 +120,6 @@ class SOAPDispatcher(object):
                           schema=self.service.schema)  # Validation.
 
     def _validate_header(self, soap_header):
-        SOAP = self.service.version
         if soap_header is not None:
             for children in soap_header._xmlelement.getchildren():
                 try:
@@ -140,7 +136,6 @@ class SOAPDispatcher(object):
                             raise
 
     def _validate_body(self, soap_body):
-        SOAP = self.service.version
         self.xmlschema.assertValid(soap_body.content())
 
     def _validate_input(self, envelope):
