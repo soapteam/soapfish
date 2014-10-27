@@ -194,6 +194,18 @@ class SoapDispatcherTest(PythonicTestCase):
             partial_fault_string=u'internal data error'
         )
 
+    def test_can_handle_xsd_element_as_return_value_from_handler(self):
+        handler = lambda request, input_: input_
+        dispatcher = SOAPDispatcher(_echo_service(handler))
+        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+            '<value>hello</value>'
+        '</ns1:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+
+        response = dispatcher.dispatch(request)
+        assert_contains('<value>hello</value>', response.http_content)
+
     def test_can_propagete_custom_input_header(self):
         handler, handler_state = _echo_handler()
         dispatcher = SOAPDispatcher(_echo_service(handler, input_header=InputHeader))

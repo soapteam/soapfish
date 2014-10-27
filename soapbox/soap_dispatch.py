@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def call_method(request):
     response = request.method.function(request, request.soap_body)
     if not isinstance(response, core.SoapboxResponse):
-        response = SoapboxResponse(response)
+        response = core.SoapboxResponse(response)
     return response
 
 
