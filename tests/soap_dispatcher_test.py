@@ -90,7 +90,7 @@ def _faulty_handler():
     return lambda request, input_: SoapboxResponse(soap_error)
 
 
-class SoapDispatcherTest(PythonicTestCase):
+class SOAPDispatcherTest(PythonicTestCase):
     def test_can_dispatch_good_soap_message(self):
         handler, handler_state = _echo_handler()
         dispatcher = SOAPDispatcher(_echo_service(handler))
@@ -206,7 +206,7 @@ class SoapDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request)
         assert_contains('<value>hello</value>', response.http_content)
 
-    def test_can_propagete_custom_input_header(self):
+    def test_can_propagate_custom_input_header(self):
         handler, handler_state = _echo_handler()
         dispatcher = SOAPDispatcher(_echo_service(handler, input_header=InputHeader))
         soap_header = ('<tns:InputVersion>42</tns:InputVersion>')
@@ -243,7 +243,7 @@ class SoapDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, partial_fault_string="DocumentInvalid")
 
-    def test_can_propagete_custom_output_header(self):
+    def test_can_propagate_custom_output_header(self):
         handler, handler_state = _echo_handler()
         def _handler(request, _input):
             resp = handler(request, _input)
