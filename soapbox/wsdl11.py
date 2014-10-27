@@ -103,12 +103,6 @@ class Operation(xsd.ComplexType):
         operation = wsdl.get_by_name(self.binding.operations, self.name)
         return self._get_parts(operation.input.headers)
 
-    def get_OutputMessage(self):
-        portType = self.binding.getPortType()
-        portTypeOperation = wsdl.get_by_name(portType.operations, self.name)
-        messageName = portTypeOperation.output.message
-        return wsdl.get_by_name(self.definition.messages, messageName)
-
     def get_OutputMessageHeaders(self):
         operation = wsdl.get_by_name(self.binding.operations, self.name)
         return self._get_parts(operation.output.headers)
