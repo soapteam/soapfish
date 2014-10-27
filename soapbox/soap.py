@@ -8,17 +8,12 @@ import logging
 import os
 import six
 
-if six.PY3:
-    from urllib.parse import urlparse
-else:
-    from urlparse import urlparse
-
 from . import core
 from . import settings, soap11, soap12
 from . import namespaces as ns
 from . import wsa
+from .compat import urlparse
 from .utils import uncapitalize
-
 
 SOAP_HTTP_Transport = ns.wsdl_soap_http
 

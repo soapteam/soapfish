@@ -3,8 +3,6 @@
 
 __all__ = ['urlparse', 'urlunparse']
 
-
-
 import six
 if six.PY3:
     from urllib.parse import urlparse, urlunparse
