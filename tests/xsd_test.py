@@ -3,7 +3,7 @@ import unittest
 from lxml import etree
 
 from soapbox import xsd, xsdspec
-from soapbox import iso8601
+from soapbox.lib import iso8601
 from soapbox.lib.pythonic_testcase import *
 
 

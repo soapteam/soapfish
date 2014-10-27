@@ -3,7 +3,7 @@ from lxml import etree
 
 from soapbox.py2xsd import generate_xsd
 from soapbox import xsd
-from soapbox import iso8601
+from soapbox.lib import iso8601
 
 
 class Pilot(xsd.String):

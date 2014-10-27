@@ -51,7 +51,7 @@ from lxml import etree
 import six
 
 from . import namespaces as ns
-from . import iso8601, settings
+from .lib import iso8601
 from .utils import timezone_offset_to_string
 
 basestring = six.string_types
