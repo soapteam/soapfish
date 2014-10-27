@@ -51,10 +51,10 @@ from lxml import etree
 import six
 
 from . import namespaces as ns
+from .compat import basestring
 from .lib import iso8601
 from .utils import timezone_offset_to_string
 
-basestring = six.string_types
 logger = logging.getLogger(__name__)
 NIL = object()
 

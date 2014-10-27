@@ -7,18 +7,16 @@ import argparse
 import imp
 import logging
 import textwrap
-import six
 
 from lxml import etree
 
 from . import xsd
+from . import namespaces as ns
+from .compat import basestring
 from .py2xsd import generate_xsdspec
 from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
 from .wsdl import get_wsdl_classes
-from . import namespaces as ns
-
-basestring = six.string_types
 
 logger = logging.getLogger('soapbox')
 

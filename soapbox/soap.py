@@ -6,18 +6,15 @@ SOAP protocol implementation, dispatchers and client stub.
 import httplib2
 import logging
 import os
-import six
 
 from . import core
 from . import settings, soap11, soap12
 from . import namespaces as ns
 from . import wsa
-from .compat import urlparse
+from .compat import basestring, urlparse
 from .utils import uncapitalize
 
 SOAP_HTTP_Transport = ns.wsdl_soap_http
-
-basestring = six.string_types
 
 
 logger = logging.getLogger('soapbox')

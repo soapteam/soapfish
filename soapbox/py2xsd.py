@@ -14,9 +14,8 @@ from lxml import etree
 
 from . import namespaces as ns
 from . import xsd, xsdspec
+from .compat import basestring
 from .utils import uncapitalize
-
-basestring = six.string_types
 
 NUMERIC_TYPES = [xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long, xsd.Short,
         xsd.UnsignedByte, xsd.UnsignedInt, xsd.UnsignedLong, xsd.UnsignedShort,

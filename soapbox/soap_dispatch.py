@@ -4,16 +4,15 @@ from __future__ import absolute_import
 
 import functools
 import logging
+
 from lxml import etree
-import six
 
 from . import core
 from . import py2wsdl
 from . import wsa
+from .compat import basestring
 from .py2xsd import generate_xsd
 from .utils import uncapitalize
-
-basestring = six.string_types
 
 __all__ = ['SOAPDispatcher']
 
