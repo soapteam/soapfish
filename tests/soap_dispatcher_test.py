@@ -6,6 +6,7 @@ from lxml import etree
 
 from soapbox import core, soap, wsa, xsd
 from soapbox.core import SoapboxRequest, SoapboxResponse
+from soapbox.compat import basestring
 from soapbox.lib.pythonic_testcase import *
 from soapbox.lib.attribute_dict import AttrDict
 from soapbox.middlewares import ExceptionToSoapFault
@@ -204,7 +205,10 @@ class SOAPDispatcherTest(PythonicTestCase):
         request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
 
         response = dispatcher.dispatch(request)
-        assert_contains('<value>hello</value>', response.http_content)
+        body_text = response.http_content
+        if not isinstance(body_text, basestring):
+            body_text = body_text.decode('utf-8')
+        assert_contains('<value>hello</value>', body_text)
 
     def test_can_propagate_custom_input_header(self):
         handler, handler_state = _echo_handler()

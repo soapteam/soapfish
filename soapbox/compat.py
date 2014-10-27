@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-__all__ = ['urlparse', 'urlunparse']
+__all__ = ['basestring', 'urlparse', 'urlunparse']
 
 import six
 if six.PY3:
@@ -9,3 +9,4 @@ if six.PY3:
 else:
     from urlparse import urlparse, urlunparse
 
+basestring = six.string_types
