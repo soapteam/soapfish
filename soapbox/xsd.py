@@ -875,6 +875,9 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         if schema is None:
             parser = etree.fromstring
         else:
+            if not isinstance(schema, etree.XMLSchema):
+                from .py2xsd import generate_xsd
+                schema = etree.XMLSchema(generate_xsd(schema))
             xmlparser = etree.XMLParser(schema=schema)
             parser = functools.partial(etree.fromstring, parser=xmlparser)
         xmlelement = parser(xml)

@@ -500,6 +500,26 @@ class ComplexTest(unittest.TestCase):
         self.assertEqual(b.name, "b")
         self.assertEqual(b.type, "B")
 
+    def test_parsexml_with_soapbox_schema(self):
+        # sometimes it comes handy that soapbox can validate some XML against a
+        # provided soapbox schema (instead of an etree.XMLSchema) especially in
+        # testing.
+        class A(xsd.ComplexType):
+            name = xsd.Element(xsd.String, nillable=True)
+        ns = 'http://foo.example'
+        soapbox_schema = xsd.Schema(ns,
+            imports=[],
+            elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
+            simpleTypes=[],
+            attributeGroups=[],
+            groups=[],
+            complexTypes=[A],
+            elements={'foo': xsd.Element(A)},
+        )
+        xml = '<test:foo xmlns:test="%s"><name>bar</name></test:foo>' % ns
+        foo = A.parsexml(xml, schema=soapbox_schema)
+        assert_equals('bar', foo.name)
+
 
 class XmlParsingTest(unittest.TestCase):
     SIMPLE_XML = b"""<flight>
