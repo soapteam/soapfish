@@ -90,9 +90,10 @@ class SOAPDispatcher(object):
             elif root_tag == method.input:
                 return method
         if soap_action is not None:
-            raise core.SOAPError(SOAP.Code.CLIENT, "Invalid soap action '%s'" % soap_action)
+            error_msg = "Invalid soap action '%s'" % soap_action
         else:
-            raise core.SOAPError(SOAP.Code.CLIENT, "Missing soap action and invalid root tag '%s'" % root_tag)
+            error_msg = "Missing soap action and invalid root tag '%s'" % root_tag
+        raise core.SOAPError(SOAP.Code.CLIENT, error_msg)
 
     def _find_root_tag(self, body_document):
         root = body_document
