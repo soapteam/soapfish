@@ -411,7 +411,7 @@ class ComplexTest(unittest.TestCase):
         aircraft = Aircraft.parsexml(XML)
         self.assertEqual("LN-KKX", aircraft.tail_number)
 
-    def test_mulitylayer_complex(self):
+    def test_multilayer_complex(self):
         flight = Flight()
         flight.tail_number = "LN-KKA"
         flight.takeoff_airport = Airport.create("IATA", "WAW")
@@ -485,7 +485,7 @@ class ComplexTest(unittest.TestCase):
         EXPECTED_XML = b"""<inheritance name="b" type="B"/>\n"""
         self.assertEqual(EXPECTED_XML, xml)
 
-    def test_inheritance_parsin(self):
+    def test_inheritance_parsing(self):
 
         class A(xsd.ComplexType):
             name = xsd.Attribute(xsd.String)

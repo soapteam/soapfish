@@ -2,7 +2,7 @@ TODO
 ====
 
 This project is very, very promising:
-- It is focussed on XML and SOAP/WSDL without any compromise. In an ideal world
+- It is focused on XML and SOAP/WSDL without any compromise. In an ideal world
   soapbox works with each and every syntax allowed by these technologies.
 - It allows you to have a representation of arbitrary XML including support
   for XSD. Parse any XML described by a schema into a nice class-based tree
