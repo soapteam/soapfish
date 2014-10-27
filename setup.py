@@ -5,15 +5,21 @@ Soapbox is a SOAP library for Python capable of generating Python modules from
 WSDL documents and providing a dispatcher for the Django framework.
 '''
 
+import re
 
 from setuptools import setup, find_packages
 
 import soapbox
 
 
-def get_requires(filename):
-    return [r.strip() for r in open(filename).readlines() if r[:3] != '-r ' and r.strip()]
-
+def requires_from_file(filename):
+    requirements = []
+    with open(filename, 'r') as requirements_fp:
+        for line in requirements_fp.readlines():
+            match = re.search('^\s*([a-zA-Z][^#]+?)(\s*#.+)?\n$', line)
+            if match:
+                requirements.append(match.group(1))
+    return requirements
 
 setup(
     name='soapbox-bsd',
@@ -27,8 +33,8 @@ setup(
     license='New BSD License',
     packages=find_packages(exclude=("examples", "tests",)),
     include_package_data=True,
-    install_requires=get_requires('requirements.txt'),
-    tests_require=get_requires('dev_requirements.txt'),
+    install_requires=requires_from_file('requirements.txt'),
+    tests_require=requires_from_file('dev_requirements.txt'),
     test_suite='nose.collector',
     entry_points={
         'console_scripts': [
