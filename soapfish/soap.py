@@ -128,7 +128,7 @@ class Stub(object):
             _type = method.output
 
         body = envelope.Body.parse_as(_type)
-        return core.SoapfishResponse(body, soap_header=response_header)
+        return core.SOAPResponse(body, soap_header=response_header)
 
     def call(self, operationName, parameter, header=None):
         '''

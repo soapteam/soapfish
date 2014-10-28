@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 
 def call_method(request):
     response = request.method.function(request, request.soap_body)
-    if not isinstance(response, core.SoapfishResponse):
-        response = core.SoapfishResponse(response)
+    if not isinstance(response, core.SOAPResponse):
+        response = core.SOAPResponse(response)
     return response
 
 
@@ -151,7 +151,7 @@ class SOAPDispatcher(object):
         elif request_method == 'POST':
             return self.handle_soap_request(request)
         else:
-            return core.SoapfishResponse('bad request', http_status_code=400,
+            return core.SOAPResponse('bad request', http_status_code=400,
                 http_content='bad_request', http_headers={'Content-Type': 'text/plain'})
 
     def handle_soap_request(self, request):
@@ -176,8 +176,8 @@ class SOAPDispatcher(object):
         else:
             response = self.middleware()(request)
 
-        if not isinstance(response, core.SoapfishResponse):
-            response = core.SoapfishResponse(response)
+        if not isinstance(response, core.SOAPResponse):
+            response = core.SOAPResponse(response)
 
         response.http_headers['Content-Type'] = SOAP.CONTENT_TYPE
 
@@ -197,7 +197,7 @@ class SOAPDispatcher(object):
         return response
 
     def handle_wsdl_request(self, request):
-        return core.SoapfishResponse('wsdl', http_content=self.wsdl, http_headers={'Content-Type': 'text/xml'})
+        return core.SOAPResponse('wsdl', http_content=self.wsdl, http_headers={'Content-Type': 'text/xml'})
 
 
 class WsgiSoapApplication(object):
@@ -211,7 +211,7 @@ class WsgiSoapApplication(object):
     def __call__(self, req_env, start_response, wsgi_url=None):
         content_length = int(req_env.get('CONTENT_LENGTH', '') or 0)
         content = req_env['wsgi.input'].read(content_length)
-        soap_request = core.SoapfishRequest(req_env, content)
+        soap_request = core.SOAPRequest(req_env, content)
         response = self.dispatcher.dispatch(soap_request)
         start_response(self._get_http_status(response.http_status_code), response.http_headers.items())
         return [response.http_content]
