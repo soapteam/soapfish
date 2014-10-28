@@ -108,8 +108,8 @@ def main():
     xml = open_document(opt.xsd)
     xmlelement = etree.fromstring(xml)
     print(textwrap.dedent('''\
-    from soapfish import xsd
-    from soapfish.xsd import UNBOUNDED
+        from soapfish import xsd
+        from soapfish.xsd import UNBOUNDED
     '''))
     print(generate_code_from_xsd(xmlelement))
 
