@@ -61,7 +61,9 @@ def resolve_import(xsdimport, known_namespaces):
 
 
 def schema_name(namespace):
-    return hashlib.sha512(namespace.encode()).hexdigest()[0:5]
+    # we don't have any cryptographic requirements here and md5 is faster than
+    # sha512 so there is no harm using an outdated algorithm.
+    return hashlib.md5(namespace.encode()).hexdigest()[0:5]
 
 
 def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None, encoding='utf8'):
