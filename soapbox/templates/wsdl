@@ -128,7 +128,7 @@ class {{ outputMessage.name }}Headers(BaseHeader):
     {%- else %}
     version=soap.SOAPVersion.SOAP12,
     {%- endif %}
-    methods={{ '{' }}{% for o in binding.operations %}'{{ o.name }}': {{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
+    methods=[{% for o in binding.operations %}{{ o.name }}_method{% if not loop.last %}, {% endif %}{% endfor %}],
 )
 {# [blank line] #}
 {# [blank line] #}

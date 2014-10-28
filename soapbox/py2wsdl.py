@@ -43,7 +43,7 @@ def build_bindings(wsdl, definitions, service):
     binding.binding.style = 'document'
     binding.binding.transport = SOAP_HTTP_Transport
 
-    for method in service.methods.values():
+    for method in service.methods:
         operation = wsdl.Operation()
         operation.name = method.operationName
         operation.operation = wsdl.SOAP_Operation()
@@ -60,7 +60,7 @@ def build_portTypes(wsdl, definitions, service):
     portType = wsdl.PortType()
     portType.name = service.name + 'PortType'
 
-    for method in service.methods.values():
+    for method in service.methods:
         operation = wsdl.Operation()
         operation.name = method.operationName
         operation.input = wsdl.Input(message='tns:' + method.operationName + 'Input')
@@ -71,7 +71,7 @@ def build_portTypes(wsdl, definitions, service):
 
 
 def build_messages(wsdl, definitions, service):
-    for method in service.methods.values():
+    for method in service.methods:
         inputMessage = wsdl.Message(name=method.operationName + 'Input')
         part = wsdl.Part(name='body')
         if isinstance(method.input, basestring):

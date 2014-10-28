@@ -78,7 +78,7 @@ class Service(object):
         self.output_header= output_header
 
     def get_method(self, operationName):
-        return self.methods[operationName]
+        return filter(lambda m: m.operationName == operationName, self.methods)[0]
 
 
 class Stub(object):
