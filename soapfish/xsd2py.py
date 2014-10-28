@@ -7,10 +7,12 @@ import argparse
 import hashlib
 import keyword
 import logging
+import sys
 import textwrap
 
 from jinja2 import Environment, PackageLoader
 from lxml import etree
+import six
 
 from . import xsd
 from .xsdspec import Schema
@@ -108,10 +110,21 @@ def main():
     xml = open_document(opt.xsd)
     xmlelement = etree.fromstring(xml)
     print(textwrap.dedent('''\
+        # -*- coding: utf-8 -*-
+
         from soapfish import xsd
         from soapfish.xsd import UNBOUNDED
     '''))
-    print(generate_code_from_xsd(xmlelement))
+    code = generate_code_from_xsd(xmlelement, encoding='utf-8')
+    # In Python 3 encoding a string returns bytes so we have to write the
+    # generated code to sys.stdout.buffer instead of sys.stdout.
+    # We should not depend on Python 3's "auto-conversion to console charset"
+    # because this might fail for file redirections and cron jobs which might
+    # use pure ASCII.
+    if six.PY3:
+        sys.stdout.buffer.write(code)
+    else:
+        print(code)
 
 
 if __name__ == '__main__':
