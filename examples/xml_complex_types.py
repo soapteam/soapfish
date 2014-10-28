@@ -3,7 +3,7 @@
 from __future__ import print_function
 
 from datetime import datetime
-from soapbox import xsd
+from soapfish import xsd
 
 
 class Airport(xsd.ComplexType):

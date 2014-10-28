@@ -5,13 +5,13 @@ Middlewares
 Middlewares Overview
 --------------------
 
-The soapbox librairie implements a version of the Rack protocol. As a result, a soapbox dispatcher can have middlewares that may inspect, analyze, or modify the application environment, request, and response before and/or after the method call.
+The soapfish librairie implements a version of the Rack protocol. As a result, a soapfish dispatcher can have middlewares that may inspect, analyze, or modify the application environment, request, and response before and/or after the method call.
 
 
 Middlewares Architecture
 ''''''''''''''''''''''''
 
-Think of a soapbox dispatcher as an onion. Each layer of the onion is a middleware. When you invoke the dispatcher dispatch() method, the outer-most middleware layer is invoked first. When ready, that middleware layer is responsible for optionally invoking the next middleware layer that it surrounds. This process steps deeper into the onion - through each middleware layer - until the service method is invoked. This stepped process is possible because each middleware layer are callable. When you add new middleware to the dispatcher, the added middleware will become a new outer layer and surround the previous outer middleware layer (if available) or the service method call itself.
+Think of a soapfish dispatcher as an onion. Each layer of the onion is a middleware. When you invoke the dispatcher dispatch() method, the outer-most middleware layer is invoked first. When ready, that middleware layer is responsible for optionally invoking the next middleware layer that it surrounds. This process steps deeper into the onion - through each middleware layer - until the service method is invoked. This stepped process is possible because each middleware layer are callable. When you add new middleware to the dispatcher, the added middleware will become a new outer layer and surround the previous outer middleware layer (if available) or the service method call itself.
 
 
 Dispatcher Reference
@@ -104,8 +104,8 @@ When the example dispatcher above is invoked, the client ip address will be logg
 How to Write Middleware
 -----------------------
 
-Middleware must be a callable accepting 2 parameters `request` and `next_call` with these exact names. The callable must return a soapbox response object.
-I encourage you to look at soapbox built-in middleware for working examples (eg. soapbox.middlewares.ExceptionToSoapFault or soapbox.middlewares.ExceptionLogger).
+Middleware must be a callable accepting 2 parameters `request` and `next_call` with these exact names. The callable must return a soapfish response object.
+I encourage you to look at soapfish built-in middleware for working examples (eg. soapfish.middlewares.ExceptionToSoapFault or soapfish.middlewares.ExceptionLogger).
 
 This example is the most simple implementation of middleware.
 

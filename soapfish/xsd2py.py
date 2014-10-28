@@ -25,10 +25,10 @@ from .utils import (
 )
 
 
-TEMPLATE_PACKAGE = 'soapbox.templates'
+TEMPLATE_PACKAGE = 'soapfish.templates'
 
 
-logger = logging.getLogger('soapbox')
+logger = logging.getLogger('soapfish')
 
 
 # --- Helpers -----------------------------------------------------------------
@@ -108,8 +108,8 @@ def main():
     xml = open_document(opt.xsd)
     xmlelement = etree.fromstring(xml)
     print(textwrap.dedent('''\
-    from soapbox import xsd
-    from soapbox.xsd import UNBOUNDED
+    from soapfish import xsd
+    from soapfish.xsd import UNBOUNDED
     '''))
     print(generate_code_from_xsd(xmlelement))
 

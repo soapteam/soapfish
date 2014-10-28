@@ -6,7 +6,7 @@ xsd.Ref is not serialized at all
 
 xsd.References are not serialized at all.
 ,-----------------------------------------------------------------------------
-from soapbox import xsd
+from soapfish import xsd
 
 class Person(xsd.Group):
     name = xsd.Element(xsd.String)
@@ -28,7 +28,7 @@ schema = xsd.Schema(
     elements={'job': xsd.Element(Job())},
 )
 
-from soapbox.py2xsd import generate_xsd
+from soapfish.py2xsd import generate_xsd
 xsd_ = generate_xsd(schema)
 from lxml import etree
 print etree.tostring(xsd_, pretty_print=True)

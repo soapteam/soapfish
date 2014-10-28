@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
-Soapbox is a SOAP library for Python capable of generating Python modules from
+Soapfish is a SOAP library for Python capable of generating Python modules from
 WSDL documents and providing a dispatcher for the Django framework.
 '''
 
@@ -9,7 +9,7 @@ import re
 
 from setuptools import setup, find_packages
 
-import soapbox
+import soapfish
 
 
 def requires_from_file(filename):
@@ -22,11 +22,11 @@ def requires_from_file(filename):
     return requirements
 
 setup(
-    name='soapbox-bsd',
-    version=soapbox.__version__,
-    author=soapbox.__author__,
-    author_email=soapbox.__email__,
-    url='https://github.com/FelixSchwarz/soapbox-bsd',
+    name='soapfish',
+    version=soapfish.__version__,
+    author=soapfish.__author__,
+    author_email=soapfish.__email__,
+    url='https://github.com/FelixSchwarz/soapfish',
     description='A SOAP library for Python',
     long_description=open('README.md').read() + open('CHANGES').read() + open('TODO').read(),
     download_url='',
@@ -38,10 +38,10 @@ setup(
     test_suite='nose.collector',
     entry_points={
         'console_scripts': [
-            'py2wsdl=soapbox.py2wsdl:main',
-            'py2xsd=soapbox.py2xsd:main',
-            'wsdl2py=soapbox.wsdl2py:main',
-            'xsd2py=soapbox.xsd2py:main',
+            'py2wsdl=soapfish.py2wsdl:main',
+            'py2xsd=soapfish.py2xsd:main',
+            'wsdl2py=soapfish.wsdl2py:main',
+            'xsd2py=soapfish.xsd2py:main',
         ],
     },
     platforms=['OS Independent'],

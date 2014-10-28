@@ -2,12 +2,12 @@ import unittest
 
 from lxml import etree
 
-from soapbox import xsd
-from soapbox import wsa
-from soapbox import soap11
-from soapbox import soap12
-from soapbox.lib.pythonic_testcase import *
-from soapbox.py2xsd import generate_xsd
+from soapfish import xsd
+from soapfish import wsa
+from soapfish import soap11
+from soapfish import soap12
+from soapfish.lib.pythonic_testcase import *
+from soapfish.py2xsd import generate_xsd
 
 SOAP11_ENVELOPE = """\
 <?xml version="1.0" encoding="utf-8"?>

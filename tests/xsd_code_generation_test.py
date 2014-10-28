@@ -3,9 +3,9 @@ from __future__ import print_function
 from lxml import etree
 from nose import SkipTest
 
-from soapbox import xsd, xsdspec
-from soapbox import xsd2py
-from soapbox.lib.pythonic_testcase import *
+from soapfish import xsd, xsdspec
+from soapfish import xsd2py
+from soapfish.lib.pythonic_testcase import *
 
 
 class XSDCodeGenerationTest(PythonicTestCase):
@@ -121,8 +121,8 @@ class XSDCodeGenerationTest(PythonicTestCase):
     
     def _generated_symbols(self, code_string):
         # imports not present in generated code
-        from soapbox import xsd
-        from soapbox.xsd import UNBOUNDED
+        from soapfish import xsd
+        from soapfish.xsd import UNBOUNDED
         new_locals = dict(locals())
         
         try:

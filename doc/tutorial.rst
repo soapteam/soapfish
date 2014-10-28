@@ -15,8 +15,8 @@ to object. The object description generally is similar to Django database models
     # in Django
     Django: tail_number = models.CharField()
 
-    # in soapbox
-    soapbox: tail_number = xsd.Element(xsd.String)
+    # in soapfish
+    soapfish: tail_number = xsd.Element(xsd.String)
 
 xsd.Element reflects the nature of the field, elements are fields that
 will be wrapped with tag, other options are xsd.Attribute, xsd.Ref and 
@@ -36,7 +36,7 @@ The main building blocks are xsd.ComplexType, xsd.Element, xsd.Attribute and sim
 .. code-block:: python
 
     #Example 1. Rendering object to XML.
-    from soapbox import xsd
+    from soapfish import xsd
 
     class Airport(xsd.ComplexType):
         type = xsd.Element(xsd.String)
@@ -52,7 +52,7 @@ Note that xml method takes one parameter  - root tag name.
 .. code-block:: python
 
     #Example 2. Parsing XML to object.
-    from soapbox import xsd
+    from soapfish import xsd
     class Airport(xsd.ComplexType):
          type = xsd.Element(xsd.String)
          code = xsd.Element(xsd.String)
@@ -71,7 +71,7 @@ Note that xml method takes one parameter  - root tag name.
 
     #Example 3. Nested ComplexTypes with attributes.
     from datetime import datetime
-    from soapbox import xsd
+    from soapfish import xsd
     class Airport(xsd.ComplexType):
          type = xsd.Element(xsd.String)
          code = xsd.Element(xsd.String)
@@ -128,7 +128,7 @@ will generate:
 
 .. code-block:: python
 
-    from soapbox import xsd
+    from soapfish import xsd
     
     class Pilot(xsd.String):
         enumeration = [ "CAPTAIN",  "FIRST_OFFICER", ]
@@ -294,7 +294,7 @@ provided company code and datetime.
 
     Schema = xsd.Schema(
           #Should be unique URL, can be any string.
-          targetNamespace = "http://code.google.com/p/soapbox/stock.xsd",
+          targetNamespace = "http://code.google.com/p/soapfish/stock.xsd",
           #Register all complex types to schema.
           complexTypes = [GetStockPrice, StockPrice],
           elements = {"getStockPrice":xsd.Element(GetStockPrice), 
@@ -316,7 +316,7 @@ an element of specific type and use it string element name as input/output in Se
 
     get_stock_price_method = xsd.Method(
         function = get_stock_price,
-        soapAction = "http://code.google.com/p/soapbox/stock/get_stock_price",
+        soapAction = "http://code.google.com/p/soapfish/stock/get_stock_price",
         input = "getStockPrice",
         output = "stockPrice",
         operationName = "GetStockPrice")
@@ -329,7 +329,7 @@ an element of specific type and use it string element name as input/output in Se
 
     SERVICE = soap.Service(
         #WSDL targetNamespce
-        targetNamespace = "http://code.google.com/p/soapbox/stock.wsdl",
+        targetNamespace = "http://code.google.com/p/soapfish/stock.wsdl",
         #The url were request should be send.
         location = "http://127.0.0.1:8000/stock",
         schema = Schema,
@@ -341,7 +341,7 @@ and wsgi.py
 .. code-block:: python
 
     from wsgiref.simple_server import make_server
-    from soapbox import soap_dispatch
+    from soapfish import soap_dispatch
     from service_gen import SERVICE
 
     dispatcher = soap_dispatch.SOAPDispatcher(SERVICE)
@@ -356,7 +356,7 @@ Now requesting http://127.0.0.1:8000/stock?wsdl will give service specification 
 
 .. code-block:: xml
 
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="http://code.google.com/p/soapbox/stock.xsd">
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="http://code.google.com/p/soapfish/stock.xsd">
        <soapenv:Header/>
        <soapenv:Body>
           <stoc:getStockPrice>

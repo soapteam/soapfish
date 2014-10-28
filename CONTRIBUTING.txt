@@ -7,7 +7,7 @@ Contributions to the project can take many forms:
 I won't even pretend to understand the XML/XSD semantics completely so there is
 a good chance I missed something.
 You can help by submitting examples of XML (with the according schema) which
-soapbox currently can not handle. Ideally you'd write a unit test which clearly
+soapfish currently can not handle. Ideally you'd write a unit test which clearly
 demonstrates the failure.
 
 Please try to minimize the sample as much as possible. I know this can be
@@ -20,9 +20,9 @@ Well, of course that's most helpful.
 
 Some advice about the order in which new features should be implemented:
 1. Ensure that you can express the XSD schema using the classes from
-   soapbox.xsdspec. This is the actual schema representation without any
+   soapfish.xsdspec. This is the actual schema representation without any
    semantic sugar.
-2. Build your schema in soapbox.xsd elements which is the high-level API. Try
+2. Build your schema in soapfish.xsd elements which is the high-level API. Try
    to build the object graph as you need.
 3. Ensure that the assigned values in the object graph can be parsed and
    serialized to XML.

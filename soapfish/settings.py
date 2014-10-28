@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-Soapbox Configuration
+Soapfish Configuration
 '''
 
 # --- HTTP --------------------------------------------------------------------

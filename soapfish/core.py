@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class SoapboxResponse(object):
+class SoapfishResponse(object):
     def __init__(self, soap_body, soap_header=None, http_status_code=200, http_content=None,
                  http_headers=None):
         self.soap_body = soap_body
@@ -11,7 +11,7 @@ class SoapboxResponse(object):
         self.http_headers = {} if http_headers is None else http_headers
 
 
-class SoapboxRequest(object):
+class SoapfishRequest(object):
     def __init__(self, environ, http_content):
         self.environ = environ
         self.http_content = http_content

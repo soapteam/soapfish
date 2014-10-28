@@ -29,10 +29,10 @@ from .wsdl import get_wsdl_classes, get_by_name
 from .xsd2py import schema_to_py, schema_name
 
 
-TEMPLATE_PACKAGE = 'soapbox.templates'
+TEMPLATE_PACKAGE = 'soapfish.templates'
 
 
-logger = logging.getLogger('soapbox')
+logger = logging.getLogger('soapfish')
 
 
 # --- Helpers -----------------------------------------------------------------

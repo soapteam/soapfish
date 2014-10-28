@@ -27,7 +27,7 @@ STRING_TYPES = [xsd.QName, xsd.AnyURI, xsd.Base64Binary, xsd.QName,
 ALL_TYPES = NUMERIC_TYPES + STRING_TYPES
 
 
-logger = logging.getLogger('soapbox')
+logger = logging.getLogger('soapfish')
 
 
 # --- Helpers -----------------------------------------------------------------

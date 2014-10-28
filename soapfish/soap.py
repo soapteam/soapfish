@@ -17,7 +17,7 @@ from .utils import uncapitalize
 SOAP_HTTP_Transport = ns.wsdl_soap_http
 
 
-logger = logging.getLogger('soapbox')
+logger = logging.getLogger('soapfish')
 
 
 class SOAPVersion:
@@ -128,7 +128,7 @@ class Stub(object):
             _type = method.output
 
         body = envelope.Body.parse_as(_type)
-        return core.SoapboxResponse(body, soap_header=response_header)
+        return core.SoapfishResponse(body, soap_header=response_header)
 
     def call(self, operationName, parameter, header=None):
         '''

@@ -1,6 +1,6 @@
 
-from soapbox import xsdspec
-from soapbox.lib.pythonic_testcase import *
+from soapfish import xsdspec
+from soapfish.lib.pythonic_testcase import *
 
 
 class XSDSpecSchemaTest(PythonicTestCase):

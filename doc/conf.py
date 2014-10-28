@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Soapbox BSD documentation build configuration file, created by
+# Soapfish BSD documentation build configuration file, created by
 # sphinx-quickstart on Thu Mar  6 16:06:14 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -47,7 +47,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Soapbox BSD'
+project = 'Soapfish BSD'
 copyright = '2014, AuthorName'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -180,7 +180,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'SoapboxBSDdoc'
+htmlhelp_basename = 'SoapfishBSDdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -200,7 +200,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'SoapboxBSD.tex', 'Soapbox BSD Documentation',
+  ('index', 'SoapfishBSD.tex', 'Soapfish BSD Documentation',
    'AuthorName', 'manual'),
 ]
 
@@ -230,7 +230,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'soapboxbsd', 'Soapbox BSD Documentation',
+    ('index', 'soapfishbsd', 'Soapfish BSD Documentation',
      ['AuthorName'], 1)
 ]
 
@@ -244,8 +244,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'SoapboxBSD', 'Soapbox BSD Documentation',
-   'AuthorName', 'SoapboxBSD', 'One line description of project.',
+  ('index', 'SoapfishBSD', 'Soapfish BSD Documentation',
+   'AuthorName', 'SoapfishBSD', 'One line description of project.',
    'Miscellaneous'),
 ]
 

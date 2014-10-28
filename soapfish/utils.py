@@ -11,7 +11,7 @@ from . import settings
 from .compat import urlparse, urlunparse
 
 
-logger = logging.getLogger('soapbox')
+logger = logging.getLogger('soapfish')
 
 
 # --- File Functions ----------------------------------------------------------

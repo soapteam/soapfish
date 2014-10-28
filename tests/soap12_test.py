@@ -3,8 +3,8 @@ from __future__ import absolute_import
 
 from lxml import etree
 
-from soapbox.lib.pythonic_testcase import *
-from soapbox.soap12 import get_error_response, Code
+from soapfish.lib.pythonic_testcase import *
+from soapfish.soap12 import get_error_response, Code
 
 
 class SOAP12Test(PythonicTestCase):

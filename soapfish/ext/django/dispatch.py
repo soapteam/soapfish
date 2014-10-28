@@ -1,4 +1,4 @@
-from soapbox.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
+from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 
 # https://github.com/Polyconseil/django-viewsgi
 from viewsgi import embed_wsgi

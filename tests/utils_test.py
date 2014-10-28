@@ -3,8 +3,8 @@ from __future__ import absolute_import
 
 from datetime import timedelta as TimeDelta
 
-from soapbox.lib.pythonic_testcase import *
-from soapbox.utils import timezone_offset_to_string
+from soapfish.lib.pythonic_testcase import *
+from soapfish.utils import timezone_offset_to_string
 
 
 class FormatOffsetTest(PythonicTestCase):

@@ -3,9 +3,9 @@ import unittest
 from lxml import etree
 import tempfile
 
-from soapbox.xsd2py import generate_code_from_xsd
-from soapbox.wsdl2py import generate_code_from_wsdl
-from soapbox import  py2wsdl
+from soapfish.xsd2py import generate_code_from_xsd
+from soapfish.wsdl2py import generate_code_from_wsdl
+from soapfish import  py2wsdl
 
 
 XSD = """
@@ -235,7 +235,7 @@ class CodeGenerationTest(unittest.TestCase):
     def test_code_generation_from_xsd(self):
         xmlelement = etree.fromstring(XSD)
         # Add mandatory imports to test the generated code
-        code = b'from soapbox import soap, xsd\n' + generate_code_from_xsd(xmlelement)
+        code = b'from soapfish import soap, xsd\n' + generate_code_from_xsd(xmlelement)
         self._exec(code, {})
 
     def test_code_generation_from_wsdl_client(self):

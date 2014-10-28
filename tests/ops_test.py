@@ -1,9 +1,9 @@
 import unittest
 from lxml import etree
 
-from soapbox.py2xsd import generate_xsd
-from soapbox import xsd
-from soapbox.lib import iso8601
+from soapfish.py2xsd import generate_xsd
+from soapfish import xsd
+from soapfish.lib import iso8601
 
 
 class Pilot(xsd.String):

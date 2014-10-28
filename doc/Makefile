@@ -85,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/SoapboxBSD.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/Soapfish.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/SoapboxBSD.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/Soapfish.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/SoapboxBSD"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/SoapboxBSD"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/Soapfish"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/Soapfish"
 	@echo "# devhelp"
 
 epub:

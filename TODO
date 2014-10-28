@@ -3,11 +3,11 @@ TODO
 
 This project is very, very promising:
 - It is focused on XML and SOAP/WSDL without any compromise. In an ideal world
-  soapbox works with each and every syntax allowed by these technologies.
+  soapfish works with each and every syntax allowed by these technologies.
 - It allows you to have a representation of arbitrary XML including support
   for XSD. Parse any XML described by a schema into a nice class-based tree
   (and the other way round: serialization is possible as well).
-- Because soapbox supports only SOAP and no other remoting protocol (e.g.
+- Because soapfish supports only SOAP and no other remoting protocol (e.g.
   ReST-style APIs with JSON) the API is not tied to the lowest common
   denominator. You should be able implement any given WSDL.
 
@@ -58,4 +58,4 @@ OTHER TODOS
 
 - Fix circular dependency of generated schema classes.
 
-See the **TODO** markers in ``soapbox/*.py`` for a complete list.
+See the **TODO** markers in ``soapfish/*.py`` for a complete list.

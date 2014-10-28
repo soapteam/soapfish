@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from soapbox import core, soap, soap11, soap12
+from soapfish import core, soap, soap11, soap12
 
 SOAP11_ERROR_MESSAGE = """
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">

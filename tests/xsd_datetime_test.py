@@ -4,8 +4,8 @@ from datetime import datetime, timedelta as TimeDelta, tzinfo
 
 from lxml import etree
 
-from soapbox import xsd
-from soapbox.lib import iso8601
+from soapfish import xsd
+from soapfish.lib import iso8601
 
 
 class DatetimeTest(unittest.TestCase):

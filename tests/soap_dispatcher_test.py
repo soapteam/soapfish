@@ -4,13 +4,13 @@ from __future__ import absolute_import
 import io
 from lxml import etree
 
-from soapbox import core, soap, wsa, xsd
-from soapbox.core import SoapboxRequest, SoapboxResponse
-from soapbox.compat import basestring
-from soapbox.lib.pythonic_testcase import *
-from soapbox.lib.attribute_dict import AttrDict
-from soapbox.middlewares import ExceptionToSoapFault
-from soapbox.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
+from soapfish import core, soap, wsa, xsd
+from soapfish.core import SoapfishRequest, SoapfishResponse
+from soapfish.compat import basestring
+from soapfish.lib.pythonic_testcase import *
+from soapfish.lib.attribute_dict import AttrDict
+from soapfish.middlewares import ExceptionToSoapFault
+from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 
 
 # --- define test service -------------------------------------------------
@@ -34,7 +34,7 @@ def _echo_handler():
             input_ = input_,
             input_header = request.soap_header,
         ))
-        return SoapboxResponse(EchoType.create(input_.value))
+        return SoapfishResponse(EchoType.create(input_.value))
     return _handler, state
 
 class InputVersion(xsd.String):
@@ -86,7 +86,7 @@ def _echo_service(handler=None, input_header=None, output_header=None):
 
 def _faulty_handler():
     soap_error = core.SOAPError('code', 'internal data error', 'actor')
-    return lambda request, input_: SoapboxResponse(soap_error)
+    return lambda request, input_: SoapfishResponse(soap_error)
 
 
 class SOAPDispatcherTest(PythonicTestCase):
@@ -97,7 +97,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
 
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
@@ -123,14 +123,14 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<invalid>foobar</invalid>'
             '</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         assert_false(handler_state.was_called)
         self.assert_is_soap_fault(response,
             partial_fault_string=u"Element 'invalid': This element is not expected. Expected is ( value ).")
 
     def test_can_reject_malformed_xml_soap_message(self):
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), 'garbage')
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), 'garbage')
         dispatcher = SOAPDispatcher(_echo_service())
         response = dispatcher.dispatch(request)
         assert_equals(500, response.http_status_code)
@@ -138,7 +138,7 @@ class SOAPDispatcherTest(PythonicTestCase):
         self.assert_is_soap_fault(response, partial_fault_string=u"Start tag expected, '<' not found")
 
     def test_can_reject_non_soap_xml_body(self):
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), '<some>xml</some>')
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), '<some>xml</some>')
         dispatcher = SOAPDispatcher(_echo_service())
 
         # previously this raised an AttributeError due to an unhandled exception
@@ -152,7 +152,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
             '</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='invalid', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='invalid', REQUEST_METHOD='POST'), request_message)
         dispatcher = SOAPDispatcher(_echo_service())
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, partial_fault_string=u"Invalid soap action 'invalid'")
@@ -160,7 +160,7 @@ class SOAPDispatcherTest(PythonicTestCase):
     def test_can_reject_invalid_root_tag(self):
         soap_message = ('<ns0:invalid xmlns:ns0="invalid"/>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(REQUEST_METHOD='POST'), request_message)
         dispatcher = SOAPDispatcher(_echo_service())
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, partial_fault_string="DocumentInvalid")
@@ -172,7 +172,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='""', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='""', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
 
@@ -183,7 +183,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(REQUEST_METHOD='POST'), request_message)
 
         response = dispatcher.dispatch(request)
         assert_equals('text/xml', response.http_headers['Content-Type'])
@@ -200,7 +200,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>hello</value>'
         '</ns1:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
 
         response = dispatcher.dispatch(request)
         body_text = response.http_content
@@ -216,7 +216,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</tns:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
         assert_not_none(handler_state.input_header)
@@ -229,7 +229,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</tns:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
 
@@ -241,7 +241,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</tns:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, partial_fault_string="DocumentInvalid")
 
@@ -257,7 +257,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</tns:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
         assert_contains(b'<ns0:OutputVersion>42</ns0:OutputVersion>', response.http_content)
@@ -269,7 +269,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</tns:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
 
@@ -282,7 +282,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '<value>foobar</value>'
         '</tns:echoRequest>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SoapboxRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SoapfishRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response,
             fault_code=service.version.Code.SERVER,

@@ -18,7 +18,7 @@ from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
 from .wsdl import get_wsdl_classes
 
-logger = logging.getLogger('soapbox')
+logger = logging.getLogger('soapfish')
 
 
 # --- Helpers -----------------------------------------------------------------

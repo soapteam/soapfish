@@ -1,6 +1,6 @@
 # Create your views here.
-from soapbox import xsd, soap
-from soapbox.soap import SOAPVersion
+from soapfish import xsd, soap
+from soapfish.soap import SOAPVersion
 
 
 class GetStockPrice(xsd.ComplexType):
@@ -15,7 +15,7 @@ class StockPrice(xsd.ComplexType):
 
 Schema = xsd.Schema(
       # Should be unique URL, can be any string.
-      targetNamespace="http://code.google.com/p/soapbox/stock.xsd",
+      targetNamespace="http://code.google.com/p/soapfish/stock.xsd",
       # Register all complex types to schema.
       complexTypes=[GetStockPrice, StockPrice],
       elements={"getStockPrice": xsd.Element("GetStockPrice"),
@@ -33,7 +33,7 @@ def get_stock_price(request, gsp):
 
 get_stock_price_method = xsd.Method(
     function=get_stock_price,
-    soapAction="http://code.google.com/p/soapbox/stock/get_stock_price",
+    soapAction="http://code.google.com/p/soapfish/stock/get_stock_price",
     input="getStockPrice",
     output="stockPrice",
     operationName="GetStockPrice")
@@ -41,7 +41,7 @@ get_stock_price_method = xsd.Method(
 
 SERVICE11 = soap.Service(
     name="StockService",
-    targetNamespace="http://code.google.com/p/soapbox/stock.wsdl",  # WSDL targetNamespce
+    targetNamespace="http://code.google.com/p/soapfish/stock.wsdl",  # WSDL targetNamespce
     version=SOAPVersion.SOAP11,
     # The url were request should be send.
     location="http://127.0.0.1:8000/stock/soap11",
@@ -52,7 +52,7 @@ SERVICE11 = soap.Service(
 SERVICE12 = soap.Service(
     # WSDL targetNamespce
     name="StockService",
-    targetNamespace="http://code.google.com/p/soapbox/stock.wsdl",
+    targetNamespace="http://code.google.com/p/soapfish/stock.wsdl",
     version=SOAPVersion.SOAP12,
     # The url where request should be sent.
     location="http://127.0.0.1:8000/stock/soap12",

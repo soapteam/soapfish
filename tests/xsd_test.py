@@ -2,9 +2,9 @@ import unittest
 
 from lxml import etree
 
-from soapbox import xsd, xsdspec
-from soapbox.lib import iso8601
-from soapbox.lib.pythonic_testcase import *
+from soapfish import xsd, xsdspec
+from soapfish.lib import iso8601
+from soapfish.lib.pythonic_testcase import *
 
 
 class Aircraft(xsd.ComplexType):
@@ -155,7 +155,7 @@ class BooleanTypeTest(unittest.TestCase):
         self.assertEqual(expected_xml, xml)
 
     def test_boolean_correctly_renders_false_value_in_xml(self):
-        # regression test for http://code.google.com/p/soapbox/issues/detail?id=3
+        # regression test for http://code.google.com/p/soapfish/issues/detail?id=3
         # before xsd.Boolean would render [true, false] Python values *both*
         # to as 'true' in the xml.
         parent = etree.Element('parent')
@@ -500,14 +500,14 @@ class ComplexTest(unittest.TestCase):
         self.assertEqual(b.name, "b")
         self.assertEqual(b.type, "B")
 
-    def test_parsexml_with_soapbox_schema(self):
-        # sometimes it comes handy that soapbox can validate some XML against a
-        # provided soapbox schema (instead of an etree.XMLSchema) especially in
+    def test_parsexml_with_soapfish_schema(self):
+        # sometimes it comes handy that soapfish can validate some XML against a
+        # provided soapfish schema (instead of an etree.XMLSchema) especially in
         # testing.
         class A(xsd.ComplexType):
             name = xsd.Element(xsd.String, nillable=True)
         ns = 'http://foo.example'
-        soapbox_schema = xsd.Schema(ns,
+        soapfish_schema = xsd.Schema(ns,
             imports=[],
             elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
             simpleTypes=[],
@@ -517,7 +517,7 @@ class ComplexTest(unittest.TestCase):
             elements={'foo': xsd.Element(A)},
         )
         xml = '<test:foo xmlns:test="%s"><name>bar</name></test:foo>' % ns
-        foo = A.parsexml(xml, schema=soapbox_schema)
+        foo = A.parsexml(xml, schema=soapfish_schema)
         assert_equals('bar', foo.name)
 
 
@@ -884,8 +884,8 @@ class ElementTypeEvaluation(unittest.TestCase):
     def test_string_type_evalutation(self):
 
         class B1(xsd.ComplexType):
-            a = xsd.Element("soapbox.xsd.String")
-            b = xsd.Element("soapbox.xsd.Integer")
+            a = xsd.Element("soapfish.xsd.String")
+            b = xsd.Element("soapfish.xsd.Integer")
 
         b = B1()
         b.a = "test"
