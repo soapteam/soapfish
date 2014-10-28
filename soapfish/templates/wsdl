@@ -167,3 +167,4 @@ class {{ port.name }}ServiceStub(soap.Stub):
 {#- vim:set et ft=django nowrap sts=4 sw=4 ts=4: -#}
 ################################################################################
 # vim:et:ft=python:nowrap:sts=4:sw=4:ts=4
+{# [blank line] #}
