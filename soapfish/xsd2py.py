@@ -57,7 +57,7 @@ def resolve_import(xsdimport, known_namespaces):
     logger.info('Generating code for XSD import \'%s\'...' % xsdimport.schemaLocation)
     xml = open_document(xsdimport.schemaLocation)
     xmlelement = etree.fromstring(xml)
-    return generate_code_from_xsd(xmlelement, known_namespaces, xsdimport.schemaLocation)
+    return generate_code_from_xsd(xmlelement, known_namespaces, xsdimport.schemaLocation, encoding=None)
 
 
 def schema_name(namespace):
@@ -75,7 +75,10 @@ def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None, enc
     if schema.targetNamespace in known_namespaces:
         return ''
 
-    return schema_to_py(schema, xsd_namespace, known_namespaces, location).encode(encoding)
+    schema_code = schema_to_py(schema, xsd_namespace, known_namespaces, location)
+    if encoding is None:
+        return schema_code
+    return schema_code.encode(encoding)
 
 
 def schema_to_py(schema, xsd_namespace, known_namespaces=None, location=None):
