@@ -13,12 +13,4 @@ install:
 
 script: make test-with-coverage
 
-notifications:
-    email: true
-    irc:
-        channels:
-            - "chat.freenode.net#soapbox-bsd"
-        on_success: always
-        on_failure: always
-        use_notice: true
-        skip_join: true
+
