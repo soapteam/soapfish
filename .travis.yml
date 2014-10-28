@@ -11,6 +11,4 @@ install:
     - python setup.py build install
     - pip install -r dev_requirements.txt
 
-script: make test-with-coverage
-
-
+script: nosetests -s
