@@ -56,7 +56,7 @@ Schema_qualified = xsd.Schema(
         'Identity': xsd.Element(xsd.String),
     },
 )
-XmlSchema_qualified = etree.XMLSchema(generate_xsd(Schema_qualified))
+XMLSchema_qualified = etree.XMLSchema(generate_xsd(Schema_qualified))
 
 class WsaAppHeader(wsa.Header):
     SCHEMA = Schema_qualified
@@ -80,16 +80,16 @@ Schema_unqualified = xsd.Schema(
         'AppHeader': xsd.Element(AppHeaderU),
     },
 )
-XmlSchema_unqualified = etree.XMLSchema(generate_xsd(Schema_unqualified))
+XMLSchema_unqualified = etree.XMLSchema(generate_xsd(Schema_unqualified))
 
 
 class SOAP_TBase(object):
 
     def test_parse_message_qualified(self):
-        self._test_parse_message(MESSAGE_QUALIFIED, GetWeatherByPlaceName, XmlSchema_qualified)
+        self._test_parse_message(MESSAGE_QUALIFIED, GetWeatherByPlaceName, XMLSchema_qualified)
 
     def test_parse_message_unqualified(self):
-        self._test_parse_message(MESSAGE_UNQUALIFIED, GetWeatherByPlaceNameU, XmlSchema_unqualified)
+        self._test_parse_message(MESSAGE_UNQUALIFIED, GetWeatherByPlaceNameU, XMLSchema_unqualified)
 
     def _test_parse_message(self, xml, MessageType, schema):
         envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', xml).encode('utf8'))
@@ -100,10 +100,10 @@ class SOAP_TBase(object):
         self.assertEqual(message.Place.Name, 'Weatharia')
 
     def test_render_message_qualified(self):
-        self._test_render_message(GetWeatherByPlaceName, Place, XmlSchema_qualified)
+        self._test_render_message(GetWeatherByPlaceName, Place, XMLSchema_qualified)
 
     def test_render_message_unqualified(self):
-        self._test_render_message(GetWeatherByPlaceNameU, PlaceU, XmlSchema_unqualified)
+        self._test_render_message(GetWeatherByPlaceNameU, PlaceU, XMLSchema_unqualified)
 
     def _test_render_message(self, MessageType, PlaceType, schema):
         return_object = MessageType(Place=PlaceType(Name='Skypia'))

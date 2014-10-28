@@ -521,7 +521,7 @@ class ComplexTest(unittest.TestCase):
         assert_equals('bar', foo.name)
 
 
-class XmlParsingTest(unittest.TestCase):
+class XMLParsingTest(unittest.TestCase):
     SIMPLE_XML = b"""<flight>
   <landing_airport>
     <code>EGLL</code>

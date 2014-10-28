@@ -90,8 +90,8 @@ XML_REQUIRED_ONLY = """
 
 class OPS_Test(unittest.TestCase):
     def test_required_only(self):
-        XmlSchema = etree.XMLSchema(generate_xsd(Schema))
-        ops = Ops.parsexml(XML_REQUIRED_ONLY, XmlSchema)
+        XMLSchema = etree.XMLSchema(generate_xsd(Schema))
+        ops = Ops.parsexml(XML_REQUIRED_ONLY, XMLSchema)
         self.assertEqual("N608WB", ops.aircraft)
         self.assertEqual("123123", ops.flight_number)
         self.assertEqual("COMMERCIAL", ops.type)
