@@ -99,17 +99,10 @@ def parse_arguments():
 
 def main():
     opt = parse_arguments()
-
-    if opt.client:
-        logger.info('Generating client code for WSDL document \'%s\'...' % opt.wsdl)
-        xml = open_document(opt.wsdl)
-        code = generate_code_from_wsdl(xml, 'client', opt.use_wsa)
-
-    elif opt.server:
-        logger.info('Generating server code for WSDL document \'%s\'...' % opt.wsdl)
-        xml = open_document(opt.wsdl)
-        code = generate_code_from_wsdl(xml, 'server', opt.use_wsa)
-
+    xml = open_document(opt.wsdl)
+    target = 'server' if opt.server else 'client'
+    logger.info('Generating %s code for WSDL document \'%s\'...' % (target, opt.wsdl))
+    code = generate_code_from_wsdl(xml, target, opt.use_wsa)
     if six.PY3:
         sys.stdout.buffer.write(code)
     else:
