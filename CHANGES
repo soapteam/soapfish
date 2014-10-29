@@ -4,6 +4,10 @@ Changes
 0.6dev
 ------
 * TODO (#36)
+* support choice indicator in ComplexTypes (#39)
+  This fixes validation of matching XML documents (previously soapfish always
+  assumed sequences as well and code generation from WSDL/XSD)
+  patch contributed by Martin Mrose, tests written by Felix Schwarz
 
 0.5.1
 -----
