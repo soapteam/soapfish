@@ -116,6 +116,7 @@ class XSDComplexType(xsd.ComplexType):
     NAMESPACE = ns.xsd
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     sequence = xsd.Element(Sequence)
+    choice = xsd.Element(Sequence)
     all = xsd.Element(Sequence)
     complexContent = xsd.Element(ComplexContent)
     attributes = xsd.ListElement(Attribute, 'attribute')
