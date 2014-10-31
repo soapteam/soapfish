@@ -1,5 +1,6 @@
-Copyright (c) <YEAR>, <OWNER>
+Copyright (c) 2011-2014, soapfish contributors
 All rights reserved.
+For the exact contribution history, see the git revision log.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
