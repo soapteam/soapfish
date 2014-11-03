@@ -28,7 +28,7 @@ setup(
     author_email=soapfish.__email__,
     url='https://github.com/FelixSchwarz/soapfish',
     description='A SOAP library for Python',
-    long_description=open('README.md').read() + open('CHANGES').read() + open('TODO').read(),
+    long_description=open('README.md').read() + open('CHANGES.txt').read() + open('TODO.txt').read(),
     download_url='',
     license='New BSD License',
     packages=find_packages(exclude=("examples", "tests",)),
