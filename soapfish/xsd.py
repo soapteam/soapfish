@@ -152,7 +152,7 @@ class String(SimpleType):
             return value
 
         if not isinstance(value, basestring):
-            raise ValueError("Value '%s' for class '%s'." % (value, self.__class__.__name__))
+            raise ValueError("Value %r for class '%s'." % (value, self.__class__.__name__))
 
         if self.pattern:
             cp = re.compile(self.pattern)
@@ -213,7 +213,7 @@ class DateTime(SimpleType):
             return value
         elif isinstance(value, basestring):
             return iso8601.parse_date(value)
-        raise ValueError("Incorrect type value '%s' for Datetime field." % value)
+        raise ValueError("Incorrect type value '%s' for DateTime field." % value)
 
     def xmlvalue(self, value):
         if value is None:
