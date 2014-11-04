@@ -1,13 +1,13 @@
-include AUTHORS
-include CHANGES
-include LICENSE
-include README.md
-include TODO
+include *.ini
+include *.txt
+include *.md
 include *.py
 include *requirements.txt
 recursive-include doc *
 prune doc/_build
 recursive-include soapfish/raw *
 recursive-include soapfish/templates *
+recursive-include examples *
+recursive-include tests *.py
 exclude build
 exclude dist
