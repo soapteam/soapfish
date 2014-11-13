@@ -2,11 +2,11 @@ import unittest
 
 from lxml import etree
 
-from soapfish import xsd, xsdspec
-from soapfish.lib import iso8601
+from soapfish import xsd
 from soapfish.lib.pythonic_testcase import *
-from soapfish.xsd import Schema, ElementFormDefault, String, ComplexType
 from soapfish.py2xsd import generate_xsd
+from soapfish.xsd import ComplexType, ElementFormDefault, Schema
+
 
 class XSDComplexTypeChoiceTest(unittest.TestCase):
     def test_can_validate_choice_groups(self):
