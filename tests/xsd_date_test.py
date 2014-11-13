@@ -6,12 +6,15 @@ from lxml import etree
 
 from soapfish import xsd
 from soapfish.lib import iso8601
-from soapfish.lib.pythonic_testcase import *
-from soapfish.xsd_types import XSDDate
 from soapfish.lib.iso8601 import UTC, FixedOffset
+from soapfish.lib.pythonic_testcase import *
+from soapfish.testutil import SimpleTypeTestCase
+from soapfish.xsd_types import XSDDate
 
 
-class DateTest(PythonicTestCase):
+class DateTest(SimpleTypeTestCase):
+    xsd_type = xsd.Date
+
     def test_can_render_python_date(self):
         date = Date(2001, 10, 26)
         xmlelement = etree.Element('foo')
@@ -84,46 +87,9 @@ class DateTest(PythonicTestCase):
         self.assert_same_tz(FixedOffset(-2, -30, '-02:30'), parsed_date.tzinfo)
 
     # --- custom assertions ---------------------------------------------------
-    def assert_parse(self, expected_value, string_value):
-        assert_equals(expected_value, self._parse(string_value))
-
-    def assert_can_set(self, value):
-        class Container(xsd.ComplexType):
-            foo = xsd.Element(xsd.Date)
-        container = Container()
-        container.foo = value
-        return container.foo
-
-    def assert_can_not_set(self, value):
-        class Container(xsd.ComplexType):
-            foo = xsd.Element(xsd.Date)
-        container = Container()
-        try:
-            container.foo = value
-        except ValueError:
-            pass
-        else:
-            self.fail('did accept forbidden value %r' % value)
-
     def assert_same_tz(self, tz, other_tz):
         assert_equals(
             (tz._FixedOffset__offset_hours, tz._FixedOffset__offset_minutes),
             (other_tz._FixedOffset__offset_hours, other_tz._FixedOffset__offset_minutes),
         )
-
-    # --- internal helpers ----------------------------------------------------
-    def _parse(self, string_value):
-        class Container(xsd.ComplexType):
-            foo = xsd.Element(xsd.Date)
-        if string_value is None:
-            string_value = ''
-        xml = "<container><foo>%s</foo></container>" % string_value
-        return Container.parsexml(xml).foo
-
-    def _normalize(self, xml):
-        parser = etree.XMLParser(remove_blank_text=True)
-        return etree.tostring(etree.XML(xml, parser=parser))
-
-    def _to_xml(self, soapfish_element, tag_name):
-        return self._normalize(soapfish_element.xml(tag_name))
 
