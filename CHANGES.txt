@@ -12,12 +12,13 @@ Changes
   so they blend in better with the overall naming convention.
 * fixes for wsdl2py and xsd2py when using Python 3
 * restored ability to validate parsed XML using a soapfish schema in ComplexType
-* fix exception in SOAPDispatcher when a handler does not return a SOAPResponse
 * support choice indicator in ComplexTypes (#39)
   This fixes validation of matching XML documents (previously soapfish always
   assumed sequences) as well as code generation from WSDL/XSD
   patch contributed by Martin Mrose, tests written by Felix Schwarz
 * add support for xsd.date (date range currently limited by datetime.date)
+* Bug fixes:
+  - fix exception in SOAPDispatcher when a handler does not return a SOAPResponse
 
 
 0.5.1 (2014-06-12)
