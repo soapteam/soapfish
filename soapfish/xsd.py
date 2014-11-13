@@ -151,14 +151,14 @@ class String(SimpleType):
 
     def accept(self, value):
         if value is None:
-            return value
+            return None
 
         if not isinstance(value, basestring):
             raise ValueError("Value %r for class '%s'." % (value, self.__class__.__name__))
 
         if self.pattern:
-            cp = re.compile(self.pattern + '$')
-            if not cp.match(value):
+            pattern = self.pattern + '$'
+            if re.match(pattern, value) is None:
                 raise ValueError("Value '%s' doesn't match pattern '%s'" % (value, self.pattern))
 
         if self.enumeration:
@@ -348,8 +348,8 @@ class Decimal(SimpleType):
             raise ValueError('Value %s smaller than minInclusive %s' % (value, self.minInclusive))
 
         if self.pattern is not None:
-            compiled_pattern = re.compile(self.pattern + '$')
-            if not compiled_pattern.match(str(value)):
+            pattern = self.pattern + '$'
+            if re.match(pattern, str(value)) is None:
                 raise ValueError('Value %s doesn\'t match pattern %s.' % (value, self.pattern))
 
         if self.totalDigits is not None:
