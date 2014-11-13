@@ -10,6 +10,8 @@ Changes
   "soapbox" to "soapfish" causing a big API break for all existing users. Also
   SoapboxRequest and SoapboxResponse were renamed to SOAPRequest/SOAPResponse
   so they blend in better with the overall naming convention.
+* This release fixes a potential SECURITY ISSUE (pattern restrictions were not
+  applied correctly)
 * fixes for wsdl2py and xsd2py when using Python 3
 * restored ability to validate parsed XML using a soapfish schema in ComplexType
 * support choice indicator in ComplexTypes (#39)
