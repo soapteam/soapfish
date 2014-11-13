@@ -19,3 +19,11 @@ class StringTest(SimpleTypeTestCase):
         assert_raises(ValueError, lambda: xsd_string.accept('15'))
         assert_raises(ValueError, lambda: xsd_string.accept('20'))
 
+    def test_accepts_plain_strings_even_if_subclassed(self):
+        class StringWithPattern(xsd.String):
+            pattern = r'[0-9]{3}'
+        self.xsd_type = StringWithPattern
+        stored = self.assert_can_set('123')
+        assert_equals('123', stored)
+        self.assert_can_not_set('abc')
+        self.assert_can_not_set('1234')
