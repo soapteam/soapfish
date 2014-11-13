@@ -85,3 +85,18 @@ Valid xml for expected schema:
 
 ===============================================================================
 
+
+xsd_types.Date does not support the full date range
+------------------------------------------------------
+
+The XML schema spec does not limit the range of dates representable by xsd.date.
+For example "-2000-03-10" and "20000-04-20" are valid as far xsd.date is
+concerned. Currently xsd_types.Date is backed by datetime.date which has a much
+more narrow definition.
+
+Very likely the best solution is to back our implementation with an alternative
+date implementation such as mxDateTime which seems to represent all possible
+values from xsd.date. As mxDateTime currently (2014-11-13) uses compiled
+components (making it harder to install in some environments) and does not
+support Python 3 this should likely be an optional dependency (if at all).
+

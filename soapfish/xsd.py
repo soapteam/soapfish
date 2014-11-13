@@ -53,7 +53,9 @@ import six
 from . import namespaces as ns
 from .compat import basestring
 from .lib import iso8601
+from .lib.iso8601 import UTC, FixedOffset
 from .utils import timezone_offset_to_string
+from .xsd_types import XSDDate
 
 logger = logging.getLogger(__name__)
 NIL = object()
@@ -199,6 +201,78 @@ class Boolean(SimpleType):
             return None
         else:
             raise ValueError("Boolean value error - %s" % value)
+
+
+class Date(SimpleType):
+    '''
+    Example text value: 2001-10-26+02:00
+    
+    Does currently not support any constraining facets:
+        http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#date
+         3.2.9.2 Constraining facets
+    '''
+
+    YEAR_MONTH_DAY_REGEX = re.compile(r'''
+        ^(\-)?
+        (?P<year>\d{4,})\-(?P<month>\d{2})\-(?P<day>\d{2})
+        (?P<timezone>
+                Z
+                |
+                (
+                    (?P<tz_sign>[-+])
+                    (?P<tz_hour>[0-9]{2})
+                    :{0,1}
+                    (?P<tz_minute>[0-9]{2}){0,1}
+                )
+            )?$''', re.VERBOSE)
+
+    def accept(self, value):
+        if value is None:
+            return None
+        elif isinstance(value, XSDDate):
+            return value
+        time_components = ('hour', 'minute', 'second', 'microsecond')
+        has_time_compontent = any(map(lambda key: hasattr(value, key), time_components))
+        if (hasattr(value, 'year') and hasattr(value, 'month') and hasattr(value, 'day')) and not has_time_compontent:
+            tz = getattr(value, 'tzinfo', None) # support datetime.date
+            return XSDDate(value.year, value.month, value.day, tzinfo=tz)
+        raise ValueError('Incorrect type value %r for date field.' % value)
+
+    def xmlvalue(self, value):
+        timestring_without_tz = value.strftime('%Y-%m-%d')
+        tz = getattr(value, 'tzinfo', None)
+        if not tz:
+            return timestring_without_tz
+        utc_offset = tz.utcoffset(value)
+        formatted_tz = timezone_offset_to_string(utc_offset)
+        return timestring_without_tz + formatted_tz
+
+    def pythonvalue(self, value):
+        if (value is None) or (value == 'nil'):
+            return None
+        if not isinstance(value, basestring):
+            raise ValueError('Expected a string, not %r' % value)
+
+        match = self.YEAR_MONTH_DAY_REGEX.match(value)
+        if match is None:
+            raise ValueError('Unable to parse date string %r' % value)
+        year = int(match.group('year'))
+        month = int(match.group('month'))
+        day = int(match.group('day'))
+        tz = self._parse_tz(match)
+        return XSDDate(year, month, day, tzinfo=tz)
+
+    def _parse_tz(self, match):
+        offset_string = match.group('timezone')
+        if not offset_string:
+            return None
+        elif offset_string == 'Z':
+            return UTC
+
+        sign = 1 if (match.group('tz_sign') == '+') else -1
+        offset_hours = sign * int(match.group('tz_hour'))
+        offset_minutes = sign * int(match.group('tz_minute'))
+        return FixedOffset(offset_hours, offset_minutes, name=u'UTC'+offset_string)
 
 
 class DateTime(SimpleType):

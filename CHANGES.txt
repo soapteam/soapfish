@@ -17,6 +17,7 @@ Changes
   This fixes validation of matching XML documents (previously soapfish always
   assumed sequences) as well as code generation from WSDL/XSD
   patch contributed by Martin Mrose, tests written by Felix Schwarz
+* add support for xsd.date (date range currently limited by datetime.date)
 
 
 0.5.1 (2014-06-12)
