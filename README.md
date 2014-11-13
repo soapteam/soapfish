@@ -7,16 +7,32 @@ soapfish
 Introduction
 ------------
 
-soapfish is a SOAP library for Python making it easy to quickly set up or use a
-web service based on a WSDL document.
+soapfish is a library to use SOAP services in Python. The server-side component
+can be used with Pyramid, Django and other frameworks (including plain WSGI).
+The library can also be used to implement SOAP clients with httplib2 (and
+using another HTTP request library such as requests should only require
+about 20-30 lines of code).
 
-- Generate Python modules based on WSDL and XSD document.
-- Execute SOAP requests from generated client modules.
-- Provide a dispatcher for Django and stub server modules.
+The library can also help parsing/serializing a Python class model from/to XML
+and a bare-bones SOAP client.
 
-Package requires **pip** for installation.
+The project aims to support any SOAP service. Therefore the code supports:
 
-`pip install soapfish`
+- SOAP 1.1 and 1.2
+- WSDL 1.1 and 1.2
+- WS-Addressing
 
-Project sponsored by Flight Data Services Ltd: http://www.flightdataservices.com/
+
+Other notable features:
+
+- support for Python 2.6+2.7 and Python 3
+- code generation utilities to get started quickly
+- parsing/serializing a Python class model from/to XML so you can easily work
+  with XML even if you don't use SOAP at all.
+- licensed under the 3-clause BSD license
+
+
+The main contributors were Damian Powązka, Flight Data Services,
+Thomas Recouvreux and Xavier Fernandez (Polyconseil) and
+Felix Schwarz (sponsored by Rechenzentrum für Berliner Apotheken Stein & Reichwald GmbH).
 
