@@ -19,6 +19,7 @@ Changes
 * add support for xsd.date (date range currently limited by datetime.date)
 * Bug fixes:
   - fix exception in SOAPDispatcher when a handler does not return a SOAPResponse
+  - correctly apply pattern restrictions for simple types
 
 
 0.5.1 (2014-06-12)
