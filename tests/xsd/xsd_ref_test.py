@@ -5,7 +5,7 @@ from soapfish import xsd
 from soapfish.lib.pythonic_testcase import *
 
 
-class XSDRefTest(PythonicTestCase):
+class RefTest(PythonicTestCase):
     def test_can_render_references_to_groups(self):
         class Person(xsd.Group):
             name = xsd.Element(xsd.String)
