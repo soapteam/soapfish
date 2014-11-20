@@ -123,7 +123,7 @@ class ErrorHandling(unittest.TestCase):
         assert_equals('http://gizmos.com/order', e.actor)
 
 
-class SoapVersionTest(unittest.TestCase):
+class SOAPVersionTest(unittest.TestCase):
     WSDL = '''<?xml version="1.0" encoding="utf-8"?>
         <definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://tempuri.org/encodedTypes" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://tempuri.org/" xmlns="http://schemas.xmlsoap.org/wsdl/">
             <binding name="HelloWorldSoap" type="tns:HelloWorldSoap">
@@ -131,13 +131,13 @@ class SoapVersionTest(unittest.TestCase):
             </binding>
         </definitions>'''
 
-    def test_detect_soap12_form_xml(self):
+    def test_can_detect_soap12_from_xml(self):
         WSDL = self.WSDL.format(soap_version='soap12').encode('utf8')
         xml = etree.fromstring(WSDL)
         soap_version = soap.SOAPVersion.get_version_from_xml(xml)
         assert_equals(soap.SOAPVersion.SOAP12, soap_version)
 
-    def test_detect_soap11_from_xml(self):
+    def test_can_detect_soap11_from_xml(self):
         WSDL = self.WSDL.format(soap_version='soap').encode('utf8')
         xml = etree.fromstring(WSDL)
         soap_version = soap.SOAPVersion.get_version_from_xml(xml)
