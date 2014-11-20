@@ -7,10 +7,10 @@ import logging
 
 from lxml import etree
 
-from . import core
 from . import py2wsdl
 from . import wsa
 from .compat import basestring
+from .core import SOAPError, SOAPRequest, SOAPResponse
 from .py2xsd import generate_xsd
 from .utils import uncapitalize
 
@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 
 def call_method(request):
     response = request.method.function(request, request.soap_body)
-    if not isinstance(response, core.SOAPResponse):
-        response = core.SOAPResponse(response)
+    if not isinstance(response, SOAPResponse):
+        response = SOAPResponse(response)
     return response
 
 
@@ -61,7 +61,7 @@ class SOAPDispatcher(object):
             # note : no validation is performed
             envelope = SOAP.Envelope.parsexml(xml)
         except etree.XMLSyntaxError as e:
-            raise core.SOAPError(SOAP.Code.CLIENT, repr(e))
+            raise SOAPError(SOAP.Code.CLIENT, repr(e))
         # Actually this is more a stopgap measure than a real fix. The real
         # fix is to change SOAP.Envelope/ComplexType so it raise some kind of
         # validation error. A missing SOAP body is not allowed by the SOAP
@@ -69,7 +69,7 @@ class SOAPDispatcher(object):
         # SOAP 1.1: http://schemas.xmlsoap.org/soap/envelope/
         # SOAP 1.2: http://www.w3.org/2003/05/soap-envelope/
         if envelope.Body is None:
-            raise core.SOAPError(SOAP.Code.CLIENT, "Missing SOAP body")
+            raise SOAPError(SOAP.Code.CLIENT, "Missing SOAP body")
         return envelope
 
     def _find_handler_for_request(self, request, body_document):
@@ -92,7 +92,7 @@ class SOAPDispatcher(object):
             error_msg = "Invalid soap action '%s'" % soap_action
         else:
             error_msg = "Missing soap action and invalid root tag '%s'" % root_tag
-        raise core.SOAPError(SOAP.Code.CLIENT, error_msg)
+        raise SOAPError(SOAP.Code.CLIENT, error_msg)
 
     def _find_root_tag(self, body_document):
         root = body_document
@@ -151,7 +151,7 @@ class SOAPDispatcher(object):
         elif request_method == 'POST':
             return self.handle_soap_request(request)
         else:
-            return core.SOAPResponse('bad request', http_status_code=400,
+            return SOAPResponse('bad request', http_status_code=400,
                 http_content='bad_request', http_headers={'Content-Type': 'text/plain'})
 
     def handle_soap_request(self, request):
@@ -166,22 +166,22 @@ class SOAPDispatcher(object):
             try:
                 self._validate_input(soap_envelope)
             except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
-                raise core.SOAPError(SOAP.Code.CLIENT, repr(e))
+                raise SOAPError(SOAP.Code.CLIENT, repr(e))
 
             request.method = self._find_handler_for_request(request, soap_body_content)
             request.soap_header = self._parse_header(request.method, soap_header)
             request.soap_body = self._parse_input(request.method, soap_body_content)
-        except core.SOAPError as ex:
+        except SOAPError as ex:
             response = ex
         else:
             response = self.middleware()(request)
 
-        if not isinstance(response, core.SOAPResponse):
-            response = core.SOAPResponse(response)
+        if not isinstance(response, SOAPResponse):
+            response = SOAPResponse(response)
 
         response.http_headers['Content-Type'] = SOAP.CONTENT_TYPE
 
-        if isinstance(response.soap_body, core.SOAPError):
+        if isinstance(response.soap_body, SOAPError):
             error = response.soap_body
             response.http_content = SOAP.get_error_response(error.code, error.message, header=response.soap_header)
             response.http_status_code = 500
@@ -197,7 +197,7 @@ class SOAPDispatcher(object):
         return response
 
     def handle_wsdl_request(self, request):
-        return core.SOAPResponse('wsdl', http_content=self.wsdl, http_headers={'Content-Type': 'text/xml'})
+        return SOAPResponse('wsdl', http_content=self.wsdl, http_headers={'Content-Type': 'text/xml'})
 
 
 class WsgiSoapApplication(object):
@@ -211,7 +211,7 @@ class WsgiSoapApplication(object):
     def __call__(self, req_env, start_response, wsgi_url=None):
         content_length = int(req_env.get('CONTENT_LENGTH', '') or 0)
         content = req_env['wsgi.input'].read(content_length)
-        soap_request = core.SOAPRequest(req_env, content)
+        soap_request = SOAPRequest(req_env, content)
         response = self.dispatcher.dispatch(soap_request)
         start_response(self._get_http_status(response.http_status_code), response.http_headers.items())
         return [response.http_content]
