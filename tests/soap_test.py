@@ -3,6 +3,7 @@ import unittest
 from lxml import etree
 
 from soapfish import core, soap, soap11, soap12
+from soapfish.lib.pythonic_testcase import *
 
 SOAP11_ERROR_MESSAGE = """
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -66,16 +67,16 @@ class ErrorHandling(unittest.TestCase):
     def test_soap11_actor_parsing(self):
         envelope = soap11.Envelope.parsexml(SOAP11_ERROR_MESSAGE)
         code, message, actor = soap11.parse_fault_message(envelope.Body.Fault)
-        self.assertEqual(code, "Result")
-        self.assertEqual(message, None)
-        self.assertEqual(actor, "Resultset empty2.")
+        assert_equals('Result', code)
+        assert_none(message)
+        assert_equals('Resultset empty2.', actor)
         
     def test_soap11_noactor_parsing(self):
         envelope = soap11.Envelope.parsexml(SOAP11_ERROR_MESSAGE_NO_ACTOR)
         code, message, actor = soap11.parse_fault_message(envelope.Body.Fault)
-        self.assertEqual(code, "Result")
-        self.assertEqual(message, "String")
-        self.assertEqual(actor, None)
+        assert_equals('Result', code)
+        assert_equals('String', message)
+        assert_none(actor)
         
     def test_soap11_fault_handling(self):
         stub = soap.Stub(location="empty")
@@ -87,28 +88,24 @@ class ErrorHandling(unittest.TestCase):
             version=soap.SOAPVersion.SOAP11,
             methods=[])
         
-        try:
-            stub._handle_response(None, None, SOAP11_ERROR_MESSAGE)
-        except core.SOAPError as e:
-            self.assertEqual(e.code, "Result")
-            self.assertEqual(e.message, None)
-            self.assertEqual(e.actor, "Resultset empty2.")
-        else:
-            self.fail()
+        e = assert_raises(core.SOAPError, lambda: stub._handle_response(None, None, SOAP11_ERROR_MESSAGE))
+        assert_equals('Result', e.code)
+        assert_none(e.message)
+        assert_equals('Resultset empty2.', e.actor)
         
     def test_soap12_actor_parsing(self):
         envelope = soap12.Envelope.parsexml(SOAP12_ERROR_ROLE)
         code, message, actor = soap12.parse_fault_message(envelope.Body.Fault)
-        self.assertEqual(code,"env:Sender")
-        self.assertEqual(message, "\nMessage does not have necessary info\n")
-        self.assertEqual(actor, "http://gizmos.com/order")
+        assert_equals('env:Sender', code)
+        assert_equals('\nMessage does not have necessary info\n', message)
+        assert_equals('http://gizmos.com/order', actor)
         
     def test_soap12_noactor_parsing(self):
         envelope = soap12.Envelope.parsexml(SOAP12_ERROR_NOROLE)
         code, message, actor = soap12.parse_fault_message(envelope.Body.Fault)
-        self.assertEqual(code,"env:Sender")
-        self.assertEqual(message, "\nMessage does not have necessary info\n")
-        self.assertEqual(actor, None)
+        assert_equals('env:Sender', code)
+        assert_equals('\nMessage does not have necessary info\n', message)
+        assert_none(actor)
         
     def test_soap12_fault_handling(self):
         stub = soap.Stub(location="empty")
@@ -120,14 +117,10 @@ class ErrorHandling(unittest.TestCase):
             version=soap.SOAPVersion.SOAP12,
             methods=[])
         
-        try:
-            stub._handle_response(None, None, SOAP12_ERROR_ROLE)
-        except core.SOAPError as e:
-            self.assertEqual(e.code,"env:Sender")
-            self.assertEqual(e.message, "\nMessage does not have necessary info\n")
-            self.assertEqual(e.actor, "http://gizmos.com/order")
-        else:
-            self.assertFalse("true", "should not get here")
+        e = assert_raises(core.SOAPError, lambda: stub._handle_response(None, None, SOAP12_ERROR_ROLE))
+        assert_equals('env:Sender', e.code)
+        assert_equals('\nMessage does not have necessary info\n', e.message)
+        assert_equals('http://gizmos.com/order', e.actor)
 
 
 class SoapVersionTest(unittest.TestCase):
@@ -142,13 +135,13 @@ class SoapVersionTest(unittest.TestCase):
         WSDL = self.WSDL.format(soap_version='soap12').encode('utf8')
         xml = etree.fromstring(WSDL)
         soap_version = soap.SOAPVersion.get_version_from_xml(xml)
-        self.assertEqual(soap.SOAPVersion.SOAP12, soap_version)
+        assert_equals(soap.SOAPVersion.SOAP12, soap_version)
 
     def test_detect_soap11_from_xml(self):
         WSDL = self.WSDL.format(soap_version='soap').encode('utf8')
         xml = etree.fromstring(WSDL)
         soap_version = soap.SOAPVersion.get_version_from_xml(xml)
-        self.assertEqual(soap.SOAPVersion.SOAP11, soap_version)
+        assert_equals(soap.SOAPVersion.SOAP11, soap_version)
 
 
 if __name__ == "__main__":
