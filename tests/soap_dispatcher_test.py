@@ -4,12 +4,13 @@ from __future__ import absolute_import
 import io
 from lxml import etree
 
-from soapfish import core, soap, wsa, xsd
-from soapfish.core import SOAPRequest, SOAPResponse
+from soapfish import wsa, xsd
+from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.compat import basestring
-from soapfish.lib.pythonic_testcase import *
 from soapfish.lib.attribute_dict import AttrDict
+from soapfish.lib.pythonic_testcase import *
 from soapfish.middlewares import ExceptionToSoapFault
+from soapfish.soap import Service, SOAPVersion
 from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 
 
@@ -75,17 +76,17 @@ def _echo_service(handler=None, input_header=None, output_header=None):
         outputPartName='result',
         operationName='echoOperation',
     )
-    return soap.Service(
+    return Service(
         name='TestService',
         targetNamespace='http://soap.example/echo',
         location='http://soap.example/ws',
         schema=EchoSchema,
-        version=soap.SOAPVersion.SOAP11,
+        version=SOAPVersion.SOAP11,
         methods=[echo_method],
     )
 
 def _faulty_handler():
-    soap_error = core.SOAPError('code', 'internal data error', 'actor')
+    soap_error = SOAPError('code', 'internal data error', 'actor')
     return lambda request, input_: SOAPResponse(soap_error)
 
 
