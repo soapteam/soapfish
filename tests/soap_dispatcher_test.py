@@ -144,7 +144,7 @@ class SOAPDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
         assert_not_none(handler_state.input_header)
-        self.assertEqual('42', handler_state.input_header.InputVersion)
+        assert_equals('42', handler_state.input_header.InputVersion)
 
     def test_can_handle_empty_input_header(self):
         handler, handler_state = echo_handler()
@@ -216,16 +216,14 @@ class SOAPDispatcherTest(PythonicTestCase):
         assert_equals(500, response.http_status_code)
 
     def test_can_validate_wsa_header(self):
-        service = echo_service()
-        dispatcher = SOAPDispatcher(service)
+        dispatcher = SOAPDispatcher(echo_service())
         header = wsa.Header.parsexml('<Header><Action xmlns="http://www.w3.org/2005/08/addressing">/Action</Action></Header>')
         dispatcher._validate_header(header)
 
-    def test_can_invalidate_wsa_header(self):
-        service = echo_service()
-        dispatcher = SOAPDispatcher(service)
+    def test_can_detect_invalid_wsa_header(self):
+        dispatcher = SOAPDispatcher(echo_service())
         header = wsa.Header.parsexml('<Header><Invalid xmlns="http://www.w3.org/2005/08/addressing">/Action</Invalid></Header>')
-        self.assertRaises(etree.DocumentInvalid, dispatcher._validate_header, header)
+        assert_raises(etree.DocumentInvalid, lambda: dispatcher._validate_header(header))
 
     # --- custom assertions ---------------------------------------------------
 
