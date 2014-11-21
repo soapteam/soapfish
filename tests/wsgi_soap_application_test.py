@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import io
+from io import BytesIO
 
 from soapfish.lib.pythonic_testcase import *
 from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
@@ -10,8 +10,7 @@ from soapfish.testutil import echo_service
 
 
 class WsgiTest(PythonicTestCase):
-
-    def test_wsgi(self):
+    def test_can_dispatch_soap_request_with_plain_wsgi(self):
         service = echo_service()
         dispatcher = SOAPDispatcher(service)
         app = WsgiSoapApplication(dispatcher)
@@ -39,7 +38,7 @@ class WsgiTest(PythonicTestCase):
             'SERVER_PORT': '7000',
             'REQUEST_METHOD': 'POST',
             'wsgi.url_scheme': 'http',
-            'wsgi.input': io.BytesIO(soap_message),
+            'wsgi.input': BytesIO(soap_message),
         }, start_response))
         dict_headers = dict(start_response.headers)
         expected_xml = (
@@ -51,7 +50,7 @@ class WsgiTest(PythonicTestCase):
             b'  </ns0:Body>\n'
             b'</ns0:Envelope>\n'
         )
-        self.assertEqual(expected_xml, response_xml)
-        self.assertEqual(WsgiSoapApplication.HTTP_200, start_response.code)
-        self.assertEqual('text/xml', dict_headers['Content-Type'])
+        assert_equals(expected_xml, response_xml)
+        assert_equals(WsgiSoapApplication.HTTP_200, start_response.code)
+        assert_equals('text/xml', dict_headers['Content-Type'])
 
