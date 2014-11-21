@@ -863,7 +863,7 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         elif isinstance(value, self.__class__):
             return value
         else:
-            raise ValueError('Wrong value object type %s for %s.' % (value, self.__class__.__name__))
+            raise ValueError('Wrong value object type %r for %s.' % (value, self.__class__.__name__))
 
     def render(self, parent, instance, namespace=None, elementFormDefault=None):
         if instance is None:
