@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 from lxml import etree
 
-from soapfish import wsa
+from soapfish import wsa, xsd
 from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.compat import basestring
 from soapfish.lib.pythonic_testcase import *
@@ -59,6 +59,31 @@ class SOAPDispatcherTest(PythonicTestCase):
         assert_equals(500, response.http_status_code)
         assert_equals('text/xml', response.http_headers['Content-Type'])
         self.assert_is_soap_fault(response, partial_fault_string=u"Start tag expected, '<' not found")
+
+    def test_can_include_imported_schemas_during_validation(self):
+        # In case the SOAPDispatcher would not use imported schemas for
+        # validation it would fail because the 'code' tag is only defined in
+        # the imported schema
+        handler, handler_state = echo_handler()
+        service = echo_service(handler)
+        class CodeType(xsd.String):
+            pattern = r'[0-9]{5}'
+        code_schema = xsd.Schema('http://soap.example/included',
+            location='http://soap.example/included',
+            elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
+            simpleTypes=[CodeType],
+            elements={'code': xsd.Element(CodeType)},
+        )
+        service.schema.imports = (code_schema, )
+        # The setup is a bit simplistic because the <code> tag is not parsed
+        # into a soapfish model element for the handler but this was enough
+        # to trigger the bug
+        dispatcher = SOAPDispatcher(service)
+        wsgi_environ = dict(SOAPACTION='echo', REQUEST_METHOD='POST')
+        soap_message = '<ns0:code xmlns:ns0="http://soap.example/included">12345</ns0:code>'
+        request = SOAPRequest(wsgi_environ, self._wrap_with_soap_envelope(soap_message))
+        response = dispatcher.dispatch(request)
+        self.assert_is_successful_response(response, handler_state)
 
     def test_can_reject_non_soap_xml_body(self):
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), '<some>xml</some>')

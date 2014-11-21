@@ -11,7 +11,7 @@ from . import py2wsdl
 from . import wsa
 from .compat import basestring
 from .core import SOAPError, SOAPRequest, SOAPResponse
-from .py2xsd import generate_xsd
+from .py2xsd import schema_validator
 from .utils import uncapitalize
 
 __all__ = ['SOAPDispatcher']
@@ -41,8 +41,7 @@ class SOAPDispatcher(object):
         if middlewares is None:
             middlewares = []
         self.middlewares = middlewares
-        self.xsdschema = generate_xsd(self.service.schema)
-        self.xmlschema = etree.XMLSchema(self.xsdschema)
+        self.schema_validator = schema_validator(self.service.schema)
         if wsdl is None:
             wsdlelement = py2wsdl.generate_wsdl(self.service)
             wsdl = etree.tostring(wsdlelement, pretty_print=True)
@@ -132,13 +131,13 @@ class SOAPDispatcher(object):
                 wsa.XML_SCHEMA.assertValid(children)
             else:
                 try:
-                    self.xmlschema.assertValid(children)
+                    self.schema_validator(children)
                 except (etree.XMLSyntaxError, etree.DocumentInvalid):
                     if self.strict_soap_header:
                         raise
 
     def _validate_body(self, soap_body):
-        self.xmlschema.assertValid(soap_body.content())
+        self.schema_validator(soap_body.content())
 
     def _validate_input(self, envelope):
         self._validate_header(envelope.Header)

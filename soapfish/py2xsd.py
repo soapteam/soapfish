@@ -199,6 +199,49 @@ def generate_xsd(schema):
     return xmlelement
 
 
+def schema_validator(schema):
+    """
+    Return a callable for the specified soapfish schema which can be used
+    to validate (etree) xml documents.
+    The method takes care of resolving imported (soapfish) schemas but prevents
+    any unwanted network access.
+    """
+    class SchemaResolver(etree.Resolver):
+        def __init__(self, schemas, *args, **kwargs):
+            super(SchemaResolver, self).__init__(*args, **kwargs)
+            self._soapfish_schemas = {}
+            for schema in schemas:
+                self._soapfish_schemas[schema.location] = schema
+
+        def resolve(self, url, id_, context):
+            if url in self._soapfish_schemas:
+                schema_string = etree.tostring(generate_xsd(self._soapfish_schemas[url]))
+                return self.resolve_string(schema_string, context)
+            # prevent unwanted network access
+            raise ValueError('can not resolve %r - not a known soapfish schema' % url)
+
+    resolver = SchemaResolver(schema.imports or ())
+    parser = etree.XMLParser(load_dtd=True)
+    parser.resolvers.add(resolver)
+
+    # unfortunately we have to parse the whole schema from string so we are
+    # able to configure a custom resolver just for this instance. This seems to
+    # a limitation of the lxml API.
+    # I tried to use '.parser.resolvers.add()' on an ElementTree instance but
+    # that uses the default parser which refers to a shared _ResolverRegistry
+    # which can not be cleared without having references to all registered
+    # resolvers (and we don't know these instances). Also I noticed many test
+    # failures (only when running all tests!) and strange behavior in
+    # "resolve()" (self._soapfish_schemas was empty unless doing repr() on the
+    # instance attribute first).
+    # Also having shared resolvers is not a good idea because a user might want
+    # to have different validator instances at the same time (possibly with
+    # conflicting namespace urls).
+    schema_xml = etree.tostring(generate_xsd(schema))
+    schema_element = etree.fromstring(schema_xml, parser)
+    xml_schema = etree.XMLSchema(schema_element)
+    return xml_schema.assertValid
+
 # --- Program -----------------------------------------------------------------
 def parse_arguments():
     parser = argparse.ArgumentParser(
