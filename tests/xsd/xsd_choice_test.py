@@ -8,7 +8,7 @@ from soapfish.py2xsd import generate_xsd
 from soapfish.xsd import ComplexType, ElementFormDefault, Schema
 
 
-class XSDComplexTypeChoiceTest(unittest.TestCase):
+class XSDChoiceTest(unittest.TestCase):
     def test_can_validate_choice_groups(self):
         class Code(xsd.String):
             pattern='[0-9]{1,3}'
