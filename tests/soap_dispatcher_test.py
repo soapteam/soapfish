@@ -1,8 +1,6 @@
 
 from __future__ import absolute_import
 
-import io
-
 from lxml import etree
 
 from soapfish import wsa
@@ -10,7 +8,7 @@ from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.compat import basestring
 from soapfish.lib.pythonic_testcase import *
 from soapfish.middlewares import ExceptionToSoapFault
-from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
+from soapfish.soap_dispatch import SOAPDispatcher
 from soapfish.testutil import echo_handler, echo_service, EchoInputHeader, EchoOutputHeader
 
 
@@ -268,54 +266,4 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</senv:Envelope>'
         ) % dict(payload=payload, header=header)
         return envelope.encode('utf-8')
-
-
-class WsgiTest(PythonicTestCase):
-
-    def test_wsgi(self):
-        service = echo_service()
-        dispatcher = SOAPDispatcher(service)
-        app = WsgiSoapApplication(dispatcher)
-        class StartResponse():
-            self.code = None
-            self.headers = None
-            def __call__(self, code, headers):
-                self.code = code
-                self.headers = headers
-        start_response = StartResponse()
-        soap_message = (b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<senv:Envelope xmlns:senv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soap.example/echo/types">'
-            b'<senv:Body>'
-            b'<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
-            b'<value>foobar</value>'
-            b'</ns1:echoRequest>'
-            b'</senv:Body>'
-            b'</senv:Envelope>')
-        response_xml = b''.join(app({
-            'SOAPACTION': 'echo',
-            'PATH_INFO': '/service',
-            'CONTENT_LENGTH': len(soap_message),
-            'QUERY_STRING': '',
-            'SERVER_NAME': 'localhost',
-            'SERVER_PORT': '7000',
-            'REQUEST_METHOD': 'POST',
-            'wsgi.url_scheme': 'http',
-            'wsgi.input': io.BytesIO(soap_message),
-        }, start_response))
-        dict_headers = dict(start_response.headers)
-        expected_xml = (
-            b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">\n'
-            b'  <ns0:Body>\n'
-            b'    <ns0:echoResponse xmlns:ns0="http://soap.example/echo/types">\n'
-            b'      <value>foobar</value>\n'
-            b'    </ns0:echoResponse>\n'
-            b'  </ns0:Body>\n'
-            b'</ns0:Envelope>\n'
-        )
-        self.assertEqual(expected_xml, response_xml)
-        self.assertEqual(WsgiSoapApplication.HTTP_200, start_response.code)
-        self.assertEqual('text/xml', dict_headers['Content-Type'])
-
-
-
 
