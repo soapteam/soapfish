@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, unicode_literals
+
 from lxml import etree
 
-from . import xsd
-from .lib.pythonic_testcase import *
+from .. import xsd
+from ..lib.pythonic_testcase import *
 
 
 __all__ = ['SimpleTypeTestCase']
