@@ -6,7 +6,7 @@ from . import xsd
 from .lib.pythonic_testcase import *
 
 
-__all__ = ['XSDSimpleTypeTestCase']
+__all__ = ['SimpleTypeTestCase']
 
 class SimpleTypeTestCase(PythonicTestCase):
     xsd_type = None
