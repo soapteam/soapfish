@@ -9,18 +9,11 @@ from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 from soapfish.testutil import echo_service
 
 
-class WsgiTest(PythonicTestCase):
+class WsgiSoapApplicationTest(PythonicTestCase):
     def test_can_dispatch_soap_request_with_plain_wsgi(self):
-        service = echo_service()
-        dispatcher = SOAPDispatcher(service)
+        dispatcher = SOAPDispatcher(echo_service())
         app = WsgiSoapApplication(dispatcher)
-        class StartResponse():
-            self.code = None
-            self.headers = None
-            def __call__(self, code, headers):
-                self.code = code
-                self.headers = headers
-        start_response = StartResponse()
+        start_response = self._response_mock()
         soap_message = (b'<?xml version="1.0" encoding="UTF-8"?>'
             b'<senv:Envelope xmlns:senv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soap.example/echo/types">'
             b'<senv:Body>'
@@ -29,18 +22,9 @@ class WsgiTest(PythonicTestCase):
             b'</ns1:echoRequest>'
             b'</senv:Body>'
             b'</senv:Envelope>')
-        response_xml = b''.join(app({
-            'SOAPACTION': 'echo',
-            'PATH_INFO': '/service',
-            'CONTENT_LENGTH': len(soap_message),
-            'QUERY_STRING': '',
-            'SERVER_NAME': 'localhost',
-            'SERVER_PORT': '7000',
-            'REQUEST_METHOD': 'POST',
-            'wsgi.url_scheme': 'http',
-            'wsgi.input': BytesIO(soap_message),
-        }, start_response))
-        dict_headers = dict(start_response.headers)
+        response = app(self._wsgi_env(soap_message), start_response)
+        assert_equals(WsgiSoapApplication.HTTP_200, start_response.code)
+        assert_equals('text/xml', dict(start_response.headers)['Content-Type'])
         expected_xml = (
             b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">\n'
             b'  <ns0:Body>\n'
@@ -50,7 +34,26 @@ class WsgiTest(PythonicTestCase):
             b'  </ns0:Body>\n'
             b'</ns0:Envelope>\n'
         )
-        assert_equals(expected_xml, response_xml)
-        assert_equals(WsgiSoapApplication.HTTP_200, start_response.code)
-        assert_equals('text/xml', dict_headers['Content-Type'])
+        assert_equals(expected_xml, b''.join(response))
 
+    def _response_mock(self):
+        class StartResponse():
+            self.code = None
+            self.headers = None
+            def __call__(self, code, headers):
+                self.code = code
+                self.headers = headers
+        return StartResponse()
+
+    def _wsgi_env(self, soap_xml):
+        return {
+            'SOAPACTION': 'echo',
+            'PATH_INFO': '/service',
+            'CONTENT_LENGTH': len(soap_xml),
+            'QUERY_STRING': '',
+            'SERVER_NAME': 'localhost',
+            'SERVER_PORT': '7000',
+            'REQUEST_METHOD': 'POST',
+            'wsgi.url_scheme': 'http',
+            'wsgi.input': BytesIO(soap_xml),
+        }
