@@ -78,7 +78,7 @@ def create_xsd_element(element):
             xsd_element.simpleType.restriction.fractionDigits = xsdspec.RestrictionValue(value=str(_type.fractionDigits))
 
         if hasattr(_type, 'pattern') and _type.pattern:
-            xsd_element.simpleType.restriction.pattern = xsdspec.RestrictionValue(value=str(_type.pattern))
+            xsd_element.simpleType.restriction.pattern = xsdspec.Pattern(value=str(_type.pattern))
 
         if hasattr(_type, 'minInclusive') and _type.minInclusive:
             xsd_element.simpleType.restriction.minInclusive = xsdspec.RestrictionValue(value=str(_type.minInclusive))
