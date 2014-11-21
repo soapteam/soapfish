@@ -1086,7 +1086,7 @@ class Schema(object):
 
     def __init__(self, targetNamespace, elementFormDefault=ElementFormDefault.UNQUALIFIED,
                  simpleTypes=[], attributeGroups=[], groups=[], complexTypes=[], elements={},
-                 imports=None, location=None):
+                 imports=(), location=None):
         '''
         :param targetNamespace: string, xsd namespace URL.
         :param elementFormDefault: unqualified/qualified. Defines if namespaces

@@ -110,7 +110,7 @@ class SOAPDispatcher(object):
     def _parse_input(self, method, message):
         input_parser = method.input
         if isinstance(method.input, basestring):
-            element = self.service.schema.elements[method.input]
+            element = self.service.schema.get_element_by_name(method.input)
             input_parser = element._type
         return input_parser.parse_xmlelement(message)
 

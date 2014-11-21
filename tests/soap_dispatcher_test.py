@@ -68,22 +68,27 @@ class SOAPDispatcherTest(PythonicTestCase):
         service = echo_service(handler)
         class CodeType(xsd.String):
             pattern = r'[0-9]{5}'
+        class Container(xsd.ComplexType):
+            value = xsd.Element(CodeType)
         code_schema = xsd.Schema('http://soap.example/included',
             location='http://soap.example/included',
             elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
             simpleTypes=[CodeType],
-            elements={'code': xsd.Element(CodeType)},
+            complexTypes=[Container],
+            elements={'foo': xsd.Element(Container)},
         )
+        service.methods[0].input = 'foo'
         service.schema.imports = (code_schema, )
         # The setup is a bit simplistic because the <code> tag is not parsed
         # into a soapfish model element for the handler but this was enough
         # to trigger the bug
         dispatcher = SOAPDispatcher(service)
         wsgi_environ = dict(SOAPACTION='echo', REQUEST_METHOD='POST')
-        soap_message = '<ns0:code xmlns:ns0="http://soap.example/included">12345</ns0:code>'
+        soap_message = '<ns0:foo xmlns:ns0="http://soap.example/included"><value>12345</value></ns0:foo>'
         request = SOAPRequest(wsgi_environ, self._wrap_with_soap_envelope(soap_message))
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
+        assert_equals('12345', handler_state.input_.value)
 
     def test_can_reject_non_soap_xml_body(self):
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), '<some>xml</some>')
