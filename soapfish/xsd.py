@@ -894,7 +894,7 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         raise ValueError("Field not found '%s', fields: %s" % (field_name, fields))
 
     @classmethod
-    def _find_subelement(cls, field, xmlelement):
+    def _is_matching_element(cls, field, xmlelement):
         def gettagns(tag):
             '''
             Translates a tag string in a format {namespace} tag to a tuple
@@ -904,13 +904,16 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
                 return tag[1:].split('}', 1)
             else:
                 return (None, tag)
+        if isinstance(xmlelement, etree._Comment):
+            return False
+        ns, tag = gettagns(xmlelement.tag)
+        return (tag == field._name) or (tag == field.tagname)
 
+    @classmethod
+    def _find_subelement(cls, field, xmlelement):
         subelements = []
         for subelement in xmlelement:
-            if isinstance(subelement, etree._Comment):
-                continue
-            ns, tag = gettagns(subelement.tag)
-            if tag == field._name or tag == field.tagname:
+            if cls._is_matching_element(field, subelement):
                 subelements.append(subelement)
         return subelements
 
@@ -921,10 +924,18 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         for attribute in instance._meta.attributes:
             attribute.parse(instance, attribute._name, xmlelement)
 
+        is_choice = (instance._meta.cls.INDICATOR == Choice)
         for field in instance._meta.fields:
-            subelements = cls._find_subelement(field, xmlelement)
+            if is_choice:
+                if not cls._is_matching_element(field, xmlelement):
+                    continue
+                subelements = [xmlelement]
+            else:
+                subelements = cls._find_subelement(field, xmlelement)
             for subelement in subelements:
                 field.parse(instance, field._name, subelement)
+            if is_choice:
+                break
 
         for group in instance._meta.groups:
             group.parse(instance, group._name, xmlelement)
