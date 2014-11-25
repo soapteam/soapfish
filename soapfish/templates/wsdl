@@ -134,16 +134,15 @@ class {{ outputMessage.name }}Headers(BaseHeader):
 {# [blank line] #}
 {%- if is_server %}
 ################################################################################
-# Django Dispatch
 {# [blank line] #}
 {# [blank line] #}
-# Uncomment these lines to turn on dispatching:
-#from soapfish.ext.django.dispatch import DjangoSOAPDispatcher
-#dispatcher = get_django_dispatch('{{ service.ports.0.address.location|url_regex }}', {{ port.name }}_SERVICE))
+#Uncomment these lines to turn on Django dispatching:
+#from soapfish.django_ import django_dispatcher
+#dispatcher = django_dispatcher('{{ service.ports.0.address.location|url_regex }}', {{ port.name }}_SERVICE))
 {# [blank line] #}
 # Put these lines in the urls.py file of your Django project/application:
 #urlpatterns += patterns('',
-#    (r'{{ service.ports.0.address.location|url_regex }}', csrf_exempt('<module>.dispatcher')),
+#    (r'{{ service.ports.0.address.location|url_regex }}', '<module>.dispatcher'),
 #)
 {%- else %}
 ################################################################################
