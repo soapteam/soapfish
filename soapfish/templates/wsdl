@@ -138,7 +138,7 @@ class {{ outputMessage.name }}Headers(BaseHeader):
 {# [blank line] #}
 #Uncomment these lines to turn on Django dispatching:
 #from soapfish.django_ import django_dispatcher
-#dispatcher = django_dispatcher('{{ service.ports.0.address.location|url_regex }}', {{ port.name }}_SERVICE)
+#dispatcher = django_dispatcher({{ port.name }}_SERVICE)
 {# [blank line] #}
 # Put these lines in the urls.py file of your Django project/application:
 #urlpatterns += patterns('',
