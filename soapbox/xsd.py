@@ -243,7 +243,7 @@ class String(SimpleType):
             raise ValueError("Value '%s' for class '%s'." % (unicode(value), self.__class__.__name__))
 
         if self.pattern:
-            cp = re.compile(self.pattern)
+            cp = re.compile(self.pattern + '$')
             if not cp.match(value):
                 raise ValueError("Value '%s' doesn't match pattern '%s'" % (value, self.pattern))
 
@@ -382,7 +382,7 @@ class Decimal(SimpleType):
             raise ValueError('Value %s smaller than minInclusive %s' % (value, self.minInclusive))
 
         if self.pattern is not None:
-            compiled_pattern = re.compile(self.pattern)
+            compiled_pattern = re.compile(self.pattern + '$')
             if not compiled_pattern.match(str(value)):
                 raise ValueError('Value %s doesn\'t match pattern %s.' % (value, self.pattern))
 
