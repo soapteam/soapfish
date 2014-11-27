@@ -24,6 +24,9 @@ Changes
   - fix exception in SOAPDispatcher when a handler does not return a SOAPResponse
   - correctly apply pattern restrictions for simple types
   - pattern restriction was not correctly serialized when generating xsd schemas
+  - omit minOccurs=1 and maxOccurs=1 in xsd2py: these are the defaults and the
+    latter even produces invalid code (because xsd.Element does not support
+    the maxOccurs attribute)
   - fix bad WSDL generation due to unresolved type reference
 
 
