@@ -24,6 +24,7 @@ Changes
   - fix exception in SOAPDispatcher when a handler does not return a SOAPResponse
   - correctly apply pattern restrictions for simple types
   - pattern restriction was not correctly serialized when generating xsd schemas
+  - fix bad WSDL generation due to unresolved type reference
 
 
 0.5.1 (2014-06-12)
