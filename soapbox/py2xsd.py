@@ -187,6 +187,7 @@ def generate_xsdspec(schema):
     '''
     xsd_schema = xsdspec.Schema()
     xsd_schema.targetNamespace = schema.targetNamespace
+    xsd_schema.elementFormDefault = schema.elementFormDefault
 
     build_imports(xsd_schema, schema.imports)
     for st in schema.simpleTypes:
