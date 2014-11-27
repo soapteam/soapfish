@@ -116,9 +116,9 @@ class {{ ct.name|capitalize }}(xsd.ComplexType):
     {%- if element.type %}
     {%- if element.maxOccurs and element.maxOccurs > 1 %}
     {%- if element.name + 's' in keywords %}
-    _{{ element.name }}s = xsd.{{ field_type }}({{ element.type|type(known_types) }}, '{{ element.name }}', tagname='{{ element.name }}s'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    _{{ element.name }}s = xsd.{{ field_type }}({{ element.type|type(known_types) }}, '{{ element.name }}', tagname='{{ element.name }}s'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- else %}
-    {{ element.name }}s = xsd.{{ field_type }}({{ element.type|type(known_types) }}, '{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {{ element.name }}s = xsd.{{ field_type }}({{ element.type|type(known_types) }}, '{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- endif %}
     {%- else %}
     {%- if element.name in keywords %}
@@ -216,9 +216,9 @@ class {{ element.name|capitalize }}(xsd.ComplexType):
     {%- endif %}
     {%- if element.type %}
     {%- if element.name in keywords %}
-    _{{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    _{{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- else %}
-    {{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if not element.maxOccurs is none %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- endif %}
     {%- endif %}
     {%- if element.simpleType %}
