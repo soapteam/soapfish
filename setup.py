@@ -6,11 +6,15 @@ WSDL documents and providing a dispatcher for the Django framework.
 '''
 
 import re
+import sys
 
 from setuptools import setup, find_packages
 
 import soapfish
 
+if (3, 0) <= sys.version_info < (3, 3):
+    sys.stderr.write('soapfish requires at Python 3.3 (or later)')
+    sys.exit(1)
 
 def requires_from_file(filename):
     requirements = []
