@@ -101,7 +101,7 @@ class SOAPDispatcher(object):
     def _parse_header(self, handler, soap_header):
         # TODO return soap fault if header is required but missing in the input
         if soap_header is None:
-            return
+            return None
         if handler.input_header:
             return soap_header.parse_as(handler.input_header)
         elif self.service.input_header:
