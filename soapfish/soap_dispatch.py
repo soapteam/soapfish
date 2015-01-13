@@ -62,7 +62,7 @@ class SOAPDispatcher(object):
         except etree.XMLSyntaxError as e:
             raise SOAPError(SOAP.Code.CLIENT, repr(e))
         # Actually this is more a stopgap measure than a real fix. The real
-        # fix is to change SOAP.Envelope/ComplexType so it raise some kind of
+        # fix is to change SOAP.Envelope/ComplexType so it raises some kind of
         # validation error. A missing SOAP body is not allowed by the SOAP
         # specs (according to my interpretation):
         # SOAP 1.1: http://schemas.xmlsoap.org/soap/envelope/
