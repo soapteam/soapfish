@@ -528,6 +528,9 @@ class Element(object):
         '''
         return self.default
 
+    def xsd_elements(self):
+        return (self, )
+
     def accept(self, value):
         '''
         Checks is the value correct from type defined in constructions.

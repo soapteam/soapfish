@@ -119,14 +119,15 @@ def xsd_complexType(complexType, named=True):
         container = xsd_ct
 
     for element in complexType._meta.fields:
-        if element._type is None:
-            # The type must be known in order to generate a valid schema. The
-            # error occured when using the built-in WSDL generation but I was
-            # unable to reproduce the error condition in a test case.
-            # Forcing type evaluation fixed the problem though.
-            element._evaluate_type()
-        xsd_element = create_xsd_element(element)
-        container.elements.append(xsd_element)
+        for element_ in element.xsd_elements():
+            if element_._type is None:
+                # The type must be known in order to generate a valid schema. The
+                # error occured when using the built-in WSDL generation but I was
+                # unable to reproduce the error condition in a test case.
+                # Forcing type evaluation fixed the problem though.
+                element_._evaluate_type()
+            xsd_element = create_xsd_element(element_)
+            container.elements.append(xsd_element)
     return xsd_ct
 
 
