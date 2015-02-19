@@ -67,7 +67,8 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8'):
     definitions = wsdl.Definitions.parse_xmlelement(xmlelement)
     schema = definitions.types.schema
     xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
-    schemaxml = schema_to_py(schema, xsd_namespace)
+    schemaxml = schema_to_py(schema, xsd_namespace,
+                             parent_namespace=definitions.targetNamespace)
 
     tpl = env.get_template('wsdl')
     return tpl.render(

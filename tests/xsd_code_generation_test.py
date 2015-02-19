@@ -119,6 +119,17 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # Check generated XML
         # <job><person><name>Foo</name></person></job>
     
+    def test_implicit_target_namespace(self):
+        xml = ('<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" \n'
+            '    elementFormDefault="qualified">\n'
+            '    <xs:element name="field" type="xsd:string" />\n'
+            '</xs:schema>')
+        xml_element = etree.fromstring(xml)
+        generated_schema = xsdspec.Schema.parse_xmlelement(xml_element)
+        xsd2py.schema_to_py(generated_schema, ['xs'], known_namespaces=[],
+                            parent_namespace="http://site.example/ws/spec")
+
+
     def _generated_symbols(self, code_string):
         # imports not present in generated code
         from soapfish import xsd
