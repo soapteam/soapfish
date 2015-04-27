@@ -1,4 +1,5 @@
 from __future__ import print_function
+import unittest
 
 from lxml import etree
 from nose import SkipTest
@@ -129,6 +130,32 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xsd2py.schema_to_py(generated_schema, ['xs'], known_namespaces=[],
                             parent_namespace="http://site.example/ws/spec")
 
+    @unittest.expectedFailure
+    def test_can_generate_list_enumeration(self):
+        xml = '<xsd:schema elementFormDefault="qualified" targetNamespace="http://example.org/A" xmlns:xsd="http://www.w3.org/2001/XMLSchema">' \
+              '    <xsd:simpleType name="MyList">' \
+              '        <xsd:list>' \
+              '            <xsd:simpleType>' \
+              '                <xsd:restriction base="xsd:string">' \
+              '                    <xsd:enumeration value="A"/>' \
+              '                    <xsd:enumeration value="B"/>' \
+              '                    <xsd:enumeration value="C"/>' \
+              '                </xsd:restriction>' \
+              '            </xsd:simpleType>' \
+              '        </xsd:list>' \
+              '    </xsd:simpleType>' \
+              '</xsd:schema>'
+        xml_element = etree.fromstring(xml)
+        code_string = xsd2py.generate_code_from_xsd(xml_element)
+
+        schema, new_symbols = self._generated_symbols(code_string)
+        assert_not_none(schema)
+        assert_length(2, new_symbols)
+
+        assert_true(issubclass(new_symbols['MyList'], xsd.List))
+
+        my_list = new_symbols['MyList']()
+        assert_equals(my_list.accept(['B']), True)
 
     def _generated_symbols(self, code_string):
         # imports not present in generated code
