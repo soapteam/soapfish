@@ -6,6 +6,7 @@ from nose import SkipTest
 from soapfish import xsd, xsdspec
 from soapfish import xsd2py
 from soapfish.lib.pythonic_testcase import *
+from tests import generated_symbols
 
 
 class XSDCodeGenerationTest(PythonicTestCase):
@@ -19,7 +20,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml_element = etree.fromstring(xml)
         code_string = xsd2py.generate_code_from_xsd(xml_element)
         
-        schema, new_symbols = self._generated_symbols(code_string)
+        schema, new_symbols = generated_symbols(code_string)
         assert_not_none(schema)
         assert_length(1, new_symbols)
         
@@ -45,7 +46,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml_element = etree.fromstring(xml)
         code_string = xsd2py.generate_code_from_xsd(xml_element)
         
-        schema, new_symbols = self._generated_symbols(code_string)
+        schema, new_symbols = generated_symbols(code_string)
         assert_not_none(schema)
         # somehow we need to be able to have a schema with multiple possible
         # root elements
@@ -98,7 +99,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         generated_schema = xsdspec.Schema.parse_xmlelement(xml_element)
         code_string = xsd2py.schema_to_py(generated_schema, ['xs'], known_namespaces=[])
         
-        schema, new_symbols = self._generated_symbols(code_string)
+        schema, new_symbols = generated_symbols(code_string)
         assert_not_none(schema)
         assert_length(3, new_symbols)
         assert_contains('Person', new_symbols.keys())
@@ -128,28 +129,3 @@ class XSDCodeGenerationTest(PythonicTestCase):
         generated_schema = xsdspec.Schema.parse_xmlelement(xml_element)
         xsd2py.schema_to_py(generated_schema, ['xs'], known_namespaces=[],
                             parent_namespace="http://site.example/ws/spec")
-
-
-    def _generated_symbols(self, code_string):
-        # imports not present in generated code
-        from soapfish import xsd
-        from soapfish.xsd import UNBOUNDED
-        new_locals = dict(locals())
-        
-        try:
-            # Let's trust our own code generation...
-            exec(code_string, {}, new_locals)
-        except Exception:
-            print(code_string)
-            raise
-        new_variables = set(new_locals).difference(locals())
-        
-        schema = None
-        new_symbols = dict()
-        for name in new_variables:
-            symbol_ = new_locals[name]
-            new_symbols[name] = symbol_
-            if isinstance(symbol_, xsd.Schema):
-                schema = symbol_
-        return schema, new_symbols
-
