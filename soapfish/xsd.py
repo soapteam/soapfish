@@ -41,7 +41,7 @@ For information on XML schema validation:
 
 
 from copy import copy
-from decimal import Decimal
+from decimal import Decimal as _Decimal
 from datetime import datetime
 import functools
 import logging
@@ -60,7 +60,7 @@ from .xsd_types import XSDDate
 logger = logging.getLogger(__name__)
 NIL = object()
 
-UNBOUNDED = Decimal('infinity')
+UNBOUNDED = _Decimal('infinity')
 
 
 class CallStyle(object):
@@ -365,6 +365,8 @@ class Decimal(SimpleType):
     def accept(self, value):
         if value is None:
             return None
+        elif isinstance(value, _Decimal):
+            value = str(value)
         elif isinstance(value, six.integer_types) or isinstance(value, float):
             pass  # value is just value
         elif isinstance(value, basestring):
