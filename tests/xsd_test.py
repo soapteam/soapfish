@@ -1,4 +1,5 @@
 import unittest
+from decimal import Decimal
 
 from lxml import etree
 
@@ -184,6 +185,14 @@ class BooleanTypeTest(unittest.TestCase):
 
 
 class DecimalTypeTest(unittest.TestCase):
+
+    def test_python_decimal(self):
+
+        class Test(xsd.ComplexType):
+            float = xsd.Element(xsd.Decimal())
+
+        test = Test()
+        test.float = Decimal('2.2')
 
     def test_enumeration(self):
 
