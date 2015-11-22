@@ -326,6 +326,14 @@ class CodeGenerationTest(unittest.TestCase):
         assert_contains('Schema1_Element', code)
         assert_contains('Schema2_Element', code)
 
+    def test_schema_xsd_include(self):
+        path = 'tests/assets/include/include.wsdl'
+        xml = open_document(path)
+        code = generate_code_from_wsdl(xml, 'server', cwd=os.path.dirname(path))
+        if six.PY3:
+            code = code.decode()
+        assert_contains('Schema1_Element', code)
+
     def test_schema_xsd_restriction(self):
         xmlelement = etree.fromstring(XSD_RESTRICTION)
         code = generate_code_from_xsd(xmlelement)

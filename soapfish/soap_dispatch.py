@@ -8,6 +8,7 @@ import logging
 from lxml import etree
 import six
 
+from . import py2xsd
 from . import py2wsdl
 from . import wsa
 from .compat import basestring
@@ -29,7 +30,7 @@ def call_method(request):
 
 class SOAPDispatcher(object):
 
-    def __init__(self, service, middlewares=None, wsdl=None, strict_soap_header=True):
+    def __init__(self, service, middlewares=None, wsdl=None, xsds=None, strict_soap_header=True):
         """
         Args:
             service: the service to expose
@@ -43,10 +44,17 @@ class SOAPDispatcher(object):
             middlewares = []
         self.middlewares = middlewares
         self.schema_validator = schema_validator(self.service.schema)
+
         if wsdl is None:
             wsdlelement = py2wsdl.generate_wsdl(self.service)
+            self._rewrite_locations(wsdlelement)
             wsdl = etree.tostring(wsdlelement, pretty_print=True)
         self.wsdl = wsdl
+
+        if xsds is None:
+            xsds = self._generate_xsds(self.service.schema)
+        self.xsds = xsds
+
         self.strict_soap_header = strict_soap_header
 
     def middleware(self, i=0):
@@ -146,8 +154,11 @@ class SOAPDispatcher(object):
 
     def dispatch(self, request):
         request_method = request.environ.get('REQUEST_METHOD', '')
-        if request_method == 'GET' and 'wsdl' in request.environ.get('QUERY_STRING', ''):
+        qs = request.environ.get('QUERY_STRING', '')
+        if request_method == 'GET' and 'wsdl' in qs:
             return self.handle_wsdl_request(request)
+        elif request_method == 'GET' and 'xsd=' in qs:
+            return self.handle_xsd_request(request)
         elif request_method == 'POST':
             return self.handle_soap_request(request)
         else:
@@ -210,6 +221,32 @@ class SOAPDispatcher(object):
                 wsdl = wsdl.encode()
 
         return SOAPResponse('wsdl', http_content=wsdl, http_headers={'Content-Type': 'text/xml'})
+
+    def handle_xsd_request(self, request):
+        qs = request.environ.get('QUERY_STRING')
+        xsd_filename = qs[qs.index('xsd=') + 4:]
+        if '&' in xsd_filename:
+            xsd_filename, _ = xsd_filename.split('&', 1)
+        return SOAPResponse('xsd', http_content=self.xsds[xsd_filename], http_headers={'Content-Type': 'text/xml'})
+
+    def _generate_xsds(self, schema, _generated=None):
+        if _generated is None:
+            _generated = {}
+
+        for _schema in (schema.imports + schema.includes):
+            if _schema.location in _generated:
+                continue
+
+            xsdelement = py2xsd.generate_xsd(_schema)
+            self._rewrite_locations(xsdelement)
+            xsd = etree.tostring(xsdelement, pretty_print=True)
+            _generated[_schema.location] = xsd
+            self._generate_xsds(_schema, _generated)
+        return _generated
+
+    def _rewrite_locations(self, element):
+        for e in element.xpath('//xsd:import|//xsd:include', namespaces=element.nsmap):
+            e.attrib['schemaLocation'] = '?xsd=%s' % e.attrib['schemaLocation']
 
 
 class WsgiSoapApplication(object):

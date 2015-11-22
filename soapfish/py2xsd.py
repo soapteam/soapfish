@@ -6,6 +6,7 @@ from __future__ import print_function
 import argparse
 import imp
 import inspect
+import itertools
 import logging
 import six
 import textwrap
@@ -159,12 +160,22 @@ def build_imports(xsd_schema, imports):
             counter += 1
 
 
+def build_includes(xsd_schema, includes):
+    if includes:
+        for _include in includes:
+            xsd_include = xsdspec.Include()
+            if _include.location:
+                xsd_include.schemaLocation = _include.location
+            xsd_schema.includes.append(xsd_include)
+
+
 def generate_xsdspec(schema):
     xsd_schema = xsdspec.Schema()
     xsd_schema.targetNamespace = schema.targetNamespace
     xsd_schema.elementFormDefault = schema.elementFormDefault
 
     build_imports(xsd_schema, schema.imports)
+    build_includes(xsd_schema, schema.includes)
     for st in schema.simpleTypes:
         xsd_st = xsd_simpleType(st)
         xsd_schema.simpleTypes.append(xsd_st)
@@ -217,8 +228,13 @@ def schema_validator(schema):
         def __init__(self, schemas, *args, **kwargs):
             super(SchemaResolver, self).__init__(*args, **kwargs)
             self._soapfish_schemas = {}
-            for schema in schemas:
-                self._soapfish_schemas[schema.location] = schema
+            self._map(schema)
+
+        def _map(self, schema):
+            for item in itertools.chain(schema.imports, schema.includes):
+                if item.location not in self._soapfish_schemas:
+                    self._soapfish_schemas[item.location] = item
+                    self._map(item)
 
         def resolve(self, url, id_, context):
             if url in self._soapfish_schemas:
@@ -227,8 +243,8 @@ def schema_validator(schema):
             # prevent unwanted network access
             raise ValueError('can not resolve %r - not a known soapfish schema' % url)
 
-    resolver = SchemaResolver(schema.imports or ())
     parser = etree.XMLParser(load_dtd=True)
+    resolver = SchemaResolver(schema)
     parser.resolvers.add(resolver)
 
     # unfortunately we have to parse the whole schema from string so we are

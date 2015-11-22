@@ -1,6 +1,6 @@
 {#- XSD Includes -#}
 {%- for imp in schema.includes %}
-{{- resolve_import(imp, known_files) }}
+{{- resolve_import(imp, known_files, schema.targetNamespace, cwd) }}
 {%- endfor %}
 {#- XSD Imports -#}
 {%- for imp in schema.imports %}
@@ -267,7 +267,7 @@ Schema_{{ schema_name(schema, location) }} = xsd.Schema(
     includes=[{% for i in schema.includes %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     targetNamespace='{{ schema.targetNamespace }}',
     {%- if location %}
-    location='{{ location|url_template }}',{% endif %}
+    location='{{ location }}',{% endif %}
     elementFormDefault='{{ schema.elementFormDefault }}',
     simpleTypes=[{% for st in schema.simpleTypes %}{{ st.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
     attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
