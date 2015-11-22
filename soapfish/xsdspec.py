@@ -141,6 +141,10 @@ class Import(xsd.ComplexType):
     namespace = xsd.Attribute(xsd.String)
 
 
+class Include(xsd.ComplexType):
+    schemaLocation = xsd.Attribute(xsd.String)
+
+
 class Schema(xsd.ComplexType):
     NAMESPACE = ns.xsd
     targetNamespace = xsd.Attribute(xsd.String)
@@ -149,6 +153,7 @@ class Schema(xsd.ComplexType):
         use=xsd.Use.OPTIONAL, default='unqualified',
     )
     imports = xsd.ListElement(Import, 'import')
+    includes = xsd.ListElement(Include, 'include')
     simpleTypes = xsd.ListElement(SimpleType, 'simpleType')
     groups = xsd.ListElement(Group, 'group')
     attributeGroups = xsd.ListElement(AttributeGroup, 'attributeGroup')

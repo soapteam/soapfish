@@ -44,6 +44,7 @@ from copy import copy
 from decimal import Decimal as _Decimal
 from datetime import datetime
 import functools
+import itertools
 import logging
 import re
 
@@ -1145,7 +1146,7 @@ class Schema(object):
 
     def __init__(self, targetNamespace, elementFormDefault=ElementFormDefault.UNQUALIFIED,
                  simpleTypes=[], attributeGroups=[], groups=[], complexTypes=[], elements={},
-                 imports=(), location=None):
+                 imports=(), includes=(), location=None):
         '''
         :param targetNamespace: string, xsd namespace URL.
         :param elementFormDefault: unqualified/qualified. Defines if namespaces
@@ -1165,6 +1166,7 @@ class Schema(object):
         self.complexTypes = complexTypes
         self.elements = elements
         self.imports = imports
+        self.includes = includes
         self.location = location
 
         self.__init_schema(self.simpleTypes)
@@ -1197,8 +1199,8 @@ class Schema(object):
         if name in self.elements:
             return self.elements[name]
 
-        for _import in self.imports:
-            element = _import.get_element_by_name(name)
+        for i in itertools.chain(self.imports, self.includes):
+            element = i.get_element_by_name(name)
             if element is not None:
                 return element
 
