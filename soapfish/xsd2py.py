@@ -75,6 +75,7 @@ def schema_name(schema, location=None):
         location = location.encode()
     except UnicodeEncodeError:
         pass
+
     # we don't have any cryptographic requirements here and md5 is faster than
     # sha512 so there is no harm using an outdated algorithm.
     return hashlib.md5(location).hexdigest()[0:5]
@@ -88,8 +89,8 @@ def generate_code_from_xsd(xmlelement, known_files=None, location=None,
 
     schema = Schema.parse_xmlelement(xmlelement)
 
-    # Skip if this schema has already been included:
-    if schema.targetNamespace in known_files:
+    # Skip if this file has already been included:
+    if location and location in known_files:
         return ''
 
     schema_code = schema_to_py(schema, xsd_namespace, known_files,
