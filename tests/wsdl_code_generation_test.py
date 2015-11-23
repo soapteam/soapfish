@@ -5,7 +5,7 @@ from pythonic_testcase import *
 
 from soapfish import xsd
 from soapfish import wsdl2py
-from tests import generated_symbols
+from soapfish.testutil import generated_symbols
 
 
 class XSDCodeGenerationTest(PythonicTestCase):

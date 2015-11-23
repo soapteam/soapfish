@@ -6,7 +6,7 @@ from pythonic_testcase import *
 
 from soapfish import xsd, xsdspec
 from soapfish import xsd2py
-from tests import generated_symbols
+from soapfish.testutil import generated_symbols
 
 
 class XSDCodeGenerationTest(PythonicTestCase):
