@@ -9,7 +9,9 @@ try:
     from django.conf.urls import patterns
     from django.conf import empty
     from django.test import Client
-except ImportError:
+except (ImportError, SyntaxError):
+    # Django 1.8 does not support Python 2.6 anymore, importing the module
+    # triggers a SyntaxError which causes builds to fail.
     django = None
 from nose import SkipTest
 
