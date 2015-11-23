@@ -1,5 +1,4 @@
 from __future__ import print_function
-import unittest
 
 from lxml import etree
 from nose import SkipTest
@@ -130,8 +129,8 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xsd2py.schema_to_py(generated_schema, ['xs'], known_namespaces=[],
                             parent_namespace="http://site.example/ws/spec")
 
-    @unittest.expectedFailure
     def test_can_generate_list_enumeration(self):
+        raise SkipTest('list enumerations are not parsed correctly from xsd')
         xml = '<xsd:schema elementFormDefault="qualified" targetNamespace="http://example.org/A" xmlns:xsd="http://www.w3.org/2001/XMLSchema">' \
               '    <xsd:simpleType name="MyList">' \
               '        <xsd:list>' \
