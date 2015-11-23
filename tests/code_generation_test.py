@@ -1,7 +1,8 @@
 import unittest
 
-from lxml import etree
 import tempfile
+
+from lxml import etree
 
 from soapfish.xsd2py import generate_code_from_xsd
 from soapfish.wsdl2py import generate_code_from_wsdl
