@@ -3,3 +3,4 @@
 nose>=1.0
 coverage
 django
+flask
