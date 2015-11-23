@@ -101,7 +101,7 @@ def url_template(url):
     http://example.net/ws/endpoint --> %s/ws/endpoint
     '''
     o = list(urlparse(url))
-    o[0:2] = ['%(scheme)s', '%(host)s']
+    o[0:2] = ['{scheme}', '{host}']
     return urlunparse(o)
 
 

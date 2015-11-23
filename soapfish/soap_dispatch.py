@@ -6,6 +6,7 @@ import functools
 import logging
 
 from lxml import etree
+import six
 
 from . import py2wsdl
 from . import wsa
@@ -196,7 +197,19 @@ class SOAPDispatcher(object):
         return response
 
     def handle_wsdl_request(self, request):
-        return SOAPResponse('wsdl', http_content=self.wsdl, http_headers={'Content-Type': 'text/xml'})
+        scheme = request.environ.get('X-Forwarded-Proto', request.environ.get('wsgi.url_scheme', 'http'))
+        host = request.environ.get('HTTP_HOST')
+        wsdl = self.wsdl
+        if scheme and host:
+            if six.PY3:
+                wsdl = wsdl.decode()
+
+            wsdl = wsdl.format(scheme=scheme, host=host)
+
+            if six.PY3:
+                wsdl = wsdl.encode()
+
+        return SOAPResponse('wsdl', http_content=wsdl, http_headers={'Content-Type': 'text/xml'})
 
 
 class WsgiSoapApplication(object):
