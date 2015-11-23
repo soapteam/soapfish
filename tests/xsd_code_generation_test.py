@@ -2,10 +2,10 @@ from __future__ import print_function
 
 from lxml import etree
 from nose import SkipTest
+from pythonic_testcase import *
 
 from soapfish import xsd, xsdspec
 from soapfish import xsd2py
-from soapfish.lib.pythonic_testcase import *
 from tests import generated_symbols
 
 

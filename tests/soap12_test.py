@@ -2,8 +2,8 @@
 from __future__ import absolute_import
 
 from lxml import etree
+from pythonic_testcase import *
 
-from soapfish.lib.pythonic_testcase import *
 from soapfish.soap12 import get_error_response, Code
 
 

@@ -4,7 +4,8 @@ from __future__ import absolute_import, unicode_literals
 
 from io import BytesIO
 
-from soapfish.lib.pythonic_testcase import *
+from pythonic_testcase import *
+
 from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 from soapfish.testutil import echo_service
 

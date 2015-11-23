@@ -14,11 +14,11 @@ except (ImportError, SyntaxError):
     # triggers a SyntaxError which causes builds to fail.
     django = None
 from nose import SkipTest
+from pythonic_testcase import *
 
 from soapfish.django_ import django_dispatcher
 from soapfish.testutil import echo_service
 from soapfish.lib.attribute_dict import AttrDict
-from soapfish.lib.pythonic_testcase import *
 
 
 class DjangoDispatchTest(PythonicTestCase):

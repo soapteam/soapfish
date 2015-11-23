@@ -2,9 +2,9 @@
 from __future__ import absolute_import, unicode_literals
 
 from lxml import etree
+from pythonic_testcase import *
 
 from soapfish import xsd
-from soapfish.lib.pythonic_testcase import *
 from soapfish.py2xsd import generate_xsd
 
 

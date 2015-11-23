@@ -1,9 +1,9 @@
 import unittest
 
 from lxml import etree
+from pythonic_testcase import *
 
 from soapfish import xsd
-from soapfish.lib.pythonic_testcase import *
 from soapfish.py2xsd import generate_xsd
 from soapfish.xsd import ComplexType, ElementFormDefault, Schema
 

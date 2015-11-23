@@ -3,11 +3,11 @@
 from datetime import date as Date, datetime as DateTime, timedelta as TimeDelta, tzinfo
 
 from lxml import etree
+from pythonic_testcase import *
 
 from soapfish import xsd
 from soapfish.lib import iso8601
 from soapfish.lib.iso8601 import UTC, FixedOffset
-from soapfish.lib.pythonic_testcase import *
 from soapfish.testutil import SimpleTypeTestCase
 from soapfish.xsd_types import XSDDate
 

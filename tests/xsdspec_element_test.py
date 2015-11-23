@@ -1,8 +1,8 @@
 
 from nose import SkipTest
+from pythonic_testcase import *
 
 from soapfish import xsd, xsdspec
-from soapfish.lib.pythonic_testcase import *
 
 
 class XSDSpecElementTest(PythonicTestCase):

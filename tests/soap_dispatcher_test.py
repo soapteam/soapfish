@@ -2,11 +2,11 @@
 from __future__ import absolute_import
 
 from lxml import etree
+from pythonic_testcase import *
 
 from soapfish import wsa, xsd
 from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.compat import basestring
-from soapfish.lib.pythonic_testcase import *
 from soapfish.middlewares import ExceptionToSoapFault
 from soapfish.soap_dispatch import SOAPDispatcher
 from soapfish.testutil import echo_handler, echo_service, EchoInputHeader, EchoOutputHeader

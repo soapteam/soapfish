@@ -1,10 +1,10 @@
 import unittest
 
 from lxml import etree
+from pythonic_testcase import *
 
 from soapfish import xsd, xsdspec
 from soapfish.lib import iso8601
-from soapfish.lib.pythonic_testcase import *
 
 
 class Aircraft(xsd.ComplexType):

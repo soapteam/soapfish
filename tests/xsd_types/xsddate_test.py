@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from nose import SkipTest
+from pythonic_testcase import *
 
-from soapfish.lib.pythonic_testcase import *
 from soapfish.xsd_types import XSDDate
 
 

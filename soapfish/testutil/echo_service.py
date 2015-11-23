@@ -3,11 +3,11 @@
 from __future__ import absolute_import, unicode_literals
 
 from lxml import etree
+from pythonic_testcase import *
 
 from .. import xsd
 from ..core import SOAPResponse
 from ..lib.attribute_dict import AttrDict
-from ..lib.pythonic_testcase import *
 from ..soap import Service, SOAPVersion
 
 

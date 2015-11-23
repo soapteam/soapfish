@@ -1,8 +1,8 @@
 
 from nose import SkipTest
+from pythonic_testcase import *
 
 from soapfish import xsd
-from soapfish.lib.pythonic_testcase import *
 
 
 class RefTest(PythonicTestCase):
