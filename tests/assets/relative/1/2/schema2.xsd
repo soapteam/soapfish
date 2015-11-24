@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://example.com/2" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace='http://example.com/3' schemaLocation="../3/schema3.xsd"/>
+    <xsd:element name="Schema2_Element" type="xsd:string"/>
+</xsd:schema>

@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import argparse
 import logging
+import os
 import sys
 import textwrap
 
@@ -55,7 +56,10 @@ def get_rendering_environment():
     return env
 
 
-def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8'):
+def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
+    if cwd is None:
+        cwd = os.getcwd()
+
     env = get_rendering_environment()
     xmlelement = etree.fromstring(xml)
     XSD_NAMESPACE = find_xsd_namespaces(xmlelement.nsmap)
@@ -68,7 +72,8 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8'):
     schema = definitions.types.schema
     xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
     schemaxml = schema_to_py(schema, xsd_namespace,
-                             parent_namespace=definitions.targetNamespace)
+                             parent_namespace=definitions.targetNamespace,
+                             cwd=cwd)
 
     tpl = env.get_template('wsdl')
     return tpl.render(
@@ -101,9 +106,10 @@ def parse_arguments():
 def main():
     opt = parse_arguments()
     xml = open_document(opt.wsdl)
+    cwd = os.path.dirname(os.path.abspath(opt.wsdl))
     target = 'server' if opt.server else 'client'
     logger.info('Generating %s code for WSDL document \'%s\'...' % (target, opt.wsdl))
-    code = generate_code_from_wsdl(xml, target, opt.use_wsa)
+    code = generate_code_from_wsdl(xml, target, opt.use_wsa, cwd=cwd)
     if six.PY3:
         sys.stdout.buffer.write(code)
     else:

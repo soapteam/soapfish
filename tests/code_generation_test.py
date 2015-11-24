@@ -1,12 +1,15 @@
+import os
 import unittest
-
 import tempfile
 
 from lxml import etree
+import six
+from pythonic_testcase import *
 
 from soapfish.xsd2py import generate_code_from_xsd
 from soapfish.wsdl2py import generate_code_from_wsdl
-from soapfish import  py2wsdl
+from soapfish import py2wsdl
+from soapfish.utils import open_document
 
 
 XSD = """
@@ -277,6 +280,14 @@ class CodeGenerationTest(unittest.TestCase):
             m['PutOpsPortServiceStub'] = m.pop('PutOpsPortPortServiceStub')
         self.assertEqual(sorted(m), sorted(base))
 
+    def test_relative_paths(self):
+        path = 'tests/assets/relative/relative.wsdl'
+        xml = open_document(path)
+        code = generate_code_from_wsdl(xml, 'server', cwd=os.path.dirname(path))
+        if six.PY3:
+            code = code.decode()
+        assert_contains('Schema2_Element', code)
+        assert_contains('Schema3_Element', code)
 
 if __name__ == "__main__":
     unittest.main()

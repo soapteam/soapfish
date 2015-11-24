@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import keyword
 import logging
+import os
 import sys
 import textwrap
 
@@ -53,11 +54,14 @@ def get_rendering_environment():
     return env
 
 
-def resolve_import(xsdimport, known_namespaces, parent_namespace):
-    logger.info('Generating code for XSD import \'%s\'...' % xsdimport.schemaLocation)
-    xml = open_document(xsdimport.schemaLocation)
+def resolve_import(xsdimport, known_namespaces, parent_namespace, cwd):
+    location = os.path.join(cwd, xsdimport.schemaLocation)
+    cwd = os.path.dirname(location)
+    logger.info('Generating code for XSD import \'%s\'...' % location)
+    xml = open_document(location)
     xmlelement = etree.fromstring(xml)
-    return generate_code_from_xsd(xmlelement, known_namespaces, xsdimport.schemaLocation, parent_namespace, encoding=None)
+    return generate_code_from_xsd(xmlelement, known_namespaces, location,
+                                  parent_namespace, encoding=None, cwd=cwd)
 
 
 def schema_name(namespace):
@@ -66,7 +70,8 @@ def schema_name(namespace):
     return hashlib.md5(namespace.encode()).hexdigest()[0:5]
 
 
-def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None, parent_namespace=None, encoding='utf8'):
+def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None,
+                           parent_namespace=None, encoding='utf8', cwd=None):
     if known_namespaces is None:
         known_namespaces = []
     xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
@@ -77,13 +82,15 @@ def generate_code_from_xsd(xmlelement, known_namespaces=None, location=None, par
     if schema.targetNamespace in known_namespaces:
         return ''
 
-    schema_code = schema_to_py(schema, xsd_namespace, known_namespaces, location)
+    schema_code = schema_to_py(schema, xsd_namespace, known_namespaces,
+                               location, cwd=cwd)
     if encoding is None:
         return schema_code
     return schema_code.encode(encoding)
 
 
-def schema_to_py(schema, xsd_namespace, known_namespaces=None, location=None, parent_namespace=None):
+def schema_to_py(schema, xsd_namespace, known_namespaces=None, location=None,
+                 parent_namespace=None, cwd=None):
     if known_namespaces is None:
         known_namespaces = []
     known_namespaces.append(schema.targetNamespace)
@@ -98,7 +105,7 @@ def schema_to_py(schema, xsd_namespace, known_namespaces=None, location=None, pa
     if schema.targetNamespace is None:
         schema.targetNamespace = parent_namespace
 
-    return tpl.render(schema=schema)
+    return tpl.render(schema=schema, cwd=cwd)
 
 
 # --- Program -----------------------------------------------------------------

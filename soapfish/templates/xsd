@@ -1,6 +1,6 @@
 {#- XSD Imports -#}
 {%- for imp in schema.imports %}
-{{- resolve_import(imp, known_namespaces, schema.targetNamespace) }}
+{{- resolve_import(imp, known_namespaces, schema.targetNamespace, cwd) }}
 {%- endfor %}
 # {{ schema.targetNamespace }}{# Output the name of the schema in a comment. #}
 {# [blank line] #}
