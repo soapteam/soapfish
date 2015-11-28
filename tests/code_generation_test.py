@@ -289,5 +289,15 @@ class CodeGenerationTest(unittest.TestCase):
         assert_contains('Schema2_Element', code)
         assert_contains('Schema3_Element', code)
 
+    def test_import_same_namespace(self):
+        path = 'tests/assets/same_namespace/same_namespace.wsdl'
+        xml = open_document(path)
+        code = generate_code_from_wsdl(xml, 'server', cwd=os.path.dirname(path))
+        if six.PY3:
+            code = code.decode()
+        assert_contains('Schema1_Element', code)
+        assert_contains('Schema2_Element', code)
+
+
 if __name__ == "__main__":
     unittest.main()
