@@ -1,6 +1,6 @@
 {#- XSD Imports -#}
 {%- for imp in schema.imports %}
-{{- resolve_import(imp, known_namespaces, schema.targetNamespace, cwd) }}
+{{- resolve_import(imp, known_files, schema.targetNamespace, cwd) }}
 {%- endfor %}
 # {{ schema.targetNamespace }}{# Output the name of the schema in a comment. #}
 {# [blank line] #}
@@ -258,8 +258,8 @@ class {{ element.name|capitalize }}(xsd.ComplexType):
 {% endif %}
 {%- endif %}
 {%- endfor %}
-Schema_{{ schema_name(schema.targetNamespace) }} = xsd.Schema(
-    imports=[{% for i in schema.imports %}Schema_{{ schema_name(i.namespace) }}{% if not loop.last %}, {% endif %}{% endfor %}],
+Schema_{{ schema_name(schema, location) }} = xsd.Schema(
+    imports=[{% for i in schema.imports %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     targetNamespace='{{ schema.targetNamespace }}',
     {%- if location %}
     location='{{ location|url_template }}',{% endif %}

@@ -59,7 +59,7 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {%- set outputMessageHeaders = operation.get_OutputMessageHeaders() -%}
 {%- if inputMessageHeaders %}
 class {{ inputMessage.name }}Headers(BaseHeader):
-    SCHEMA = Schema_{{ schema_name(definitions.types.schema.targetNamespace) }}
+    SCHEMA = Schema_{{ schema_name(definitions.types.schema) }}
     {%- for part in inputMessageHeaders -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
@@ -71,7 +71,7 @@ class {{ inputMessage.name }}Headers(BaseHeader):
 {%- endif -%}
 {%- if outputMessageHeaders %}
 class {{ outputMessage.name }}Headers(BaseHeader):
-    SCHEMA = Schema_{{ schema_name(definitions.types.schema.targetNamespace) }}
+    SCHEMA = Schema_{{ schema_name(definitions.types.schema) }}
     {%- for part in outputMessageHeaders -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
@@ -122,7 +122,7 @@ class {{ outputMessage.name }}Headers(BaseHeader):
     name='{{ port.name }}',
     targetNamespace='{{ definitions.targetNamespace }}',
     location='{{ port.address.location|url_template }}',
-    schema=Schema_{{ schema_name(definitions.types.schema.targetNamespace) }},
+    schema=Schema_{{ schema_name(definitions.types.schema) }},
     {%- if soap_version.NAME == 'soap11' %}
     version=soap.SOAPVersion.SOAP11,
     {%- else %}

@@ -97,7 +97,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
             '</xs:schema>')
         xml_element = etree.fromstring(xml)
         generated_schema = xsdspec.Schema.parse_xmlelement(xml_element)
-        code_string = xsd2py.schema_to_py(generated_schema, ['xs'], known_namespaces=[])
+        code_string = xsd2py.schema_to_py(generated_schema, ['xs'])
         
         schema, new_symbols = generated_symbols(code_string)
         assert_not_none(schema)
@@ -127,7 +127,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
             '</xs:schema>')
         xml_element = etree.fromstring(xml)
         generated_schema = xsdspec.Schema.parse_xmlelement(xml_element)
-        xsd2py.schema_to_py(generated_schema, ['xs'], known_namespaces=[],
+        xsd2py.schema_to_py(generated_schema, ['xs'],
                             parent_namespace="http://site.example/ws/spec")
 
     def test_can_generate_list_enumeration(self):
