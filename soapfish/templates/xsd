@@ -134,7 +134,7 @@ class {{ ct.name|capitalize }}(xsd.ComplexType):
     {%- else %}
     {{ element.name }} = xsd.{{ field_type }}({{ element.simpleType.restriction.base|type(known_types) }}(
     {%- endif %}
-    {%- if element.simpleType.restriction.enumerations %}enumeration=[{% for enum in element.simpleType.restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}])
+    {%- if element.simpleType.restriction.enumerations %}enumeration=[{% for enum in element.simpleType.restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
     {%- endif %}
     {%- if element.name in keywords %}tagname='{{ element.name }}',{% endif %}
     {%- if element.simpleType.restriction.minInclusive %}minInclusive={{ element.simpleType.restriction.minInclusive.value }},{% endif %}
@@ -143,7 +143,7 @@ class {{ ct.name|capitalize }}(xsd.ComplexType):
     {%- if element.simpleType.restriction.maxExclusive %}maxExclusive={{ element.simpleType.restriction.maxExclusive.value }},{% endif %}
     {%- if element.simpleType.restriction.fractionDigits %}fractionDigits={{ element.simpleType.restriction.fractionDigits.value }},{% endif %}
     {%- if element.simpleType.restriction.totalDigits %}totalDigits={{ element.simpleType.restriction.totalDigits.value }},{% endif %}
-    {%- if element.simpleType.restriction.pattern %}pattern={{ element.simpleType.restriction.pattern.value }},{% endif %})
+    {%- if element.simpleType.restriction.pattern %}pattern={{ element.simpleType.restriction.pattern.value }},{% endif %}))
     {%- endif %}
     {%- if element.ref %}{{ element.ref|remove_namespace }} = xsd.Ref({{ element.ref|type(known_types) }}){% endif %}
 {%- endfor %}
