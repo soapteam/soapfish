@@ -267,6 +267,27 @@ class SOAPDispatcherTest(PythonicTestCase):
         assert_not_contains('{scheme}', response.http_content.decode())
         assert_not_contains('{http}', response.http_content.decode())
 
+    def test_service_bind_function(self):
+        handler, handler_state = echo_handler()
+        service = echo_service(handler)
+
+        @service.route('echoOperation')
+        def echo_func(request, input_):
+            handler_state.new_func_was_called = True
+            return handler(request, input_)
+
+        dispatcher = SOAPDispatcher(service)
+        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+            '<value>foobar</value>'
+        '</ns1:echoRequest>')
+        request_message = self._wrap_with_soap_envelope(soap_message)
+        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'),
+                              request_message)
+        response = dispatcher.dispatch(request)
+
+        self.assertTrue(handler_state.new_func_was_called)
+        self.assert_is_successful_response(response, handler_state)
+
     # --- custom assertions ---------------------------------------------------
 
     def assert_is_successful_response(self, response, handler_state=None):

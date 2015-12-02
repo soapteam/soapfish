@@ -80,6 +80,15 @@ class Service(object):
     def get_method(self, operationName):
         return tuple(filter(lambda m: m.operationName == operationName, self.methods))[0]
 
+    def route(self, operationName):
+        """Decorator to bind a Python function to service method."""
+        method = self.get_method(operationName)
+
+        def wrapper(func):
+            method.function = func
+            return func
+        return wrapper
+
 
 class Stub(object):
     '''
