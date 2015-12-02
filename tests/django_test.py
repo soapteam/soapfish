@@ -2,11 +2,12 @@
 
 from __future__ import absolute_import
 
+from collections import namedtuple
 from datetime import datetime as DateTime
 
 try:
     import django
-    from django.conf.urls import patterns
+    from django.conf.urls import url
     from django.conf import empty
     from django.test import Client
 except (ImportError, SyntaxError):
@@ -20,6 +21,8 @@ from soapfish.django_ import django_dispatcher
 from soapfish.testutil import echo_service
 from soapfish.lib.attribute_dict import AttrDict
 
+Urlconf = namedtuple('Urlconf', 'urlpatterns')
+
 
 class DjangoDispatchTest(PythonicTestCase):
     def setUp(self):
@@ -29,11 +32,15 @@ class DjangoDispatchTest(PythonicTestCase):
         self.service = echo_service()
         if django.conf.settings.__dict__['_wrapped'] is empty:
             django.conf.settings.configure(self.django_settings())
+
             django.conf.settings.update(AttrDict(
-                ROOT_URLCONF=AttrDict(
-                    urlpatterns = patterns('', (r"^ws/$", django_dispatcher(self.service))),
+                ROOT_URLCONF=Urlconf(
+                    urlpatterns=(
+                        url(r"^ws/$", django_dispatcher(self.service)),
+                    )
                 ),
             ))
+        django.setup()
         self.client = Client()
 
     def test_can_retrieve_wsdl_via_django(self):
@@ -84,6 +91,10 @@ class DjangoDispatchTest(PythonicTestCase):
         return AttrDict(
             DEFAULT_CHARSET='utf8',
             DEBUG=False,
+            INSTALLED_APPS=[
+                'django.contrib.auth',
+                'django.contrib.contenttypes',
+            ],
             MIDDLEWARE_CLASSES = (
                 'django.contrib.sessions.middleware.SessionMiddleware',
                 'django.middleware.common.CommonMiddleware',
@@ -107,6 +118,7 @@ class DjangoDispatchTest(PythonicTestCase):
             SESSION_CACHE_ALIAS='default',
             SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer',
             USE_X_FORWARDED_HOST=False,
+            USE_X_FORWARDED_PORT=False,
             SECURE_PROXY_SSL_HEADER=None,
             ALLOWED_HOSTS=['testserver'],
             CSRF_COOKIE_NAME='csrftoken',
@@ -120,5 +132,7 @@ class DjangoDispatchTest(PythonicTestCase):
             SEND_BROKEN_LINK_EMAILS=False,
             USE_ETAGS=False,
             SESSION_SAVE_EVERY_REQUEST=False,
+            LOGGING_CONFIG=None,
+            LOGGING=None,
         )
 
