@@ -41,6 +41,11 @@ class Restriction(xsd.ComplexType):
     fractionDigits = xsd.Element(RestrictionValue)
     totalDigits = xsd.Element(RestrictionValue)
 
+    length = xsd.Element(RestrictionValue)
+    minLength = xsd.Element(RestrictionValue)
+    maxLength = xsd.Element(RestrictionValue)
+    whiteSpace = xsd.Element(RestrictionValue)
+
     def to_python(self):
         enum_values = map(lambda e: '\'%s\'' % e.value, self.enumerations)
         return '[%s]' % ','.join(enum_values)

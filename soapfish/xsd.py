@@ -140,21 +140,39 @@ class SimpleType(Type):
 
 class String(SimpleType):
 
-    enumeration = None  # To be defined in child.
-    pattern = None      # To be defined in child.
+    # To be defined in children.
+    enumeration = None
+    pattern = None
+    length = None
+    minLength = None
+    maxLength = None
+    whiteSpace = None
 
-    def __init__(self, enumeration=None, pattern=None):
+    def __init__(self, enumeration=None, pattern=None,
+                 length=None, minLength=None, maxLength=None, whiteSpace=None):
+        # Override static values
         if enumeration is not None:
-            self.enumeration = enumeration  # Override static value
+            self.enumeration = enumeration
         if pattern is not None:
-            self.pattern = pattern  # Override static value
+            self.pattern = pattern
+        if length is not None:
+            self.length = length
+        if minLength is not None:
+            self.minLength = minLength
+        if maxLength is not None:
+            self.maxLength = maxLength
+        if whiteSpace is not None:
+            self.whiteSpace = whiteSpace
 
     def accept(self, value):
         if value is None:
             return None
 
+
         if not isinstance(value, basestring):
             raise ValueError("Value %r for class '%s'." % (value, self.__class__.__name__))
+
+        value = self._clean_whitespace(value)
 
         if self.pattern:
             pattern = self.pattern + '$'
@@ -165,6 +183,18 @@ class String(SimpleType):
             if not (value in self.enumeration):
                 raise ValueError("Value '%s' not in list %s." % (value, self.enumeration))
 
+        if self.length:
+            if len(value) != self.length:
+                raise ValueError("Value '%s' length %s expected." % (value, self.length))
+
+        if self.minLength:
+            if len(value) < self.minLength:
+                raise ValueError("Value '%s' minLength %s expected." % (value, self.minLength))
+
+        if self.maxLength:
+            if len(value) > self.maxLength:
+                raise ValueError("Value '%s' maxLength %s expected." % (value, self.maxLength))
+
         return value
 
     def xmlvalue(self, value):
@@ -172,6 +202,19 @@ class String(SimpleType):
 
     def pythonvalue(self, xmlvalue):
         return xmlvalue
+
+    def _clean_whitespace(self, value):
+        if self.whiteSpace == "preserve":
+            # do nothing, just preserve the value
+            pass
+        elif self.whiteSpace == "replace":
+            # replace line feeds, tabs, spaces, and carriage returns with whitespaces
+            value = re.sub(r"[\t\r\n\s]", " ", value)
+        elif self.whiteSpace == "collapse":
+            # clean line feeds, tabs, spaces, and carriage returns with one whitespace
+            value = re.sub(r"[\t\r\n\s]+", " ", value)
+
+        return value
 
 
 class Boolean(SimpleType):
