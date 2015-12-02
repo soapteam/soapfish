@@ -106,6 +106,22 @@ xmlns="http://flightdataservices.com/ops.xsd">
 </xsd:schema>
 """
 
+XSD_RESTRICTION = b"""<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://example.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:complexType name="ComplexType">
+        <xsd:sequence>
+            <xsd:element name="RestrictedString">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="60" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
+"""
+
 WSDL = b"""<?xml version="1.0" encoding="utf-8"?>
 <wsdl:definitions xmlns:tns="http://flightdataservices.com/ops.wsdl" xmlns:xs="http://www.w3.org/2000/10/XMLSchema" xmlns:fds="http://flightdataservices.com/ops.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OPS" targetNamespace="http://flightdataservices.com/ops.wsdl" xmlns="http://flightdataservices.com/ops.xsd">
     <wsdl:types>
@@ -288,6 +304,14 @@ class CodeGenerationTest(unittest.TestCase):
             code = code.decode()
         assert_contains('Schema2_Element', code)
         assert_contains('Schema3_Element', code)
+
+    def test_schema_xsd_restriction(self):
+        xmlelement = etree.fromstring(XSD_RESTRICTION)
+        code = generate_code_from_xsd(xmlelement)
+        if six.PY3:
+            code = code.decode()
+        compile(code, 'restriction', 'exec')
+
 
 if __name__ == "__main__":
     unittest.main()
