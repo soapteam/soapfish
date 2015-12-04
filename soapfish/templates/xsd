@@ -27,126 +27,16 @@
 {%- endfor %}
 {#- Groups -#}
 {%- for group in schema.groups %}
-class {{ group.name|capitalize }}(xsd.Group):
-    {%- for element in group.sequence.elements %}
-    {%- if element.ref %}
-    {{ element.ref|remove_namespace }} = xsd.Element({{ element.ref|type(known_types) }})
-    {%- if element.ref|remove_namespace in keywords %}
-    _{{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type(known_types) }}, tagname='{{ element.ref|remove_namespace }}')
-    {%- else %}
-    {{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type(known_types) }})
-    {%- endif %}
-    {%- else %}
-    {%- if element.name in keywords %}
-    _{{ element.name }} = xsd.Element({{ element.type|type(known_types) }}, tagname='{{ element.name }}')
-    {%- else %}
-    {{ element.name }} = xsd.Element({{ element.type|type(known_types) }})
-    {%- endif %}
-    {%- endif %}
-    {%- endfor %}
+{{ lib.render_xsd_Group(group) }}
 {%- endfor %}
 {#- Complex Types -#}
 {% for ct in schema.complexTypes %}
-{%- set content = ct %}
-{%- if not ct.sequence and not ct.complexContent %}
-class {{ ct.name|capitalize }}(xsd.ComplexType):
-{%- endif %}
-{%- if ct.complexContent %}
-    {%- if ct.complexContent.restriction %}
-class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type(known_types) }}):
-    INHERITANCE = xsd.Inheritance.RESTRICTION
-    {%- set content = ct.complexContent.restriction %}
-    {%- else %}
-class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type(known_types) }}):
-    INHERITANCE = xsd.Inheritance.EXTENSION
-    {%- set content = ct.complexContent.extension %}
-    {%- endif %}
-{%- elif ct.sequence %}
-class {{ ct.name|capitalize }}(xsd.ComplexType):
-    INHERITANCE = None
-    {%- set content = ct %}
-{%- endif %}
-{%- if content.sequence %}
-    INDICATOR = xsd.Sequence
-    {%- set elements = content.sequence.elements %}
-{%- elif content.all %}
-    INDICATOR = xsd.All
-    {%- set elements = content.all.elements %}
-{%- elif content.choice %}
-    INDICATOR = xsd.Choice
-    {%- set elements = content.choice.elements %}
-{%- endif %}
-{%- for attribute in content.attributes %}
-    {%- if attribute.ref %}
-    {{ attribute.ref|remove_namespace }} = xsd.Attribute({{ attribute.ref|type(known_types) }})
-    {%- else %}
-    {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
-    {%- endif %}
-{%- endfor %}
-{%- for attrGroupRef in content.attributeGroups %}
-    {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type(known_types) }})
-{%- endfor %}
-{%- for element in elements %}
-    {{ lib.render_xsd_element(element) }}
-{%- endfor %}
-{%- if content.sequence %}
-{{ lib.render_create_method(elements) }}
-{% endif %}
+{{ lib.render_complexType(ct.name, ct) }}
 {% do known_types.append(ct.name|capitalize) %}
 {%- endfor %}
 {#- Complex Types (Defined in Elements) -#}
-{%- for element in schema.elements %}
-    {%- if element.complexType %}
-
-{%- set ct = element.complexType %}
-{%- set content = element.complexType %}
-
-{%- if not ct.sequence and not ct.complexContent %}
-class {{ element.name|capitalize }}(xsd.ComplexType):
-    ''
-{%- endif %}
-{%- if ct.complexContent %}
-    {%- if ct.complexContent.restriction %}
-class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type(known_types) }}):
-    INHERITANCE = xsd.Inheritance.RESTRICTION
-    {%- set content = ct.complexContent.restriction %}
-    {%- else %}
-class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type(known_types) }}):
-    INHERITANCE = xsd.Inheritance.EXTENSION
-    {%- set content = ct.complexContent.extension %}
-    {%- endif %}
-{%- elif ct.sequence %}
-class {{ element.name|capitalize }}(xsd.ComplexType):
-    INHERITANCE = None
-    {%- set content = ct %}
-{%- endif %}
-{%- if content.sequence %}
-    INDICATOR = xsd.Sequence
-    {%- set elements = content.sequence.elements %}
-{%- elif content.all %}
-    INDICATOR = xsd.All
-    {%- set elements = content.all.elements %}
-{%- elif content.choice %}
-    INDICATOR = xsd.Choice
-    {%- set elements = content.choice.elements %}
-{%- endif %}
-{%- for attribute in content.attributes %}
-    {%- if attribute.ref %}
-    {{ attribute.ref|remove_namespace }} = xsd.Attribute({{ attribute.ref|type(known_types) }})
-    {%- else %}
-    {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
-    {%- endif %}
-{%- endfor %}
-{%- for attrGroupRef in content.attributeGroups %}
-    {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type(known_types) }})
-{%- endfor %}
-{%- for element in elements %}
-    {{ lib.render_xsd_element(element) }}
-{%- endfor %}
-{%- if content.sequence %}
-{{ lib.render_create_method(elements) }}
-{% endif %}
-{%- endif %}
+{%- for element in schema.elements if element.complexType %}
+{{ lib.render_complexType(element.name, element.complexType) }}
 {%- endfor %}
 {{ lib.render_Schema(schema, location) }}
 {# [blank line] #}

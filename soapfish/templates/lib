@@ -25,6 +25,26 @@ class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
     {%- endfor %}
 {%- endmacro %}
 
+{% macro render_xsd_Group(element) -%}
+class {{ group.name|capitalize }}(xsd.Group):
+    {%- for element in group.sequence.elements %}
+    {%- if element.ref %}
+    {{ element.ref|remove_namespace }} = xsd.Element({{ element.ref|type(known_types) }})
+    {%- if element.ref|remove_namespace in keywords %}
+    _{{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type(known_types) }}, tagname='{{ element.ref|remove_namespace }}')
+    {%- else %}
+    {{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type(known_types) }})
+    {%- endif %}
+    {%- else %}
+    {%- if element.name in keywords %}
+    _{{ element.name }} = xsd.Element({{ element.type|type(known_types) }}, tagname='{{ element.name }}')
+    {%- else %}
+    {{ element.name }} = xsd.Element({{ element.type|type(known_types) }})
+    {%- endif %}
+    {%- endif %}
+    {%- endfor %}
+{%- endmacro %}
+
 {% macro render_xsd_Restriction(name, restriction) -%}
 class {{ name|capitalize }}({{ restriction.base|type(known_types) }}):
 {%- if restriction.enumerations %}
@@ -47,6 +67,56 @@ class {{ name|capitalize }}({{ restriction.base|type(known_types) }}):
         and not restriction.minInclusive and not restriction.minExclusive
         and not restriction.maxInclusive and not restriction.maxExclusive %}
     pass
+{%- endif %}
+{# [blank line] #}
+{%- endmacro %}
+
+{% macro render_complexType(class_name, content) -%}
+{%- set ct = content %}
+{%- if not ct.sequence and not ct.complexContent %}
+class {{ class_name|capitalize }}(xsd.ComplexType):
+    ''
+{%- endif %}
+{%- if ct.complexContent %}
+    {%- if ct.complexContent.restriction %}
+class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type(known_types) }}):
+    INHERITANCE = xsd.Inheritance.RESTRICTION
+    {%- set content = ct.complexContent.restriction %}
+    {%- else %}
+class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type(known_types) }}):
+    INHERITANCE = xsd.Inheritance.EXTENSION
+    {%- set content = ct.complexContent.extension %}
+    {%- endif %}
+{%- elif ct.sequence %}
+class {{ class_name|capitalize }}(xsd.ComplexType):
+    INHERITANCE = None
+    {%- set content = ct %}
+{%- endif %}
+{%- if content.sequence %}
+    INDICATOR = xsd.Sequence
+    {%- set elements = content.sequence.elements %}
+{%- elif content.all %}
+    INDICATOR = xsd.All
+    {%- set elements = content.all.elements %}
+{%- elif content.choice %}
+    INDICATOR = xsd.Choice
+    {%- set elements = content.choice.elements %}
+{%- endif %}
+{%- for attribute in content.attributes %}
+    {%- if attribute.ref %}
+    {{ attribute.ref|remove_namespace }} = xsd.Attribute({{ attribute.ref|type(known_types) }})
+    {%- else %}
+    {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
+    {%- endif %}
+{%- endfor %}
+{%- for attrGroupRef in content.attributeGroups %}
+    {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type(known_types) }})
+{%- endfor %}
+{%- for element in elements -%}
+    {{ render_xsd_element(element) }}
+{%- endfor %}
+{%- if content.sequence %}
+{{ render_create_method(elements) }}
 {%- endif %}
 {%- endmacro %}
 
