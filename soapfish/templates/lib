@@ -12,3 +12,15 @@ Schema_{{ schema_name(schema, location) }} = xsd.Schema(
     elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e.type|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
 )
 {%- endmacro %}
+
+{% macro render_xsd_List(name) -%}
+class {{ name|capitalize }}(xsd.List):
+    pass
+{%- endmacro %}
+
+{% macro render_xsd_AttributeGroup(attrGroup) -%}
+class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
+    {%- for attribute in attrGroup.attributes %}
+    {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types)(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
+    {%- endfor %}
+{%- endmacro %}

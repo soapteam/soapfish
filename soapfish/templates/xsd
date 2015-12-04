@@ -39,17 +39,13 @@ class {{ st.name|capitalize }}({{ st.restriction.base|type(known_types) }}):
 
 {% endif %}
 {%- if st.list %}
-class {{ st.name|capitalize }}(xsd.List):
-    pass
+{{ lib.render_xsd_List(st.name) }}
 {%- endif %}
 {% do known_types.append(st.name|capitalize) %}
 {%- endfor %}
 {#- Attribute Groups -#}
 {%- for attrGroup in schema.attributeGroups %}
-class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
-    {%- for attribute in attrGroup.attributes %}
-    {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types)(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
-    {%- endfor %}
+{{ lib.render_xsd_AttributeGroup(attrGroup) }}
 {%- endfor %}
 {#- Groups -#}
 {%- for group in schema.groups %}
