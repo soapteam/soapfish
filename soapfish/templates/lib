@@ -25,6 +25,52 @@ class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
     {%- endfor %}
 {%- endmacro %}
 
+{% macro render_xsd_element(element) -%}
+    {%- if element.maxOccurs and element.maxOccurs > 1 %}
+        {%- set field_type = 'ListElement' %}
+    {%- else %}
+        {%- set field_type = 'Element' %}
+    {%- endif %}
+    {%- if element.type %}
+    {%- if element.maxOccurs and element.maxOccurs > 1 %}
+    {%- if element.name in keywords %}
+    _{{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, '{{ element.name }}', tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {%- else %}
+    {{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, '{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {%- endif %}
+    {%- else %}
+    {%- if element.name in keywords %}
+    _{{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {%- else %}
+    {{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
+    {%- endif %}
+    {%- endif %}
+    {%- endif %}
+    {%- if element.simpleType %}
+    {%- if element.name in keywords %}
+    _{{ element.name }} = xsd.Element({{ element.simpleType.restriction.base|type(known_types) }}(
+    {%- else %}
+    {{ element.name }} = xsd.Element({{ element.simpleType.restriction.base|type(known_types) }}(
+    {%- endif %}
+    {%- if element.simpleType.restriction.enumerations %}
+    enumeration=[{% for enum in element.simpleType.restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
+    {%- endif %}
+    {%- if element.name in keywords %}tagname='{{ element.name }}',{% endif %}
+    {%- if element.simpleType.restriction.minInclusive %}minInclusive={{ element.simpleType.restriction.minInclusive.value }},{% endif %}
+    {%- if element.simpleType.restriction.maxInclusive %}maxInclusive={{ element.simpleType.restriction.maxInclusive.value }},{% endif %}
+    {%- if element.simpleType.restriction.minExclusive %}minExclusive={{ element.simpleType.restriction.minExclusive.value }},{% endif %}
+    {%- if element.simpleType.restriction.maxExclusive %}maxExclusive={{ element.simpleType.restriction.maxExclusive.value }},{% endif %}
+    {%- if element.simpleType.restriction.fractionDigits %}fractionDigits={{ element.simpleType.restriction.fractionDigits.value }},{% endif %}
+    {%- if element.simpleType.restriction.totalDigits %}totalDigits={{ element.simpleType.restriction.totalDigits.value }},{% endif %}
+    {%- if element.simpleType.restriction.pattern %}pattern={{ element.simpleType.restriction.pattern.value }},{% endif %}
+    {%- if element.simpleType.restriction.length %}length={{ element.simpleType.restriction.length.value }},{% endif %}
+    {%- if element.simpleType.restriction.minLength %}minLength={{ element.simpleType.restriction.minLength.value }},{% endif %}
+    {%- if element.simpleType.restriction.maxLength %}maxLength={{ element.simpleType.restriction.maxLength.value }},{% endif %}
+    {%- if element.simpleType.restriction.whiteSpace %}whiteSpace={{ element.simpleType.restriction.whiteSpace.value }},{% endif %}))
+    {%- endif %}
+    {%- if element.ref %}{{ element.ref|remove_namespace }} = xsd.Ref({{ element.ref|type(known_types) }}){% endif %}
+{%- endmacro %}
+
 {% macro render_create_method(elements) -%}
 {# [blank line] #}
     @classmethod
