@@ -14,30 +14,8 @@
 {%- set known_types = [] %}
 {%- for st in schema.simpleTypes %}
 {%- if st.restriction %}
-class {{ st.name|capitalize }}({{ st.restriction.base|type(known_types) }}):
-{%- if st.restriction.enumerations %}
-    enumeration = [{% for enum in st.restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
+{{ lib.render_xsd_Restriction(st.name, st.restriction) }}
 {%- endif %}
-{%- if st.restriction.pattern %}
-    pattern = r'{{ st.restriction.pattern.value }}'
-{%- endif %}
-{%- if st.restriction.minInclusive %}
-    minInclusive = r'{{ st.restriction.minInclusive.value }}'
-{%- elif st.restriction.minExclusive %}
-    minExclusive = r'{{ st.restriction.minExclusive.value }}'
-{%- endif %}
-{%- if st.restriction.maxInclusive %}
-    maxInclusive = r'{{ st.restriction.maxInclusive.value }}'
-{%- elif st.restriction.maxExclusive %}
-    maxExclusive = r'{{ st.restriction.maxExclusive.value }}'
-{%- endif %}
-{%- if not st.restriction.enumerations and not st.restriction.pattern
-        and not st.restriction.minInclusive and not st.restriction.minExclusive
-        and not st.restriction.maxInclusive and not st.restriction.maxExclusive %}
-    pass
-{%- endif %}
-
-{% endif %}
 {%- if st.list %}
 {{ lib.render_xsd_List(st.name) }}
 {%- endif %}
