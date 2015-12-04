@@ -149,15 +149,7 @@ class {{ ct.name|capitalize }}(xsd.ComplexType):
     {%- if element.ref %}{{ element.ref|remove_namespace }} = xsd.Ref({{ element.ref|type(known_types) }}){% endif %}
 {%- endfor %}
 {%- if content.sequence %}
-
-    @classmethod
-    def create(cls{% for e in elements %}{% if e.minOccurs == 1 or e.minOccurs == None %}, {{ e.name }}{% endif %}{% endfor %}):
-        instance = cls()
-        {%- for e in elements if e.minOccurs == 1 or e.minOccurs == None %}
-        instance.{{ e.name }} = {{ e.name }}
-        {%- endfor %}
-        return instance
-
+{{ lib.render_create_method(elements) }}
 {% endif %}
 {% do known_types.append(ct.name|capitalize) %}
 {%- endfor %}
@@ -247,15 +239,7 @@ class {{ element.name|capitalize }}(xsd.ComplexType):
     {%- endif %}
 {%- endfor %}
 {%- if content.sequence %}
-
-    @classmethod
-    def create(cls{%- for e in elements %}{% if e.minOccurs == 1 or e.minOccurs == None %}, {{ e.name }}{% endif %}{% endfor %}):
-        instance = cls()
-        {%- for e in elements if e.minOccurs == 1 or e.minOccurs == None %}
-        instance.{{ e.name }} = {{ e.name }}
-        {%- endfor %}
-        return instance
-
+{{ lib.render_create_method(elements) }}
 {% endif %}
 {%- endif %}
 {%- endfor %}

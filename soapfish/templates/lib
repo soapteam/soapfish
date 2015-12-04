@@ -24,3 +24,17 @@ class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
     {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types)(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
     {%- endfor %}
 {%- endmacro %}
+
+{% macro render_create_method(elements) -%}
+{# [blank line] #}
+    @classmethod
+    def create(cls{% for e in elements %}{% if e.minOccurs == 1 or e.minOccurs == None %}, {{ e.name }}{% endif %}{% endfor %}):
+        instance = cls()
+        {%- for e in elements %}
+        {%- if e.minOccurs == 1 or e.minOccurs == None %}
+        instance.{{ e.name }} = {{ e.name }}
+        {%- endif %}
+        {%- endfor %}
+        return instance
+{# [blank line] #}
+{%- endmacro %}
