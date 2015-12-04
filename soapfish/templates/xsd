@@ -1,3 +1,4 @@
+{%- import "lib" as lib %}
 {#- XSD Includes -#}
 {%- for imp in schema.includes %}
 {{- resolve_import(imp, known_files, schema.targetNamespace, cwd, base_path) }}
@@ -262,19 +263,7 @@ class {{ element.name|capitalize }}(xsd.ComplexType):
 {% endif %}
 {%- endif %}
 {%- endfor %}
-Schema_{{ schema_name(schema, location) }} = xsd.Schema(
-    imports=[{% for i in schema.imports %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    includes=[{% for i in schema.includes %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    targetNamespace='{{ schema.targetNamespace }}',
-    {%- if location %}
-    location='{{ location }}',{% endif %}
-    elementFormDefault='{{ schema.elementFormDefault }}',
-    simpleTypes=[{% for st in schema.simpleTypes %}{{ st.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    groups=[{% for g in schema.groups %}{{ g.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    complexTypes=[{% for ct in schema.complexTypes %}{{ ct.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e.type|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
-)
+{{ lib.render_Schema(schema, location) }}
 {# [blank line] #}
 {# [blank line] #}
 {#- vim:set et ft=django nowrap sts=4 sw=4 ts=4: -#}

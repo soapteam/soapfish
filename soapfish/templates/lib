@@ -1,0 +1,14 @@
+{% macro render_Schema(schema, location) -%}
+Schema_{{ schema_name(schema, location) }} = xsd.Schema(
+    imports=[{% for i in schema.imports %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    targetNamespace='{{ schema.targetNamespace }}',
+    {%- if location %}
+    location='{{ location|url_template }}',{% endif %}
+    elementFormDefault='{{ schema.elementFormDefault }}',
+    simpleTypes=[{% for st in schema.simpleTypes %}{{ st.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    groups=[{% for g in schema.groups %}{{ g.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    complexTypes=[{% for ct in schema.complexTypes %}{{ ct.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e.type|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
+)
+{%- endmacro %}
