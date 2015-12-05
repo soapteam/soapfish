@@ -14,31 +14,31 @@
 {%- set known_types = [] %}
 {%- for st in schema.simpleTypes %}
 {%- if st.restriction %}
-{{ lib.render_xsd_Restriction(st.name, st.restriction) }}
+{{ lib.render_xsd_Restriction(st.name, st.restriction, known_types) }}
 {%- endif %}
 {%- if st.list %}
-{{ lib.render_xsd_List(st.name) }}
+{{ lib.render_xsd_List(st.name, known_types) }}
 {%- endif %}
 {% do known_types.append(st.name|capitalize) %}
 {%- endfor %}
 {#- Attribute Groups -#}
 {%- for attrGroup in schema.attributeGroups %}
-{{ lib.render_xsd_AttributeGroup(attrGroup) }}
+{{ lib.render_xsd_AttributeGroup(attrGroup, known_types) }}
 {%- endfor %}
 {#- Groups -#}
 {%- for group in schema.groups %}
-{{ lib.render_xsd_Group(group) }}
+{{ lib.render_xsd_Group(group, known_types) }}
 {%- endfor %}
 {#- Complex Types -#}
 {% for ct in schema.complexTypes %}
-{{ lib.render_complexType(ct.name, ct) }}
+{{ lib.render_complexType(ct.name, ct, known_types) }}
 {% do known_types.append(ct.name|capitalize) %}
 {%- endfor %}
 {#- Complex Types (Defined in Elements) -#}
 {%- for element in schema.elements if element.complexType %}
-{{ lib.render_complexType(element.name, element.complexType) }}
+{{ lib.render_complexType(element.name, element.complexType, known_types) }}
 {%- endfor %}
-{{ lib.render_Schema(schema, location) }}
+{{ lib.render_Schema(schema, location, known_types) }}
 {# [blank line] #}
 {# [blank line] #}
 {#- vim:set et ft=django nowrap sts=4 sw=4 ts=4: -#}

@@ -1,4 +1,4 @@
-{% macro render_Schema(schema, location) -%}
+{% macro render_Schema(schema, location, known_types=None) -%}
 Schema_{{ schema_name(schema, location) }} = xsd.Schema(
     imports=[{% for i in schema.imports %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     targetNamespace='{{ schema.targetNamespace }}',
@@ -13,19 +13,19 @@ Schema_{{ schema_name(schema, location) }} = xsd.Schema(
 )
 {%- endmacro %}
 
-{% macro render_xsd_List(name) -%}
+{% macro render_xsd_List(name, known_types=None) -%}
 class {{ name|capitalize }}(xsd.List):
     pass
 {%- endmacro %}
 
-{% macro render_xsd_AttributeGroup(attrGroup) -%}
+{% macro render_xsd_AttributeGroup(attrGroup, known_types=None) -%}
 class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
     {%- for attribute in attrGroup.attributes %}
     {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types)(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
     {%- endfor %}
 {%- endmacro %}
 
-{% macro render_xsd_Group(element) -%}
+{% macro render_xsd_Group(element, known_types=None) -%}
 class {{ group.name|capitalize }}(xsd.Group):
     {%- for element in group.sequence.elements %}
     {%- if element.ref %}
@@ -45,7 +45,7 @@ class {{ group.name|capitalize }}(xsd.Group):
     {%- endfor %}
 {%- endmacro %}
 
-{% macro render_xsd_Restriction(name, restriction) -%}
+{% macro render_xsd_Restriction(name, restriction, known_types=None) -%}
 class {{ name|capitalize }}({{ restriction.base|type(known_types) }}):
 {%- if restriction.enumerations %}
     enumeration = [{% for enum in restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
@@ -71,7 +71,7 @@ class {{ name|capitalize }}({{ restriction.base|type(known_types) }}):
 {# [blank line] #}
 {%- endmacro %}
 
-{% macro render_complexType(class_name, content) -%}
+{% macro render_complexType(class_name, content, known_types=None) -%}
 {%- set ct = content %}
 {%- if not ct.sequence and not ct.complexContent %}
 class {{ class_name|capitalize }}(xsd.ComplexType):
@@ -113,14 +113,14 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
     {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type(known_types) }})
 {%- endfor %}
 {%- for element in elements -%}
-    {{ render_xsd_element(element) }}
+    {{ render_xsd_element(element, known_types) }}
 {%- endfor %}
 {%- if content.sequence %}
-{{ render_create_method(elements) }}
+{{ render_create_method(elements, known_types) }}
 {%- endif %}
 {%- endmacro %}
 
-{% macro render_xsd_element(element) -%}
+{% macro render_xsd_element(element, known_types=None) -%}
     {%- if element.maxOccurs and element.maxOccurs > 1 %}
         {%- set field_type = 'ListElement' %}
     {%- else %}
@@ -166,7 +166,7 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
     {%- if element.ref %}{{ element.ref|remove_namespace }} = xsd.Ref({{ element.ref|type(known_types) }}){% endif %}
 {%- endmacro %}
 
-{% macro render_create_method(elements) -%}
+{% macro render_create_method(elements, known_types=None) -%}
 {# [blank line] #}
     @classmethod
     def create(cls{% for e in elements %}{% if e.minOccurs == 1 or e.minOccurs == None %}, {{ e.name }}{% endif %}{% endfor %}):
