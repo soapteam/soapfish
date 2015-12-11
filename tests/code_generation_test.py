@@ -122,6 +122,18 @@ XSD_RESTRICTION = b"""<?xml version="1.0" encoding="UTF-8"?>
 </xsd:schema>
 """
 
+XSD_LIST_PARAM = b"""<xsd:schema xmlns:sns="http://flightdataservices.com/ops.xsd"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://flightdataservices.com/ops.xsd"
+xmlns="http://flightdataservices.com/ops.xsd">
+  <xsd:complexType name="airport">
+    <xsd:sequence>
+      <xsd:element name="Items" type="xsd:String" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
+"""
+
 WSDL = b"""<?xml version="1.0" encoding="utf-8"?>
 <wsdl:definitions xmlns:tns="http://flightdataservices.com/ops.wsdl" xmlns:xs="http://www.w3.org/2000/10/XMLSchema" xmlns:fds="http://flightdataservices.com/ops.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OPS" targetNamespace="http://flightdataservices.com/ops.wsdl" xmlns="http://flightdataservices.com/ops.xsd">
     <wsdl:types>
@@ -321,6 +333,14 @@ class CodeGenerationTest(unittest.TestCase):
             code = code.decode()
         compile(code, 'restriction', 'exec')
 
+    def test_create_method_list_param(self):
+        xmlelement = etree.fromstring(XSD_LIST_PARAM)
+        code = generate_code_from_xsd(xmlelement)
+        if six.PY3:
+            code = code.decode()
+        assert_contains("def create(cls, Items):", code)
+        assert_contains("instance.Items = Items", code)
+        assert_not_contains("Itemss", code)
 
 if __name__ == "__main__":
     unittest.main()
