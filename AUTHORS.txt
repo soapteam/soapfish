@@ -8,4 +8,5 @@ Credits
   November 2013 (based on the last BSD-licensed commit in 2012-03-19).
 - Thomas Recouvreux and Xavier Fernandez from Polyconseil added a lot of
   features between February and June 2014.
-
+- Iuri de Silvio from Pricez added some features and fixed bugs.
+  Using Flask+soapfish in production.

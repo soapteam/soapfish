@@ -20,6 +20,11 @@ Changes
   assumed sequences) as well as code generation from WSDL/XSD
   patch contributed by Martin Mrose, tests written by Felix Schwarz
 * add support for xsd.date (date range currently limited by datetime.date)
+* add support relative schema paths (#49)
+* add support to string restrictions length, minLength, maxLength, whiteSpace (#67)
+* xsd.Decimal field accept Python Decimal (#52)
+* implement service.route function to avoid changes to generated code (#68)
+* Flask dispatcher (#53)
 * Bug fixes:
   - fix exception in SOAPDispatcher when a handler does not return a SOAPResponse
   - correctly apply pattern restrictions for simple types
