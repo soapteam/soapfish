@@ -316,6 +316,7 @@ class CodeGenerationTest(unittest.TestCase):
             code = code.decode()
         assert_contains('Schema2_Element', code)
         assert_contains('Schema3_Element', code)
+        self.assertEqual(1, code.count('Schema3_Element'))
 
     def test_import_same_namespace(self):
         path = 'tests/assets/same_namespace/same_namespace.wsdl'

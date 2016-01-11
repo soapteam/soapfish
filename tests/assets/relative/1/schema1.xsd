@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema elementFormDefault="qualified" targetNamespace="http://example.com/1" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:import namespace='http://example.com/2' schemaLocation="2/schema2.xsd"/>
+    <xsd:import namespace='http://example.com/3' schemaLocation="3/schema3.xsd"/>
 </xsd:schema>
