@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import argparse
 import hashlib
+import itertools
 import keyword
 import logging
 import os
@@ -54,14 +55,28 @@ def get_rendering_environment():
     return env
 
 
-def resolve_import(xsdimport, known_files, parent_namespace, cwd):
-    location = os.path.join(cwd, xsdimport.schemaLocation)
+def rewrite_paths(schema, cwd, base_path):
+    """
+    Rewrite include and import locations relative to base_path.
+
+    This location is the unique identification for each file, they must match.
+    """
+    f = lambda x: os.path.relpath(os.path.normpath(os.path.join(cwd, x.schemaLocation)), base_path)
+    for i in itertools.chain(schema.includes, schema.imports):
+        i.schemaLocation = f(i)
+
+
+def resolve_import(xsdimport, known_files, parent_namespace, cwd, base_path):
+    location = os.path.join(base_path, xsdimport.schemaLocation)
     cwd = os.path.dirname(location)
     logger.info('Generating code for XSD import \'%s\'...' % location)
     xml = open_document(location)
     xmlelement = etree.fromstring(xml)
+
+    location = os.path.relpath(location, base_path)
     return generate_code_from_xsd(xmlelement, known_files, location,
-                                  parent_namespace, encoding=None, cwd=cwd)
+                                  parent_namespace, encoding=None,
+                                  cwd=cwd, base_path=base_path)
 
 
 def schema_name(schema, location=None):
@@ -82,7 +97,8 @@ def schema_name(schema, location=None):
 
 
 def generate_code_from_xsd(xmlelement, known_files=None, location=None,
-                           parent_namespace=None, encoding='utf8', cwd=None):
+                           parent_namespace=None, encoding='utf8',
+                           cwd=None, base_path=None):
     if known_files is None:
         known_files = []
     xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
@@ -94,14 +110,19 @@ def generate_code_from_xsd(xmlelement, known_files=None, location=None,
         return ''
 
     schema_code = schema_to_py(schema, xsd_namespace, known_files,
-                               location, cwd=cwd)
+                               location, cwd=cwd, base_path=base_path)
     if encoding is None:
         return schema_code
     return schema_code.encode(encoding)
 
 
 def schema_to_py(schema, xsd_namespace, known_files=None, location=None,
-                 parent_namespace=None, cwd=None):
+                 parent_namespace=None, cwd=None, base_path=None):
+    if base_path is None:
+        base_path = cwd
+    if base_path:
+        rewrite_paths(schema, cwd, base_path)
+
     if known_files is None:
         known_files = []
     if location:
@@ -117,7 +138,7 @@ def schema_to_py(schema, xsd_namespace, known_files=None, location=None,
     if schema.targetNamespace is None:
         schema.targetNamespace = parent_namespace
 
-    return tpl.render(schema=schema, cwd=cwd)
+    return tpl.render(schema=schema, cwd=cwd, base_path=base_path)
 
 
 # --- Program -----------------------------------------------------------------
