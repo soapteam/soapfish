@@ -157,3 +157,31 @@ class XSDCodeGenerationTest(PythonicTestCase):
         my_list = new_symbols['MyList']()
         assert_equals(my_list.accept(['B']), True)
 
+    def test_can_generate_extension(self):
+        raise SkipTest('extension subclass fails with lazy defined base')
+        xml = """
+        <xs:schema targetNamespace="http://example.com"
+                    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                    elementFormDefault="qualified"
+                    attributeFormDefault="unqualified">
+            <xs:complexType name="ComplexType">
+                <xs:complexContent>
+                    <xs:extension base="Base">
+                        <xs:sequence>
+                            <xs:element maxOccurs="1" minOccurs="0"
+                                name="Field2" type="xs:string">
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="Base">
+                <xs:sequence>
+                    <xs:element name="Field1" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        """
+        xml_element = etree.fromstring(xml)
+        code_string = xsd2py.generate_code_from_xsd(xml_element)
+        schema, new_symbols = generated_symbols(code_string)
