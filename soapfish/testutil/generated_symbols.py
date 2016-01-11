@@ -16,7 +16,7 @@ def generated_symbols(code_string):
 
     try:
         # Let's trust our own code generation...
-        exec(code_string, {}, new_locals)
+        exec(code_string, {'xsd': xsd}, new_locals)
     except Exception:
         logging.warning("Code could not be imported:\n%s", code_string)
         raise
