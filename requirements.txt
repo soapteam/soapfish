@@ -2,5 +2,5 @@ argparse
 httplib2>=0.7.0
 jinja2
 lxml
-pythonic_testcase
+PythonicTestcase >= 1.3.0
 six>=1.5.2

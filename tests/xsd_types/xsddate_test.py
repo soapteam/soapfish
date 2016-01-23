@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from nose import SkipTest
 from pythonic_testcase import *
 
 from soapfish.xsd_types import XSDDate
@@ -16,8 +15,9 @@ class XSDDateTest(PythonicTestCase):
         assert_raises(ValueError, lambda: XSDDate(2014, 13, 10))
         assert_raises(ValueError, lambda: XSDDate(2011, 2, 29))
 
+    @expect_failure
     def test_supports_very_distant_dates(self):
-        raise SkipTest('XSDDate can currently only represent the value range of datetime.date')
+        # XSDDate can currently only represent the value range of datetime.date
         future = XSDDate(12345, 4, 21)
         assert_equals(12345, future.year)
 

@@ -1,7 +1,6 @@
 from __future__ import print_function
 
 from lxml import etree
-from nose import SkipTest
 from pythonic_testcase import *
 
 from soapfish import xsd, xsdspec
@@ -27,9 +26,10 @@ class XSDCodeGenerationTest(PythonicTestCase):
         assert_equals(['simpleElement'], list(schema.elements))
         simple_element = schema.elements['simpleElement']
         assert_isinstance(simple_element._type, xsd.String)
-    
+
+    @expect_failure
     def test_can_generate_code_with_xsd_refs_to_simple_elements(self):
-        raise SkipTest('References to simple elements not yet implemented')
+        # References to simple elements are not yet implemented
         xml = ('<xs:schema targetNamespace="http://site.example/ws/spec" \n'
             '    xmlns:example="http://site.example/ws/spec" \n'
             '    xmlns:xs="http://www.w3.org/2001/XMLSchema" \n'
@@ -68,9 +68,10 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # Should not raise
         job.name = u'Foo'
         # probably we need to check some more stuff here
-    
+
+    @expect_failure
     def test_can_generate_code_with_xsd_refs_to_elements_with_anoynmous_complex_types(self):
-        raise SkipTest('References to elements with anonymous complex types are not yet implemented')
+        # References to elements with anonymous complex types are not yet implemented
         # The final test should have an object graph representation of the
         # schema below. Currently I don't know how to represent multiple
         # xs:elements in a schema without using ComplexTypes.
@@ -130,8 +131,9 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xsd2py.schema_to_py(generated_schema, ['xs'],
                             parent_namespace="http://site.example/ws/spec")
 
+    @expect_failure
     def test_can_generate_list_enumeration(self):
-        raise SkipTest('list enumerations are not parsed correctly from xsd')
+        # list enumerations are not parsed correctly from xsd
         xml = '<xsd:schema elementFormDefault="qualified" targetNamespace="http://example.org/A" xmlns:xsd="http://www.w3.org/2001/XMLSchema">' \
               '    <xsd:simpleType name="MyList">' \
               '        <xsd:list>' \
@@ -157,8 +159,9 @@ class XSDCodeGenerationTest(PythonicTestCase):
         my_list = new_symbols['MyList']()
         assert_equals(my_list.accept(['B']), True)
 
+    @expect_failure
     def test_can_generate_extension(self):
-        raise SkipTest('extension subclass fails with lazy defined base')
+        # extension subclass fails with lazy defined base
         xml = """
         <xs:schema targetNamespace="http://example.com"
                     xmlns:xs="http://www.w3.org/2001/XMLSchema"

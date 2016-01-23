@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-from nose import SkipTest
 from pythonic_testcase import *
 
 from soapfish import xsd
@@ -9,8 +8,8 @@ from soapfish.testutil import generated_symbols
 
 
 class XSDCodeGenerationTest(PythonicTestCase):
+    @expect_failure
     def test_can_generate_code_for_two_schemas(self):
-        raise SkipTest('can not generate code for wsdl with multiple schemas')
         xml = '<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:b="http://example.org/B">'\
               '    <wsdl:types>'\
               '        <xsd:schema elementFormDefault="qualified" targetNamespace="http://example.org/A">' \
@@ -30,8 +29,9 @@ class XSDCodeGenerationTest(PythonicTestCase):
 
         assert_equals(['B', 'A'], list(schema.elements))
 
+    @expect_failure
     def test_can_generate_code_for_inheritance(self):
-        raise SkipTest('can not generate code for wsdl with type inheritance')
+        # can not generate code for wsdl with type inheritance
         xml = '<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">' \
               '    <wsdl:types>' \
               '        <xsd:schema elementFormDefault="qualified" targetNamespace="http://example.org/A">' \

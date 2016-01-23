@@ -1,5 +1,4 @@
 
-from nose import SkipTest
 from pythonic_testcase import *
 
 from soapfish import xsd
@@ -22,9 +21,9 @@ class RefTest(PythonicTestCase):
             b'  <name>Foo Bar</name>\n'
             b'</job>\n')
         assert_equals(expected_xml, job.xml('job'))
-    
+
+    @expect_failure
     def test_can_render_references_to_simple_types(self):
-        raise SkipTest('References to SimpleTypes are not yet implemented.')
         class Person(xsd.SimpleType):
             pass
         
