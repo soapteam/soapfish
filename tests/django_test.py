@@ -14,6 +14,7 @@ except (ImportError, SyntaxError):
     # Django 1.8 does not support Python 2.6 anymore, importing the module
     # triggers a SyntaxError which causes builds to fail.
     django = None
+from nose import SkipTest
 from pythonic_testcase import *
 
 from soapfish.django_ import django_dispatcher
@@ -26,7 +27,7 @@ Urlconf = namedtuple('Urlconf', 'urlpatterns')
 class DjangoDispatchTest(PythonicTestCase):
     def setUp(self):
         if django is None:
-            self.skipTest('django not installed')
+            raise SkipTest('django not installed')
         super(DjangoDispatchTest, self).setUp()
         self.service = echo_service()
         if django.conf.settings.__dict__['_wrapped'] is empty:

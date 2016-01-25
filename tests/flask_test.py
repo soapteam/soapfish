@@ -14,7 +14,7 @@ class FlaskDispatchTest(PythonicTestCase):
         try:
             from flask import Flask
         except ImportError:
-            self.skipTest('flask not installed')
+            raise self.skipTest('flask not installed')
 
         super(FlaskDispatchTest, self).setUp()
         self.service = echo_service()
