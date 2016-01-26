@@ -213,7 +213,6 @@ def main():
         # -*- coding: utf-8 -*-
 
         from soapfish import xsd
-        from soapfish.xsd import UNBOUNDED
     '''))
     code = generate_code_from_xsd(xmlelement, encoding='utf-8')
     # In Python 3 encoding a string returns bytes so we have to write the
