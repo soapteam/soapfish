@@ -138,7 +138,7 @@ class Group(xsd.ComplexType):
 
 class Import(xsd.ComplexType):
     schemaLocation = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
-    namespace = xsd.Attribute(xsd.String)
+    namespace = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
 
 
 class Include(xsd.ComplexType):
