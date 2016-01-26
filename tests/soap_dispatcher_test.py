@@ -285,7 +285,7 @@ class SOAPDispatcherTest(PythonicTestCase):
                               request_message)
         response = dispatcher.dispatch(request)
 
-        self.assertTrue(handler_state.new_func_was_called)
+        assert_true(handler_state.new_func_was_called)
         self.assert_is_successful_response(response, handler_state)
 
     # --- custom assertions ---------------------------------------------------

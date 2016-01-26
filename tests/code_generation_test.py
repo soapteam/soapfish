@@ -306,7 +306,7 @@ class CodeGenerationTest(unittest.TestCase):
         m['PutOpsPort_SERVICE'] = m.pop('PutOpsPortPort_SERVICE')
         if target == 'client':
             m['PutOpsPortServiceStub'] = m.pop('PutOpsPortPortServiceStub')
-        self.assertEqual(sorted(m), sorted(base))
+        assert_equals(sorted(m), sorted(base))
 
     def test_relative_paths(self):
         path = 'tests/assets/relative/relative.wsdl'
@@ -316,7 +316,7 @@ class CodeGenerationTest(unittest.TestCase):
             code = code.decode()
         assert_contains('Schema2_Element', code)
         assert_contains('Schema3_Element', code)
-        self.assertEqual(1, code.count('Schema3_Element'))
+        assert_equals(1, code.count('Schema3_Element'))
 
     def test_import_same_namespace(self):
         path = 'tests/assets/same_namespace/same_namespace.wsdl'
