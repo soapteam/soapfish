@@ -3,12 +3,11 @@
 SOAP protocol implementation, dispatchers and client stub.
 '''
 
-import httplib2
 import logging
-import os
+import requests
 
 from . import core
-from . import settings, soap11, soap12
+from . import soap11, soap12
 from . import namespaces as ns
 from . import wsa
 from .compat import basestring, urlparse
@@ -151,24 +150,14 @@ class Stub(object):
         else:
             tagname = uncapitalize(parameter.__class__.__name__)
 
-        disable_validation = not os.path.exists(settings.CA_CERTIFICATE_FILE)
-        http = httplib2.Http(
-            ca_certs=settings.CA_CERTIFICATE_FILE,
-            disable_ssl_certificate_validation=disable_validation,
-            timeout=settings.REQUEST_TIMEOUT,
-        )
-        if self.username:
-            http.add_credentials(self.username, self.password)
-
+        auth = (self.username, self.password) if self.username else None
+        data = SOAP.Envelope.response(tagname, parameter, header=header)
         headers = SOAP.build_http_request_headers(method.soapAction)
-        envelope = SOAP.Envelope.response(tagname, parameter, header=header)
 
-        logger.info("Call %r on %r", operationName, self.location)
-        logger.debug("Request Headers: %s", headers)
-        logger.debug("Request Envelope: %s", envelope)
-        headers, content = http.request(self.location, 'POST',
-             body=envelope, headers=headers)
-        logger.debug("Response Headers: %s", headers)
-        logger.debug("Response Envelope: %s", content)
-
-        return self._handle_response(method, headers, content)
+        logger.info('Call %r on %r', operationName, self.location)
+        logger.debug('Request Headers: %s', headers)
+        logger.debug('Request Envelope: %s', data)
+        r = requests.post(self.location, auth=auth, headers=headers, data=data)
+        logger.debug('Response Headers: %s', r.headers)
+        logger.debug('Response Envelope: %s', r.text)
+        return self._handle_response(method, r.headers, r.text)
