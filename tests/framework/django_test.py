@@ -11,9 +11,7 @@ from soapfish.testutil import echo_service, framework
 
 try:
     import django
-except (ImportError, SyntaxError):
-    # Django 1.8 does not support Python 2.6 anymore, importing the module
-    # triggers a SyntaxError which causes builds to fail.
+except ImportError:
     django = None
 else:
     from django.conf import settings

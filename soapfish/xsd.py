@@ -902,7 +902,7 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
                 raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__, attr))
 
     def __str__(self):
-        fields = dict((f._name, getattr(self, f._name, '<UNKNOWN FIELD>')) for f in self._meta.fields)
+        fields = {f._name: getattr(self, f._name, '<UNKNOWN FIELD>') for f in self._meta.fields}
         str_fields = ', '.join('%s=%s' % item for item in fields.items())
         return '<{class_name}: {fields}>'.format(class_name=self.__class__.__name__, fields=str_fields)
 

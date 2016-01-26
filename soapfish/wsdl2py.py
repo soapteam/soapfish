@@ -32,7 +32,7 @@ def reorder_schemas(schemas):
     while x and counter > 0:
         counter -= 1
         schema = x.popleft()
-        ns = set(i.namespace for i in schema.imports)
+        ns = {i.namespace for i in schema.imports}
         if x and ns and ns - targets:
             x.append(schema)
         else:

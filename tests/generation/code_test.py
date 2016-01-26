@@ -21,7 +21,6 @@ class CodeGenerationTest(unittest.TestCase):
         ''').format(os.path.dirname(fn)).encode('utf8')
         code = header + b'\n' + code + b'\n'
         with open(fn, 'wb') as f:
-            # Empty last line is mandatory for python2.6
             f.write(code)
         compile(code, fn, 'exec')
         globalz['__name__'] = fn.rsplit('/', 1)[-1].rsplit('.', 1)[0]

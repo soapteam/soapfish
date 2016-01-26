@@ -119,12 +119,7 @@ def _reorder_complexTypes(schema):
         # inconclusive, do the same test with their bases
         return _cmp(base_a or a, base_b or b)
 
-    if hasattr(functools, 'cmp_to_key'):
-        sort_param = {'key': functools.cmp_to_key(_cmp)}
-    else:
-        # Python 2.6/3.0/3.1
-        sort_param = {'cmp': _cmp}
-    schema.complexTypes.sort(**sort_param)
+    schema.complexTypes.sort(key=functools.cmp_to_key(_cmp))
 
 
 def schema_to_py(schema, xsd_namespaces, known_files=None, location=None,
