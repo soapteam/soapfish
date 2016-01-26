@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import functools
+import itertools
 import logging
 
 from lxml import etree
@@ -233,7 +234,7 @@ class SOAPDispatcher(object):
         if _generated is None:
             _generated = {}
 
-        for _schema in (schema.imports + schema.includes):
+        for _schema in itertools.chain(schema.imports, schema.includes):
             if _schema.location in _generated:
                 continue
 
