@@ -9,9 +9,7 @@ Introduction
 
 soapfish is a library to use SOAP services in Python. The server-side component
 can be used with Pyramid, Django and other frameworks (including plain WSGI).
-The library can also be used to implement SOAP clients with httplib2 (and
-using another HTTP request library such as requests should only require
-about 20-30 lines of code).
+The library can also be used to implement SOAP clients with requests.
 
 The library can also help parsing/serializing a Python class model from/to XML
 and a bare-bones SOAP client.
