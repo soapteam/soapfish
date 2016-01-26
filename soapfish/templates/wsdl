@@ -5,7 +5,7 @@
 ################################################################################
 {# [blank line] #}
 {# [blank line] #}
-from soapfish import soap, xsd, wsa
+from soapfish import soap, xsd{% if use_wsa %}, wsa{% endif %}
 {# [blank line] #}
 {# [blank line] #}
 {%- if use_wsa %}
