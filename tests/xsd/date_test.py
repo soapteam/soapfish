@@ -2,12 +2,11 @@
 
 from datetime import date as Date, datetime as DateTime, timedelta as TimeDelta, tzinfo
 
+from iso8601 import iso8601
 from lxml import etree
 from pythonic_testcase import *
 
 from soapfish import xsd
-from soapfish.lib import iso8601
-from soapfish.lib.iso8601 import UTC, FixedOffset
 from soapfish.testutil import SimpleTypeTestCase
 from soapfish.xsd_types import XSDDate
 
@@ -36,7 +35,7 @@ class DateTest(SimpleTypeTestCase):
     def test_parsing_utctimezone(self):
         class Test(xsd.ComplexType):
             datetime = xsd.Element(xsd.DateTime)
-        XML = '''<root><datetime>2011-06-30T00:19:00+0000Z</datetime></root>'''
+        XML = '''<root><datetime>2011-06-30T00:19:00+0000</datetime></root>'''
         test = Test.parsexml(XML)
         assert_equals(DateTime(2011, 6, 30, 0, 19, 0), test.datetime.replace(tzinfo=None))
 
@@ -77,14 +76,14 @@ class DateTest(SimpleTypeTestCase):
         self.assert_parse(None, None)
         self.assert_parse(None, 'nil')
         self.assert_parse(XSDDate(2012, 10, 26), '2012-10-26')
-        self.assert_parse(XSDDate(2016, 2, 29, tzinfo=UTC), '2016-02-29Z')
+        self.assert_parse(XSDDate(2016, 2, 29, tzinfo=iso8601.UTC), '2016-02-29Z')
         parsed_date = self._parse('2012-02-29+01:00')
         assert_equals(Date(2012, 2, 29), parsed_date.as_datetime_date())
-        self.assert_same_tz(FixedOffset(1, 0, '+01:00'), parsed_date.tzinfo)
+        self.assert_same_tz(iso8601.FixedOffset(1, 0, '+01:00'), parsed_date.tzinfo)
 
         parsed_date = self._parse('2012-02-29-02:30')
         assert_equals(Date(2012, 2, 29), parsed_date.as_datetime_date())
-        self.assert_same_tz(FixedOffset(-2, -30, '-02:30'), parsed_date.tzinfo)
+        self.assert_same_tz(iso8601.FixedOffset(-2, -30, '-02:30'), parsed_date.tzinfo)
 
     # --- custom assertions ---------------------------------------------------
     def assert_same_tz(self, tz, other_tz):

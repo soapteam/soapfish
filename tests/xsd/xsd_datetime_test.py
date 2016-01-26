@@ -1,11 +1,11 @@
 import unittest
 
 from datetime import datetime, timedelta as TimeDelta, tzinfo
+from iso8601 import iso8601
 
 from lxml import etree
 
 from soapfish import xsd
-from soapfish.lib import iso8601
 
 
 class DatetimeTest(unittest.TestCase):
@@ -36,7 +36,7 @@ class DatetimeTest(unittest.TestCase):
     def test_parsing_utctimezone(self):
         class Test(xsd.ComplexType):
             datetime = xsd.Element(xsd.DateTime)
-        XML = """<root><datetime>2011-06-30T00:19:00+0000Z</datetime></root>"""
+        XML = """<root><datetime>2011-06-30T00:19:00+0000</datetime></root>"""
         test = Test.parsexml(XML)
         self.assertEqual(datetime(2011, 6, 30, 0, 19, 0), test.datetime.replace(tzinfo=None))
 

@@ -1,3 +1,4 @@
+import iso8601
 import unittest
 from decimal import Decimal
 
@@ -5,7 +6,6 @@ from lxml import etree
 from pythonic_testcase import *
 
 from soapfish import xsd, xsdspec
-from soapfish.lib import iso8601
 
 
 class Aircraft(xsd.ComplexType):
@@ -552,7 +552,7 @@ class XMLParsingTest(unittest.TestCase):
         self.assertEqual("IATA", flight.takeoff_airport.type)
         self.assertEqual("EGLL", flight.landing_airport.code)
         self.assertEqual("ICAO", flight.landing_airport.type)
-        self.assertEqual(iso8601.parse_date("2001-10-26T21:32:52z"), flight.takeoff_datetime)
+        self.assertEqual(iso8601.parse_date("2001-10-26T21:32:52Z"), flight.takeoff_datetime)
 
     LIST_XML = b"""<flight>
   <landing_airport>
