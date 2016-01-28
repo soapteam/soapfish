@@ -1,11 +1,11 @@
 {%- import "lib" as lib with context %}
 {#- XSD Includes -#}
-{%- for imp in schema.includes %}
-{{- resolve_import(imp, known_files, schema.targetNamespace, cwd, base_path) }}
+{%- for i in schema.includes %}
+{{- resolve_import(i, known_files, schema.targetNamespace, cwd, base_path) }}
 {%- endfor %}
 {#- XSD Imports -#}
-{%- for imp in schema.imports %}
-{{- resolve_import(imp, known_files, schema.targetNamespace, cwd, base_path) }}
+{%- for i in schema.imports %}
+{{- resolve_import(i, known_files, schema.targetNamespace, cwd, base_path) }}
 {%- endfor %}
 # {% if location %}{{ location }} - {% endif -%} {{ schema.targetNamespace }}{# Output the name of the schema in a comment. #}
 {# [blank line] #}
