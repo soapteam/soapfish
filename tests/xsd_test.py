@@ -1,6 +1,6 @@
 
-from decimal import Decimal
 import unittest
+from decimal import Decimal
 
 import iso8601
 from lxml import etree

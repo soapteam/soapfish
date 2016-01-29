@@ -10,7 +10,6 @@
 
 from unittest import TestCase
 
-
 __all__ = ['AttrDict']
 
 
@@ -36,4 +35,3 @@ class AttributDictTests(TestCase):
     def test_raise_attribute_error_for_non_existent_keys(self):
         obj = AttrDict(foo=1)
         self.assertRaises(AttributeError, getattr, obj, 'invalid')
-

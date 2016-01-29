@@ -1,5 +1,4 @@
-from soapfish import xsd, soap
-from soapfish.soap import SOAPVersion
+from soapfish import soap, xsd
 
 
 class GetStockPrice(xsd.ComplexType):
@@ -41,7 +40,7 @@ get_stock_price_method = xsd.Method(
 SERVICE11 = soap.Service(
     name="StockService",
     targetNamespace="http://code.google.com/p/soapfish/stock.wsdl",  # WSDL targetNamespce
-    version=SOAPVersion.SOAP11,
+    version=soap.SOAPVersion.SOAP11,
     # The url were request should be send.
     location="http://127.0.0.1:8000/stock/soap11",
     schema=Schema,
@@ -52,7 +51,7 @@ SERVICE12 = soap.Service(
     # WSDL targetNamespce
     name="StockService",
     targetNamespace="http://code.google.com/p/soapfish/stock.wsdl",
-    version=SOAPVersion.SOAP12,
+    version=soap.SOAPVersion.SOAP12,
     # The url where request should be sent.
     location="http://127.0.0.1:8000/stock/soap12",
     schema=Schema,

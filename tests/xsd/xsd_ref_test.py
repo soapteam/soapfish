@@ -58,4 +58,3 @@ class RefTest(PythonicTestCase):
             b'  </person>\n'
             b'</job>\n')
         assert_equals(expected_xml, job.xml('job'))
-

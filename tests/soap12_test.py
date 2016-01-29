@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from lxml import etree
 from pythonic_testcase import *
 
-from soapfish.soap12 import get_error_response, Code
+from soapfish.soap12 import Code, get_error_response
 
 
 class SOAP12Test(PythonicTestCase):

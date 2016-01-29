@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import namespaces as ns
-from . import xsd
-
+from . import namespaces as ns, xsd
 
 XSD_NAMESPACE = ns.xsd
 

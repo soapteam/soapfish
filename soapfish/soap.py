@@ -4,12 +4,10 @@ SOAP protocol implementation, dispatchers and client stub.
 '''
 
 import logging
+
 import requests
 
-from . import core
-from . import soap11, soap12
-from . import namespaces as ns
-from . import wsa
+from . import core, namespaces as ns, soap11, soap12, wsa
 from .compat import basestring, urlparse
 from .utils import uncapitalize
 

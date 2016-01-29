@@ -1,7 +1,7 @@
 from flask import Flask
+from stock.gen import SERVICE, SERVICE11, SERVICE12
 
 from soapfish.flask_ import flask_dispatcher
-from stock.gen import SERVICE, SERVICE11, SERVICE12
 
 ws_ops = flask_dispatcher(SERVICE)
 dispatch11 = flask_dispatcher(SERVICE11)

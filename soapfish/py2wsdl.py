@@ -10,8 +10,7 @@ import textwrap
 
 from lxml import etree
 
-from . import xsd
-from . import namespaces as ns
+from . import namespaces as ns, xsd
 from .compat import basestring
 from .py2xsd import generate_xsdspec
 from .soap import SOAP_HTTP_Transport

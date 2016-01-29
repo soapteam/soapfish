@@ -40,29 +40,30 @@ For information on XML schema validation:
 '''
 
 
-from copy import copy
-from decimal import Decimal as _Decimal
-from datetime import datetime
 import functools
 import itertools
 import logging
 import re
+from copy import copy
+from datetime import datetime
+from decimal import Decimal as _Decimal
 
 import iso8601
-# pyiso8601 does not export UTC/FixedOffset via their main module
-# (fixed in 031688e, after 0.1.11)
-from iso8601.iso8601 import UTC, FixedOffset
-from lxml import etree
 import six
+from lxml import etree
 
 from . import namespaces as ns
 from .compat import basestring
 from .utils import timezone_offset_to_string
 from .xsd_types import XSDDate
 
-logger = logging.getLogger(__name__)
-NIL = object()
+# TODO: Change import we update to iso8601 > 0.1.11 (fixed in 031688e)
+from iso8601.iso8601 import UTC, FixedOffset  # isort:skip
 
+
+logger = logging.getLogger(__name__)
+
+NIL = object()
 UNBOUNDED = _Decimal('infinity')
 
 

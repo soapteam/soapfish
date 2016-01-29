@@ -8,7 +8,7 @@ WSDL documents and providing a dispatcher for the Django framework.
 import re
 import sys
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 import soapfish
 

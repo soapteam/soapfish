@@ -32,4 +32,3 @@ class py2xsdTest(PythonicTestCase):
 
         bad_xml = '<foo xmlns="%s"><code>abc</code></foo>' % ns
         assert_false(is_valid(bad_xml))
-

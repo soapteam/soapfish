@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from soapfish.core import SOAPRequest
 from soapfish.soap_dispatch import SOAPDispatcher
 
-
 __all__ = ['django_dispatcher']
 
 class DjangoEnvironWrapper(object):

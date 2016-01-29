@@ -63,4 +63,3 @@ class XSDSpecElementTest(PythonicTestCase):
         xsd_element = xsdspec.Element()
         xsd_element.maxOccurs = xsd.UNBOUNDED
         assert_equals(xsd.UNBOUNDED, xsd_element.maxOccurs)
-

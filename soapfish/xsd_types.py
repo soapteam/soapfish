@@ -8,7 +8,7 @@ For example xsd.Date might contain a timezone reference but that is not allowed
 for datetime.date.
 """
 
-from datetime import date as Date
+from datetime import date
 
 
 class XSDDate(object):
@@ -50,7 +50,7 @@ class XSDDate(object):
         instance (silently ignores the time zone information if present).
         Raises a ValueError if the date is not representable by datetime.date.
         """
-        return Date(self.year, self.month, self.day)
+        return date(self.year, self.month, self.day)
 
     def __eq__(self, other):
         attrs = ('year', 'month', 'day', 'tzinfo')
@@ -68,4 +68,3 @@ class XSDDate(object):
 
     def __repr__(self):
         return 'XSDDate(%r, %r, %r, tzinfo=%r)' % (self.year, self.month, self.day, self.tzinfo)
-

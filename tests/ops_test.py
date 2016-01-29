@@ -1,11 +1,9 @@
-
 import unittest
 
-from iso8601 import iso8601
+import iso8601
 from lxml import etree
 
-from soapfish.py2xsd import generate_xsd
-from soapfish import xsd
+from soapfish import py2xsd, xsd
 
 
 class Pilot(xsd.String):
@@ -92,7 +90,7 @@ XML_REQUIRED_ONLY = """
 
 class OPS_Test(unittest.TestCase):
     def test_required_only(self):
-        XMLSchema = etree.XMLSchema(generate_xsd(Schema))
+        XMLSchema = etree.XMLSchema(py2xsd.generate_xsd(Schema))
         ops = Ops.parsexml(XML_REQUIRED_ONLY, XMLSchema)
         self.assertEqual("N608WB", ops.aircraft)
         self.assertEqual("123123", ops.flight_number)

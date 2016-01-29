@@ -8,13 +8,12 @@ import imp
 import inspect
 import itertools
 import logging
-import six
 import textwrap
 
+import six
 from lxml import etree
 
-from . import namespaces as ns
-from . import xsd, xsdspec
+from . import namespaces as ns, xsd, xsdspec
 from .compat import basestring
 from .utils import uncapitalize
 

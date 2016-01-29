@@ -7,7 +7,6 @@ from pythonic_testcase import *
 
 from .. import xsd
 
-
 __all__ = ['SimpleTypeTestCase']
 
 class SimpleTypeTestCase(PythonicTestCase):
@@ -47,4 +46,3 @@ class SimpleTypeTestCase(PythonicTestCase):
     def _normalize(self, xml):
         parser = etree.XMLParser(remove_blank_text=True)
         return etree.tostring(etree.XML(xml, parser=parser))
-

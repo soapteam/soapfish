@@ -8,11 +8,11 @@ import logging
 import os
 import sys
 import textwrap
-
 from datetime import datetime
+
+import six
 from jinja2 import Environment, PackageLoader
 from lxml import etree
-import six
 
 from .soap import SOAP_HTTP_Transport, SOAPVersion
 from .utils import (
@@ -26,9 +26,8 @@ from .utils import (
     url_template,
     use,
 )
-from .wsdl import get_wsdl_classes, get_by_name
-from .xsd2py import schema_to_py, schema_name
-
+from .wsdl import get_by_name, get_wsdl_classes
+from .xsd2py import schema_name, schema_to_py
 
 TEMPLATE_PACKAGE = 'soapfish.templates'
 

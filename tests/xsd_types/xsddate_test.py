@@ -23,4 +23,3 @@ class XSDDateTest(PythonicTestCase):
 
         past = XSDDate(-12345, 4, 21)
         assert_equals(-12345, past.year)
-

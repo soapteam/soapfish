@@ -1,13 +1,12 @@
-
-from datetime import datetime, timedelta as TimeDelta, tzinfo
 import unittest
+from datetime import datetime, timedelta, tzinfo
 
-# pyiso8601 does not export UTC/FixedOffset via their main module
-# (fixed in 031688e, after 0.1.11)
-from iso8601.iso8601 import FixedOffset, UTC
 from lxml import etree
 
 from soapfish import xsd
+
+# TODO: Change import we update to iso8601 > 0.1.11 (fixed in 031688e)
+from iso8601.iso8601 import FixedOffset, UTC  # isort:skip
 
 
 class DatetimeTest(unittest.TestCase):
@@ -55,13 +54,12 @@ class DatetimeTest(unittest.TestCase):
         class SummerWinterTZ(tzinfo):
             def utcoffset(self, dt):
                 if dt.month in (10, 11, 12, 1, 2, 3):
-                    return TimeDelta(0)
-                return TimeDelta(hours=1)
+                    return timedelta(0)
+                return timedelta(hours=1)
 
             def dst(self, dt):
-                return TimeDelta(hours=1)
+                return timedelta(hours=1)
         tz = SummerWinterTZ()
         xsd_dt = xsd.DateTime()
         self.assertEqual('2013-11-26T00:00:00+00:00', xsd_dt.xmlvalue(datetime(2013, 11, 26, tzinfo=tz)))
         self.assertEqual('2013-07-26T00:00:00+01:00', xsd_dt.xmlvalue(datetime(2013, 7, 26, tzinfo=tz)))
-

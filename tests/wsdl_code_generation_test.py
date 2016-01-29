@@ -3,8 +3,7 @@ from __future__ import print_function
 from nose import SkipTest
 from pythonic_testcase import *
 
-from soapfish import xsd
-from soapfish import wsdl2py
+from soapfish import wsdl2py, xsd
 from soapfish.testutil import generated_symbols
 
 

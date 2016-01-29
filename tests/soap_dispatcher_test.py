@@ -5,11 +5,16 @@ from lxml import etree
 from pythonic_testcase import *
 
 from soapfish import wsa, xsd
-from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.compat import basestring
+from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.middlewares import ExceptionToSoapFault
 from soapfish.soap_dispatch import SOAPDispatcher
-from soapfish.testutil import echo_handler, echo_service, EchoInputHeader, EchoOutputHeader
+from soapfish.testutil import (
+    EchoInputHeader,
+    EchoOutputHeader,
+    echo_handler,
+    echo_service,
+)
 
 
 class SOAPDispatcherTest(PythonicTestCase):
@@ -327,4 +332,3 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</senv:Envelope>'
         ) % dict(payload=payload, header=header)
         return envelope.encode('utf-8')
-

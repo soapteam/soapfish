@@ -6,15 +6,12 @@ import functools
 import itertools
 import logging
 
-from lxml import etree
 import six
+from lxml import etree
 
-from . import py2xsd
-from . import py2wsdl
-from . import wsa
+from . import py2wsdl, py2xsd, wsa
 from .compat import basestring
 from .core import SOAPError, SOAPRequest, SOAPResponse
-from .py2xsd import schema_validator
 from .utils import uncapitalize
 
 __all__ = ['SOAPDispatcher']
@@ -44,7 +41,7 @@ class SOAPDispatcher(object):
         if middlewares is None:
             middlewares = []
         self.middlewares = middlewares
-        self.schema_validator = schema_validator(self.service.schema)
+        self.schema_validator = py2xsd.schema_validator(self.service.schema)
 
         if wsdl is None:
             wsdlelement = py2wsdl.generate_wsdl(self.service)

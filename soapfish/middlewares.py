@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import six
 import traceback
+
+import six
 
 from . import core
 

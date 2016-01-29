@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import xsd, xsdspec
-from . import wsdl
-from . import namespaces as ns
+from . import namespaces as ns, wsdl, xsd, xsdspec
 
 
 class SOAP_Binding(xsd.ComplexType):

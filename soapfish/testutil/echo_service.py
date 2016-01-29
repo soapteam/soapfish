@@ -10,7 +10,6 @@ from ..core import SOAPResponse
 from ..lib.attribute_dict import AttrDict
 from ..soap import Service, SOAPVersion
 
-
 __all__ = [
     'echo_handler',
     'echo_service',
@@ -87,4 +86,3 @@ def echo_service(handler=None, input_header=None, output_header=None):
         version=SOAPVersion.SOAP11,
         methods=[echo_method],
     )
-

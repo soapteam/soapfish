@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta as TimeDelta
-import requests
 import logging
+from datetime import timedelta
+
+import requests
 import six
 
 from . import namespaces as ns
 from .compat import urlparse, urlunparse
-
 
 logger = logging.getLogger('soapfish')
 
@@ -123,9 +123,8 @@ def timezone_offset_to_string(offset):
     # criteria as well but are NOT UTC. In particular the local government may
     # decide to introduce some kind of winter/summer time while UTC is
     # guaranteed to have no such things.
-    sign = '+' if (offset >= TimeDelta(0)) else '-'
+    sign = '+' if (offset >= timedelta(0)) else '-'
     offset_seconds = abs((offset.days * 24 * 60 * 60) + offset.seconds)
     hours = offset_seconds // 3600
     minutes = (offset_seconds % 3600) // 60
     return '%s%02d:%02d' % (sign, hours, minutes)
-

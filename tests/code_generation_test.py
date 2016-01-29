@@ -1,15 +1,15 @@
 import os
-import unittest
 import tempfile
+import unittest
 
-from lxml import etree
 import six
+from lxml import etree
 from pythonic_testcase import *
 
-from soapfish.xsd2py import generate_code_from_xsd
-from soapfish.wsdl2py import generate_code_from_wsdl
 from soapfish import py2wsdl
 from soapfish.utils import open_document
+from soapfish.wsdl2py import generate_code_from_wsdl
+from soapfish.xsd2py import generate_code_from_xsd
 
 
 XSD = """

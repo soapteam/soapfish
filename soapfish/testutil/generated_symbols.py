@@ -4,7 +4,6 @@ from __future__ import absolute_import, unicode_literals
 
 import logging
 
-
 __all__ = ['generated_symbols']
 
 def generated_symbols(code_string):
@@ -30,4 +29,3 @@ def generated_symbols(code_string):
         if isinstance(symbol_, xsd.Schema):
             schema = symbol_
     return schema, new_symbols
-

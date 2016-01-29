@@ -2,9 +2,10 @@
 
 from __future__ import absolute_import
 
-from datetime import datetime as DateTime
+from datetime import datetime
 
 from pythonic_testcase import *
+
 from soapfish.flask_ import flask_dispatcher
 from soapfish.testutil import echo_service
 
@@ -32,7 +33,7 @@ class FlaskDispatchTest(PythonicTestCase):
         assert_contains('<wsdl:definitions', response.data.decode('utf-8'))
 
     def test_can_dispatch_simple_request_through_flask(self):
-        input_value = str(DateTime.now())
+        input_value = str(datetime.now())
         headers, body = self._soap_request(input_value)
         response = self.client.post('/ws/', data=body, headers=headers)
         assert_equals(200, response.status_code)

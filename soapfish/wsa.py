@@ -5,9 +5,7 @@ import uuid
 
 from lxml import etree
 
-from . import namespaces as ns
-from . import xsd
-
+from . import namespaces as ns, xsd
 
 NAMESPACE = ns.wsa
 ANONYMOUS = 'http://www.w3.org/2005/08/addressing/anonymous'

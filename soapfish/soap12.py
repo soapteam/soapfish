@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import namespaces as ns
-from . import soap11
-from . import xsd
-
+from . import namespaces as ns, soap11, xsd
 
 ENVELOPE_NAMESPACE = ns.soap12_envelope
 BINDING_NAMESPACE = ns.wsdl_soap12

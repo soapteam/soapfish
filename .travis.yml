@@ -13,4 +13,4 @@ install:
     - python setup.py build install
     - pip install -r dev_requirements.txt
 
-script: nosetests -s
+script: nosetests --nocapture

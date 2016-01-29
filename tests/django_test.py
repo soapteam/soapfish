@@ -3,7 +3,14 @@
 from __future__ import absolute_import
 
 from collections import namedtuple
-from datetime import datetime as DateTime
+from datetime import datetime
+
+from nose import SkipTest
+from pythonic_testcase import *
+
+from soapfish.django_ import django_dispatcher
+from soapfish.lib.attribute_dict import AttrDict
+from soapfish.testutil import echo_service
 
 try:
     import django
@@ -14,12 +21,7 @@ except (ImportError, SyntaxError):
     # Django 1.8 does not support Python 2.6 anymore, importing the module
     # triggers a SyntaxError which causes builds to fail.
     django = None
-from nose import SkipTest
-from pythonic_testcase import *
 
-from soapfish.django_ import django_dispatcher
-from soapfish.testutil import echo_service
-from soapfish.lib.attribute_dict import AttrDict
 
 Urlconf = namedtuple('Urlconf', 'urlpatterns')
 
@@ -50,7 +52,7 @@ class DjangoDispatchTest(PythonicTestCase):
         assert_contains('<wsdl:definitions', response.content.decode('utf8'))
 
     def test_can_dispatch_simple_request_through_django(self):
-        input_value = str(DateTime.now())
+        input_value = str(datetime.now())
         headers, body = self._soap_request(input_value)
         response = self.client.post('/ws/', body, **headers)
         assert_equals(200, response.status_code)
@@ -135,4 +137,3 @@ class DjangoDispatchTest(PythonicTestCase):
             LOGGING_CONFIG=None,
             LOGGING=None,
         )
-

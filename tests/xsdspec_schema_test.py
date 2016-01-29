@@ -37,4 +37,3 @@ class XSDSpecSchemaTest(PythonicTestCase):
         person_element = schema.elements[0]
         assert_equals('person', person_element.name)
         # TODO: check that the person_reference points to person
-

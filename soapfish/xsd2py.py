@@ -12,15 +12,13 @@ import logging
 import os
 import sys
 import textwrap
-
 from datetime import datetime
 
+import six
 from jinja2 import Environment, PackageLoader
 from lxml import etree
-import six
 
 from . import xsd
-from .xsdspec import Schema
 from .utils import (
     capitalize,
     find_xsd_namespaces,
@@ -30,7 +28,7 @@ from .utils import (
     url_template,
     use,
 )
-
+from .xsdspec import Schema
 
 TEMPLATE_PACKAGE = 'soapfish.templates'
 
