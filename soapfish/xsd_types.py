@@ -20,7 +20,7 @@ class XSDDate(object):
 
     Currently this class only supports dates representable by Python's
     datetime.date (with an optional time zone attached) but you should not
-    assume that this will be true forever (see LIMITATIONS.txt for further
+    assume that this will be true forever (see LIMITATIONS.md for further
     information).
     """
     def __init__(self, year, month, day, tzinfo=None):

@@ -1,7 +1,8 @@
-TODO
-====
+To Do
+=====
 
 This project is very, very promising:
+
 - It is focused on XML and SOAP/WSDL without any compromise. In an ideal world
   soapfish works with each and every syntax allowed by these technologies.
 - It allows you to have a representation of arbitrary XML including support
@@ -21,9 +22,9 @@ On the upside that means there are a lot of ways to improve the code and your
 contribution and make a big difference.
 
 Here some bigger areas which need work:
-- much more comprehensive unit tests
-- SOAP support for web frameworks other than Django (Pyramid already works
-  with the new SOAPDispatcher class)
+
+- A much more comprehensive set of unit tests
+- Implement support for additional web frameworks
 - XSD schema generation (object graph to XSD file) has most of its logic in a
   very complex Jinja2 template which shows it limits. For example features like
   named xs:Elements with embedded anonymous ComplexTypes can not be serialized
@@ -38,7 +39,6 @@ Here some bigger areas which need work:
   errors. Some of them are fixable on their own but often this is because of
   other missing features (see above). The output should be usable as
   scaffolding though.
-- Convert the ad-hoc fork to real project with its own name, website and docs
 
 Don't worry if the items on the list above seem to big for you. Just start out
 with something small, write tests and contribute them. Even a small (failing)
@@ -53,9 +53,9 @@ time and/or awareness about certain XSD features. The goal of this library is
 to fully implement XSD schemas and potentially SOAP/WSDL so patches (with tests)
 are always welcome.
 
-OTHER TODOS
-============
+Specific Items
+--------------
 
 - Fix circular dependency of generated schema classes.
 
-See the **TODO** markers in ``soapfish/*.py`` for a complete list.
+See the **TODO** markers in `soapfish/*.py` for a complete list.
