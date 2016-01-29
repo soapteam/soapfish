@@ -3,6 +3,10 @@
 from . import namespaces as ns, wsdl, xsd, xsdspec
 
 
+# FIXME: With the current implementation of schema we cannot share classes
+#        between different schema so we duplicate classes to soapfish.wsdl12
+
+
 class SOAP_Binding(xsd.ComplexType):
     ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
     style = xsd.Attribute(xsd.String)
@@ -53,6 +57,7 @@ class Message(xsd.ComplexType):
 
 
 # WSDL 1.1 SOAP 1.1
+
 
 class Input(xsd.ComplexType):
     message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
@@ -111,7 +116,6 @@ class Operation(xsd.ComplexType):
             message = wsdl.get_by_name(self.definition.messages, ref.message)
             parts.append(wsdl.get_by_name(message.parts, ref.part))
         return parts
-
 
 
 class PortType(xsd.ComplexType):

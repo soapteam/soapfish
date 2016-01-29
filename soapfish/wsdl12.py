@@ -3,8 +3,9 @@
 from . import namespaces as ns, wsdl11, xsd
 
 
-# With the current implementation of schema we cannot share classes
-# between different schema so we duplicate wsdl11 classes
+# FIXME: With the current implementation of schema we cannot share classes
+#        between different schema so we duplicate classes from soapfish.wsdl11
+
 
 class SOAP_Binding(wsdl11.SOAP_Binding):
     pass
@@ -35,9 +36,11 @@ class Part(wsdl11.Part):
 
 
 class Message(wsdl11.Message):
-    pass
+    parts = xsd.ListElement(Part, tagname='part', minOccurs=1)
+
 
 # WSDL 1.1 SOAP 1.2 classes
+
 
 class Input(wsdl11.Input):
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12, minOccurs=0)
@@ -72,6 +75,8 @@ class Service(wsdl11.Service):
 
 
 class Definitions(wsdl11.Definitions):
+    types = xsd.Element(Types)
+    messages = xsd.ListElement(Message, 'message')
     portTypes = xsd.ListElement(PortType, 'portType')
     bindings = xsd.ListElement(Binding, 'binding')
     services = xsd.ListElement(Service, 'service')
