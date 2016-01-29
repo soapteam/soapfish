@@ -22,7 +22,7 @@ and a bare-bones SOAP client.
 Currently the project supports the following:
 
 - SOAP 1.1 and 1.2
-- WSDL 1.1 and 1.2
+- WSDL 1.1
 - WS-Addressing
 
 Other notable features include:
