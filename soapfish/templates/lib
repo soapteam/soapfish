@@ -1,6 +1,7 @@
 {% macro render_Schema(schema, location, known_types=None) -%}
 Schema_{{ schema_name(schema, location) }} = xsd.Schema(
     imports=[{% for i in schema.imports %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    includes=[{% for i in schema.includes %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     targetNamespace='{{ schema.targetNamespace }}',
     {%- if location %}
     location='{{ location|url_template }}',{% endif %}
