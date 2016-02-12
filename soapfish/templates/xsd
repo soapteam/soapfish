@@ -30,12 +30,12 @@
 {{ lib.render_xsd_Group(group, known_types) }}
 {%- endfor %}
 {#- Complex Types -#}
-{% for ct in schema.complexTypes %}
+{% for ct in schema.complexTypes -%}
 {{ lib.render_complexType(ct.name, ct, known_types) }}
-{% do known_types.append(ct.name|capitalize) %}
+{%- do known_types.append(ct.name|capitalize) -%}
 {%- endfor %}
 {#- Complex Types (Defined in Elements) -#}
-{%- for element in schema.elements if element.complexType %}
+{% for element in schema.elements if element.complexType -%}
 {{ lib.render_complexType(element.name, element.complexType, known_types) }}
 {%- endfor %}
 {{ lib.render_Schema(schema, location, known_types) }}

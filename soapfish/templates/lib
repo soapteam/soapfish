@@ -118,6 +118,7 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
 {%- if content.sequence %}
 {{ render_create_method(elements, known_types) }}
 {%- endif %}
+{# blank line #}
 {%- endmacro %}
 
 {% macro render_xsd_element(element, known_types=None) -%}
@@ -179,3 +180,4 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
         return instance
 {# [blank line] #}
 {%- endmacro %}
+{#- vim:set et ft=django nowrap sts=4 sw=4 ts=4: -#}
