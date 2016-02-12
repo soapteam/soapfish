@@ -5,7 +5,7 @@
 build
 dist
 *.egg-info
-*.swp
+.*.sw?
 .coverage
 .tox/
 doc/_build
