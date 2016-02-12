@@ -157,5 +157,5 @@ class Stub(object):
         logger.debug('Request Envelope: %s', data)
         r = requests.post(self.location, auth=auth, headers=headers, data=data)
         logger.debug('Response Headers: %s', r.headers)
-        logger.debug('Response Envelope: %s', r.text)
-        return self._handle_response(method, r.headers, r.text)
+        logger.debug('Response Envelope: %s', r.content)
+        return self._handle_response(method, r.headers, r.content)

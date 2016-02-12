@@ -17,7 +17,7 @@ def open_document(path):
     logger.info('Opening document \'%s\'...' % path)
     # Handle documents available on the Internet:
     if path.startswith('http:'):
-        return requests.get(path).text
+        return requests.get(path).content
 
     # Attempt to open the document from the filesystem:
     else:
