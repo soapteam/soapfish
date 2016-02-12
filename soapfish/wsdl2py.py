@@ -59,17 +59,21 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
     if cwd is None:
         cwd = os.getcwd()
 
-    env = get_rendering_environment()
     xmlelement = etree.fromstring(xml)
-    XSD_NAMESPACE = find_xsd_namespaces(xmlelement.nsmap)
-    env.filters['type'] = get_get_type(XSD_NAMESPACE)
+    nsmap = xmlelement.nsmap.copy()
+    for x in xmlelement.xpath('//*[local-name()="schema"]'):
+        nsmap.update(x.nsmap)
+    xsd_namespace = find_xsd_namespaces(nsmap)
+
+    env = get_rendering_environment()
+    env.filters['type'] = get_get_type(xsd_namespace)
+
     soap_version = SOAPVersion.get_version_from_xml(xmlelement)
     logger.info('Detect version %s', soap_version.NAME)
 
     wsdl = get_wsdl_classes(soap_version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xmlelement)
     schema = definitions.types.schema
-    xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
     schemaxml = schema_to_py(schema, xsd_namespace,
                              parent_namespace=definitions.targetNamespace,
                              cwd=cwd)
