@@ -1,11 +1,10 @@
-
 from __future__ import absolute_import
 
+import six
 from lxml import etree
 from pythonic_testcase import *
 
 from soapfish import wsa, xsd
-from soapfish.compat import basestring
 from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.middlewares import ExceptionToSoapFault
 from soapfish.soap_dispatch import SOAPDispatcher
@@ -163,7 +162,7 @@ class SOAPDispatcherTest(PythonicTestCase):
 
         response = dispatcher.dispatch(request)
         body_text = response.http_content
-        if not isinstance(body_text, basestring):
+        if not isinstance(body_text, six.string_types):
             body_text = body_text.decode('utf-8')
         assert_contains('<value>hello</value>', body_text)
 

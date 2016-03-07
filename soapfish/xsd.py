@@ -53,7 +53,6 @@ import six
 from lxml import etree
 
 from . import namespaces as ns
-from .compat import basestring
 from .utils import timezone_offset_to_string
 from .xsd_types import XSDDate
 
@@ -173,7 +172,7 @@ class String(SimpleType):
             return None
 
 
-        if not isinstance(value, basestring):
+        if not isinstance(value, six.string_types):
             raise ValueError("Value %r for class '%s'." % (value, self.__class__.__name__))
 
         value = self._clean_whitespace(value)
@@ -297,7 +296,7 @@ class Date(SimpleType):
     def pythonvalue(self, value):
         if (value is None) or (value == 'nil'):
             return None
-        if not isinstance(value, basestring):
+        if not isinstance(value, six.string_types):
             raise ValueError('Expected a string, not %r' % value)
 
         match = self.YEAR_MONTH_DAY_REGEX.match(value)
@@ -332,7 +331,7 @@ class DateTime(SimpleType):
             return None
         elif isinstance(value, datetime):
             return value
-        elif isinstance(value, basestring):
+        elif isinstance(value, six.string_types):
             return iso8601.parse_date(value)
         raise ValueError("Incorrect type value '%s' for DateTime field." % value)
 
@@ -416,7 +415,7 @@ class Decimal(SimpleType):
             value = str(value)
         elif isinstance(value, six.integer_types) or isinstance(value, float):
             pass  # value is just value
-        elif isinstance(value, basestring):
+        elif isinstance(value, six.string_types):
             value = float(value)
         else:
             raise ValueError("Incorrect value '%s' for Decimal field." % value)
@@ -468,7 +467,7 @@ class Integer(Decimal):
             return None
         elif isinstance(value, six.integer_types):
             pass  # value is just value continue.
-        elif isinstance(value, basestring):
+        elif isinstance(value, six.string_types):
             value = int(value)
         else:
             raise ValueError("Incorrect value '%s' for Decimal field." % value)
@@ -562,7 +561,7 @@ class Element(object):
 
     def _evaluate_type(self):
         if self._type is None:
-            if isinstance(self._passed_type, basestring):
+            if isinstance(self._passed_type, six.string_types):
                 self._passed_type = import_type(self._passed_type)
             if isinstance(self._passed_type, Type):
                 self._type = self._passed_type
@@ -619,7 +618,7 @@ class Element(object):
         setattr(instance, field_name, value)
 
     def __repr__(self):
-        if isinstance(self._type, basestring):
+        if isinstance(self._type, six.string_types):
             return '%s<%s>' % (self.__class__.__name__, self._type)
         else:
             return '%s<%s>' % (self.__class__.__name__, self._type.__class__.__name__)
@@ -999,7 +998,7 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         from .py2xsd import generate_xsd
         schema = generate_xsd(schema)
         schemaelement = etree.XMLSchema(schema)
-        if isinstance(xml, basestring):
+        if isinstance(xml, six.string_types):
             parser = etree.XMLParser(schema=schemaelement)
             xmlelement = etree.fromstring(xml, parser)
         else:

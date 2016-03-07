@@ -7,7 +7,6 @@ import requests
 import six
 
 from . import namespaces as ns
-from .compat import urlparse, urlunparse
 
 logger = logging.getLogger('soapfish')
 
@@ -75,12 +74,12 @@ def url_regex(url):
     '''
     http://example.net/ws/endpoint --> ^ws/endpoint$
     '''
-    o = urlparse(url)
+    o = six.moves.urllib.parse.urlparse(url)
     return r'^%s$' % o.path.lstrip('/')
 
 
 def url_component(url, item):
-    parts = urlparse(url)
+    parts = six.moves.urllib.parse.urlparse(url)
     try:
         return getattr(parts, item)
     except AttributeError:
@@ -91,9 +90,9 @@ def url_template(url):
     '''
     http://example.net/ws/endpoint --> %s/ws/endpoint
     '''
-    o = list(urlparse(url))
+    o = list(six.moves.urllib.parse.urlparse(url))
     o[0:2] = ['{scheme}', '{host}']
-    return urlunparse(o)
+    return six.moves.urllib.parse.urlunparse(o)
 
 
 # --- Other Functions ---------------------------------------------------------

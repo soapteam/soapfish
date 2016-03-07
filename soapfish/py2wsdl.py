@@ -8,10 +8,10 @@ import imp
 import logging
 import textwrap
 
+import six
 from lxml import etree
 
 from . import namespaces as ns, xsd
-from .compat import basestring
 from .py2xsd import generate_xsdspec
 from .soap import SOAP_HTTP_Transport
 from .utils import uncapitalize
@@ -73,7 +73,7 @@ def build_messages(wsdl, definitions, service):
     for method in service.methods:
         inputMessage = wsdl.Message(name=method.operationName + 'Input')
         part = wsdl.Part(name='body')
-        if isinstance(method.input, basestring):
+        if isinstance(method.input, six.string_types):
             part.element = 'sns:' + method.input
         else:
             part.type = 'sns:' + uncapitalize(method.input.__name__)
@@ -82,7 +82,7 @@ def build_messages(wsdl, definitions, service):
 
         outputMessage = wsdl.Message(name=method.operationName + 'Output')
         part = wsdl.Part(name='body')
-        if isinstance(method.output, basestring):
+        if isinstance(method.output, six.string_types):
             part.element = 'sns:' + method.output
         else:
             part.type = 'sns:' + uncapitalize(method.output.__name__)

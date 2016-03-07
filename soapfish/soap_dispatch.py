@@ -10,7 +10,6 @@ import six
 from lxml import etree
 
 from . import py2wsdl, py2xsd, wsa
-from .compat import basestring
 from .core import SOAPError, SOAPRequest, SOAPResponse
 from .utils import uncapitalize
 
@@ -116,7 +115,7 @@ class SOAPDispatcher(object):
 
     def _parse_input(self, method, message):
         input_parser = method.input
-        if isinstance(method.input, basestring):
+        if isinstance(method.input, six.string_types):
             element = self.service.schema.get_element_by_name(method.input)
             input_parser = element._type
         return input_parser.parse_xmlelement(message)
@@ -198,7 +197,7 @@ class SOAPDispatcher(object):
             tagname = uncapitalize(response.soap_body.__class__.__name__)
             #self._validate_response(response.soap_body, tagname)
             # TODO: handle validation results
-            if isinstance(request.method.output, basestring):
+            if isinstance(request.method.output, six.string_types):
                 tagname = request.method.output
             else:
                 tagname = uncapitalize(response.content.__class__.__name__)

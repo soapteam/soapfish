@@ -57,7 +57,7 @@ def get_rendering_environment():
 
 def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
     if cwd is None:
-        cwd = os.getcwd()
+        cwd = six.moves.getcwd()
 
     xmlelement = etree.fromstring(xml)
     nsmap = xmlelement.nsmap.copy()

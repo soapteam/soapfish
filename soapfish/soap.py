@@ -6,9 +6,9 @@ SOAP protocol implementation, dispatchers and client stub.
 import logging
 
 import requests
+import six
 
 from . import core, namespaces as ns, soap11, soap12, wsa
-from .compat import basestring, urlparse
 from .utils import uncapitalize
 
 SOAP_HTTP_Transport = ns.wsdl_soap_http
@@ -103,7 +103,7 @@ class Stub(object):
             self.location = location
         else:
             if base_url:
-                p = urlparse(base_url)
+                p = six.moves.urllib.parse.urlparse(base_url)
                 parts = {'scheme': p.scheme, 'host': p.netloc}
             else:
                 parts = {'scheme': self.SCHEME, 'host': self.HOST}
@@ -123,7 +123,7 @@ class Stub(object):
             error = core.SOAPError(code=code, message=message, actor=actor)
             raise error
 
-        if isinstance(method.output, basestring):
+        if isinstance(method.output, six.string_types):
             element = self.SERVICE.schema.get_element_by_name(method.output)
             _type = element._type.__class__
         else:
@@ -139,7 +139,7 @@ class Stub(object):
         SOAP = self.SERVICE.version
         method = self.SERVICE.get_method(operationName)
 
-        if isinstance(method.input, basestring):
+        if isinstance(method.input, six.string_types):
             tagname = method.input
         else:
             tagname = uncapitalize(parameter.__class__.__name__)

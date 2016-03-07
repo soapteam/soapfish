@@ -14,7 +14,6 @@ import six
 from lxml import etree
 
 from . import namespaces as ns, xsd, xsdspec
-from .compat import basestring
 from .utils import uncapitalize
 
 NUMERIC_TYPES = [xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long, xsd.Short,
@@ -191,7 +190,7 @@ def generate_elements(xsd_schema, schema):
     for name, element in six.iteritems(schema.elements):
         xsd_element = xsdspec.Element()
         xsd_element.name = name
-        if isinstance(element._passed_type, basestring) or inspect.isclass(element._passed_type):
+        if isinstance(element._passed_type, six.string_types) or inspect.isclass(element._passed_type):
             xsd_element.type = get_xsd_type(element._type)
         else:
             xsd_element.complexType = xsd_complexType(element._type.__class__, named=False)
