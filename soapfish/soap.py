@@ -101,17 +101,13 @@ class Stub(object):
         self.service = service if service else self.SERVICE
         if location:
             self.location = location
-        elif base_url:
-            p = urlparse(base_url)
-            self.location = self.service.location % {
-                'scheme': p.scheme,
-                'host': p.netloc,
-            }
         else:
-            self.location = self.service.location % {
-                'scheme': self.SCHEME,
-                'host': self.HOST,
-            }
+            if base_url:
+                p = urlparse(base_url)
+                parts = {'scheme': p.scheme, 'host': p.netloc}
+            else:
+                parts = {'scheme': self.SCHEME, 'host': self.HOST}
+            self.location = self.service.location.format(**parts)
 
     def _handle_response(self, method, http_headers, content):
         SOAP = self.SERVICE.version
