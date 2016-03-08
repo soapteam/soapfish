@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://example.org/A">
+      <xsd:element name="A" type="B"/>
+      <xsd:element name="B" type="xsd:string"/>
+    </xsd:schema>
+  </wsdl:types>
+</wsdl:definitions>

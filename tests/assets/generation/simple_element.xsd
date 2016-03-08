@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:example="http://site.example/ws/spec" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://site.example/ws/spec" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:element name="simpleElement" type="xs:string"/>
+</xs:schema>

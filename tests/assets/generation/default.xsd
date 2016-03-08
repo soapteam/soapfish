@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:sns="http://flightdataservices.com/ops.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://flightdataservices.com/ops.xsd" targetNamespace="http://flightdataservices.com/ops.xsd">
+  <xsd:simpleType name="pilot">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="CAPTAIN"/>
+      <xsd:enumeration value="FIRST_OFFICER"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="airport">
+    <xsd:sequence>
+      <xsd:element name="code_type">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ICAO"/>
+            <xsd:enumeration value="IATA"/>
+            <xsd:enumeration value="FAA"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="code" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="weight">
+    <xsd:sequence>
+      <xsd:element name="value" type="xsd:integer"/>
+      <xsd:element name="unit">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="kg"/>
+            <xsd:enumeration value="lb"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ops">
+    <xsd:sequence>
+      <xsd:element name="aircraft" type="xsd:string"/>
+      <xsd:element name="flight_number" type="xsd:string"/>
+      <xsd:element name="type">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="COMMERCIAL"/>
+            <xsd:enumeration value="INCOMPLETE"/>
+            <xsd:enumeration value="ENGINE_RUN_UP"/>
+            <xsd:enumeration value="TEST"/>
+            <xsd:enumeration value="TRAINING"/>
+            <xsd:enumeration value="FERRY"/>
+            <xsd:enumeration value="POSITIONING"/>
+            <xsd:enumeration value="LINE_TRAINING"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="takeoff_airport" type="sns:airport"/>
+      <xsd:element name="takeoff_gate_datetime" type="xsd:dateTime" minOccurs="0"/>
+      <xsd:element name="takeoff_datetime" type="xsd:dateTime"/>
+      <xsd:element name="takeoff_fuel" type="sns:weight" minOccurs="0"/>
+      <xsd:element name="takeoff_gross_weight" type="sns:weight" minOccurs="0"/>
+      <xsd:element name="takeoff_pilot" type="sns:pilot" minOccurs="0"/>
+      <xsd:element name="landing_airport" type="sns:airport"/>
+      <xsd:element name="landing_gate_datetime" type="xsd:dateTime" minOccurs="0"/>
+      <xsd:element name="landing_datetime" type="xsd:dateTime"/>
+      <xsd:element name="landing_fuel" type="sns:weight" minOccurs="0"/>
+      <xsd:element name="landing_pilot" type="sns:pilot" minOccurs="0"/>
+      <xsd:element name="destination_airport" type="sns:airport" minOccurs="0"/>
+      <xsd:element name="captain_code" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="first_officer_code" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="V2" type="xsd:integer" minOccurs="0"/>
+      <xsd:element name="Vref" type="xsd:integer" minOccurs="0"/>
+      <xsd:element name="Vapp" type="xsd:integer" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="status">
+    <xsd:sequence>
+      <xsd:element name="action">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="INSERTED"/>
+            <xsd:enumeration value="UPDATED"/>
+            <xsd:enumeration value="EXISTS"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="id" type="xsd:long"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="status" type="sns:status"/>
+  <xsd:element name="ops" type="sns:ops"/>
+</xsd:schema>

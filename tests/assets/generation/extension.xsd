@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://example.com" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:complexType name="ComplexType">
+    <xs:complexContent>
+      <xs:extension base="Base">
+        <xs:sequence>
+          <xs:element maxOccurs="1" minOccurs="0" name="Field2" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Base">
+    <xs:sequence>
+      <xs:element name="Field1" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
