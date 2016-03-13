@@ -143,19 +143,17 @@ def _reorder_complexTypes(schema):
 
         w_a, base_a = weights[a]
         w_b, base_b = weights[b]
-
         # a and b are not extension/restriction
         if not base_a and not base_b:
             return w_a - w_b
-
+        is_extension = lambda obj, base: (obj == base)
+        has_namespace = lambda base: (':' in base)
         # a is a extension/restriction of b: a > b
-        if base_a == b or ":" in base_a:
+        if is_extension(b, base_a) or has_namespace(base_a):
             return 1
-
         # b is a extension/restriction of a: a < b
-        if base_b == a or ":" in base_b:
+        elif is_extension(a, base_b) or has_namespace(base_b):
             return -1
-
         # inconclusive, do the same test with their bases
         return _cmp(base_a or a, base_b or b)
 
