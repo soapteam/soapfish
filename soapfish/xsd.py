@@ -43,12 +43,15 @@ For information on XML schema validation:
 from copy import copy
 from decimal import Decimal as _Decimal
 from datetime import datetime
-from iso8601 import iso8601
 import functools
 import itertools
 import logging
 import re
 
+import iso8601
+# pyiso8601 does not export UTC/FixedOffset via their main module
+# (fixed in 031688e, after 0.1.11)
+from iso8601.iso8601 import UTC, FixedOffset
 from lxml import etree
 import six
 
@@ -310,12 +313,12 @@ class Date(SimpleType):
         if not offset_string:
             return None
         elif offset_string == 'Z':
-            return iso8601.UTC
+            return UTC
 
         sign = 1 if (match.group('tz_sign') == '+') else -1
         offset_hours = sign * int(match.group('tz_hour'))
         offset_minutes = sign * int(match.group('tz_minute'))
-        return iso8601.FixedOffset(offset_hours, offset_minutes, name=u'UTC'+offset_string)
+        return FixedOffset(offset_hours, offset_minutes, name=u'UTC'+offset_string)
 
 
 class DateTime(SimpleType):

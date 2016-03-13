@@ -1,7 +1,8 @@
-import iso8601
-import unittest
-from decimal import Decimal
 
+from decimal import Decimal
+import unittest
+
+import iso8601
 from lxml import etree
 from pythonic_testcase import *
 

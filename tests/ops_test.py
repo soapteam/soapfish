@@ -1,5 +1,7 @@
-import iso8601
+
 import unittest
+
+from iso8601 import iso8601
 from lxml import etree
 
 from soapfish.py2xsd import generate_xsd
