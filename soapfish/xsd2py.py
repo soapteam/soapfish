@@ -4,6 +4,7 @@
 from __future__ import print_function
 
 import argparse
+import functools
 import hashlib
 import itertools
 import keyword
@@ -116,12 +117,62 @@ def generate_code_from_xsd(xmlelement, known_files=None, location=None,
     return schema_code.encode(encoding)
 
 
+def _reorder_complexTypes(schema):
+    """
+    Reorder complexTypes to render base extension/restriction elements
+    render before the children.
+    """
+    weights = {}
+    for n, complex_type in enumerate(schema.complexTypes):
+        content = complex_type.complexContent
+        if content:
+            extension = content.extension
+            restriction = content.restriction
+            if extension:
+                base = extension.base
+            elif restriction:
+                base = restriction.base
+        else:
+            base = ''
+
+        weights[complex_type.name] = (n, base)
+
+    def _cmp(a, b):
+        a = getattr(a, 'name', a)
+        b = getattr(b, 'name', b)
+
+        w_a, base_a = weights[a]
+        w_b, base_b = weights[b]
+        # a and b are not extension/restriction
+        if not base_a and not base_b:
+            return w_a - w_b
+        is_extension = lambda obj, base: (obj == base)
+        has_namespace = lambda base: (':' in base)
+        # a is a extension/restriction of b: a > b
+        if is_extension(b, base_a) or has_namespace(base_a):
+            return 1
+        # b is a extension/restriction of a: a < b
+        elif is_extension(a, base_b) or has_namespace(base_b):
+            return -1
+        # inconclusive, do the same test with their bases
+        return _cmp(base_a or a, base_b or b)
+
+    if hasattr(functools, 'cmp_to_key'):
+        sort_param = {'key': functools.cmp_to_key(_cmp)}
+    else:
+        # Python 2.6/3.0/3.1
+        sort_param = {'cmp': _cmp}
+    schema.complexTypes.sort(**sort_param)
+
+
 def schema_to_py(schema, xsd_namespace, known_files=None, location=None,
                  parent_namespace=None, cwd=None, base_path=None):
     if base_path is None:
         base_path = cwd
     if base_path:
         rewrite_paths(schema, cwd, base_path)
+
+    _reorder_complexTypes(schema)
 
     if known_files is None:
         known_files = []

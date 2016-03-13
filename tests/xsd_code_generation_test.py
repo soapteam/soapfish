@@ -158,7 +158,6 @@ class XSDCodeGenerationTest(PythonicTestCase):
         assert_equals(my_list.accept(['B']), True)
 
     def test_can_generate_extension(self):
-        raise SkipTest('extension subclass fails with lazy defined base')
         xml = """
         <xs:schema targetNamespace="http://example.com"
                     xmlns:xs="http://www.w3.org/2001/XMLSchema"
