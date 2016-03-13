@@ -125,12 +125,13 @@ def _reorder_complexTypes(schema):
     weights = {}
     for n, complex_type in enumerate(schema.complexTypes):
         content = complex_type.complexContent
-
         if content:
             extension = content.extension
             restriction = content.restriction
-            base = extension and extension.base or \
-                restriction and restriction.base
+            if extension:
+                base = extension.base
+            elif restriction:
+                base = restriction.base
         else:
             base = ''
 
