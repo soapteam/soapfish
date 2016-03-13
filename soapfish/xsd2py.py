@@ -138,15 +138,8 @@ def _reorder_complexTypes(schema):
         weights[complex_type.name] = (n, base)
 
     def _cmp(a, b):
-        try:
-            a = a.name
-        except AttributeError:
-            pass
-
-        try:
-            b = b.name
-        except AttributeError:
-            pass
+        a = getattr(a, 'name', a)
+        b = getattr(b, 'name', b)
 
         w_a, base_a = weights[a]
         w_b, base_b = weights[b]
@@ -167,9 +160,9 @@ def _reorder_complexTypes(schema):
         return _cmp(base_a or a, base_b or b)
 
     sort_kw = {}
-    try:
+    if hasattr(functools, 'cmp_to_key'):
         sort_kw['key'] = functools.cmp_to_key(_cmp)
-    except AttributeError:
+    else:
         sort_kw['cmp'] = _cmp
     schema.complexTypes.sort(**sort_kw)
 
