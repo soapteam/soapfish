@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://example.org/" location="import_target.wsdl"/>
+</wsdl:definitions>

@@ -46,6 +46,10 @@ class Message(wsdl11.Message):
     parts = xsd.ListElement(Part, tagname='part', minOccurs=0)
 
 
+class Import(wsdl11.Import):
+    pass
+
+
 class Input(wsdl11.Input):
     # Extensibility Elements:
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12)
@@ -87,6 +91,7 @@ class Service(wsdl11.Service):
 
 
 class Definitions(wsdl11.Definitions):
+    imports = xsd.ListElement(Import, 'import', minOccurs=0)
     types = xsd.Element(Types, minOccurs=0)
     messages = xsd.ListElement(Message, 'message', minOccurs=0)
     portTypes = xsd.ListElement(PortType, 'portType', minOccurs=0)
@@ -101,6 +106,6 @@ SCHEMA = xsd.Schema(
     attributeGroups=[],
     groups=[],
     complexTypes=[Types, Part, Message, Input, Output, Operation, PortType,
-                  Binding, Port, Service, Definitions],
+                  Binding, Port, Service, Import, Definitions],
     elements={},
 )

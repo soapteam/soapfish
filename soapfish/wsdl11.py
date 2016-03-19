@@ -82,6 +82,11 @@ class Message(xsd.ComplexType):
         return self.parts[0]
 
 
+class Import(xsd.ComplexType):
+    namespace = xsd.Attribute(xsd.String)
+    location = xsd.Attribute(xsd.String)
+
+
 class Input(xsd.ComplexType):
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)      # See note #1.
     message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)   # See note #2.
@@ -146,6 +151,7 @@ class Service(xsd.ComplexType):
 class Definitions(xsd.ComplexType):
     name = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
     targetNamespace = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
+    imports = xsd.ListElement(Import, 'import', minOccurs=0)
     types = xsd.Element(Types, minOccurs=0)
     messages = xsd.ListElement(Message, 'message', minOccurs=0)
     portTypes = xsd.ListElement(PortType, 'portType', minOccurs=0)
@@ -161,6 +167,6 @@ SCHEMA = xsd.Schema(
     attributeGroups=[],
     groups=[],
     complexTypes=[Types, Part, Message, Input, Output, Operation, PortType,
-                  Binding, Port, Service, Definitions],
+                  Binding, Port, Service, Import, Definitions],
     elements={},
 )

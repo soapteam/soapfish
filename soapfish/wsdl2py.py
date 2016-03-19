@@ -39,6 +39,45 @@ def reorder_schemas(schemas):
     return schemas
 
 
+def merge_imports(wsdl, definitions, xsd_namespaces, cwd=None, seen=None):
+
+    if seen is None:
+        seen = set()
+
+    for _import in definitions.imports:
+        if '://' in _import.location:
+            path = _import.location
+            cwd = None
+        else:
+            path = os.path.join(cwd, _import.location)
+            cwd = os.path.dirname(path)
+
+        if path in seen:
+            continue
+
+        seen.add(path)
+
+        xml = open_document(path)
+        xml = etree.fromstring(xml)
+
+        xsd_namespaces.update(find_xsd_namespaces(xml))
+
+        imported = wsdl.Definitions.parse_xmlelement(xml)
+
+        if imported.imports:
+            merge_imports(wsdl, imported, xsd_namespaces, cwd=cwd, seen=seen)
+
+        if imported.types and imported.types.schemas:
+            if not definitions.types:
+                definitions.types = wsdl.Types()
+            definitions.types.schemas[:0] = imported.types.schemas
+
+        definitions.services[:0] = imported.services
+        definitions.bindings[:0] = imported.bindings
+        definitions.messages[:0] = imported.messages
+        definitions.portTypes[:0] = imported.portTypes
+
+
 def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
 
     if isinstance(xml, six.string_types):
@@ -47,20 +86,18 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
     if cwd is None:
         cwd = six.moves.getcwd()
 
-    nsmap = xml.nsmap.copy()
-    for x in xml.xpath('//*[local-name()="schema"]'):
-        nsmap.update(x.nsmap)
-    xsd_namespaces = find_xsd_namespaces(nsmap)
+    xsd_namespaces = find_xsd_namespaces(xml)
 
     soap_version = SOAPVersion.get_version_from_xml(xml)
     logger.info('Detected version of SOAP: %s', soap_version.NAME)
 
     wsdl = get_wsdl_classes(soap_version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xml)
-    schemas = ''
-    for s in reorder_schemas(definitions.types.schemas):
-        schemas += schema_to_py(s, xsd_namespaces, cwd=cwd,
-                                parent_namespace=definitions.targetNamespace)
+    merge_imports(wsdl, definitions, xsd_namespaces, cwd=cwd)
+
+    kw = {'cwd': cwd, 'parent_namespace': definitions.targetNamespace}
+    schemas = reorder_schemas(definitions.types.schemas) if definitions.types else []
+    schemas = ''.join(schema_to_py(schema, xsd_namespaces, **kw) for schema in schemas)
 
     env = get_rendering_environment(xsd_namespaces, module='soapfish.wsdl2py')
     tpl = env.get_template('wsdl')

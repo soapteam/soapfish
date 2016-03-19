@@ -167,16 +167,11 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
 
 
 # --- Other Functions ---------------------------------------------------------
-def find_xsd_namespaces(nsmap):
-    xsd_namespaces = [
-        ns.xsd2000,
-        ns.xsd,
-    ]
-    namespaces = []
-    for key, value in six.iteritems(nsmap):
-        if value in xsd_namespaces:
-            namespaces.append(key)
-    return namespaces
+def find_xsd_namespaces(xml):
+    nsmap = xml.nsmap.copy()
+    for x in xml.xpath('//*[local-name()="schema"]'):
+        nsmap.update(x.nsmap)
+    return set(k for k, v in six.iteritems(nsmap) if v in (ns.xsd, ns.xsd2000))
 
 
 def walk_schema_tree(schemas, callback, seen=None):

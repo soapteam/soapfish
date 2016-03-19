@@ -68,7 +68,8 @@ def generate_code_from_xsd(xml, known_files=None, location=None,
 
     if known_files is None:
         known_files = []
-    xsd_namespaces = find_xsd_namespaces(xml.nsmap)
+
+    xsd_namespaces = find_xsd_namespaces(xml)
 
     schema = xsdspec.Schema.parse_xmlelement(xml)
 
