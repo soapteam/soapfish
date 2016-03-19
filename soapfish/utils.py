@@ -97,7 +97,7 @@ def schema_name(schema, location=None):
     return hashlib.md5(location).hexdigest()[0:5]
 
 
-def get_rendering_environment(xsd_namespaces):
+def get_rendering_environment(xsd_namespaces, module='soapfish'):
     '''
     Returns a rendering environment to use with code generation templates.
     '''
@@ -136,8 +136,11 @@ def get_rendering_environment(xsd_namespaces):
         SOAPTransport=soap.SOAP_HTTP_Transport,
         get_by_name=wsdl.get_by_name,
         keywords=keyword.kwlist,
+        preamble={
+            'module': module,
+            'generated': datetime.now(),
+        },
         schema_name=schema_name,
-        generation_dt=datetime.now()
     )
     return env
 

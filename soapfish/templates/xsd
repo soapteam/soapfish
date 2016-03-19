@@ -1,4 +1,10 @@
-{%- import "lib" as lib with context %}
+{%- import 'lib' as lib with context -%}
+{%- if preamble -%}
+{{- lib.render_preamble(preamble) -}}
+from soapfish import xsd
+{# [blank line] #}
+{# [blank line] #}
+{%- endif -%}
 {#- XSD Includes -#}
 {%- for i in schema.includes %}
 {{- resolve_import(i, known_files, schema.targetNamespace, cwd, base_path) }}

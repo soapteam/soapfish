@@ -35,8 +35,6 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
         nsmap.update(x.nsmap)
     xsd_namespaces = find_xsd_namespaces(nsmap)
 
-    env = get_rendering_environment(xsd_namespaces)
-
     soap_version = SOAPVersion.get_version_from_xml(xmlelement)
     logger.info('Detect version %s', soap_version.NAME)
 
@@ -47,7 +45,9 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
                              parent_namespace=definitions.targetNamespace,
                              cwd=cwd)
 
+    env = get_rendering_environment(xsd_namespaces, module='soapfish.wsdl2py')
     tpl = env.get_template('wsdl')
+
     return tpl.render(
         soap_version=soap_version,
         definitions=definitions,
