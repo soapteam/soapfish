@@ -50,6 +50,14 @@ class SOAP_Body(xsd.ComplexType):
     encodingStyle = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
 
 
+class SOAP_Fault(xsd.ComplexType):
+    ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
+    name = xsd.Attribute(xsd.NMTOKEN)
+    use = xsd.Attribute(xsd.String(enumeration=['encoded', 'literal']))
+    namespace = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
+    encodingStyle = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
+
+
 class SOAP_Address(xsd.ComplexType):
     ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
     location = xsd.Attribute(xsd.AnyURI)
@@ -107,10 +115,20 @@ class Output(xsd.ComplexType):
     headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0, namespace=ns.wsdl_soap)
 
 
+class Fault(xsd.ComplexType):
+    name = xsd.Attribute(xsd.String)
+    message = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)   # See note #2.
+    documentation = xsd.Element(xsd.String, minOccurs=0)
+
+    # Extensibility Elements:
+    fault = xsd.Element(SOAP_Fault, namespace=ns.wsdl_soap)
+
+
 class Operation(xsd.ComplexType):
     name = xsd.Attribute(xsd.String)
     input = xsd.Element(Input, minOccurs=0)
     output = xsd.Element(Output, minOccurs=0)
+    faults = xsd.ListElement(Fault, 'fault', minOccurs=0)
     documentation = xsd.Element(xsd.String, minOccurs=0)
 
     # Extensibility Elements:
@@ -166,7 +184,7 @@ SCHEMA = xsd.Schema(
     simpleTypes=[],
     attributeGroups=[],
     groups=[],
-    complexTypes=[Types, Part, Message, Input, Output, Operation, PortType,
-                  Binding, Port, Service, Import, Definitions],
+    complexTypes=[Types, Part, Message, Input, Output, Fault, Operation,
+                  PortType, Binding, Port, Service, Import, Definitions],
     elements={},
 )

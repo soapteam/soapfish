@@ -27,6 +27,10 @@ class SOAP_Body(wsdl11.SOAP_Body):
     pass
 
 
+class SOAP_Fault(wsdl11.SOAP_Fault):
+    pass
+
+
 class SOAP_Address(wsdl11.SOAP_Address):
     pass
 
@@ -62,9 +66,15 @@ class Output(wsdl11.Output):
     headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0, namespace=ns.wsdl_soap12)
 
 
+class Fault(wsdl11.Fault):
+    # Extensibility Elements:
+    fault = xsd.Element(SOAP_Fault, namespace=ns.wsdl_soap12)
+
+
 class Operation(wsdl11.Operation):
     input = xsd.Element(Input, minOccurs=0)
     output = xsd.Element(Output, minOccurs=0)
+    faults = xsd.ListElement(Fault, 'fault', minOccurs=0)
 
     # Extensibility Elements:
     operation = xsd.Element(SOAP_Operation, minOccurs=0, namespace=ns.wsdl_soap12)
@@ -105,7 +115,7 @@ SCHEMA = xsd.Schema(
     simpleTypes=[],
     attributeGroups=[],
     groups=[],
-    complexTypes=[Types, Part, Message, Input, Output, Operation, PortType,
-                  Binding, Port, Service, Import, Definitions],
+    complexTypes=[Types, Part, Message, Input, Output, Fault, Operation,
+                  PortType, Binding, Port, Service, Import, Definitions],
     elements={},
 )
