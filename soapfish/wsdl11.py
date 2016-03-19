@@ -59,7 +59,7 @@ class SOAP_Address(xsd.ComplexType):
 
 
 class Types(xsd.ComplexType):
-    schema = xsd.Element(xsdspec.Schema, namespace=xsdspec.XSD_NAMESPACE)
+    schemas = xsd.ListElement(xsdspec.Schema, 'schema', namespace=xsdspec.XSD_NAMESPACE)
     documentation = xsd.Element(xsd.String, minOccurs=0)
 
 

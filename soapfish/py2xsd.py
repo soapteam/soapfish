@@ -6,7 +6,6 @@ from __future__ import print_function
 import argparse
 import imp
 import inspect
-import itertools
 import logging
 import textwrap
 
@@ -14,7 +13,7 @@ import six
 from lxml import etree
 
 from . import namespaces as ns, xsd, xsdspec
-from .utils import uncapitalize
+from .utils import uncapitalize, walk_schema_tree
 
 NUMERIC_TYPES = [xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long, xsd.Short,
         xsd.UnsignedByte, xsd.UnsignedInt, xsd.UnsignedLong, xsd.UnsignedShort,
@@ -213,34 +212,28 @@ def generate_xsd(schema):
     return xmlelement
 
 
-def schema_validator(schema):
+def schema_validator(schemas):
     """
-    Return a callable for the specified soapfish schema which can be used
+    Return a callable for the specified soapfish schemas which can be used
     to validate (etree) xml documents.
     The method takes care of resolving imported (soapfish) schemas but prevents
     any unwanted network access.
     """
     class SchemaResolver(etree.Resolver):
+
         def __init__(self, schemas, *args, **kwargs):
             super(SchemaResolver, self).__init__(*args, **kwargs)
-            self._soapfish_schemas = {}
-            self._map(schema)
-
-        def _map(self, schema):
-            for item in itertools.chain(schema.imports, schema.includes):
-                if item.location not in self._soapfish_schemas:
-                    self._soapfish_schemas[item.location] = item
-                    self._map(item)
+            self.lookup = walk_schema_tree(schemas, lambda x: x)
 
         def resolve(self, url, id_, context):
-            if url in self._soapfish_schemas:
-                schema_string = etree.tostring(generate_xsd(self._soapfish_schemas[url]))
+            if url in self.lookup:
+                schema_string = etree.tostring(generate_xsd(self.lookup[url]))
                 return self.resolve_string(schema_string, context)
             # prevent unwanted network access
-            raise ValueError('can not resolve %r - not a known soapfish schema' % url)
+            raise ValueError('Cannot resolve %r - not a known soapfish schema' % url)
 
     parser = etree.XMLParser(load_dtd=True)
-    resolver = SchemaResolver(schema)
+    resolver = SchemaResolver(schemas)
     parser.resolvers.add(resolver)
 
     # unfortunately we have to parse the whole schema from string so we are
@@ -251,12 +244,12 @@ def schema_validator(schema):
     # which can not be cleared without having references to all registered
     # resolvers (and we don't know these instances). Also I noticed many test
     # failures (only when running all tests!) and strange behavior in
-    # "resolve()" (self._soapfish_schemas was empty unless doing repr() on the
+    # "resolve()" (self.lookup was empty unless doing repr() on the
     # instance attribute first).
     # Also having shared resolvers is not a good idea because a user might want
     # to have different validator instances at the same time (possibly with
     # conflicting namespace urls).
-    schema_xml = etree.tostring(generate_xsd(schema))
+    schema_xml = ''.join(etree.tostring(generate_xsd(s)) for s in schemas)
     schema_element = etree.fromstring(schema_xml, parser)
     xml_schema = etree.XMLSchema(schema_element)
     return xml_schema.assertValid

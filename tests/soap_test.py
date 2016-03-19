@@ -85,7 +85,7 @@ class ErrorHandling(unittest.TestCase):
             name=None,
             targetNamespace=None,
             location="mock_location",
-            schema=None,
+            schemas=[],
             version=soap.SOAPVersion.SOAP11,
             methods=[])
         
@@ -114,7 +114,7 @@ class ErrorHandling(unittest.TestCase):
             name=None,
             targetNamespace=None,
             location="mock_location",
-            schema=None,
+            schemas=[],
             version=soap.SOAPVersion.SOAP12,
             methods=[])
         

@@ -51,19 +51,19 @@ class Service(object):
     WSDL generation.
     '''
 
-    def __init__(self, targetNamespace, location, schema, methods,
+    def __init__(self, targetNamespace, location, schemas, methods,
                  version=SOAPVersion.SOAP11, name='Service',
                  input_header=None, output_header=None, use_wsa=False):
         '''
         :param targetNamespace: string
         :param location: string, endpoint url.
-        :param schema: xsd.Schema instance.
+        :param schemas: xsd.Schema instances.
         :param methods: list of xsd.Methods
         '''
         self.name = name
         self.targetNamespace = targetNamespace
         self.location = location
-        self.schema = schema
+        self.schemas = schemas
         self.methods = methods
         self.version = version
         self.use_wsa = use_wsa
@@ -76,6 +76,14 @@ class Service(object):
 
     def get_method(self, operationName):
         return tuple(filter(lambda m: m.operationName == operationName, self.methods))[0]
+
+    def find_element_by_name(self, name):
+        element = None
+        for schema in self.schemas:
+            element = schema.get_element_by_name(name)
+            if element is not None:
+                break
+        return element
 
     def route(self, operationName):
         """Decorator to bind a Python function to service method."""
@@ -124,7 +132,7 @@ class Stub(object):
             raise error
 
         if isinstance(method.output, six.string_types):
-            element = self.SERVICE.schema.get_element_by_name(method.output)
+            element = self.SERVICE.find_element_by_name(method.output)
             _type = element._type.__class__
         else:
             _type = method.output

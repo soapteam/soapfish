@@ -13,12 +13,12 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml = utils.open_document('tests/assets/generation/simple_element.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
 
-        schema, symbols = generated_symbols(code)
-        assert_not_none(schema)
+        schemas, symbols = generated_symbols(code)
+        assert_is_not_empty(schemas)
         assert_length(1, symbols)
 
-        assert_equals(['simpleElement'], list(schema.elements))
-        simple_element = schema.elements['simpleElement']
+        assert_equals(['simpleElement'], list(schemas[0].elements))
+        simple_element = schemas[0].elements['simpleElement']
         assert_isinstance(simple_element._type, xsd.String)
 
     @unittest.skip('References to simple elements not yet implemented')
@@ -26,15 +26,15 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml = utils.open_document('tests/assets/generation/reference_simple.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
 
-        schema, symbols = generated_symbols(code)
-        assert_not_none(schema)
-        # somehow we need to be able to have a schema with multiple possible
+        schemas, symbols = generated_symbols(code)
+        assert_is_not_empty(schemas)
+        # somehow we need to be able to have schemas with multiple possible
         # root elements
         assert_length(3, symbols)
         assert_contains('Name', symbols.keys())
         assert_contains('Job', symbols.keys())
 
-        assert_equals(set(['name', 'job']), list(schema.elements))
+        assert_equals(set(['name', 'job']), list(schemas[0].elements))
 
         Job = symbols['Job']
         Name = symbols['Name']
@@ -60,13 +60,13 @@ class XSDCodeGenerationTest(PythonicTestCase):
         schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(xml))
         code = xsd2py.schema_to_py(schema, ['xs'])
 
-        schema, symbols = generated_symbols(code)
-        assert_not_none(schema)
+        schemas, symbols = generated_symbols(code)
+        assert_is_not_empty(schemas)
         assert_length(3, symbols)
         assert_contains('Person', symbols.keys())
         assert_contains('Job', symbols.keys())
 
-        assert_equals(set(['person', 'job']), list(schema.elements))
+        assert_equals(set(['person', 'job']), list(schemas[0].elements))
 
         Job = symbols['Job']
         Person = symbols['Person']
@@ -91,9 +91,8 @@ class XSDCodeGenerationTest(PythonicTestCase):
     def test_can_generate_list_enumeration(self):
         xml = utils.open_document('tests/assets/generation/enumeration.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
-
-        schema, symbols = generated_symbols(code)
-        assert_not_none(schema)
+        schemas, symbols = generated_symbols(code)
+        assert_is_not_empty(schemas)
         assert_length(2, symbols)
 
         assert_true(issubclass(symbols['MyList'], xsd.List))
@@ -105,4 +104,4 @@ class XSDCodeGenerationTest(PythonicTestCase):
     def test_can_generate_extension(self):
         xml = utils.open_document('tests/assets/generation/extension.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
-        schema, symbols = generated_symbols(code)
+        schemas, symbols = generated_symbols(code)

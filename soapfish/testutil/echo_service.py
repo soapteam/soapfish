@@ -82,7 +82,7 @@ def echo_service(handler=None, input_header=None, output_header=None):
         name='TestService',
         targetNamespace='http://soap.example/echo',
         location='http://soap.example/ws',
-        schema=EchoSchema,
+        schemas=[EchoSchema],
         version=SOAPVersion.SOAP11,
         methods=[echo_method],
     )

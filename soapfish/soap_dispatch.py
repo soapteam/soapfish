@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 import functools
-import itertools
 import logging
 
 import six
@@ -11,7 +10,7 @@ from lxml import etree
 
 from . import py2wsdl, py2xsd, wsa
 from .core import SOAPError, SOAPRequest, SOAPResponse
-from .utils import uncapitalize
+from .utils import uncapitalize, walk_schema_tree
 
 __all__ = ['SOAPDispatcher']
 
@@ -40,7 +39,7 @@ class SOAPDispatcher(object):
         if middlewares is None:
             middlewares = []
         self.middlewares = middlewares
-        self.schema_validator = py2xsd.schema_validator(self.service.schema)
+        self.schema_validator = py2xsd.schema_validator(self.service.schemas)
 
         if wsdl is None:
             wsdlelement = py2wsdl.generate_wsdl(self.service)
@@ -49,7 +48,11 @@ class SOAPDispatcher(object):
         self.wsdl = wsdl
 
         if xsds is None:
-            xsds = self._generate_xsds(self.service.schema)
+            def callback(item):
+                xsdelement = py2xsd.generate_xsd(item)
+                self._rewrite_locations(xsdelement)
+                xsd = etree.tostring(xsdelement, pretty_print=True)
+            xsds = walk_schema_tree(self.service.schemas, callback)
         self.xsds = xsds
 
         self.strict_soap_header = strict_soap_header
@@ -116,14 +119,17 @@ class SOAPDispatcher(object):
     def _parse_input(self, method, message):
         input_parser = method.input
         if isinstance(method.input, six.string_types):
-            element = self.service.schema.get_element_by_name(method.input)
+            element = self.service.find_element_by_name(method.input)
             input_parser = element._type
         return input_parser.parse_xmlelement(message)
 
     def _validate_response(self, return_object, tagname):
-        return_object.xml(tagname, namespace=self.service.schema.targetNamespace,
-                          elementFormDefault=self.service.schema.elementFormDefault,
-                          schema=self.service.schema)  # Validation.
+        # XXX: Lookup of schema is untested as method not currently in use.
+        schema = return_object.SCHEMA
+        assert schema in self.service.schemas
+        return_object.xml(tagname, schema=schema,
+                          namespace=schema.targetNamespace,
+                          elementFormDefault=schema.elementFormDefault)
 
     def _validate_header(self, soap_header):
         if soap_header is None:
@@ -192,8 +198,7 @@ class SOAPDispatcher(object):
             response.http_status_code = 500
         else:
             tagname = uncapitalize(response.soap_body.__class__.__name__)
-            #self._validate_response(response.soap_body, tagname)
-            # TODO: handle validation results
+            # self._validate_response(response.soap_body, tagname)  # TODO: handle validation results
             if isinstance(request.method.output, six.string_types):
                 tagname = request.method.output
             else:
@@ -221,21 +226,6 @@ class SOAPDispatcher(object):
         qs = six.moves.urllib.parse.parse_qs(qs)
         xsd = self.xsds[qs.get('xsd')]
         return SOAPResponse('xsd', http_content=xsd, http_headers={'Content-Type': 'text/xml'})
-
-    def _generate_xsds(self, schema, _generated=None):
-        if _generated is None:
-            _generated = {}
-
-        for _schema in itertools.chain(schema.imports, schema.includes):
-            if _schema.location in _generated:
-                continue
-
-            xsdelement = py2xsd.generate_xsd(_schema)
-            self._rewrite_locations(xsdelement)
-            xsd = etree.tostring(xsdelement, pretty_print=True)
-            _generated[_schema.location] = xsd
-            self._generate_xsds(_schema, _generated)
-        return _generated
 
     def _rewrite_locations(self, element):
         for e in element.xpath('//xsd:import|//xsd:include', namespaces=element.nsmap):

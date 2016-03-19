@@ -8,6 +8,7 @@ import logging
 import os
 import sys
 import textwrap
+from collections import deque
 
 import six
 from lxml import etree
@@ -25,6 +26,19 @@ logger = logging.getLogger('soapfish')
 
 
 # --- Helpers -----------------------------------------------------------------
+def reorder_schemas(schemas):
+    schemas, targets, x = [], set(), deque(schemas)
+    while x:
+        schema = x.popleft()
+        ns = set(i.namespace for i in schema.imports)
+        if x and ns and ns - targets:
+            x.append(schema)
+        else:
+            schemas.append(schema)
+            targets.add(schema.targetNamespace)
+    return schemas
+
+
 def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
 
     if isinstance(xml, six.string_types):
@@ -43,10 +57,10 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
 
     wsdl = get_wsdl_classes(soap_version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xml)
-    schema = definitions.types.schema
-    schemaxml = schema_to_py(schema, xsd_namespaces,
-                             parent_namespace=definitions.targetNamespace,
-                             cwd=cwd)
+    schemas = ''
+    for s in reorder_schemas(definitions.types.schemas):
+        schemas += schema_to_py(s, xsd_namespaces, cwd=cwd,
+                                parent_namespace=definitions.targetNamespace)
 
     env = get_rendering_environment(xsd_namespaces, module='soapfish.wsdl2py')
     tpl = env.get_template('wsdl')
@@ -54,7 +68,7 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
     code = tpl.render(
         soap_version=soap_version,
         definitions=definitions,
-        schema=schemaxml,
+        schemas=schemas,
         is_server=bool(target == 'server'),
         use_wsa=use_wsa,
     )

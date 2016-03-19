@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
+import itertools
 import keyword
 import logging
 from datetime import datetime, timedelta
@@ -102,6 +103,18 @@ def schema_name(obj, location=None):
     return hashlib.md5(value).hexdigest()[:5]
 
 
+def schema_select(schemas, elements):
+    selected = None
+    elements = [remove_namespace(x) for x in elements]
+    print(elements)
+    # {{ part.element|remove_namespace }}')
+    for schema in schemas:
+        if all(schema.get_element_by_name(x) for x in elements):
+            selected = schema
+            break
+    return selected
+
+
 def get_rendering_environment(xsd_namespaces, module='soapfish'):
     '''
     Returns a rendering environment to use with code generation templates.
@@ -148,6 +161,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
             'generated': datetime.now(),
         },
         schema_name=schema_name,
+        schema_select=schema_select,
     )
     return env
 
@@ -163,6 +177,17 @@ def find_xsd_namespaces(nsmap):
         if value in xsd_namespaces:
             namespaces.append(key)
     return namespaces
+
+
+def walk_schema_tree(schemas, callback, seen=None):
+    if seen is None:
+        seen = {}
+    for schema in schemas:
+        for item in itertools.chain(schema.imports, schema.includes):
+            if item.location not in seen:
+                seen[item.location] = callback(item)
+                walk_schema_tree([item], callback, seen)
+    return seen
 
 
 def timezone_offset_to_string(offset):

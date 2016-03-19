@@ -90,15 +90,15 @@ def build_messages(wsdl, definitions, service):
         definitions.messages.append(outputMessage)
 
 
-def build_types(wsdl, definitions, schema):
-    xsd_schema = generate_xsdspec(schema)
-    definitions.types = wsdl.Types(schema=xsd_schema)
+def build_types(wsdl, definitions, service):
+    schemas = [generate_xsdspec(schema) for schema in service.schemas]
+    definitions.types = wsdl.Types(schemas=schemas)
 
 
 def generate_wsdl(service):
     wsdl = get_wsdl_classes(service.version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions(targetNamespace=service.targetNamespace)
-    build_types(wsdl, definitions, service.schema)
+    build_types(wsdl, definitions, service)
     build_service(wsdl, definitions, service)
     build_bindings(wsdl, definitions, service)
     build_portTypes(wsdl, definitions, service)
@@ -107,7 +107,8 @@ def generate_wsdl(service):
     xmlelement = etree.Element(
         '{%s}definitions' % ns.wsdl,
         nsmap={
-            'sns': service.schema.targetNamespace,
+            # FIXME: Look up properly if multiple schemas...
+            'sns': service.schemas[0].targetNamespace,
             'soap': service.version.BINDING_NAMESPACE,
             'tns': service.targetNamespace,
             'wsdl': ns.wsdl,

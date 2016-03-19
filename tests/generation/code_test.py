@@ -25,7 +25,7 @@ class CodeGenerationTest(unittest.TestCase):
             f.write(code)
         compile(code, fn, 'exec')
         globalz['__name__'] = fn.rsplit('/', 1)[-1].rsplit('.', 1)[0]
-        exec(code, globalz)
+        six.exec_(code, globalz)
 
     def _check_reparse_wsdl(self, base, target):
         xml = py2wsdl.tostring(base['PutOpsPort_SERVICE'])

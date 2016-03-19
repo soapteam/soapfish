@@ -11,7 +11,7 @@ BaseHeader = {% if use_wsa %}wsa.Header{% else %}xsd.ComplexType{% endif %}
 ##############################################################################
 # Schemas
 
-{% if schema %}{{ schema }}{% endif -%}
+{% if schemas %}{{ schemas }}{% endif -%}
 
 {%- for service in definitions.services %}
 {%- for port in service.ports %}
@@ -47,7 +47,7 @@ def {{ operation.name }}(request, {{ _im.part.element|remove_namespace }}):
 {%- set _omh = get_message_header(definitions, binding, operation, 'output') %}
 {%- if _imh %}
 class {{ _im.name }}Headers(BaseHeader):
-    SCHEMA = Schema_{{ schema_name(definitions.types.schema) }}
+    SCHEMA = Schema_{{ schema_name(schema_select(definitions.types.schemas, _imh)) }}
     {%- for part in _imh -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
@@ -59,7 +59,7 @@ class {{ _im.name }}Headers(BaseHeader):
 {%- endif -%}
 {%- if _omh %}
 class {{ _om.name }}Headers(BaseHeader):
-    SCHEMA = Schema_{{ schema_name(definitions.types.schema) }}
+    SCHEMA = Schema_{{ schema_name(schema_select(definitions.types.schemas, _omh)) }}
     {%- for part in _omh -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
@@ -110,7 +110,7 @@ class {{ _om.name }}Headers(BaseHeader):
     name='{{ port.name }}',
     targetNamespace='{{ definitions.targetNamespace }}',
     location='{{ port.address.location|url_template }}',
-    schema=Schema_{{ schema_name(definitions.types.schema) }},
+    schemas=[{% for s in definitions.types.schemas %}Schema_{{ schema_name(s) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     {%- if soap_version.NAME == 'soap11' %}
     version=soap.SOAPVersion.SOAP11,
     {%- else %}

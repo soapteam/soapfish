@@ -82,7 +82,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             elements={'foo': xsd.Element(Container)},
         )
         service.methods[0].input = 'foo'
-        service.schema.imports = (code_schema, )
+        service.schemas[0].imports = [code_schema]
         # The setup is a bit simplistic because the <code> tag is not parsed
         # into a soapfish model element for the handler but this was enough
         # to trigger the bug

@@ -8,7 +8,7 @@ class DispatchTestMixin(object):
         method = self.service.get_method('echoOperation')
         headers = soap.build_http_request_headers(method.soapAction)
         tagname = method.input
-        element = self.service.schema.get_element_by_name('echoRequest')
+        element = self.service.find_element_by_name('echoRequest')
         echo = element._type.create(input_value)
         request_body = soap.Envelope.response(tagname, echo)
         return headers, request_body
@@ -18,5 +18,5 @@ class DispatchTestMixin(object):
         method = self.service.get_method('echoOperation')
         envelope = soap.Envelope.parsexml(response_body)
         assert_none(envelope.Body.Fault)
-        element = self.service.schema.get_element_by_name(method.output)
+        element = self.service.find_element_by_name(method.output)
         return envelope.Body.parse_as(element._type.__class__)

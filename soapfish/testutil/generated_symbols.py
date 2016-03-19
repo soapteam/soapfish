@@ -4,27 +4,29 @@ from __future__ import absolute_import, unicode_literals
 
 import logging
 
+import six
+
 __all__ = ['generated_symbols']
 
-def generated_symbols(code_string):
-    # imports not present in generated code
-    from soapfish import xsd
 
-    new_locals = dict(locals())
+def generated_symbols(code):
+    from soapfish import xsd  # import may not be generated.
+
+    locals_ = dict(locals())
 
     try:
         # Let's trust our own code generation...
-        exec(code_string, {'xsd': xsd}, new_locals)
+        six.exec_(code, {'xsd': xsd}, locals_)
     except Exception:
-        logging.warning("Code could not be imported:\n%s", code_string)
+        logging.warning('Code could not be imported:\n%s', code)
         raise
-    new_variables = set(new_locals).difference(locals())
 
-    schema = None
-    new_symbols = dict()
-    for name in new_variables:
-        symbol_ = new_locals[name]
-        new_symbols[name] = symbol_
-        if isinstance(symbol_, xsd.Schema):
-            schema = symbol_
-    return schema, new_symbols
+    variables = set(locals_).difference(locals())
+
+    schemas, symbols = [], {}
+    for name in variables:
+        symbol = locals_[name]
+        symbols[name] = symbol
+        if isinstance(symbol, xsd.Schema):
+            schemas.append(symbol)
+    return schemas, symbols
