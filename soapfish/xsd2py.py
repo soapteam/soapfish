@@ -33,6 +33,8 @@ def rewrite_paths(schema, cwd, base_path):
     """
     f = lambda x: os.path.relpath(os.path.normpath(os.path.join(cwd, x.schemaLocation)), base_path)
     for i in itertools.chain(schema.includes, schema.imports):
+        if i.schemaLocation is None:
+            continue
         i.schemaLocation = f(i)
 
 
