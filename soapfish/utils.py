@@ -16,14 +16,13 @@ logger = logging.getLogger('soapfish')
 
 # --- File Functions ----------------------------------------------------------
 def open_document(path):
-    logger.info('Opening document \'%s\'...' % path)
-    # Handle documents available on the Internet:
-    if path.startswith('http:'):
+    if '://' in path:
+        logger.info('Opening remote document: %s', path)
         return requests.get(path).content
-
-    # Attempt to open the document from the filesystem:
     else:
-        return open(path, 'rb').read()
+        logger.info('Opening local document: %s', path)
+        with open(path, 'rb') as f:
+            return f.read()
 
 
 # --- Template Filters --------------------------------------------------------
