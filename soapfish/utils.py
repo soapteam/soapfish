@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
+import keyword
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import requests
 import six
+from jinja2 import Environment, PackageLoader
 
 from . import namespaces as ns
 
@@ -38,24 +41,6 @@ def uncapitalize(value):
     if value == 'QName':
         return value
     return value[0].lower() + value[1:]
-
-
-def get_get_type(xsd_namespaces):
-    def get_type(full_typename, known_types = None):
-        if not full_typename:
-            return None
-        typename = full_typename.split(':')
-        if len(typename) < 2:
-            typename.insert(0, None)
-        ns, typename = typename
-        if ns in xsd_namespaces:
-            return 'xsd.%s' % capitalize(typename)
-        else:
-            if known_types is not None and typename in known_types:
-                return "%s" % capitalize(typename)
-            else:
-                return "__name__ + '.%s'" % capitalize(typename)
-    return get_type
 
 
 def use(usevalue):
@@ -95,6 +80,68 @@ def url_template(url):
     return six.moves.urllib.parse.urlunparse(o)
 
 
+def schema_name(schema, location=None):
+    if not location:
+        try:
+            location = schema.schemaLocation
+        except AttributeError:
+            location = schema.targetNamespace
+
+    try:
+        location = location.encode()
+    except UnicodeEncodeError:
+        pass
+
+    # we don't have any cryptographic requirements here and md5 is faster than
+    # sha512 so there is no harm using an outdated algorithm.
+    return hashlib.md5(location).hexdigest()[0:5]
+
+
+def get_rendering_environment(xsd_namespaces):
+    '''
+    Returns a rendering environment to use with code generation templates.
+    '''
+    from . import soap, xsd, wsdl
+
+    def get_type(full_typename, known_types=None):
+        if not full_typename:
+            return None
+        typename = full_typename.split(':')
+        if len(typename) < 2:
+            typename.insert(0, None)
+        ns, typename = typename
+        if ns in xsd_namespaces:
+            return 'xsd.%s' % capitalize(typename)
+        else:
+            if known_types is not None and typename in known_types:
+                return "%s" % capitalize(typename)
+            else:
+                return "__name__ + '.%s'" % capitalize(typename)
+
+    env = Environment(
+        extensions=['jinja2.ext.do', 'jinja2.ext.loopcontrols'],
+        loader=PackageLoader('soapfish', 'templates'),
+    )
+    env.filters.update(
+        capitalize=capitalize,
+        max_occurs_to_code=lambda x: 'xsd.UNBOUNDED' if x is xsd.UNBOUNDED else str(x),
+        remove_namespace=remove_namespace,
+        type=get_type,
+        url_component=url_component,
+        url_regex=url_regex,
+        url_template=url_template,
+        use=use,
+    )
+    env.globals.update(
+        SOAPTransport=soap.SOAP_HTTP_Transport,
+        get_by_name=wsdl.get_by_name,
+        keywords=keyword.kwlist,
+        schema_name=schema_name,
+        generation_dt=datetime.now()
+    )
+    return env
+
+
 # --- Other Functions ---------------------------------------------------------
 def find_xsd_namespaces(nsmap):
     xsd_namespaces = [
@@ -106,6 +153,7 @@ def find_xsd_namespaces(nsmap):
         if value in xsd_namespaces:
             namespaces.append(key)
     return namespaces
+
 
 def timezone_offset_to_string(offset):
     '''

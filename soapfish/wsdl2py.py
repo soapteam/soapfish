@@ -8,53 +8,23 @@ import logging
 import os
 import sys
 import textwrap
-from datetime import datetime
 
 import six
-from jinja2 import Environment, PackageLoader
 from lxml import etree
 
-from .soap import SOAP_HTTP_Transport, SOAPVersion
+from .soap import SOAPVersion
 from .utils import (
-    capitalize,
     find_xsd_namespaces,
-    get_get_type,
+    get_rendering_environment,
     open_document,
-    remove_namespace,
-    url_component,
-    url_regex,
-    url_template,
-    use,
 )
-from .wsdl import get_by_name, get_wsdl_classes
-from .xsd2py import schema_name, schema_to_py
-
-TEMPLATE_PACKAGE = 'soapfish.templates'
-
+from .wsdl import get_wsdl_classes
+from .xsd2py import schema_to_py
 
 logger = logging.getLogger('soapfish')
 
 
 # --- Helpers -----------------------------------------------------------------
-def get_rendering_environment():
-    pkg = TEMPLATE_PACKAGE.split('.')
-    env = Environment(
-        extensions=['jinja2.ext.loopcontrols'],
-        loader=PackageLoader(*pkg),
-    )
-    env.filters['capitalize'] = capitalize
-    env.filters['remove_namespace'] = remove_namespace
-    env.filters['url_component'] = url_component
-    env.filters['url_regex'] = url_regex
-    env.filters['url_template'] = url_template
-    env.filters['use'] = use
-    env.globals['SOAPTransport'] = SOAP_HTTP_Transport
-    env.globals['get_by_name'] = get_by_name
-    env.globals['schema_name'] = schema_name
-    env.globals['generation_dt'] = datetime.now()
-    return env
-
-
 def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
     if cwd is None:
         cwd = six.moves.getcwd()
@@ -63,10 +33,9 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
     nsmap = xmlelement.nsmap.copy()
     for x in xmlelement.xpath('//*[local-name()="schema"]'):
         nsmap.update(x.nsmap)
-    xsd_namespace = find_xsd_namespaces(nsmap)
+    xsd_namespaces = find_xsd_namespaces(nsmap)
 
-    env = get_rendering_environment()
-    env.filters['type'] = get_get_type(xsd_namespace)
+    env = get_rendering_environment(xsd_namespaces)
 
     soap_version = SOAPVersion.get_version_from_xml(xmlelement)
     logger.info('Detect version %s', soap_version.NAME)
@@ -74,7 +43,7 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
     wsdl = get_wsdl_classes(soap_version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xmlelement)
     schema = definitions.types.schema
-    schemaxml = schema_to_py(schema, xsd_namespace,
+    schemaxml = schema_to_py(schema, xsd_namespaces,
                              parent_namespace=definitions.targetNamespace,
                              cwd=cwd)
 

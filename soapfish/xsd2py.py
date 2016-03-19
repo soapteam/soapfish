@@ -5,9 +5,7 @@ from __future__ import print_function
 
 import argparse
 import functools
-import hashlib
 import itertools
-import keyword
 import logging
 import os
 import sys
@@ -15,47 +13,19 @@ import textwrap
 from datetime import datetime
 
 import six
-from jinja2 import Environment, PackageLoader
 from lxml import etree
 
-from . import xsd
 from .utils import (
-    capitalize,
     find_xsd_namespaces,
-    get_get_type,
+    get_rendering_environment,
     open_document,
-    remove_namespace,
-    url_template,
-    use,
 )
 from .xsdspec import Schema
-
-TEMPLATE_PACKAGE = 'soapfish.templates'
-
 
 logger = logging.getLogger('soapfish')
 
 
 # --- Helpers -----------------------------------------------------------------
-def get_rendering_environment():
-    pkg = TEMPLATE_PACKAGE.split('.')
-    env = Environment(
-        extensions=['jinja2.ext.loopcontrols',
-                    'jinja2.ext.do'],
-        loader=PackageLoader(*pkg),
-    )
-    env.filters['capitalize'] = capitalize
-    env.filters['remove_namespace'] = remove_namespace
-    env.filters['url_template'] = url_template
-    env.filters['use'] = use
-    env.filters['max_occurs_to_code'] = lambda x: 'xsd.UNBOUNDED' if x is xsd.UNBOUNDED else str(x)
-
-    env.globals['keywords'] = keyword.kwlist
-    env.globals['resolve_import'] = resolve_import
-    env.globals['schema_name'] = schema_name
-    return env
-
-
 def rewrite_paths(schema, cwd, base_path):
     """
     Rewrite include and import locations relative to base_path.
@@ -80,29 +50,12 @@ def resolve_import(xsdimport, known_files, parent_namespace, cwd, base_path):
                                   cwd=cwd, base_path=base_path)
 
 
-def schema_name(schema, location=None):
-    if not location:
-        try:
-            location = schema.schemaLocation
-        except AttributeError:
-            location = schema.targetNamespace
-
-    try:
-        location = location.encode()
-    except UnicodeEncodeError:
-        pass
-
-    # we don't have any cryptographic requirements here and md5 is faster than
-    # sha512 so there is no harm using an outdated algorithm.
-    return hashlib.md5(location).hexdigest()[0:5]
-
-
 def generate_code_from_xsd(xmlelement, known_files=None, location=None,
                            parent_namespace=None, encoding='utf8',
                            cwd=None, base_path=None):
     if known_files is None:
         known_files = []
-    xsd_namespace = find_xsd_namespaces(xmlelement.nsmap)
+    xsd_namespaces = find_xsd_namespaces(xmlelement.nsmap)
 
     schema = Schema.parse_xmlelement(xmlelement)
 
@@ -110,7 +63,7 @@ def generate_code_from_xsd(xmlelement, known_files=None, location=None,
     if location and location in known_files:
         return ''
 
-    schema_code = schema_to_py(schema, xsd_namespace, known_files,
+    schema_code = schema_to_py(schema, xsd_namespaces, known_files,
                                location, cwd=cwd, base_path=base_path)
     if encoding is None:
         return schema_code
@@ -165,7 +118,7 @@ def _reorder_complexTypes(schema):
     schema.complexTypes.sort(**sort_param)
 
 
-def schema_to_py(schema, xsd_namespace, known_files=None, location=None,
+def schema_to_py(schema, xsd_namespaces, known_files=None, location=None,
                  parent_namespace=None, cwd=None, base_path=None):
     if base_path is None:
         base_path = cwd
@@ -179,11 +132,12 @@ def schema_to_py(schema, xsd_namespace, known_files=None, location=None,
     if location:
         known_files.append(location)
 
-    env = get_rendering_environment()
-    env.filters['type'] = get_get_type(xsd_namespace)
-    env.globals['known_files'] = known_files
-    env.globals['location'] = location
-
+    env = get_rendering_environment(xsd_namespaces)
+    env.globals.update(
+        known_files=known_files,
+        location=location,
+        resolve_import=resolve_import,
+    )
     tpl = env.get_template('xsd')
 
     if schema.targetNamespace is None:
