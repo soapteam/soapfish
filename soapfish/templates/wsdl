@@ -28,7 +28,6 @@ BaseHeader = {% if use_wsa %}wsa.Header{% else %}xsd.ComplexType{% endif %}
 {# [blank line] #}
 {# [blank line] #}
 {%- for operation in binding.operations -%}
-{%- set XXX = operation.set_definition(definitions) -%}
 {%- set inputMessage = operation.get_InputMessage() -%}
 {%- set outputMessage = operation.get_OutputMessage() -%}
 {# [blank line] #}
@@ -44,7 +43,6 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {# [blank line] #}
 {# [blank line] #}
 {%- for operation in binding.operations -%}
-{%- set XXX = operation.set_definition(definitions) -%}
 {%- set inputMessage = operation.get_InputMessage() -%}
 {%- set inputMessageHeaders = operation.get_InputMessageHeaders() -%}
 {%- set outputMessage = operation.get_OutputMessage() -%}

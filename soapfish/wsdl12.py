@@ -64,7 +64,6 @@ class Operation(wsdl11.Operation):
 
     # Reverse References:
     binding = xsd.Element('soapfish.wsdl12.Binding')
-    definition = xsd.Element('soapfish.wsdl12.Definitions')
 
 
 class PortType(wsdl11.PortType):

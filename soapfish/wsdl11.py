@@ -100,20 +100,14 @@ class Operation(xsd.ComplexType):
 
     # Reverse References:
     binding = xsd.Element('soapfish.wsdl11.Binding')
-    definition = xsd.Element('soapfish.wsdl11.Definitions')
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
         self.binding = None
-        self.definition = None
 
     def render(self, *args, **kwargs):
         self.binding = None
-        self.definition = None
         super(Operation, self).render(*args, **kwargs)
-
-    def set_definition(self, definition):
-        self.definition = definition
 
     def set_binding(self, binding):
         self.binding = binding
@@ -122,13 +116,13 @@ class Operation(xsd.ComplexType):
         portType = self.binding.getPortType()
         portTypeOperation = wsdl.get_by_name(portType.operations, self.name)
         messageName = portTypeOperation.input.message
-        return wsdl.get_by_name(self.definition.messages, messageName)
+        return wsdl.get_by_name(self.binding.definition.messages, messageName)
 
     def get_OutputMessage(self):
         portType = self.binding.getPortType()
         portTypeOperation = wsdl.get_by_name(portType.operations, self.name)
         messageName = portTypeOperation.output.message
-        return wsdl.get_by_name(self.definition.messages, messageName)
+        return wsdl.get_by_name(self.binding.definition.messages, messageName)
 
     def get_InputMessageHeaders(self):
         operation = wsdl.get_by_name(self.binding.operations, self.name)
@@ -141,7 +135,7 @@ class Operation(xsd.ComplexType):
     def _get_parts(self, references):
         parts = []
         for ref in references:
-            message = wsdl.get_by_name(self.definition.messages, ref.message)
+            message = wsdl.get_by_name(self.binding.definition.messages, ref.message)
             parts.append(wsdl.get_by_name(message.parts, ref.part))
         return parts
 
@@ -164,13 +158,13 @@ class Binding(xsd.ComplexType):
     # Reverse References:
     definition = xsd.Element('soapfish.wsdl11.Definitions')
 
-    def render(self, *args, **kwargs):
-        self.definition = None
-        super(Binding, self).render(*args, **kwargs)
-
     def __init__(self, **kwargs):
         super(Binding, self).__init__(**kwargs)
         self.definition = None
+
+    def render(self, *args, **kwargs):
+        self.definition = None
+        super(Binding, self).render(*args, **kwargs)
 
     def set_definition(self, definition):
         self.definition = definition
