@@ -14,12 +14,14 @@ def get_by_name(_list, fullname):
 
 def get_message_header(definitions, binding, operation, x):
     assert x in ('input', 'output')
-    operation = get_by_name(binding.operations, operation.name)
-    references = getattr(operation, x).headers
+    bo = get_by_name(binding.operations, operation.name)
+    obj = getattr(bo, x, None)
+    if obj is None:
+        return None
     parts = []
-    for ref in references:
-        message = get_by_name(definitions.messages, ref.message)
-        parts.append(get_by_name(message.parts, ref.part))
+    for header in obj.headers:
+        message = get_by_name(definitions.messages, header.message)
+        parts.append(get_by_name(message.parts, header.part))
     return parts
 
 
@@ -27,8 +29,10 @@ def get_message_object(definitions, binding, operation, x):
     assert x in ('input', 'output')
     pt = get_by_name(definitions.portTypes, binding.type)
     pto = get_by_name(pt.operations, operation.name)
-    name = getattr(pto, x).message
-    return get_by_name(definitions.messages, name)
+    obj = getattr(pto, x, None)
+    if obj is None:
+        return None
+    return get_by_name(definitions.messages, obj.message)
 
 
 def get_wsdl_classes(soap_namespace):
