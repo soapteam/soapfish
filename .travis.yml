@@ -1,6 +1,5 @@
 sudo: false
 language: python
-
 python:
     - 2.6
     - 2.7
@@ -8,9 +7,15 @@ python:
     - 3.4
     - 3.5
     - nightly
-
+env:
+    - FRAMEWORK=django~=1.6.0
+    - FRAMEWORK=django~=1.7.0
+    - FRAMEWORK=django~=1.8.0
+    - FRAMEWORK=django~=1.9.0
+    - FRAMEWORK=flask~=0.10.0
 install:
-    - python setup.py build install
-    - pip install -r dev_requirements.txt
-
-script: nosetests --nocapture
+    - pip install -q "${FRAMEWORK}"
+    - pip install -q -r dev_requirements.txt
+    - pip install -q -e .
+script:
+    - nosetests --nocapture
