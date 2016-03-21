@@ -98,7 +98,7 @@ class Definitions(wsdl11.Definitions):
     services = xsd.ListElement(Service, 'service', minOccurs=0)
 
 
-SCHEMA12 = xsd.Schema(
+SCHEMA = xsd.Schema(
     targetNamespace=ns.wsdl,
     elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
     simpleTypes=[],
@@ -106,4 +106,5 @@ SCHEMA12 = xsd.Schema(
     groups=[],
     complexTypes=[Types, Part, Message, Input, Output, Operation, PortType,
                   Binding, Port, Service, Definitions],
-    elements={})
+    elements={},
+)

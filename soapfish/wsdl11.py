@@ -217,4 +217,5 @@ SCHEMA = xsd.Schema(
     groups=[],
     complexTypes=[Types, Part, Message, Input, Output, Operation, PortType,
                   Binding, Port, Service, Definitions],
-    elements={})
+    elements={},
+)
