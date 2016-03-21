@@ -133,8 +133,10 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
     )
     env.globals.update(
         SOAPTransport=soap.SOAP_HTTP_Transport,
-        get_by_name=wsdl.get_by_name,
         keywords=keyword.kwlist,
+        get_by_name=wsdl.get_by_name,
+        get_message_header=wsdl.get_message_header,
+        get_message_object=wsdl.get_message_object,
         preamble={
             'module': module,
             'generated': datetime.now(),

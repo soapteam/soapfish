@@ -98,47 +98,6 @@ class Operation(xsd.ComplexType):
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap)
     operation = xsd.Element(SOAP_Operation, namespace=ns.wsdl_soap)
 
-    # Reverse References:
-    binding = xsd.Element('soapfish.wsdl11.Binding')
-
-    def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.binding = None
-
-    def render(self, *args, **kwargs):
-        self.binding = None
-        super(Operation, self).render(*args, **kwargs)
-
-    def set_binding(self, binding):
-        self.binding = binding
-
-    def get_InputMessage(self):
-        portType = self.binding.getPortType()
-        portTypeOperation = wsdl.get_by_name(portType.operations, self.name)
-        messageName = portTypeOperation.input.message
-        return wsdl.get_by_name(self.binding.definition.messages, messageName)
-
-    def get_OutputMessage(self):
-        portType = self.binding.getPortType()
-        portTypeOperation = wsdl.get_by_name(portType.operations, self.name)
-        messageName = portTypeOperation.output.message
-        return wsdl.get_by_name(self.binding.definition.messages, messageName)
-
-    def get_InputMessageHeaders(self):
-        operation = wsdl.get_by_name(self.binding.operations, self.name)
-        return self._get_parts(operation.input.headers)
-
-    def get_OutputMessageHeaders(self):
-        operation = wsdl.get_by_name(self.binding.operations, self.name)
-        return self._get_parts(operation.output.headers)
-
-    def _get_parts(self, references):
-        parts = []
-        for ref in references:
-            message = wsdl.get_by_name(self.binding.definition.messages, ref.message)
-            parts.append(wsdl.get_by_name(message.parts, ref.part))
-        return parts
-
 
 class PortType(xsd.ComplexType):
     name = xsd.Attribute(xsd.String)
@@ -154,27 +113,6 @@ class Binding(xsd.ComplexType):
 
     # Extensibility Elements:
     binding = xsd.Element(SOAP_Binding, namespace=ns.wsdl_soap)
-
-    # Reverse References:
-    definition = xsd.Element('soapfish.wsdl11.Definitions')
-
-    def __init__(self, **kwargs):
-        super(Binding, self).__init__(**kwargs)
-        self.definition = None
-
-    def render(self, *args, **kwargs):
-        self.definition = None
-        super(Binding, self).render(*args, **kwargs)
-
-    def set_definition(self, definition):
-        self.definition = definition
-
-    def feedback_Operations(self):
-        for operation in self.operations:
-            operation.set_binding(self)
-
-    def getPortType(self):
-        return wsdl.get_by_name(self.definition.portTypes, self.type)
 
 
 class Port(xsd.ComplexType):

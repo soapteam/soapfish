@@ -62,9 +62,6 @@ class Operation(wsdl11.Operation):
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12)
     operation = xsd.Element(SOAP_Operation, namespace=ns.wsdl_soap12)
 
-    # Reverse References:
-    binding = xsd.Element('soapfish.wsdl12.Binding')
-
 
 class PortType(wsdl11.PortType):
     operations = xsd.ListElement(Operation, 'operation', minOccurs=0)
@@ -75,9 +72,6 @@ class Binding(wsdl11.Binding):
 
     # Extensibility Elements:
     binding = xsd.Element(SOAP_Binding, namespace=ns.wsdl_soap12)
-
-    # Reverse References:
-    definition = xsd.Element('soapfish.wsdl12.Definitions')
 
 
 class Port(wsdl11.Port):

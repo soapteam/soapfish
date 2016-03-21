@@ -17,8 +17,6 @@ BaseHeader = {% if use_wsa %}wsa.Header{% else %}xsd.ComplexType{% endif %}
 {%- for port in service.ports %}
 
 {%- set binding = get_by_name(definitions.bindings, port.binding) %}
-{%- set XXX = binding.set_definition(definitions) %}
-{%- set XXX = binding.feedback_Operations() %}
 
 {%- if binding.binding.transport != SOAPTransport %}{% continue %}{% endif %}
 
@@ -28,12 +26,12 @@ BaseHeader = {% if use_wsa %}wsa.Header{% else %}xsd.ComplexType{% endif %}
 {# [blank line] #}
 {# [blank line] #}
 {%- for operation in binding.operations -%}
-{%- set inputMessage = operation.get_InputMessage() -%}
-{%- set outputMessage = operation.get_OutputMessage() -%}
+{%- set _im = get_message_object(definitions, binding, operation, 'input') %}
+{%- set _om = get_message_object(definitions, binding, operation, 'output') %}
 {# [blank line] #}
-def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace }}):
+def {{ operation.name }}(request, {{ _im.part.element|remove_namespace }}):
     # TODO: Put your implementation here.
-    return {{ outputMessage.part.element|remove_namespace }}
+    return {{ _om.part.element|remove_namespace }}
 {# [blank line] #}
 {# [blank line] #}
 {%- endfor %}
@@ -43,14 +41,14 @@ def {{ operation.name }}(request, {{ inputMessage.part.element|remove_namespace 
 {# [blank line] #}
 {# [blank line] #}
 {%- for operation in binding.operations -%}
-{%- set inputMessage = operation.get_InputMessage() -%}
-{%- set inputMessageHeaders = operation.get_InputMessageHeaders() -%}
-{%- set outputMessage = operation.get_OutputMessage() -%}
-{%- set outputMessageHeaders = operation.get_OutputMessageHeaders() -%}
-{%- if inputMessageHeaders %}
-class {{ inputMessage.name }}Headers(BaseHeader):
+{%- set _im = get_message_object(definitions, binding, operation, 'input') %}
+{%- set _om = get_message_object(definitions, binding, operation, 'output') %}
+{%- set _imh = get_message_header(definitions, binding, operation, 'input') %}
+{%- set _omh = get_message_header(definitions, binding, operation, 'output') %}
+{%- if _imh %}
+class {{ _im.name }}Headers(BaseHeader):
     SCHEMA = Schema_{{ schema_name(definitions.types.schema) }}
-    {%- for part in inputMessageHeaders -%}
+    {%- for part in _imh -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
     {%- else -%}
@@ -59,10 +57,10 @@ class {{ inputMessage.name }}Headers(BaseHeader):
     {%- endfor %}
 {# [blank line] #}
 {%- endif -%}
-{%- if outputMessageHeaders %}
-class {{ outputMessage.name }}Headers(BaseHeader):
+{%- if _omh %}
+class {{ _om.name }}Headers(BaseHeader):
     SCHEMA = Schema_{{ schema_name(definitions.types.schema) }}
-    {%- for part in outputMessageHeaders -%}
+    {%- for part in _omh -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
     {%- else -%}
@@ -74,27 +72,27 @@ class {{ outputMessage.name }}Headers(BaseHeader):
 {{ operation.name }}_method = xsd.Method(
     {%- if is_server %}function={{ operation.name }},{% endif %}
     soapAction='{{ operation.operation.soapAction }}',
-    {%- if inputMessage.parts -%}
-    {%- if inputMessage.part.element %}
-    input='{{ inputMessage.part.element|remove_namespace }}',
-    inputPartName='{{ inputMessage.part.name }}',
+    {%- if _im.parts -%}
+    {%- if _im.part.element %}
+    input='{{ _im.part.element|remove_namespace }}',
+    inputPartName='{{ _im.part.name }}',
     {%- else -%}
-    input={{ inputMessage.part.type|remove_namespace|capitalize }},
+    input={{ _im.part.type|remove_namespace|capitalize }},
     {%- endif -%}
     {%- endif -%}
-    {%- if inputMessageHeaders %}
-    input_header={{ inputMessage.name }}Headers,
+    {%- if _imh %}
+    input_header={{ _im.name }}Headers,
     {%- endif -%}
-    {%- if outputMessage.parts -%}
-    {%- if outputMessage.part.element %}
-    output='{{ outputMessage.part.element|remove_namespace }}',
-    outputPartName='{{ outputMessage.part.name }}',
+    {%- if _om.parts -%}
+    {%- if _om.part.element %}
+    output='{{ _om.part.element|remove_namespace }}',
+    outputPartName='{{ _om.part.name }}',
     {%- else -%}
-    output={{ outputMessage.part.type|remove_namespace|capitalize }},
+    output={{ _om.part.type|remove_namespace|capitalize }},
     {%- endif -%}
     {%- endif -%}
-    {%- if outputMessageHeaders %}
-    output_header={{ outputMessage.name }}Headers,
+    {%- if _omh %}
+    output_header={{ _om.name }}Headers,
     {%- endif %}
     operationName='{{ operation.name }}',
     {%- if operation.operation.style %}
@@ -144,9 +142,9 @@ class {{ port.name }}ServiceStub(soap.Stub):
     SCHEME = '{{ port.address.location|url_component('scheme') }}'
     HOST = '{{ port.address.location|url_component('netloc') }}'
 {% for operation in binding.operations %}
-{%- set inputMessage = operation.get_InputMessage() %}
-    def {{ operation.name }}(self, {{ inputMessage.part.element|remove_namespace }}, header=None):
-        return self.call('{{ operation.name}}', {{ inputMessage.part.element|remove_namespace }}, header=header)
+{%- set _im = get_message_object(definitions, binding, operation, 'input') %}
+    def {{ operation.name }}(self, {{ _im.part.element|remove_namespace }}, header=None):
+        return self.call('{{ operation.name}}', {{ _im.part.element|remove_namespace }}, header=header)
 {% endfor %}
 {%- endif %}
 {%- endfor %}{# ports #}
