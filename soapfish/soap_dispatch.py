@@ -129,16 +129,13 @@ class SOAPDispatcher(object):
         if soap_header is None:
             return
         for children in soap_header._xmlelement.getchildren():
-            try:
-                namespace = children.nsmap[children.prefix]
-            except KeyError:
-                namespace = None
-            if namespace== wsa.NAMESPACE:
+            namespace = children.nsmap.get(children.prefix)
+            if namespace == wsa.NAMESPACE:
                 wsa.XML_SCHEMA.assertValid(children)
             else:
                 try:
                     self.schema_validator(children)
-                except (etree.XMLSyntaxError, etree.DocumentInvalid):
+                except (etree.DocumentInvalid, etree.XMLSyntaxError):
                     if self.strict_soap_header:
                         raise
 
