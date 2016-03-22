@@ -14,7 +14,7 @@
 {%- endmacro %}
 
 {% macro render_Schema(schema, location, known_types=None) -%}
-Schema_{{ schema_name(schema, location) }} = xsd.Schema(
+Schema_{{ schema_name(schema) }} = xsd.Schema(
     imports=[{% for i in schema.imports %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     includes=[{% for i in schema.includes %}Schema_{{ schema_name(i) }}{% if not loop.last %}, {% endif %}{% endfor %}],
     targetNamespace='{{ schema.targetNamespace }}',
@@ -27,6 +27,11 @@ Schema_{{ schema_name(schema, location) }} = xsd.Schema(
     complexTypes=[{% for ct in schema.complexTypes %}{{ ct.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
     elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e.type|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
 )
+{%- if location %}
+{# [blank line] #}
+# XXX: Workaround for naming issues related to relative locations!
+Schema_{{ schema_name(schema, location) }} = Schema_{{ schema_name(schema) }}
+{%- endif -%}
 {%- endmacro %}
 
 {% macro render_xsd_List(name, known_types=None) -%}

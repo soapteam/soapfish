@@ -79,21 +79,28 @@ def url_template(url):
     return six.moves.urllib.parse.urlunparse(o)
 
 
-def schema_name(schema, location=None):
-    if not location:
-        try:
-            location = schema.schemaLocation
-        except AttributeError:
-            location = schema.targetNamespace
+def schema_name(obj, location=None):
+    from . import xsdspec
+
+    if location:
+        value = location
+    elif isinstance(obj, xsdspec.Schema):
+        value = obj.targetNamespace
+    elif isinstance(obj, xsdspec.Import):
+        value = obj.namespace
+    elif isinstance(obj, xsdspec.Include):
+        value = obj.schemaLocation
+    else:
+        raise TypeError('Unable to generate schema name for %s.%s'
+                        % (obj.__class__.__module__, obj.__class__.__name__))
 
     try:
-        location = location.encode()
+        value = value.encode()
     except UnicodeEncodeError:
         pass
 
-    # we don't have any cryptographic requirements here and md5 is faster than
-    # sha512 so there is no harm using an outdated algorithm.
-    return hashlib.md5(location).hexdigest()[0:5]
+    # no cryptographic requirement here, so use md5 for fast hash:
+    return hashlib.md5(value).hexdigest()[:5]
 
 
 def get_rendering_environment(xsd_namespaces, module='soapfish'):

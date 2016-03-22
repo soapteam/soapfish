@@ -31,21 +31,27 @@ def rewrite_paths(schema, cwd, base_path):
 
     This location is the unique identification for each file, they must match.
     """
-    f = lambda x: os.path.relpath(os.path.normpath(os.path.join(cwd, x.schemaLocation)), base_path)
+    f = lambda x: os.path.relpath(os.path.normpath(os.path.join(cwd, x)), base_path)
     for i in itertools.chain(schema.includes, schema.imports):
-        if i.schemaLocation is None:
+        if i.schemaLocation is None or '://' in i.schemaLocation:
             continue
-        i.schemaLocation = f(i)
+        i.schemaLocation = f(i.schemaLocation)
 
 
-def resolve_import(xsdimport, known_files, parent_namespace, cwd, base_path):
-    location = os.path.join(base_path, xsdimport.schemaLocation)
-    cwd = os.path.dirname(location)
-    logger.info('Generating code for XSD import \'%s\'...' % location)
-    xml = open_document(location)
+def resolve_import(i, known_files, parent_namespace, cwd, base_path):
+    assert isinstance(i, (xsdspec.Import, xsdspec.Include))
+    if '://' in i.schemaLocation:
+        path = location = i.schemaLocation
+        cwd = None
+    else:
+        path = os.path.join(base_path, i.schemaLocation)
+        location = os.path.relpath(path, base_path)
+        cwd = os.path.dirname(path)
+    tag = i.__class__.__name__.lower()
+    logger.info('Generating code for xsd:%s=%s' % (tag, path))
+    xml = open_document(path)
     xmlelement = etree.fromstring(xml)
 
-    location = os.path.relpath(location, base_path)
     return generate_code_from_xsd(xmlelement, known_files, location,
                                   parent_namespace, encoding=None,
                                   cwd=cwd, base_path=base_path)
