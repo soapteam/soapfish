@@ -14,8 +14,7 @@ def get_by_name(_list, fullname):
 
 def get_message_header(definitions, binding, operation, x):
     assert x in ('input', 'output')
-    bo = get_by_name(binding.operations, operation.name)
-    obj = getattr(bo, x, None)
+    obj = getattr(operation, x, None)
     if obj is None:
         return None
     parts = []
