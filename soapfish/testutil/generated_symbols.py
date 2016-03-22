@@ -9,7 +9,6 @@ __all__ = ['generated_symbols']
 def generated_symbols(code_string):
     # imports not present in generated code
     from soapfish import xsd
-    from soapfish.xsd import UNBOUNDED
 
     new_locals = dict(locals())
 

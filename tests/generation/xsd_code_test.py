@@ -13,9 +13,9 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml = utils.open_document('tests/assets/generation/simple_element.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
 
-        schema, new_symbols = generated_symbols(code)
+        schema, symbols = generated_symbols(code)
         assert_not_none(schema)
-        assert_length(1, new_symbols)
+        assert_length(1, symbols)
 
         assert_equals(['simpleElement'], list(schema.elements))
         simple_element = schema.elements['simpleElement']
@@ -26,18 +26,18 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml = utils.open_document('tests/assets/generation/reference_simple.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
 
-        schema, new_symbols = generated_symbols(code)
+        schema, symbols = generated_symbols(code)
         assert_not_none(schema)
         # somehow we need to be able to have a schema with multiple possible
         # root elements
-        assert_length(3, new_symbols)
-        assert_contains('Name', new_symbols.keys())
-        assert_contains('Job', new_symbols.keys())
+        assert_length(3, symbols)
+        assert_contains('Name', symbols.keys())
+        assert_contains('Job', symbols.keys())
 
         assert_equals(set(['name', 'job']), list(schema.elements))
 
-        Job = new_symbols['Job']
-        Name = new_symbols['Name']
+        Job = symbols['Job']
+        Name = symbols['Name']
         name_ref = Job.name
         # not sure if these assertions are correct but they should give you
         # the idea
@@ -57,19 +57,19 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # Maybe we should have a special type like AnonymousComplexType and
         # put that directly into schema.elements?
         xml = utils.open_document('tests/assets/generation/reference_complex.xsd')
-        generated_schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(xml))
-        code = xsd2py.schema_to_py(generated_schema, ['xs'])
+        schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(xml))
+        code = xsd2py.schema_to_py(schema, ['xs'])
 
-        schema, new_symbols = generated_symbols(code)
+        schema, symbols = generated_symbols(code)
         assert_not_none(schema)
-        assert_length(3, new_symbols)
-        assert_contains('Person', new_symbols.keys())
-        assert_contains('Job', new_symbols.keys())
+        assert_length(3, symbols)
+        assert_contains('Person', symbols.keys())
+        assert_contains('Job', symbols.keys())
 
         assert_equals(set(['person', 'job']), list(schema.elements))
 
-        Job = new_symbols['Job']
-        Person = new_symbols['Person']
+        Job = symbols['Job']
+        Person = symbols['Person']
         person_ref = Job.person
         assert_isinstance(person_ref, xsd.Ref)
         assert_equals(person_ref._type, Person)
@@ -81,27 +81,28 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # Check generated XML
         # <job><person><name>Foo</name></person></job>
 
+    # TODO: Add missing assertions to this test!
     def test_implicit_target_namespace(self):
         xml = utils.open_document('tests/assets/generation/implicit_namespace.xsd')
-        generated_schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(xml))
-        xsd2py.schema_to_py(generated_schema, ['xs'],
-                            parent_namespace='http://site.example/ws/spec')
+        schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(xml))
+        xsd2py.schema_to_py(schema, ['xs'], parent_namespace='http://site.example/ws/spec')
 
     @unittest.skip('list enumerations are not parsed correctly from xsd')
     def test_can_generate_list_enumeration(self):
         xml = utils.open_document('tests/assets/generation/enumeration.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
 
-        schema, new_symbols = generated_symbols(code)
+        schema, symbols = generated_symbols(code)
         assert_not_none(schema)
-        assert_length(2, new_symbols)
+        assert_length(2, symbols)
 
-        assert_true(issubclass(new_symbols['MyList'], xsd.List))
+        assert_true(issubclass(symbols['MyList'], xsd.List))
 
-        my_list = new_symbols['MyList']()
+        my_list = symbols['MyList']()
         assert_equals(my_list.accept(['B']), True)
 
+    # TODO: Add missing assertions to this test!
     def test_can_generate_extension(self):
         xml = utils.open_document('tests/assets/generation/extension.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
-        schema, new_symbols = generated_symbols(code)
+        schema, symbols = generated_symbols(code)
