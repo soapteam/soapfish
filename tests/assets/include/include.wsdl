@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="TestRelativePaths" targetNamespace="http://example.com" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <wsdl:types>
-        <xsd:schema targetNamespace="http://example.com">
-            <xsd:include schemaLocation="schema1.xsd"/>
-        </xsd:schema>
-    </wsdl:types>
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="TestRelativePaths" targetNamespace="http://example.com">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://example.com">
+      <xsd:include schemaLocation="schema1.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
 </wsdl:definitions>
