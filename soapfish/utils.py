@@ -42,16 +42,15 @@ def uncapitalize(value):
     return value[0].lower() + value[1:]
 
 
-def use(usevalue):
-    from .xsd import Use
-    if usevalue == Use.OPTIONAL:
+def use(value):
+    from . import xsd
+    if value == xsd.Use.OPTIONAL:
         return 'xsd.Use.OPTIONAL'
-    elif usevalue == Use.REQUIRED:
+    if value == xsd.Use.REQUIRED:
         return 'xsd.Use.REQUIRED'
-    elif usevalue == Use.PROHIBITED:
+    if value == xsd.Use.PROHIBITED:
         return 'xsd.Use.PROHIBITED'
-    else:
-        raise ValueError
+    raise ValueError('Unknown value for use attribute: %s' % value)
 
 
 def url_regex(url):
