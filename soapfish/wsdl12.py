@@ -12,11 +12,15 @@ class SOAP_Binding(wsdl11.SOAP_Binding):
 
 
 class SOAP_Operation(wsdl11.SOAP_Operation):
+    soapActionRequired = xsd.Attribute(xsd.Boolean, use=xsd.Use.OPTIONAL)
+
+
+class SOAP_HeaderFault(wsdl11.SOAP_HeaderFault):
     pass
 
 
 class SOAP_Header(wsdl11.SOAP_Header):
-    pass
+    headerfaults = xsd.ListElement(SOAP_HeaderFault, 'headerfault', minOccurs=0, namespace=ns.wsdl_soap12)
 
 
 class SOAP_Body(wsdl11.SOAP_Body):
@@ -44,14 +48,14 @@ class Message(wsdl11.Message):
 
 class Input(wsdl11.Input):
     # Extensibility Elements:
-    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12, minOccurs=0)
-    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0)
+    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12)
+    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0, namespace=ns.wsdl_soap12)
 
 
 class Output(wsdl11.Output):
     # Extensibility Elements:
-    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12, minOccurs=0)
-    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0)
+    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12)
+    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0, namespace=ns.wsdl_soap12)
 
 
 class Operation(wsdl11.Operation):
@@ -59,8 +63,7 @@ class Operation(wsdl11.Operation):
     output = xsd.Element(Output, minOccurs=0)
 
     # Extensibility Elements:
-    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12)
-    operation = xsd.Element(SOAP_Operation, namespace=ns.wsdl_soap12)
+    operation = xsd.Element(SOAP_Operation, minOccurs=0, namespace=ns.wsdl_soap12)
 
 
 class PortType(wsdl11.PortType):

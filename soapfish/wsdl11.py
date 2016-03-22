@@ -15,30 +15,44 @@ from . import namespaces as ns, wsdl, xsd, xsdspec
 
 class SOAP_Binding(xsd.ComplexType):
     ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
-    style = xsd.Attribute(xsd.String)
-    transport = xsd.Attribute(xsd.String)
+    style = xsd.Attribute(xsd.String(enumeration=['document', 'rpc']), default='document', use=xsd.Use.OPTIONAL)
+    transport = xsd.Attribute(xsd.AnyURI)
 
 
 class SOAP_Operation(xsd.ComplexType):
     ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
-    soapAction = xsd.Attribute(xsd.String)
-    style = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
+    soapAction = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
+    style = xsd.Attribute(xsd.String(enumeration=['document', 'rpc']), use=xsd.Use.OPTIONAL)
+
+
+class SOAP_HeaderFault(xsd.ComplexType):
+    message = xsd.Attribute(xsd.QName)
+    part = xsd.Attribute(xsd.NMTOKEN)
+    use = xsd.Attribute(xsd.String(enumeration=['encoded', 'literal']))
+    namespace = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
+    encodingStyle = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
 
 
 class SOAP_Header(xsd.ComplexType):
-    message = xsd.Attribute(xsd.String)
-    part = xsd.Attribute(xsd.String)
-    use = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)
+    message = xsd.Attribute(xsd.QName)
+    part = xsd.Attribute(xsd.NMTOKEN)
+    use = xsd.Attribute(xsd.String(enumeration=['encoded', 'literal']))
+    namespace = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
+    encodingStyle = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
+    headerfaults = xsd.ListElement(SOAP_HeaderFault, 'headerfault', minOccurs=0, namespace=ns.wsdl_soap)
 
 
 class SOAP_Body(xsd.ComplexType):
     ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
-    use = xsd.Attribute(xsd.String)
+    parts = xsd.Attribute(xsd.NMTOKENS, use=xsd.Use.OPTIONAL)
+    use = xsd.Attribute(xsd.String(enumeration=['encoded', 'literal']))
+    namespace = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
+    encodingStyle = xsd.Attribute(xsd.AnyURI, use=xsd.Use.OPTIONAL)
 
 
 class SOAP_Address(xsd.ComplexType):
     ELEMENT_FORM_DEFAULT = xsd.ElementFormDefault.QUALIFIED
-    location = xsd.Attribute(xsd.String)
+    location = xsd.Attribute(xsd.AnyURI)
 
 
 # WSDL 1.1 SOAP 1.1
@@ -74,8 +88,8 @@ class Input(xsd.ComplexType):
     documentation = xsd.Element(xsd.String, minOccurs=0)
 
     # Extensibility Elements:
-    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap, minOccurs=0)
-    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0)
+    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap)
+    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0, namespace=ns.wsdl_soap)
 
 
 class Output(xsd.ComplexType):
@@ -84,8 +98,8 @@ class Output(xsd.ComplexType):
     documentation = xsd.Element(xsd.String, minOccurs=0)
 
     # Extensibility Elements:
-    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap, minOccurs=0)
-    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0)
+    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap)
+    headers = xsd.ListElement(SOAP_Header, 'header', minOccurs=0, namespace=ns.wsdl_soap)
 
 
 class Operation(xsd.ComplexType):
@@ -95,8 +109,7 @@ class Operation(xsd.ComplexType):
     documentation = xsd.Element(xsd.String, minOccurs=0)
 
     # Extensibility Elements:
-    body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap)
-    operation = xsd.Element(SOAP_Operation, namespace=ns.wsdl_soap)
+    operation = xsd.Element(SOAP_Operation, minOccurs=0, namespace=ns.wsdl_soap)
 
 
 class PortType(xsd.ComplexType):

@@ -24,3 +24,5 @@ Links to various specifications relevant to the project:
 - [Web Services Architecture](https://www.w3.org/tr/ws-arch/)
 - [Web Services Security 1.0](http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0.pdf)
 - [Web Services Security 1.1](http://www.oasis-open.org/committees/download.php/16790/wss-v1.1-spec-os-SOAPMessageSecurity.pdf)
+
+- [WSDL 1.1 Binding Extension for SOAP 1.2](https://www.w3.org/submission/wsdl11soap12/)

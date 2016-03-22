@@ -68,7 +68,7 @@ UNBOUNDED = _Decimal('infinity')
 
 class CallStyle(object):
     DOCUMENT = 'document'
-    RPC = 'RPC'
+    RPC = 'rpc'
 
 
 class Use(object):
@@ -1107,6 +1107,7 @@ class NMTOKEN(String):
     pass
 
 
+# TODO: Replace this with xsd.List(xsd.NMTOKEN)
 class NMTOKENS(String):
     pass
 
