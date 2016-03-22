@@ -11,8 +11,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
 
     def test_can_generate_code_for_simple_element(self):
         xml = utils.open_document('tests/assets/generation/simple_element.xsd')
-        xml_element = etree.fromstring(xml)
-        code = xsd2py.generate_code_from_xsd(xml_element)
+        code = xsd2py.generate_code_from_xsd(xml)
 
         schema, new_symbols = generated_symbols(code)
         assert_not_none(schema)
@@ -25,8 +24,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
     @unittest.skip('References to simple elements not yet implemented')
     def test_can_generate_code_with_xsd_refs_to_simple_elements(self):
         xml = utils.open_document('tests/assets/generation/reference_simple.xsd')
-        xml_element = etree.fromstring(xml)
-        code = xsd2py.generate_code_from_xsd(xml_element)
+        code = xsd2py.generate_code_from_xsd(xml)
 
         schema, new_symbols = generated_symbols(code)
         assert_not_none(schema)
@@ -59,8 +57,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         # Maybe we should have a special type like AnonymousComplexType and
         # put that directly into schema.elements?
         xml = utils.open_document('tests/assets/generation/reference_complex.xsd')
-        xml_element = etree.fromstring(xml)
-        generated_schema = xsdspec.Schema.parse_xmlelement(xml_element)
+        generated_schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(xml))
         code = xsd2py.schema_to_py(generated_schema, ['xs'])
 
         schema, new_symbols = generated_symbols(code)
@@ -86,16 +83,14 @@ class XSDCodeGenerationTest(PythonicTestCase):
 
     def test_implicit_target_namespace(self):
         xml = utils.open_document('tests/assets/generation/implicit_namespace.xsd')
-        xml_element = etree.fromstring(xml)
-        generated_schema = xsdspec.Schema.parse_xmlelement(xml_element)
+        generated_schema = xsdspec.Schema.parse_xmlelement(etree.fromstring(xml))
         xsd2py.schema_to_py(generated_schema, ['xs'],
                             parent_namespace='http://site.example/ws/spec')
 
     @unittest.skip('list enumerations are not parsed correctly from xsd')
     def test_can_generate_list_enumeration(self):
         xml = utils.open_document('tests/assets/generation/enumeration.xsd')
-        xml_element = etree.fromstring(xml)
-        code = xsd2py.generate_code_from_xsd(xml_element)
+        code = xsd2py.generate_code_from_xsd(xml)
 
         schema, new_symbols = generated_symbols(code)
         assert_not_none(schema)
@@ -108,6 +103,5 @@ class XSDCodeGenerationTest(PythonicTestCase):
 
     def test_can_generate_extension(self):
         xml = utils.open_document('tests/assets/generation/extension.xsd')
-        xml_element = etree.fromstring(xml)
-        code = xsd2py.generate_code_from_xsd(xml_element)
+        code = xsd2py.generate_code_from_xsd(xml)
         schema, new_symbols = generated_symbols(code)

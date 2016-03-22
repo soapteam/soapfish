@@ -40,9 +40,8 @@ class CodeGenerationTest(unittest.TestCase):
 
     def test_code_generation_from_xsd(self):
         xml = utils.open_document('tests/assets/generation/default.xsd')
-        xmlelement = etree.fromstring(xml)
         # Add mandatory imports to test the generated code
-        code = b'from soapfish import soap, xsd\n' + xsd2py.generate_code_from_xsd(xmlelement)
+        code = xsd2py.generate_code_from_xsd(xml)
         self._exec(code, {})
 
     def test_code_generation_from_wsdl_client(self):
@@ -88,16 +87,14 @@ class CodeGenerationTest(unittest.TestCase):
 
     def test_schema_xsd_restriction(self):
         xml = utils.open_document('tests/assets/generation/restriction.xsd')
-        xmlelement = etree.fromstring(xml)
-        code = xsd2py.generate_code_from_xsd(xmlelement)
+        code = xsd2py.generate_code_from_xsd(xml)
         if six.PY3:
             code = code.decode()
         assert_contains('RestrictedString', code)
 
     def test_create_method_list_param(self):
         xml = utils.open_document('tests/assets/generation/list_param.xsd')
-        xmlelement = etree.fromstring(xml)
-        code = xsd2py.generate_code_from_xsd(xmlelement)
+        code = xsd2py.generate_code_from_xsd(xml)
         if six.PY3:
             code = code.decode()
         assert_contains('def create(cls, Items):', code)

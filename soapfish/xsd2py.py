@@ -14,12 +14,12 @@ import textwrap
 import six
 from lxml import etree
 
+from . import xsdspec
 from .utils import (
     find_xsd_namespaces,
     get_rendering_environment,
     open_document,
 )
-from .xsdspec import Schema
 
 logger = logging.getLogger('soapfish')
 
@@ -50,32 +50,37 @@ def resolve_import(i, known_files, parent_namespace, cwd, base_path):
     tag = i.__class__.__name__.lower()
     logger.info('Generating code for xsd:%s=%s' % (tag, path))
     xml = open_document(path)
-    xmlelement = etree.fromstring(xml)
 
-    return generate_code_from_xsd(xmlelement, known_files, location,
+    return generate_code_from_xsd(xml, known_files, location,
                                   parent_namespace, encoding=None,
                                   cwd=cwd, base_path=base_path)
 
 
-def generate_code_from_xsd(xmlelement, known_files=None, location=None,
+def generate_code_from_xsd(xml, known_files=None, location=None,
                            parent_namespace=None, encoding='utf8',
                            cwd=None, base_path=None):
+
+    if isinstance(xml, six.string_types):
+        xml = etree.fromstring(xml)
+
+    if cwd is None:
+        cwd = six.moves.getcwd()
+
     if known_files is None:
         known_files = []
-    xsd_namespaces = find_xsd_namespaces(xmlelement.nsmap)
+    xsd_namespaces = find_xsd_namespaces(xml.nsmap)
 
-    schema = Schema.parse_xmlelement(xmlelement)
+    schema = xsdspec.Schema.parse_xmlelement(xml)
 
     # Skip if this file has already been included:
     if location and location in known_files:
         return ''
 
-    schema_code = schema_to_py(schema, xsd_namespaces, known_files,
-                               location, cwd=cwd, base_path=base_path,
-                               standalone=True)
-    if encoding is None:
-        return schema_code
-    return schema_code.encode(encoding)
+    code = schema_to_py(schema, xsd_namespaces, known_files,
+                        location, cwd=cwd, base_path=base_path,
+                        standalone=True)
+
+    return code.encode(encoding) if encoding else code
 
 
 def _reorder_complexTypes(schema):
@@ -171,19 +176,13 @@ def parse_arguments():
 def main():
     opt = parse_arguments()
 
-    logger.info('Generating code for XSD document \'%s\'...' % opt.xsd)
+    logger.info('Generating code for XSD document: %s' % opt.xsd)
     xml = open_document(opt.xsd)
-    xmlelement = etree.fromstring(xml)
-    code = generate_code_from_xsd(xmlelement, encoding='utf-8')
-    # In Python 3 encoding a string returns bytes so we have to write the
-    # generated code to sys.stdout.buffer instead of sys.stdout.
-    # We should not depend on Python 3's "auto-conversion to console charset"
-    # because this might fail for file redirections and cron jobs which might
-    # use pure ASCII.
-    if six.PY3:
-        sys.stdout.buffer.write(code)
-    else:
-        print(code)
+    cwd = os.path.dirname(os.path.abspath(opt.xsd))
+    code = generate_code_from_xsd(xml, encoding='utf-8', cwd=cwd)
+    # Ensure that we output generated code bytes as expected:
+    print_ = print if six.PY2 else sys.stdout.buffer.write
+    print_(code)
 
 
 if __name__ == '__main__':
