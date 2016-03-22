@@ -148,23 +148,21 @@ def xsd_simpleType(st):
 
 def build_imports(xsd_schema, imports):
     counter = 0
-    if imports:
-        for _import in imports:
-            xsd_import = xsdspec.Import()
-            xsd_import.namespace = _import.targetNamespace
-            if _import.location:
-                xsd_import.schemaLocation = _import.location
-            xsd_schema.imports.append(xsd_import)
-            counter += 1
+    for _import in imports:
+        xsd_import = xsdspec.Import()
+        xsd_import.namespace = _import.targetNamespace
+        if _import.location:
+            xsd_import.schemaLocation = _import.location
+        xsd_schema.imports.append(xsd_import)
+        counter += 1
 
 
 def build_includes(xsd_schema, includes):
-    if includes:
-        for _include in includes:
-            xsd_include = xsdspec.Include()
-            if _include.location:
-                xsd_include.schemaLocation = _include.location
-            xsd_schema.includes.append(xsd_include)
+    for _include in includes:
+        xsd_include = xsdspec.Include()
+        if _include.location:
+            xsd_include.schemaLocation = _include.location
+        xsd_schema.includes.append(xsd_include)
 
 
 def generate_xsdspec(schema):
