@@ -52,13 +52,13 @@ def resolve_import(i, known_files, parent_namespace, cwd, base_path):
     xml = open_document(path)
 
     return generate_code_from_xsd(xml, known_files, location,
-                                  parent_namespace, encoding=None,
-                                  cwd=cwd, base_path=base_path)
+                                  parent_namespace, encoding=None, cwd=cwd,
+                                  base_path=base_path, standalone=False)
 
 
 def generate_code_from_xsd(xml, known_files=None, location=None,
                            parent_namespace=None, encoding='utf8',
-                           cwd=None, base_path=None):
+                           cwd=None, base_path=None, standalone=True):
 
     if isinstance(xml, six.string_types):
         xml = etree.fromstring(xml)
@@ -79,7 +79,7 @@ def generate_code_from_xsd(xml, known_files=None, location=None,
 
     code = schema_to_py(schema, xsd_namespaces, known_files,
                         location, cwd=cwd, base_path=base_path,
-                        standalone=True)
+                        standalone=standalone)
 
     return code.encode(encoding) if encoding else code
 
