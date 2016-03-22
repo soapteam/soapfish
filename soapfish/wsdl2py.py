@@ -39,7 +39,7 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
     xsd_namespaces = find_xsd_namespaces(nsmap)
 
     soap_version = SOAPVersion.get_version_from_xml(xml)
-    logger.info('Detect version %s', soap_version.NAME)
+    logger.info('Detected version of SOAP: %s', soap_version.NAME)
 
     wsdl = get_wsdl_classes(soap_version.BINDING_NAMESPACE)
     definitions = wsdl.Definitions.parse_xmlelement(xml)
