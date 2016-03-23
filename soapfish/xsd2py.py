@@ -69,6 +69,8 @@ def rewrite_paths(schema, cwd, base_path):
 
 def resolve_import(xsdimport, known_files, parent_namespace, cwd, base_path):
     location = os.path.join(base_path, xsdimport.schemaLocation)
+    if not os.path.isfile(location):
+        return ''
     cwd = os.path.dirname(location)
     logger.info('Generating code for XSD import \'%s\'...' % location)
     xml = open_document(location)
@@ -215,7 +217,9 @@ def main():
         from soapfish import xsd
         from soapfish.xsd import UNBOUNDED
     '''))
-    code = generate_code_from_xsd(xmlelement, encoding='utf-8')
+
+    cwd = os.path.dirname(os.path.abspath(opt.xsd))
+    code = generate_code_from_xsd(xmlelement, encoding='utf-8', cwd=cwd)
     # In Python 3 encoding a string returns bytes so we have to write the
     # generated code to sys.stdout.buffer instead of sys.stdout.
     # We should not depend on Python 3's "auto-conversion to console charset"
