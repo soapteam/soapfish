@@ -18,6 +18,7 @@ from .utils import (
     find_xsd_namespaces,
     get_rendering_environment,
     open_document,
+    resolve_location,
 )
 from .wsdl import get_wsdl_classes
 from .xsd2py import schema_to_py
@@ -44,13 +45,8 @@ def merge_imports(wsdl, definitions, xsd_namespaces, cwd=None, seen=None):
     if seen is None:
         seen = set()
 
-    for _import in definitions.imports:
-        if '://' in _import.location:
-            path = _import.location
-            cwd = None
-        else:
-            path = os.path.join(cwd, _import.location)
-            cwd = os.path.dirname(path)
+    for i in definitions.imports:
+        path, cwd, location = resolve_location(i.location, cwd)
 
         if path in seen:
             continue

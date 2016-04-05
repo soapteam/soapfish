@@ -19,6 +19,7 @@ from .utils import (
     find_xsd_namespaces,
     get_rendering_environment,
     open_document,
+    resolve_location,
 )
 
 logger = logging.getLogger('soapfish')
@@ -40,13 +41,7 @@ def rewrite_paths(schema, cwd, base_path):
 
 def resolve_import(i, known_files, parent_namespace, cwd, base_path):
     assert isinstance(i, (xsdspec.Import, xsdspec.Include))
-    if '://' in i.schemaLocation:
-        path = location = i.schemaLocation
-        cwd = None
-    else:
-        path = os.path.join(base_path, i.schemaLocation)
-        location = os.path.relpath(path, base_path)
-        cwd = os.path.dirname(path)
+    path, cwd, location = resolve_location(i.schemaLocation, base_path)
     tag = i.__class__.__name__.lower()
     logger.info('Generating code for xsd:%s=%s' % (tag, path))
     xml = open_document(path)

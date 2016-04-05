@@ -4,6 +4,7 @@ import hashlib
 import itertools
 import keyword
 import logging
+import os
 from datetime import datetime, timedelta
 
 import requests
@@ -16,6 +17,17 @@ logger = logging.getLogger('soapfish')
 
 
 # --- File Functions ----------------------------------------------------------
+def resolve_location(path, cwd):
+    if '://' in path:
+        path = location = path
+        cwd = None
+    else:
+        path = os.path.join(cwd, path)
+        location = os.path.relpath(path, cwd)
+        cwd = os.path.dirname(path)
+    return path, cwd, location
+
+
 def open_document(path):
     if '://' in path:
         logger.info('Opening remote document: %s', path)
