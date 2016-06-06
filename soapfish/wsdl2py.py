@@ -44,6 +44,10 @@ def reorder_schemas(schemas):
 
 def merge_imports(wsdl, definitions, xsd_namespaces, cwd=None, seen=None):
 
+    def deduplicate(seq):
+        seen = set()
+        return [x for x in seq if x not in seen and not seen.add(x)]
+
     if seen is None:
         seen = set()
 
@@ -68,12 +72,12 @@ def merge_imports(wsdl, definitions, xsd_namespaces, cwd=None, seen=None):
         if imported.types and imported.types.schemas:
             if not definitions.types:
                 definitions.types = wsdl.Types()
-            definitions.types.schemas[:0] = imported.types.schemas
+            definitions.types.schemas = deduplicate(imported.types.schemas + definitions.types.schemas)
 
-        definitions.services[:0] = imported.services
-        definitions.bindings[:0] = imported.bindings
-        definitions.messages[:0] = imported.messages
-        definitions.portTypes[:0] = imported.portTypes
+        definitions.services = deduplicate(imported.services + definitions.services)
+        definitions.bindings = deduplicate(imported.bindings + definitions.bindings)
+        definitions.messages = deduplicate(imported.messages + definitions.messages)
+        definitions.portTypes = deduplicate(imported.portTypes + definitions.portTypes)
 
 
 def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
