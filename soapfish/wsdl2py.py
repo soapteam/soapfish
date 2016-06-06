@@ -28,8 +28,9 @@ logger = logging.getLogger('soapfish')
 
 # --- Helpers -----------------------------------------------------------------
 def reorder_schemas(schemas):
-    schemas, targets, x = [], set(), deque(schemas)
-    while x:
+    schemas, targets, counter, x = [], set(), len(schemas), deque(schemas)
+    while x and counter > 0:
+        counter -= 1
         schema = x.popleft()
         ns = set(i.namespace for i in schema.imports)
         if x and ns and ns - targets:
@@ -37,6 +38,7 @@ def reorder_schemas(schemas):
         else:
             schemas.append(schema)
             targets.add(schema.targetNamespace)
+    schemas.extend(x)  # always add remaining unorderable schemas...
     return schemas
 
 
