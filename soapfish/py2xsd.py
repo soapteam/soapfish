@@ -7,7 +7,7 @@ import argparse
 import imp
 import inspect
 import logging
-import textwrap
+import sys
 
 import six
 from lxml import etree
@@ -255,26 +255,29 @@ def schema_validator(schemas):
     return xml_schema.assertValid
 
 # --- Program -----------------------------------------------------------------
-def parse_arguments():
+
+
+def main(argv=None):
+    stdout = getattr(sys.stdout, 'buffer', sys.stdin)
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent('''\
-            Generates an XSD document from a Python module.
-        '''))
+        description='Generates an XSD document from a Python module.',
+    )
     parser.add_argument('module', help='The path to a python module.')
-    return parser.parse_args()
+    parser.add_argument('output', help='Output path for XSD document.',
+                        nargs='?', type=argparse.FileType('wb'), default=stdout)
+    opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
-
-def main():
-    opt = parse_arguments()
-
-    logger.info('Generating XSD for module \'%s\'...' % opt.module)
+    logger.info('Generating XSD for Python module: %s' % opt.module)
     module = imp.load_source('module.name', opt.module)
-    schema = getattr(module, 'Schema')
-    tree = generate_xsd(schema)
-    print(etree.tostring(tree, pretty_print=True))
+    tree = generate_xsd(getattr(module, 'Schema'))
+
+    opt.output.write(etree.tostring(tree, pretty_print=True))
+
+    return 0
 
 
 if __name__ == '__main__':
 
-    main()
+    sys.exit(main())

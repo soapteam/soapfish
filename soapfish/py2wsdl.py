@@ -6,7 +6,7 @@ from __future__ import print_function
 import argparse
 import imp
 import logging
-import textwrap
+import sys
 
 import six
 from lxml import etree
@@ -126,30 +126,28 @@ def generate_wsdl(service):
 
 # --- Program -----------------------------------------------------------------
 
-def tostring(service):
-    tree = generate_wsdl(service)
-    return etree.tostring(tree, pretty_print=True)
 
+def main(argv=None):
+    stdout = getattr(sys.stdout, 'buffer', sys.stdin)
 
-def parse_arguments():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent('''\
-            Generates a WSDL document from a Python module.
-        '''))
+        description='Generates a WSDL document from a Python module.',
+    )
     parser.add_argument('module', help='The path to a python module.')
-    return parser.parse_args()
+    parser.add_argument('output', help='Output path for WSDL document.',
+                        nargs='?', type=argparse.FileType('wb'), default=stdout)
+    opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
-
-def main():
-    opt = parse_arguments()
-
-    logger.info('Generating WSDL for module \'%s\'...' % opt.module)
+    logger.info('Generating WSDL for Python module: %s' % opt.module)
     module = imp.load_source('', opt.module)
-    service = getattr(module, 'SERVICE')
-    print(tostring(service))
+    tree = generate_wsdl(getattr(module, 'SERVICE'))
+
+    opt.output.write(etree.tostring(tree, pretty_print=True))
+
+    return 0
 
 
 if __name__ == '__main__':
 
-    main()
+    sys.exit(main())

@@ -7,7 +7,6 @@ import argparse
 import logging
 import os
 import sys
-import textwrap
 from collections import deque
 
 import six
@@ -116,36 +115,38 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
 
 
 # --- Program -----------------------------------------------------------------
-def parse_arguments():
+
+
+def main(argv=None):
+    stdin = getattr(sys.stdin, 'buffer', sys.stdin)
+    stdout = getattr(sys.stdout, 'buffer', sys.stdin)
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent('''\
-            Generates Python code from a WSDL document.
-
-            Code can be generated for a simple HTTP client or a server running
-            the Django web framework.
-        '''))
+        description='Generate Python code from a WSDL document.',
+    )
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-c', '--client', help='Generate code for a client.', action='store_true')
-    group.add_argument('-s', '--server', help='Generate code for a server.', action='store_true')
-    parser.add_argument('-w', '--use-wsa', help='Use ws-addressing', action='store_true')
-    parser.add_argument('wsdl', help='The path to a WSDL document.')
-    return parser.parse_args()
+    group.add_argument('-c', '--client', help='Generate code for a client.',
+                       action='store_const', const='client', dest='target')
+    group.add_argument('-s', '--server', help='Generate code for a server.',
+                       action='store_const', const='server', dest='target')
+    parser.add_argument('-w', '--use-wsa', help='Use web services addressing.',
+                        action='store_true')
+    parser.add_argument('wsdl', help='Input path to a WSDL document.')
+    parser.add_argument('output', help='Output path for Python code.', nargs='?',
+                        type=argparse.FileType('wb'), default=stdout)
+    opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
-
-def main():
-    opt = parse_arguments()
-
-    target = 'server' if opt.server else 'client'
-    logger.info('Generating %s code for WSDL document: %s' % (target, opt.wsdl))
-    xml = open_document(opt.wsdl)
+    logger.info('Generating %s code for WSDL document: %s' % (opt.target, opt.wsdl))
+    xml = stdin.read() if opt.wsdl == '-' else open_document(opt.wsdl)
     cwd = os.path.dirname(os.path.abspath(opt.wsdl))
-    code = generate_code_from_wsdl(xml, target, opt.use_wsa, cwd=cwd)
-    # Ensure that we output generated code bytes as expected:
-    print_ = print if six.PY2 else sys.stdout.buffer.write
-    print_(code)
+    code = generate_code_from_wsdl(xml, opt.target, opt.use_wsa, cwd=cwd)
+
+    opt.output.write(code)
+
+    return 0
 
 
 if __name__ == '__main__':
 
-    main()
+    sys.exit(main())

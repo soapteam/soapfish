@@ -9,7 +9,6 @@ import itertools
 import logging
 import os
 import sys
-import textwrap
 
 import six
 from lxml import etree
@@ -154,28 +153,31 @@ def schema_to_py(schema, xsd_namespaces, known_files=None, location=None,
 
 
 # --- Program -----------------------------------------------------------------
-def parse_arguments():
+
+
+def main(argv=None):
+    stdin = getattr(sys.stdin, 'buffer', sys.stdin)
+    stdout = getattr(sys.stdout, 'buffer', sys.stdin)
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent('''\
-            Generates Python code from an XSD document.
-        '''))
-    parser.add_argument('xsd', help='The path to an XSD document.')
-    return parser.parse_args()
-
-
-def main():
-    opt = parse_arguments()
+        description='Generates Python code from an XSD document.',
+    )
+    parser.add_argument('xsd', help='Input path to an XSD document.')
+    parser.add_argument('output', help='Output path for Python code.', nargs='?',
+                        type=argparse.FileType('wb'), default=stdout)
+    opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
     logger.info('Generating code for XSD document: %s' % opt.xsd)
-    xml = open_document(opt.xsd)
+    xml = stdin.read() if opt.xsd == '-' else open_document(opt.xsd)
     cwd = os.path.dirname(os.path.abspath(opt.xsd))
     code = generate_code_from_xsd(xml, encoding='utf-8', cwd=cwd)
-    # Ensure that we output generated code bytes as expected:
-    print_ = print if six.PY2 else sys.stdout.buffer.write
-    print_(code)
+
+    opt.output.write(code)
+
+    return 0
 
 
 if __name__ == '__main__':
 
-    main()
+    sys.exit(main())

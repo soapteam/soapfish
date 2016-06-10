@@ -27,7 +27,8 @@ class CodeGenerationTest(unittest.TestCase):
         six.exec_(code, globalz)
 
     def _check_reparse_wsdl(self, base, target):
-        xml = py2wsdl.tostring(base['PutOpsPort_SERVICE'])
+        tree = py2wsdl.generate_wsdl(base['PutOpsPort_SERVICE'])
+        xml = etree.tostring(tree, pretty_print=True)
         code = wsdl2py.generate_code_from_wsdl(xml, target)
         m = {}
         self._exec(code, m)
