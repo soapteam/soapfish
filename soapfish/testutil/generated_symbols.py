@@ -24,7 +24,7 @@ def generated_symbols(code):
     variables = set(locals_).difference(locals())
 
     schemas, symbols = [], {}
-    for name in variables:
+    for name in sorted(variables):
         symbol = locals_[name]
         symbols[name] = symbol
         if isinstance(symbol, xsd.Schema):
