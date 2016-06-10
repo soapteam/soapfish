@@ -54,7 +54,7 @@ def generate_code_from_xsd(xml, known_files=None, location=None,
                            parent_namespace=None, encoding='utf8',
                            cwd=None, base_path=None, standalone=True):
 
-    if isinstance(xml, six.string_types):
+    if isinstance(xml, six.binary_type):
         xml = etree.fromstring(xml)
 
     if cwd is None:

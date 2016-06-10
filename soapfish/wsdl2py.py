@@ -81,7 +81,7 @@ def merge_imports(wsdl, definitions, xsd_namespaces, cwd=None, seen=None):
 
 def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
 
-    if isinstance(xml, six.string_types):
+    if isinstance(xml, six.binary_type):
         xml = etree.fromstring(xml)
 
     if cwd is None:

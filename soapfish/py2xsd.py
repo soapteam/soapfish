@@ -249,7 +249,7 @@ def schema_validator(schemas):
     # Also having shared resolvers is not a good idea because a user might want
     # to have different validator instances at the same time (possibly with
     # conflicting namespace urls).
-    schema_xml = ''.join(etree.tostring(generate_xsd(s)) for s in schemas)
+    schema_xml = b''.join(etree.tostring(generate_xsd(s)) for s in schemas)
     schema_element = etree.fromstring(schema_xml, parser)
     xml_schema = etree.XMLSchema(schema_element)
     return xml_schema.assertValid
