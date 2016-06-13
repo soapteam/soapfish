@@ -8,12 +8,12 @@ from soapfish import xsd
 {#- XSD Includes -#}
 {%- for i in schema.includes %}
 {%- if not i.schemaLocation %}{% continue %}{% endif -%}
-{{- resolve_import(i, known_files, schema.targetNamespace, cwd, base_path) }}
+{{- resolve_import(i, known_paths, schema.targetNamespace, cwd, base_path) }}
 {%- endfor %}
 {#- XSD Imports -#}
 {%- for i in schema.imports %}
 {%- if not i.schemaLocation %}{% continue %}{% endif -%}
-{{- resolve_import(i, known_files, schema.targetNamespace, cwd, base_path) }}
+{{- resolve_import(i, known_paths, schema.targetNamespace, cwd, base_path) }}
 {%- endfor %}
 # {% if location %}{{ location }} - {% endif -%} {{ schema.targetNamespace }}{# Output the name of the schema in a comment. #}
 {# [blank line] #}
