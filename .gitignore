@@ -5,6 +5,7 @@
 build
 dist
 *.egg-info
+.eggs
 .*.sw?
 .coverage
 .tox/
