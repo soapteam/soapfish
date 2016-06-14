@@ -11,10 +11,10 @@ from soapfish.testutil import echo_service, framework
 
 try:
     import django
+    from django.conf import settings
 except ImportError:
     django = None
 else:
-    from django.conf import settings
     settings.configure(
         ROOT_URLCONF=None,
         DEBUG=True,
@@ -35,9 +35,7 @@ class DjangoDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
 
     def setUp(self):  # noqa
         self.service = echo_service()
-        settings.ROOT_URLCONF = urlconf(urlpatterns=[url(r'^ws/$', django_dispatcher(self.service))])
-        if hasattr(django, 'setup'):
-            django.setup()
+        settings.ROOT_URLCONF = urlconf(urlpatterns=(url(r'^ws/$', django_dispatcher(self.service)),))
         self.client = Client()
 
     def _prepare_extras(self, headers):
@@ -49,7 +47,7 @@ class DjangoDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
         response = self.client.get('/ws/', {'wsdl': None})
         assert_equals(200, response.status_code)
         assert_equals('text/xml', response['Content-Type'])
-        assert_contains('<wsdl:definitions', response.content)
+        assert_contains(b'<wsdl:definitions', response.content)
 
     def test_can_dispatch_simple_request(self):
         input_value = str(datetime.now())

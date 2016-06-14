@@ -27,7 +27,7 @@ class FlaskDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
         response = self.client.get('/ws/', query_string='wsdl')
         assert_equals(200, response.status_code)
         assert_equals('text/xml', response.headers['Content-Type'])
-        assert_contains('<wsdl:definitions', response.data)
+        assert_contains(b'<wsdl:definitions', response.data)
 
     def test_can_dispatch_simple_request(self):
         input_value = str(datetime.now())
