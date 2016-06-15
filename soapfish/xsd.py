@@ -1037,15 +1037,14 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         xmlelement = parser(xml)
         return cls.parse_xmlelement(xmlelement)
 
-    def xml(self, tagname, namespace=None, elementFormDefault=None, schema=None):
+    def xml(self, tagname, namespace=None, elementFormDefault=None, schema=None, pretty_print=True):
         if namespace:
             tagname = '{%s}%s' % (namespace, tagname)
         xmlelement = etree.Element(tagname)
         self.render(xmlelement, self, namespace, elementFormDefault)
         if schema is not None:
             schema.assertValid(xmlelement)
-        xml = etree.tostring(xmlelement, pretty_print=True)
-        return xml
+        return etree.tostring(xmlelement, pretty_print=pretty_print)
 
     @classmethod
     def _force_elements_type_evalution(cls):

@@ -133,30 +133,33 @@ class SOAP_TBase(object):
         assert_contains(b'<ns0:Header/>', xml)
 
     def test_no_header_in_xml(self):
-        xml = (b'<ns0:Envelope xmlns:ns0="http://www.w3.org/2003/05/soap-envelope">'
+        xml = (
+            b'<ns0:Envelope xmlns:ns0="http://www.w3.org/2003/05/soap-envelope">'
             b'<ns0:Body></ns0:Body>'
-            b'</ns0:Envelope>')
+            b'</ns0:Envelope>'
+        )
         envelope = self.SOAP.Envelope.parsexml(xml)
 
     def test_wsa_inherited_header(self):
         message = GetWeatherByPlaceName(Place=Place(Name='Skypia'))
         header = WsaAppHeader(MessageID='1234', Identity="coucou")
         xml = self.SOAP.Envelope.response('GetWeatherByPlaceName', message, header)
-        expected_xml = """<ns0:Envelope xmlns:ns0="{soap_ns}">
-  <ns0:Header>
-    <ns0:MessageID xmlns:ns0="http://www.w3.org/2005/08/addressing">1234</ns0:MessageID>
-    <ns0:Identity xmlns:ns0="http://www.example.org">coucou</ns0:Identity>
-  </ns0:Header>
-  <ns0:Body>
-    <ns0:GetWeatherByPlaceName xmlns:ns0="http://www.example.org">
-      <ns0:Place>
-        <ns0:Name>Skypia</ns0:Name>
-      </ns0:Place>
-    </ns0:GetWeatherByPlaceName>
-  </ns0:Body>
-</ns0:Envelope>
-""".format(soap_ns=self.SOAP.ENVELOPE_NAMESPACE)
-        self.assertEqual(expected_xml, xml.decode('utf8'))
+        expected_xml = (
+            b'<ns0:Envelope xmlns:ns0="%s">'
+            b'<ns0:Header>'
+            b'<ns0:MessageID xmlns:ns0="http://www.w3.org/2005/08/addressing">1234</ns0:MessageID>'
+            b'<ns0:Identity xmlns:ns0="http://www.example.org">coucou</ns0:Identity>'
+            b'</ns0:Header>'
+            b'<ns0:Body>'
+            b'<ns0:GetWeatherByPlaceName xmlns:ns0="http://www.example.org">'
+            b'<ns0:Place>'
+            b'<ns0:Name>Skypia</ns0:Name>'
+            b'</ns0:Place>'
+            b'</ns0:GetWeatherByPlaceName>'
+            b'</ns0:Body>'
+            b'</ns0:Envelope>'
+        ) % self.SOAP.ENVELOPE_NAMESPACE.encode('utf-8')
+        self.assertEqual(expected_xml, xml)
 
 
 class SOAP11_Test(SOAP_TBase, unittest.TestCase):

@@ -15,25 +15,27 @@ class WsgiSoapApplicationTest(PythonicTestCase):
         dispatcher = SOAPDispatcher(echo_service())
         app = WsgiSoapApplication(dispatcher)
         start_response = self._response_mock()
-        soap_message = (b'<?xml version="1.0" encoding="UTF-8"?>'
+        soap_message = (
+            b'<?xml version="1.0" encoding="utf-8"?>'
             b'<senv:Envelope xmlns:senv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soap.example/echo/types">'
             b'<senv:Body>'
             b'<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             b'<value>foobar</value>'
             b'</ns1:echoRequest>'
             b'</senv:Body>'
-            b'</senv:Envelope>')
+            b'</senv:Envelope>'
+        )
         response = app(self._wsgi_env(soap_message), start_response)
         assert_equals(WsgiSoapApplication.HTTP_200, start_response.code)
         assert_equals('text/xml', dict(start_response.headers)['Content-Type'])
         expected_xml = (
-            b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">\n'
-            b'  <ns0:Body>\n'
-            b'    <ns0:echoResponse xmlns:ns0="http://soap.example/echo/types">\n'
-            b'      <value>foobar</value>\n'
-            b'    </ns0:echoResponse>\n'
-            b'  </ns0:Body>\n'
-            b'</ns0:Envelope>\n'
+            b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">'
+            b'<ns0:Body>'
+            b'<ns0:echoResponse xmlns:ns0="http://soap.example/echo/types">'
+            b'<value>foobar</value>'
+            b'</ns0:echoResponse>'
+            b'</ns0:Body>'
+            b'</ns0:Envelope>'
         )
         assert_equals(expected_xml, b''.join(response))
 
