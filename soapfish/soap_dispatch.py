@@ -51,7 +51,7 @@ class SOAPDispatcher(object):
             def callback(item):
                 xsdelement = py2xsd.generate_xsd(item)
                 self._rewrite_locations(xsdelement)
-                xsd = etree.tostring(xsdelement, pretty_print=True)
+                etree.tostring(xsdelement, pretty_print=True)
             xsds = walk_schema_tree(self.service.schemas, callback)
         self.xsds = xsds
 
@@ -162,8 +162,8 @@ class SOAPDispatcher(object):
         elif request_method == 'POST':
             return self.handle_soap_request(request)
         else:
-            return SOAPResponse('bad request', http_status_code=400,
-                http_content='bad_request', http_headers={'Content-Type': 'text/plain'})
+            return SOAPResponse('bad request', http_status_code=400, http_content='bad_request',
+                                http_headers={'Content-Type': 'text/plain'})
 
     def handle_soap_request(self, request):
         request.dispatcher = self
@@ -198,7 +198,8 @@ class SOAPDispatcher(object):
             response.http_status_code = 500
         else:
             tagname = uncapitalize(response.soap_body.__class__.__name__)
-            # self._validate_response(response.soap_body, tagname)  # TODO: handle validation results
+            # self._validate_response(response.soap_body, tagname)
+            # TODO: handle validation results
             if isinstance(request.method.output, six.string_types):
                 tagname = request.method.output
             else:

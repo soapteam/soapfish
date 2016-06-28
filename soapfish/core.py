@@ -3,6 +3,7 @@
 
 __all__ = ['SOAPError', 'SOAPRequest', 'SOAPResponse']
 
+
 class SOAPError(Exception):
     def __init__(self, code, message, actor=None):
         super(SOAPError, self).__init__(code, message, actor)
@@ -15,8 +16,7 @@ class SOAPError(Exception):
 
 
 class SOAPResponse(object):
-    def __init__(self, soap_body, soap_header=None, http_status_code=200, http_content=None,
-                 http_headers=None):
+    def __init__(self, soap_body, soap_header=None, http_status_code=200, http_content=None, http_headers=None):
         self.soap_header = soap_header
         self.soap_body = soap_body
         self.http_status_code = 200

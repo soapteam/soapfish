@@ -54,6 +54,9 @@ class Import(wsdl11.Import):
     pass
 
 
+# WSDL 1.1 SOAP 1.2 classes
+
+
 class Input(wsdl11.Input):
     # Extensibility Elements:
     body = xsd.Element(SOAP_Body, namespace=ns.wsdl_soap12)

@@ -7,6 +7,7 @@ from soapfish.soap_dispatch import SOAPDispatcher
 
 __all__ = ['django_dispatcher']
 
+
 class DjangoEnvironWrapper(object):
     def __init__(self, environ):
         self.environ = environ
@@ -17,6 +18,7 @@ class DjangoEnvironWrapper(object):
             if key in self.environ:
                 return self.environ[key]
         return default
+
 
 def django_dispatcher(service, **dispatcher_kwargs):
     import django

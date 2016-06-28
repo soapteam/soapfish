@@ -134,7 +134,6 @@ class Operation(xsd.ComplexType):
     # Extensibility Elements:
     operation = xsd.Element(SOAP_Operation, minOccurs=0, namespace=ns.wsdl_soap)
 
-
 class PortType(xsd.ComplexType):
     name = xsd.Attribute(xsd.String)
     operations = xsd.ListElement(Operation, 'operation', minOccurs=0)

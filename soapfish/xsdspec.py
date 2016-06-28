@@ -27,6 +27,7 @@ class RestrictionValue(xsd.ComplexType):
     def __repr__(self):
         return 'RestrictionValue<%r>' % self.value
 
+
 class Restriction(xsd.ComplexType):
     NAMESPACE = ns.xsd
     base = xsd.Attribute(xsd.String)

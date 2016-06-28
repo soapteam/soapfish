@@ -171,7 +171,6 @@ class String(SimpleType):
         if value is None:
             return None
 
-
         if not isinstance(value, six.string_types):
             raise ValueError("Value %r for class '%s'." % (value, self.__class__.__name__))
 
@@ -229,9 +228,9 @@ class Boolean(SimpleType):
             raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
 
     def xmlvalue(self, value):
-        if value == False:
+        if value is False:
             return 'false'
-        elif value == True:
+        elif value is True:
             return 'true'
         elif value is None:
             return 'nil'
@@ -252,7 +251,7 @@ class Boolean(SimpleType):
 class Date(SimpleType):
     '''
     Example text value: 2001-10-26+02:00
-    
+
     Does currently not support any constraining facets:
         http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#date
          3.2.9.2 Constraining facets
@@ -280,7 +279,7 @@ class Date(SimpleType):
         time_components = ('hour', 'minute', 'second', 'microsecond')
         has_time_compontent = any(map(lambda key: hasattr(value, key), time_components))
         if (hasattr(value, 'year') and hasattr(value, 'month') and hasattr(value, 'day')) and not has_time_compontent:
-            tz = getattr(value, 'tzinfo', None) # support datetime.date
+            tz = getattr(value, 'tzinfo', None)  # support datetime.date
             return XSDDate(value.year, value.month, value.day, tzinfo=tz)
         raise ValueError('Incorrect type value %r for date field.' % value)
 
@@ -459,8 +458,8 @@ class Integer(Decimal):
                  maxInclusive=None, minExclusive=None, minInclusive=None,
                  pattern=None, totalDigits=None):
         super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
-                 maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
-                 pattern=pattern, totalDigits=totalDigits)
+                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
+                                      pattern=pattern, totalDigits=totalDigits)
 
     def accept(self, value):
         if value is None:
@@ -482,8 +481,8 @@ class Long(Integer):
                  maxInclusive=9223372036854775807, minExclusive=None, minInclusive=-9223372036854775808,
                  pattern=None, totalDigits=None):
         super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
-                                     maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
-                                     pattern=pattern, totalDigits=totalDigits)
+                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
+                                      pattern=pattern, totalDigits=totalDigits)
 
 
 class Int(Long):
@@ -492,8 +491,8 @@ class Int(Long):
                  maxInclusive=2147483647, minExclusive=None, minInclusive=-2147483648,
                  pattern=None, totalDigits=None):
         super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
-                                     maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
-                                     pattern=pattern, totalDigits=totalDigits)
+                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
+                                      pattern=pattern, totalDigits=totalDigits)
 
 
 class MaxOccurs(SimpleType):
@@ -547,7 +546,7 @@ class Element(object):
                         keyword e.g. "import"
         :param nillable: bool, is object nilable.
         '''
-        if not minOccurs in [0, 1]:
+        if minOccurs not in {0, 1}:
             raise ValueError('minOccurs for Element can be only 0 or 1, use ListElement instead.')
         self._creation_number = Element._creation_counter
         Element._creation_counter += 1
@@ -730,11 +729,11 @@ class Ref(Element):
                 raise ValueError('Value None is not acceptable for required field.')
             else:
                 return
-        
+
         if isinstance(value, Group):
             self._type.render(parent, value, namespace, elementFormDefault)
             return
-        
+
         if namespace:
             tagname = '{%s}%s' % (namespace, field_name)
         else:
@@ -751,7 +750,6 @@ class Content(Ref):
 
     def empty_value(self):
         return None
-
 
 
 class TypedList(list):
