@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import iso8601
 from lxml import etree
-from pythonic_testcase import *
+from pythonic_testcase import assert_raises, assert_equals
 
 from soapfish import xsd, xsdspec
 
@@ -40,17 +40,16 @@ class Flight(xsd.ComplexType):
 
 
 class ElementTest(unittest.TestCase):
-# This logic have been moved to post rendering validation
-# uncomment when implemented.
-#    def test_required(self):
-#        tail_number = xsd.Element(xsd.String)
-#        try:
-#            xmlelement = etree.Element("aircraft")
-#            tail_number.render(xmlelement, "tail_number", None)
-#        except ValueError:
-#            pass
-#        else:
-#            raise AssertionError("Should get here")
+    # This logic have been moved to post rendering validation uncomment when implemented.
+    # def test_required(self):
+    #     tail_number = xsd.Element(xsd.String)
+    #     try:
+    #         xmlelement = etree.Element("aircraft")
+    #         tail_number.render(xmlelement, "tail_number", None)
+    #     except ValueError:
+    #         pass
+    #     else:
+    #         raise AssertionError("Should get here")
 
     def test_string_element(self):
         tail_number = xsd.Element(xsd.String())
@@ -103,6 +102,7 @@ class ElementTest(unittest.TestCase):
     def test_stringify_complextype(self):
         flight = Flight(takeoff_airport=Airport())
         str(flight)
+
 
 class ListElementTest(unittest.TestCase):
 
@@ -518,14 +518,14 @@ class ComplexTest(unittest.TestCase):
             name = xsd.Element(xsd.String, nillable=True)
         ns = 'http://foo.example'
         soapfish_schema = xsd.Schema(ns,
-            imports=[],
-            elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
-            simpleTypes=[],
-            attributeGroups=[],
-            groups=[],
-            complexTypes=[A],
-            elements={'foo': xsd.Element(A)},
-        )
+                                     imports=[],
+                                     elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
+                                     simpleTypes=[],
+                                     attributeGroups=[],
+                                     groups=[],
+                                     complexTypes=[A],
+                                     elements={'foo': xsd.Element(A)},
+                                     )
         xml = '<test:foo xmlns:test="%s"><name>bar</name></test:foo>' % ns
         foo = A.parsexml(xml, schema=soapfish_schema)
         assert_equals('bar', foo.name)
@@ -756,7 +756,7 @@ class GroupTest(unittest.TestCase):
         self.assertEqual(expected_xml, xml)
 
 
-#<xs:attributeGroup name="tHeaderAttributes">
+# <xs:attributeGroup name="tHeaderAttributes">
 #   <xs:attribute name="message" type="xs:QName" use="required"/>
 #   <xs:attribute name="part" type="xs:NMTOKEN" use="required"/>
 #   <xs:attribute name="use" type="soap:useChoice" use="required"/>

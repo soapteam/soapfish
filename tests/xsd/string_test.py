@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pythonic_testcase import *
+from pythonic_testcase import assert_equals, assert_raises
 
 from soapfish import xsd
 from soapfish.testutil import SimpleTypeTestCase

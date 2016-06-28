@@ -1,7 +1,7 @@
 import unittest
 
 from lxml import etree
-from pythonic_testcase import *
+from pythonic_testcase import assert_none, assert_equals, assert_raises
 
 from soapfish import core, soap, soap11, soap12
 
@@ -64,6 +64,7 @@ Incomplete address: no zip code</PO:confirmation>
 </env:Body></env:Envelope>
 """
 
+
 class ErrorHandling(unittest.TestCase):
     def test_soap11_actor_parsing(self):
         envelope = soap11.Envelope.parsexml(SOAP11_ERROR_MESSAGE)
@@ -71,14 +72,14 @@ class ErrorHandling(unittest.TestCase):
         assert_equals('Result', code)
         assert_none(message)
         assert_equals('Resultset empty2.', actor)
-        
+
     def test_soap11_noactor_parsing(self):
         envelope = soap11.Envelope.parsexml(SOAP11_ERROR_MESSAGE_NO_ACTOR)
         code, message, actor = soap11.parse_fault_message(envelope.Body.Fault)
         assert_equals('Result', code)
         assert_equals('String', message)
         assert_none(actor)
-        
+
     def test_soap11_fault_handling(self):
         stub = soap.Stub(location="empty")
         stub.SERVICE = soap.Service(
@@ -88,26 +89,26 @@ class ErrorHandling(unittest.TestCase):
             schemas=[],
             version=soap.SOAPVersion.SOAP11,
             methods=[])
-        
+
         e = assert_raises(core.SOAPError, lambda: stub._handle_response(None, None, SOAP11_ERROR_MESSAGE))
         assert_equals('Result', e.code)
         assert_none(e.message)
         assert_equals('Resultset empty2.', e.actor)
-        
+
     def test_soap12_actor_parsing(self):
         envelope = soap12.Envelope.parsexml(SOAP12_ERROR_ROLE)
         code, message, actor = soap12.parse_fault_message(envelope.Body.Fault)
         assert_equals('env:Sender', code)
         assert_equals('\nMessage does not have necessary info\n', message)
         assert_equals('http://gizmos.com/order', actor)
-        
+
     def test_soap12_noactor_parsing(self):
         envelope = soap12.Envelope.parsexml(SOAP12_ERROR_NOROLE)
         code, message, actor = soap12.parse_fault_message(envelope.Body.Fault)
         assert_equals('env:Sender', code)
         assert_equals('\nMessage does not have necessary info\n', message)
         assert_none(actor)
-        
+
     def test_soap12_fault_handling(self):
         stub = soap.Stub(location="empty")
         stub.SERVICE = soap.Service(
@@ -117,7 +118,7 @@ class ErrorHandling(unittest.TestCase):
             schemas=[],
             version=soap.SOAPVersion.SOAP12,
             methods=[])
-        
+
         e = assert_raises(core.SOAPError, lambda: stub._handle_response(None, None, SOAP12_ERROR_ROLE))
         assert_equals('env:Sender', e.code)
         assert_equals('\nMessage does not have necessary info\n', e.message)

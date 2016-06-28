@@ -1,7 +1,7 @@
 import unittest
 
 from lxml import etree
-from pythonic_testcase import *
+from pythonic_testcase import assert_contains
 
 from soapfish import soap11, soap12, wsa, xsd
 from soapfish.py2xsd import generate_xsd
@@ -34,11 +34,14 @@ MESSAGE_UNQUALIFIED = """
 </ns0:GetWeatherByPlaceName>
 """
 
+
 class Place(xsd.ComplexType):
     Name = xsd.Element(xsd.String)
 
+
 class GetWeatherByPlaceName(xsd.ComplexType):
     Place = xsd.Element(Place)
+
 
 class AppHeader(xsd.ComplexType):
     Version = xsd.Element(xsd.String)
@@ -56,15 +59,19 @@ Schema_qualified = xsd.Schema(
 )
 XMLSchema_qualified = etree.XMLSchema(generate_xsd(Schema_qualified))
 
+
 class WsaAppHeader(wsa.Header):
     SCHEMA = Schema_qualified
     Identity = SCHEMA.get_element_by_name('Identity')
 
+
 class PlaceU(xsd.ComplexType):
     Name = xsd.Element(xsd.String)
 
+
 class GetWeatherByPlaceNameU(xsd.ComplexType):
     Place = xsd.Element(PlaceU)
+
 
 class AppHeaderU(xsd.ComplexType):
     Version = xsd.Element(xsd.String)
@@ -138,7 +145,7 @@ class SOAP_TBase(object):
             b'<ns0:Body></ns0:Body>'
             b'</ns0:Envelope>'
         )
-        envelope = self.SOAP.Envelope.parsexml(xml)
+        self.SOAP.Envelope.parsexml(xml)
 
     def test_wsa_inherited_header(self):
         message = GetWeatherByPlaceName(Place=Place(Name='Skypia'))

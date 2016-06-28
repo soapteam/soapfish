@@ -1,8 +1,11 @@
 from __future__ import absolute_import
 
-import six
 from lxml import etree
-from pythonic_testcase import *
+from pythonic_testcase import (
+    PythonicTestCase, assert_false, assert_equals, assert_not_none, assert_contains, assert_raises,
+    assert_not_contains, assert_true, assert_length,
+)
+import six
 
 from soapfish import wsa, xsd
 from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
@@ -20,9 +23,11 @@ class SOAPDispatcherTest(PythonicTestCase):
     def test_can_dispatch_good_soap_message(self):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler))
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+        soap_message = (
+            '<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</ns1:echoRequest>')
+            '</ns1:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
 
@@ -46,15 +51,17 @@ class SOAPDispatcherTest(PythonicTestCase):
     def test_can_validate_soap_message(self):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler))
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+        soap_message = (
+            '<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             '<invalid>foobar</invalid>'
-            '</ns1:echoRequest>')
+            '</ns1:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         assert_false(handler_state.was_called)
-        self.assert_is_soap_fault(response,
-            partial_fault_string=u"Element 'invalid': This element is not expected. Expected is ( value ).")
+        self.assert_is_soap_fault(response, partial_fault_string=u"Element 'invalid': This element is not expected. "
+                                  u"Expected is ( value ).")
 
     def test_can_reject_malformed_xml_soap_message(self):
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), 'garbage')
@@ -70,17 +77,19 @@ class SOAPDispatcherTest(PythonicTestCase):
         # the imported schema
         handler, handler_state = echo_handler()
         service = echo_service(handler)
+
         class CodeType(xsd.String):
             pattern = r'[0-9]{5}'
+
         class Container(xsd.ComplexType):
             value = xsd.Element(CodeType)
         code_schema = xsd.Schema('http://soap.example/included',
-            location='http://soap.example/included',
-            elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
-            simpleTypes=[CodeType],
-            complexTypes=[Container],
-            elements={'foo': xsd.Element(Container)},
-        )
+                                 location='http://soap.example/included',
+                                 elementFormDefault=xsd.ElementFormDefault.UNQUALIFIED,
+                                 simpleTypes=[CodeType],
+                                 complexTypes=[Container],
+                                 elements={'foo': xsd.Element(Container)},
+                                 )
         service.methods[0].input = 'foo'
         service.schemas[0].imports = [code_schema]
         # The setup is a bit simplistic because the <code> tag is not parsed
@@ -105,9 +114,11 @@ class SOAPDispatcherTest(PythonicTestCase):
         self.assert_is_soap_fault(response, partial_fault_string=u'Missing SOAP body')
 
     def test_can_reject_invalid_action(self):
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+        soap_message = (
+            '<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             '<value>foobar</value>'
-            '</ns1:echoRequest>')
+            '</ns1:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='invalid', REQUEST_METHOD='POST'), request_message)
         dispatcher = SOAPDispatcher(echo_service())
@@ -125,9 +136,11 @@ class SOAPDispatcherTest(PythonicTestCase):
     def test_can_dispatch_requests_based_on_soap_body(self):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler))
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+        soap_message = (
+            '<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</ns1:echoRequest>')
+            '</ns1:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='""', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
@@ -135,28 +148,32 @@ class SOAPDispatcherTest(PythonicTestCase):
 
     def test_can_use_soap_error_from_handler(self):
         soap_error = SOAPError('code', 'internal data error', 'actor')
-        faulty_handler = lambda request, input_: SOAPResponse(soap_error)
+
+        def faulty_handler(request, input_):
+            return SOAPResponse(soap_error)
         dispatcher = SOAPDispatcher(echo_service(handler=faulty_handler))
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+        soap_message = (
+            '<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</ns1:echoRequest>')
+            '</ns1:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(REQUEST_METHOD='POST'), request_message)
 
         response = dispatcher.dispatch(request)
         assert_equals('text/xml', response.http_headers['Content-Type'])
         assert_equals(500, response.http_status_code)
-        self.assert_is_soap_fault(response,
-            fault_code='code',
-            partial_fault_string=u'internal data error'
-        )
+        self.assert_is_soap_fault(response, fault_code='code', partial_fault_string=u'internal data error')
 
     def test_can_handle_xsd_element_as_return_value_from_handler(self):
-        handler = lambda request, input_: input_
+        def handler(request, input_):
+            return input_
         dispatcher = SOAPDispatcher(echo_service(handler))
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+        soap_message = (
+            '<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             '<value>hello</value>'
-        '</ns1:echoRequest>')
+            '</ns1:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
 
@@ -170,9 +187,11 @@ class SOAPDispatcherTest(PythonicTestCase):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler, input_header=EchoInputHeader))
         soap_header = ('<tns:InputVersion>42</tns:InputVersion>')
-        soap_message = ('<tns:echoRequest>'
+        soap_message = (
+            '<tns:echoRequest>'
             '<value>foobar</value>'
-        '</tns:echoRequest>')
+            '</tns:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
@@ -183,9 +202,11 @@ class SOAPDispatcherTest(PythonicTestCase):
     def test_can_handle_empty_input_header(self):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler, input_header=EchoInputHeader))
-        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+        soap_message = (
+            '<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</tns:echoRequest>')
+            '</tns:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
@@ -195,9 +216,11 @@ class SOAPDispatcherTest(PythonicTestCase):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler, input_header=EchoInputHeader))
         soap_header = ('<tns:invalid>42</tns:invalid>')
-        soap_message = ('<tns:echoRequest>'
+        soap_message = (
+            '<tns:echoRequest>'
             '<value>foobar</value>'
-        '</tns:echoRequest>')
+            '</tns:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
@@ -205,15 +228,18 @@ class SOAPDispatcherTest(PythonicTestCase):
 
     def test_can_propagate_custom_output_header(self):
         handler, handler_state = echo_handler()
+
         def _handler(request, _input):
             resp = handler(request, _input)
             resp.soap_header = EchoOutputHeader(OutputVersion='42')
             return resp
         dispatcher = SOAPDispatcher(echo_service(_handler, output_header=EchoOutputHeader))
-        soap_header = ('<tns:InputVersion>42</tns:InputVersion>')
-        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+        soap_header = '<tns:InputVersion>42</tns:InputVersion>'
+        soap_message = (
+            '<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</tns:echoRequest>')
+            '</tns:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
@@ -223,9 +249,11 @@ class SOAPDispatcherTest(PythonicTestCase):
     def test_can_handle_empty_output_header(self):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler, output_header=EchoOutputHeader))
-        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+        soap_message = (
+            '<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</tns:echoRequest>')
+            '</tns:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
@@ -236,27 +264,31 @@ class SOAPDispatcherTest(PythonicTestCase):
             raise Exception('unexpected exception')
         service = echo_service(handler)
         dispatcher = SOAPDispatcher(service, [ExceptionToSoapFault()])
-        soap_message = ('<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+        soap_message = (
+            '<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</tns:echoRequest>')
+            '</tns:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
-        self.assert_is_soap_fault(response,
-            fault_code=service.version.Code.SERVER,
-            partial_fault_string=u'Internal Error',
-        )
+        self.assert_is_soap_fault(response, fault_code=service.version.Code.SERVER,
+                                  partial_fault_string=u'Internal Error')
         assert_equals('text/xml', response.http_headers['Content-Type'])
         assert_equals(500, response.http_status_code)
 
     def test_can_validate_wsa_header(self):
         dispatcher = SOAPDispatcher(echo_service())
-        header = wsa.Header.parsexml('<Header><Action xmlns="http://www.w3.org/2005/08/addressing">/Action</Action></Header>')
+        header = wsa.Header.parsexml(
+            '<Header><Action xmlns="http://www.w3.org/2005/08/addressing">/Action</Action></Header>'
+        )
         dispatcher._validate_header(header)
 
     def test_can_detect_invalid_wsa_header(self):
         dispatcher = SOAPDispatcher(echo_service())
-        header = wsa.Header.parsexml('<Header><Invalid xmlns="http://www.w3.org/2005/08/addressing">/Action</Invalid></Header>')
+        header = wsa.Header.parsexml(
+            '<Header><Invalid xmlns="http://www.w3.org/2005/08/addressing">/Action</Invalid></Header>'
+        )
         assert_raises(etree.DocumentInvalid, lambda: dispatcher._validate_header(header))
 
     def test_evaluate_service_location(self):
@@ -281,9 +313,11 @@ class SOAPDispatcherTest(PythonicTestCase):
             return handler(request, input_)
 
         dispatcher = SOAPDispatcher(service)
-        soap_message = ('<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
+        soap_message = (
+            '<ns1:echoRequest xmlns:ns1="http://soap.example/echo/types">'
             '<value>foobar</value>'
-        '</ns1:echoRequest>')
+            '</ns1:echoRequest>'
+        )
         request_message = self._wrap_with_soap_envelope(soap_message)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'),
                               request_message)
@@ -324,7 +358,8 @@ class SOAPDispatcherTest(PythonicTestCase):
     def _wrap_with_soap_envelope(self, payload, header=''):
         if header:
             header = '<senv:Header>{header}</senv:Header>'.format(header=header)
-        envelope = ('<?xml version="1.0" encoding="UTF-8"?>'
+        envelope = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
             '<senv:Envelope xmlns:senv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soap.example/echo/types">'
             '%(header)s'
             '<senv:Body>%(payload)s</senv:Body>'

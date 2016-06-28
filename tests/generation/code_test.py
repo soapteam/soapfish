@@ -5,7 +5,7 @@ import unittest
 
 import six
 from lxml import etree
-from pythonic_testcase import *  # noqa
+from pythonic_testcase import assert_equals, assert_contains, assert_not_contains
 
 from soapfish import py2wsdl, utils, wsdl2py, xsd2py
 

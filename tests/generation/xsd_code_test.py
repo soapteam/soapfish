@@ -1,8 +1,10 @@
 import unittest
 
 from lxml import etree
-from pythonic_testcase import *  # noqa
-
+from pythonic_testcase import (
+    PythonicTestCase, assert_is_not_empty, assert_length, assert_equals, assert_isinstance, assert_contains,
+    assert_true,
+)
 from soapfish import utils, xsd, xsd2py, xsdspec
 from soapfish.testutil import generated_symbols
 

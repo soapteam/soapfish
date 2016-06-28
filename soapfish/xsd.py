@@ -47,6 +47,7 @@ import re
 from copy import copy
 from datetime import datetime
 from decimal import Decimal as _Decimal
+from importlib import import_module
 
 import iso8601
 import six
@@ -519,7 +520,7 @@ def import_type(type_name):
     if '.' not in type_name:
         raise ValueError('We need the full namepath to be able to import it: %s' % type_name)
     module, name = type_name.rsplit('.', 1)
-    module = __import__(module, globals(), {}, [name])
+    module = import_module(module)
     return getattr(module, name)
 
 

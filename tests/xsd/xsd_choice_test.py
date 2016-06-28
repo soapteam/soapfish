@@ -1,7 +1,7 @@
 import unittest
 
 from lxml import etree
-from pythonic_testcase import *
+from pythonic_testcase import assert_none, assert_equals, assert_true, assert_false
 
 from soapfish import xsd
 from soapfish.py2xsd import generate_xsd
@@ -11,7 +11,7 @@ from soapfish.xsd import ComplexType, ElementFormDefault, Schema
 class XSDChoiceTest(unittest.TestCase):
     def _choice_schema(self):
         class Code(xsd.String):
-            pattern='[0-9]{1,3}'
+            pattern = '[0-9]{1,3}'
 
         class Message(xsd.String):
             pass
@@ -21,12 +21,12 @@ class XSDChoiceTest(unittest.TestCase):
             code = xsd.Element(Code)
             message = xsd.Element(Message)
 
-        return Schema('http://foo.example/' ,
-            elementFormDefault=ElementFormDefault.QUALIFIED,
-            simpleTypes=(Code, Message),
-            complexTypes=(Result, ),
-            elements={'result': xsd.Element(Result)}
-        )
+        return Schema('http://foo.example/',
+                      elementFormDefault=ElementFormDefault.QUALIFIED,
+                      simpleTypes=(Code, Message),
+                      complexTypes=(Result, ),
+                      elements={'result': xsd.Element(Result)}
+                      )
 
     def test_can_validate_choice_groups(self):
         schema = self._choice_schema()

@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 
 from io import BytesIO
 
-from pythonic_testcase import *
+from pythonic_testcase import PythonicTestCase, assert_equals
 
 from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 from soapfish.testutil import echo_service
@@ -43,6 +43,7 @@ class WsgiSoapApplicationTest(PythonicTestCase):
         class StartResponse():
             self.code = None
             self.headers = None
+
             def __call__(self, code, headers):
                 self.code = code
                 self.headers = headers

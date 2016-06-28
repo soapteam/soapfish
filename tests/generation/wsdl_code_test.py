@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from pythonic_testcase import *  # noqa
+from pythonic_testcase import PythonicTestCase, assert_is_not_empty, assert_length, assert_equals, assert_isinstance
 
 from soapfish import utils, wsdl2py, xsd
 from soapfish.testutil import generated_symbols

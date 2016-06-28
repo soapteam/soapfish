@@ -199,7 +199,6 @@ def walk_schema_tree(schemas, callback, seen=None):
     return seen
 
 
-
 def timezone_offset_to_string(offset):
     '''
     Returns a XSD-compatible string representation of a time zone UTC offset
