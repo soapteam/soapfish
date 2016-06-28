@@ -15,12 +15,12 @@ from lxml import etree
 from . import namespaces as ns, xsd, xsdspec
 from .utils import uncapitalize, walk_schema_tree
 
-NUMERIC_TYPES = [xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long, xsd.Short,
-        xsd.UnsignedByte, xsd.UnsignedInt, xsd.UnsignedLong, xsd.UnsignedShort,
-        xsd.Double, xsd.Float, xsd.Byte]
+NUMERIC_TYPES = [
+    xsd.Decimal, xsd.Integer, xsd.Int, xsd.Long, xsd.Short, xsd.UnsignedByte, xsd.UnsignedInt, xsd.UnsignedLong,
+    xsd.UnsignedShort, xsd.Double, xsd.Float, xsd.Byte,
+]
 
-STRING_TYPES = [xsd.QName, xsd.AnyURI, xsd.Base64Binary, xsd.QName,
-        xsd.AnyType, xsd.Duration]
+STRING_TYPES = [xsd.QName, xsd.AnyURI, xsd.Base64Binary, xsd.QName, xsd.AnyType, xsd.Duration]
 
 ALL_TYPES = NUMERIC_TYPES + STRING_TYPES
 
@@ -35,7 +35,7 @@ def get_xsd_type(_type):
     defined type.
     '''
     base_class = _type.__class__.__bases__[0]
-    if base_class == xsd.SimpleType or _type.__class__  in ALL_TYPES:
+    if base_class == xsd.SimpleType or _type.__class__ in ALL_TYPES:
         return 'xsd:' + uncapitalize(_type.__class__.__name__)
     else:
         return 'sns:' + uncapitalize(_type.__class__.__name__)
@@ -66,8 +66,10 @@ def create_xsd_element(element):
         xsd_element.simpleType.restriction = xsdspec.Restriction()
         xsd_element.simpleType.restriction.base = get_xsd_type(element._type)
 
-        if hasattr(element._type, 'enumeration') and element._type.enumeration\
-        and parent_type == xsd.SimpleType:
+        if (
+            hasattr(element._type, 'enumeration') and element._type.enumeration and
+            parent_type == xsd.SimpleType
+        ):
             for value in element._type.enumeration:
                 enum = xsdspec.Enumeration.create(value)
                 xsd_element.simpleType.restriction.enumerations.append(enum)
@@ -253,6 +255,7 @@ def schema_validator(schemas):
     schema_element = etree.fromstring(schema_xml, parser)
     xml_schema = etree.XMLSchema(schema_element)
     return xml_schema.assertValid
+
 
 # --- Program -----------------------------------------------------------------
 

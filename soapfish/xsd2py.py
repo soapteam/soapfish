@@ -107,8 +107,8 @@ def _reorder_complexTypes(schema):
         # a and b are not extension/restriction
         if not base_a and not base_b:
             return w_a - w_b
-        is_extension = lambda obj, base: (obj == base)
-        has_namespace = lambda base: (':' in base)
+        is_extension = lambda obj, base: obj == base
+        has_namespace = lambda base: ':' in base
         # a is a extension/restriction of b: a > b
         if is_extension(b, base_a) or has_namespace(base_a):
             return 1

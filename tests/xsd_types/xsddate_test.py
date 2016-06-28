@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from nose import SkipTest
-from pythonic_testcase import *
+from pythonic_testcase import PythonicTestCase, assert_equals, assert_raises
 
 from soapfish.xsd_types import XSDDate
 

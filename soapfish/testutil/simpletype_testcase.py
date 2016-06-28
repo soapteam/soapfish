@@ -3,18 +3,19 @@
 from __future__ import absolute_import, unicode_literals
 
 from lxml import etree
-from pythonic_testcase import *
+from pythonic_testcase import PythonicTestCase
 
 from .. import xsd
 
 __all__ = ['SimpleTypeTestCase']
+
 
 class SimpleTypeTestCase(PythonicTestCase):
     xsd_type = None
 
     # --- custom assertions ---------------------------------------------------
     def assert_parse(self, expected_value, string_value):
-        assert_equals(expected_value, self._parse(string_value))
+        self.assert_equals(expected_value, self._parse(string_value))
 
     def assert_can_set(self, value):
         class Container(xsd.ComplexType):

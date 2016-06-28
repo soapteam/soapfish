@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 
 from lxml import etree
-from pythonic_testcase import *
+from pythonic_testcase import PythonicTestCase, assert_contains
 
 from soapfish.soap12 import Code, get_error_response
 

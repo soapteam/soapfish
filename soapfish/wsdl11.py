@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import namespaces as ns, wsdl, xsd, xsdspec
+from . import namespaces as ns, xsd, xsdspec
 
 
 # FIXME: With the current implementation of schema we cannot share classes

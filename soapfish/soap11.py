@@ -46,8 +46,8 @@ class Header(xsd.ComplexType):
         return ContentType.parse_xmlelement(self._xmlelement)
 
     def render(self, parent, instance, namespace=None, elementFormDefault=None):
-        return super(Header, self).render(parent, instance,
-            namespace=instance.SCHEMA.targetNamespace, elementFormDefault=elementFormDefault)
+        return super(Header, self).render(parent, instance, namespace=instance.SCHEMA.targetNamespace,
+                                          elementFormDefault=elementFormDefault)
 
 
 class Fault(xsd.ComplexType):
@@ -88,7 +88,7 @@ class Envelope(xsd.ComplexType):
         envelope.Body = Body()
         envelope.Body.message = xsd.NamedType(name=tagname, value=return_object)
         return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,
-            elementFormDefault=xsd.ElementFormDefault.QUALIFIED, pretty_print=False)
+                            elementFormDefault=xsd.ElementFormDefault.QUALIFIED, pretty_print=False)
 
     @classmethod
     def error_response(cls, code, message, header=None, actor=None):
@@ -98,7 +98,7 @@ class Envelope(xsd.ComplexType):
         envelope.Body = Body()
         envelope.Body.Fault = Fault(faultcode=code, faultstring=message, faultactor=actor)
         return envelope.xml('Envelope', namespace=ENVELOPE_NAMESPACE,
-            elementFormDefault=xsd.ElementFormDefault.QUALIFIED, pretty_print=False)
+                            elementFormDefault=xsd.ElementFormDefault.QUALIFIED, pretty_print=False)
 
 
 SCHEMA = xsd.Schema(
