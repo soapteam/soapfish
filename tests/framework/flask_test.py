@@ -22,6 +22,10 @@ if not hasattr(unittest, 'skip'):
 class FlaskDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
 
     def setUp(self):  # noqa
+        # XXX: Python 2.6 and unittest2 still call this method for skipped class.
+        if flask is None:
+            self.skipTest('Flask is not installed.')
+
         self.service = echo_service()
         app = flask.Flask(__name__)
         app.add_url_rule('/ws/', 'ws', flask_dispatcher(self.service), methods=['GET', 'POST'])

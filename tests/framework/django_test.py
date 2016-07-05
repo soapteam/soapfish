@@ -40,6 +40,10 @@ urlconf = namedtuple('urlconf', 'urlpatterns')
 class DjangoDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
 
     def setUp(self):  # noqa
+        # XXX: Python 2.6 and unittest2 still call this method for skipped class.
+        if django is None:
+            self.skipTest('Django is not installed.')
+
         self.service = echo_service()
         settings.ROOT_URLCONF = urlconf(urlpatterns=(url(r'^ws/$', django_dispatcher(self.service)),))
         self.client = Client()
