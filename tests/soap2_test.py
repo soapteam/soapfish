@@ -145,20 +145,20 @@ class SOAP_TBase(object):
         header = WsaAppHeader(MessageID='1234', Identity="coucou")
         xml = self.SOAP.Envelope.response('GetWeatherByPlaceName', message, header)
         expected_xml = (
-            b'<ns0:Envelope xmlns:ns0="%s">'
-            b'<ns0:Header>'
-            b'<ns0:MessageID xmlns:ns0="http://www.w3.org/2005/08/addressing">1234</ns0:MessageID>'
-            b'<ns0:Identity xmlns:ns0="http://www.example.org">coucou</ns0:Identity>'
-            b'</ns0:Header>'
-            b'<ns0:Body>'
-            b'<ns0:GetWeatherByPlaceName xmlns:ns0="http://www.example.org">'
-            b'<ns0:Place>'
-            b'<ns0:Name>Skypia</ns0:Name>'
-            b'</ns0:Place>'
-            b'</ns0:GetWeatherByPlaceName>'
-            b'</ns0:Body>'
-            b'</ns0:Envelope>'
-        ) % self.SOAP.ENVELOPE_NAMESPACE.encode('utf-8')
+            '<ns0:Envelope xmlns:ns0="{}">'
+            '<ns0:Header>'
+            '<ns0:MessageID xmlns:ns0="http://www.w3.org/2005/08/addressing">1234</ns0:MessageID>'
+            '<ns0:Identity xmlns:ns0="http://www.example.org">coucou</ns0:Identity>'
+            '</ns0:Header>'
+            '<ns0:Body>'
+            '<ns0:GetWeatherByPlaceName xmlns:ns0="http://www.example.org">'
+            '<ns0:Place>'
+            '<ns0:Name>Skypia</ns0:Name>'
+            '</ns0:Place>'
+            '</ns0:GetWeatherByPlaceName>'
+            '</ns0:Body>'
+            '</ns0:Envelope>'
+        ).format(self.SOAP.ENVELOPE_NAMESPACE).encode('utf-8')
         self.assertEqual(expected_xml, xml)
 
 
