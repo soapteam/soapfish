@@ -4,4 +4,4 @@ jinja2
 lxml
 pythonic_testcase
 requests
-six>=1.5.2
+six>=1.10.0
