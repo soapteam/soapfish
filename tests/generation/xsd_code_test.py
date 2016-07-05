@@ -6,6 +6,10 @@ from pythonic_testcase import *  # noqa
 from soapfish import utils, xsd, xsd2py, xsdspec
 from soapfish.testutil import generated_symbols
 
+if not hasattr(unittest, 'skip'):
+    # XXX: Skipping tests not supported in Python 2.6
+    import unittest2 as unittest
+
 
 class XSDCodeGenerationTest(PythonicTestCase):
 

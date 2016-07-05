@@ -145,7 +145,7 @@ class SOAP_TBase(object):
         header = WsaAppHeader(MessageID='1234', Identity="coucou")
         xml = self.SOAP.Envelope.response('GetWeatherByPlaceName', message, header)
         expected_xml = (
-            '<ns0:Envelope xmlns:ns0="{}">'
+            '<ns0:Envelope xmlns:ns0="{0}">'
             '<ns0:Header>'
             '<ns0:MessageID xmlns:ns0="http://www.w3.org/2005/08/addressing">1234</ns0:MessageID>'
             '<ns0:Identity xmlns:ns0="http://www.example.org">coucou</ns0:Identity>'

@@ -121,7 +121,7 @@ def _reorder_complexTypes(schema):
     if hasattr(functools, 'cmp_to_key'):
         kw = {'key': functools.cmp_to_key(_cmp)}
     else:
-        kw = {'cmp': _cmp}  # Python < 2.7 and < 3.2
+        kw = {'cmp': _cmp}  # XXX: Python < 2.7 and < 3.2
     schema.complexTypes.sort(**kw)
 
 

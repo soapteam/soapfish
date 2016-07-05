@@ -13,6 +13,10 @@ try:
 except ImportError:
     flask = None
 
+if not hasattr(unittest, 'skip'):
+    # XXX: Skipping tests not supported in Python 2.6
+    import unittest2 as unittest
+
 
 @unittest.skipIf(flask is None, 'Flask is not installed.')
 class FlaskDispatchTest(framework.DispatchTestMixin, PythonicTestCase):

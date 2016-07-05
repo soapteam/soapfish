@@ -28,6 +28,11 @@ else:
     from django.conf.urls import url
     from django.test import Client
 
+if not hasattr(unittest, 'skip'):
+    # XXX: Skipping tests not supported in Python 2.6
+    import unittest2 as unittest
+
+
 urlconf = namedtuple('urlconf', 'urlpatterns')
 
 
