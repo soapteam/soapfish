@@ -1,8 +1,6 @@
 -r requirements.txt
 
 coverage
-django
-flask
 isort
 nose>=1.0
 unittest2
