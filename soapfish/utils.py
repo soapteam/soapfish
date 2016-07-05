@@ -183,7 +183,7 @@ def find_xsd_namespaces(xml):
     nsmap = xml.nsmap.copy()
     for x in xml.xpath('//*[local-name()="schema"]'):
         nsmap.update(x.nsmap)
-    return {k for k, v in six.iteritems(nsmap) if v in (ns.xsd, ns.xsd2000)}
+    return set(k for k, v in six.iteritems(nsmap) if v in (ns.xsd, ns.xsd2000))
 
 
 def walk_schema_tree(schemas, callback, seen=None):

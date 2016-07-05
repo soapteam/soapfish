@@ -27,7 +27,7 @@ Currently the project supports the following:
 
 Other notable features include:
 
-- Support for Python 2.7 and 3.3+
+- Support for Python 2.6, 2.7 and 3.3+
 - Licensed under the 3-clause BSD license
 - Code generation utilities to get started quickly
 - Parsing/serializing a Python class model from/to XML so you can easily work

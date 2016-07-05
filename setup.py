@@ -9,8 +9,8 @@ from setuptools import find_packages, setup
 
 import soapfish
 
-if sys.version_info < (2, 7) or (3, 0) <= sys.version_info < (3, 3):
-    sys.stderr.write('soapfish requires Python 2.7 or 3.3+')
+if sys.version_info < (2, 6) or (3, 0) <= sys.version_info < (3, 3):
+    sys.stderr.write('Soapfish requires Python 2.6, 2.7 or 3.3+')
     sys.exit(1)
 
 
@@ -71,6 +71,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',

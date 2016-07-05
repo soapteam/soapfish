@@ -12,7 +12,8 @@ from soapfish.testutil import echo_service, framework
 try:
     import django
     from django.conf import settings
-except ImportError:
+except (ImportError, SyntaxError):
+    # XXX: SyntaxError caused by Django 1.8+ on Python 2.6
     django = None
 else:
     settings.configure(

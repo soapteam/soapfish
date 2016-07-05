@@ -34,7 +34,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         assert_contains('Name', symbols.keys())
         assert_contains('Job', symbols.keys())
 
-        assert_equals({'job', 'name'}, list(schemas[0].elements))
+        assert_equals(set(['name', 'job']), list(schemas[0].elements))
 
         Job = symbols['Job']
         Name = symbols['Name']
@@ -66,7 +66,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
         assert_contains('Person', symbols.keys())
         assert_contains('Job', symbols.keys())
 
-        assert_equals({'job', 'person'}, list(schemas[0].elements))
+        assert_equals(set(['person', 'job']), list(schemas[0].elements))
 
         Job = symbols['Job']
         Person = symbols['Person']
