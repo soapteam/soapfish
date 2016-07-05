@@ -24,6 +24,10 @@ the `soapfish` fork.
     - _Patch contributed by Martin Mrose, tests written by Felix Schwarz_
   - Implemented a dispatcher for Flask (#53)
   - Implement service.route function to avoid changes to generated code (#68)
+  - Changed to use `requests` instead of `httplib2`.
+  - Added support for multiple inline schema imports and includes.
+  - Added support for import of other WSDL documents.
+  - Support for reordering of schema imports and includes and handle circular imports.
 - **Bug Fixes:**
   - Make xsd.Decimal field accept Python Decimal (#52)
   - Schema validation now also uses imported schemas correctly
@@ -35,8 +39,19 @@ the `soapfish` fork.
   - Omit `minOccurs=1` and `maxOccurs=1` in `xsd2py` as these are the default.
     (The latter produces invalid code because `xsd.Element` doesn't support it.)
   - Restored ability to validate parsed XML using a soapfish schema in `ComplexType`
+  - Fixed WSDL classes to more closely match the WSDL specifications.
+  - Fixed WSDL classes to correctly define SOAP extensibility elements.
+  - Removed reverse references from WSDL classes.
+  - Fixed query string handling in dispatch to be more robust.
+  - Support importing documents over HTTPS.
+  - Fixed detection of XML schema namespaces.
+  - Attempts to fix handling of remote vs local imports.
 - **Miscellaneous:**
   - Renamed `SoapboxRequest` and `SoapboxResponse` to `SOAPRequest` and `SOAPResponse` respectively.
+  - Improved testing against different versions of Python, Django & Flask.
+  - Improved entry points for generation scripts - additional flags, etc.
+  - Dropped support for Django < 1.6
+  - Moved to using an external dependency for `iso8601`
 
 0.5.1 (2014-06-12)
 ------------------
