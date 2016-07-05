@@ -872,7 +872,6 @@ class Complex_PythonType(type):
         return newcls
 
 
-@functools.total_ordering
 class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
     '''
     Parent for XML elements that have sub-elements.
@@ -919,6 +918,21 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         # FIXME: We should do this without the conversion back to XML.
         return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
             and etree.tostring(self._xmlelement) < etree.tostring(other._xmlelement)
+
+    def __gt__(self, other):
+        # FIXME: We should do this without the conversion back to XML.
+        return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
+            and etree.tostring(self._xmlelement) > etree.tostring(other._xmlelement)
+
+    def __le__(self, other):
+        # FIXME: We should do this without the conversion back to XML.
+        return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
+            and etree.tostring(self._xmlelement) <= etree.tostring(other._xmlelement)
+
+    def __ge__(self, other):
+        # FIXME: We should do this without the conversion back to XML.
+        return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
+            and etree.tostring(self._xmlelement) >= etree.tostring(other._xmlelement)
 
     def __ne__(self, other):
         return not self.__eq__(other)

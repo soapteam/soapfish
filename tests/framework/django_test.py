@@ -40,7 +40,7 @@ class DjangoDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
         self.client = Client()
 
     def _prepare_extras(self, headers):
-        extras = {'HTTP_' + k.replace('-', '_').upper(): v for k, v in headers.items()}
+        extras = dict(('HTTP_' + k.replace('-', '_').upper(), v) for k, v in headers.items())
         extras.update(content_type=headers['content-type'])
         return extras
 
