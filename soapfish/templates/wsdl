@@ -124,14 +124,15 @@ class {{ _om.name }}Headers(BaseHeader):
 ##############################################################################
 {# [blank line] #}
 {# [blank line] #}
-#Uncomment these lines to turn on Django dispatching:
-#from soapfish.django_ import django_dispatcher
-#dispatcher = django_dispatcher({{ port.name }}_SERVICE)
+# NOTE: Uncomment the following lines to turn on dispatching for Django:
+# from soapfish.django_ import django_dispatcher
+# dispatcher = django_dispatcher({{ port.name }}_SERVICE)
 {# [blank line] #}
-# Put these lines in the urls.py file of your Django project/application:
-#urlpatterns += patterns('',
-#    (r'{{ service.ports.0.address.location|url_regex }}', '<module>.dispatcher'),
-#)
+{# [blank line] #}
+# NOTE: Put these lines in the urls.py for your project or application:
+# urlpatterns += patterns('',
+#     (r'{{ service.ports.0.address.location|url_regex }}', '<module>.dispatcher'),
+# )
 {%- else %}
 ##############################################################################
 # SOAP Service Stub

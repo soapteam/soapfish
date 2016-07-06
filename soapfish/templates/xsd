@@ -27,7 +27,7 @@ from soapfish import xsd
 {%- if st.list %}
 {{ lib.render_xsd_List(st.name, known_types) }}
 {%- endif %}
-{% do known_types.append(st.name|capitalize) %}
+{%- do known_types.append(st.name|capitalize) %}
 {%- endfor %}
 {#- Attribute Groups -#}
 {%- for attrGroup in schema.attributeGroups %}
@@ -47,6 +47,4 @@ from soapfish import xsd
 {{ lib.render_complexType(element.name, element.complexType, known_types) }}
 {%- endfor %}
 {{ lib.render_Schema(schema, location, known_types) }}
-{# [blank line] #}
-{# [blank line] #}
 {#- vim:set et ft=django nowrap sts=4 sw=4 ts=4: -#}

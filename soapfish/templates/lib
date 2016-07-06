@@ -25,49 +25,46 @@ Schema_{{ schema_name(schema) }} = xsd.Schema(
     attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
     groups=[{% for g in schema.groups %}{{ g.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
     complexTypes=[{% for ct in schema.complexTypes %}{{ ct.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e.type|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
+    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
 )
 {%- if location %}
 {# [blank line] #}
 # XXX: Workaround for naming issues related to relative locations!
 Schema_{{ schema_name(schema, location) }} = Schema_{{ schema_name(schema) }}
-{%- endif -%}
+{%- endif %}
+{# [blank line] #}
+{# [blank line] #}
 {%- endmacro %}
 
 {% macro render_xsd_List(name, known_types=None) -%}
 class {{ name|capitalize }}(xsd.List):
     pass
+{# [blank line] #}
+{# [blank line] #}
 {%- endmacro %}
 
 {% macro render_xsd_AttributeGroup(attrGroup, known_types=None) -%}
 class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
     {%- for attribute in attrGroup.attributes %}
-    {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types)(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
+    {%- set name = attribute.ref|remove_namespace if attribute.ref else attribute.name %}
+    {{ name|fix_keyword }} = xsd.Attribute({{ attribute|type(known_types) }}{% if name in keywords %}, tagname='{{ name }}'{% endif %}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
     {%- endfor %}
+{# [blank line] #}
+{# [blank line] #}
 {%- endmacro %}
 
 {% macro render_xsd_Group(element, known_types=None) -%}
 class {{ group.name|capitalize }}(xsd.Group):
     {%- for element in group.sequence.elements %}
-    {%- if element.ref %}
-    {{ element.ref|remove_namespace }} = xsd.Element({{ element.ref|type(known_types) }})
-    {%- if element.ref|remove_namespace in keywords %}
-    _{{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type(known_types) }}, tagname='{{ element.ref|remove_namespace }}')
-    {%- else %}
-    {{ element.ref|remove_namespace }} = xsd.Element({{ element.type|type(known_types) }})
-    {%- endif %}
-    {%- else %}
-    {%- if element.name in keywords %}
-    _{{ element.name }} = xsd.Element({{ element.type|type(known_types) }}, tagname='{{ element.name }}')
-    {%- else %}
-    {{ element.name }} = xsd.Element({{ element.type|type(known_types) }})
-    {%- endif %}
-    {%- endif %}
+    {%- set name = element.ref|remove_namespace if element.ref else element.name %}
+    {{ name|fix_keyword }} = xsd.Element({{ element|type(known_types) }}{% if name in keywords %}, tagname='{{ name }}'{% endif %})
     {%- endfor %}
+{# [blank line] #}
+{# [blank line] #}
 {%- endmacro %}
 
 {% macro render_xsd_Restriction(name, restriction, known_types=None) -%}
-class {{ name|capitalize }}({{ restriction.base|type(known_types) }}):
+class {{ name|capitalize }}({{ restriction|type(known_types) }}):
 {%- if restriction.enumerations %}
     enumeration = [{% for enum in restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endif %}
@@ -90,21 +87,22 @@ class {{ name|capitalize }}({{ restriction.base|type(known_types) }}):
     pass
 {%- endif %}
 {# [blank line] #}
+{# [blank line] #}
 {%- endmacro %}
 
 {% macro render_complexType(class_name, content, known_types=None) -%}
 {%- set ct = content %}
 {%- if not ct.sequence and not ct.complexContent %}
 class {{ class_name|capitalize }}(xsd.ComplexType):
-    ''
+    pass
 {%- endif %}
 {%- if ct.complexContent %}
     {%- if ct.complexContent.restriction %}
-class {{ ct.name|capitalize }}({{ ct.complexContent.restriction.base|type(known_types) }}):
+class {{ ct.name|capitalize }}({{ ct.complexContent.restriction|type(known_types) }}):
     INHERITANCE = xsd.Inheritance.RESTRICTION
     {%- set content = ct.complexContent.restriction %}
     {%- else %}
-class {{ ct.name|capitalize }}({{ ct.complexContent.extension.base|type(known_types) }}):
+class {{ ct.name|capitalize }}({{ ct.complexContent.extension|type(known_types) }}):
     INHERITANCE = xsd.Inheritance.EXTENSION
     {%- set content = ct.complexContent.extension %}
     {%- endif %}
@@ -124,11 +122,8 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
     {%- set elements = content.choice.elements %}
 {%- endif %}
 {%- for attribute in content.attributes %}
-    {%- if attribute.ref %}
-    {{ attribute.ref|remove_namespace }} = xsd.Attribute({{ attribute.ref|type(known_types) }})
-    {%- else %}
-    {{ attribute.name }} = xsd.Attribute({{ attribute.type|type(known_types) }}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
-    {%- endif %}
+    {%- set name = attribute.ref|remove_namespace if attribute.ref else attribute.name %}
+    {{ name|fix_keyword }} = xsd.Attribute({{ attribute|type(known_types) }}{% if name in keywords %}, tagname='{{ name }}'{% endif %}{% if attribute.use %}, use={{ attribute.use|use }}{% endif %})
 {%- endfor %}
 {%- for attrGroupRef in content.attributeGroups %}
     {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type(known_types) }})
@@ -140,35 +135,16 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
 {{ render_create_method(elements, known_types) }}
 {%- endif %}
 {# blank line #}
+{# blank line #}
 {%- endmacro %}
 
 {% macro render_xsd_element(element, known_types=None) -%}
-    {%- if element.maxOccurs and element.maxOccurs > 1 %}
-        {%- set field_type = 'ListElement' %}
-    {%- else %}
-        {%- set field_type = 'Element' %}
-    {%- endif %}
+    {%- set field_type = 'ListElement' if element.maxOccurs and element.maxOccurs > 1 else 'Element' %}
     {%- if element.type %}
-    {%- if element.maxOccurs and element.maxOccurs > 1 %}
-    {%- if element.name in keywords %}
-    _{{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
-    {%- else %}
-    {{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, '{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and (element.maxOccurs > 1) %}, maxOccurs={{ element.maxOccurs|max_occurs_to_code }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
-    {%- endif %}
-    {%- else %}
-    {%- if element.name in keywords %}
-    _{{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}, tagname='{{ element.name }}'{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
-    {%- else %}
-    {{ element.name }} = xsd.{{ field_type }}({{ element.type|type(known_types) }}{% if not element.minOccurs is none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
-    {%- endif %}
-    {%- endif %}
+    {{ element.name|fix_keyword }} = xsd.{{ field_type }}({{ element|type(known_types) }}{% if element.name in keywords or element.maxOccurs and element.maxOccurs > 1 %}, tagname='{{ element.name }}'{% endif %}{% if element.minOccurs is not none %}, minOccurs={{ element.minOccurs|upper }}{% endif %}{% if element.maxOccurs and element.maxOccurs > 1 %}, maxOccurs={{ element.maxOccurs|max_occurs }}{% endif %}{% if element.nillable %}, nillable=True{% endif %})
     {%- endif %}
     {%- if element.simpleType %}
-    {%- if element.name in keywords %}
-    _{{ element.name }} = xsd.Element({{ element.simpleType.restriction.base|type(known_types) }}(
-    {%- else %}
-    {{ element.name }} = xsd.Element({{ element.simpleType.restriction.base|type(known_types) }}(
-    {%- endif %}
+    {{ element.name|fix_keyword }} = xsd.Element({{ element.simpleType.restriction|type(known_types) }}(
     {%- if element.simpleType.restriction.enumerations %}
     enumeration=[{% for enum in element.simpleType.restriction.enumerations %}'{{ enum.value }}'{% if not loop.last %}, {% endif %}{% endfor %}]
     {%- endif %}
@@ -185,20 +161,21 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
     {%- if element.simpleType.restriction.maxLength %}maxLength={{ element.simpleType.restriction.maxLength.value }},{% endif %}
     {%- if element.simpleType.restriction.whiteSpace %}whiteSpace={{ element.simpleType.restriction.whiteSpace.value }},{% endif %}))
     {%- endif %}
-    {%- if element.ref %}{{ element.ref|remove_namespace }} = xsd.Ref({{ element.ref|type(known_types) }}){% endif %}
+    {%- if element.ref %}
+    {{ element.ref|remove_namespace }} = xsd.Ref({{ element|type(known_types) }})
+    {%- endif %}
 {%- endmacro %}
 
 {% macro render_create_method(elements, known_types=None) -%}
 {# [blank line] #}
     @classmethod
-    def create(cls{% for e in elements %}{% if e.minOccurs == 1 or e.minOccurs == None %}, {{ e.name }}{% endif %}{% endfor %}):
+    def create(cls{% for e in elements %}{% if e.minOccurs == 1 or e.minOccurs is none %}, {{ e.ref|remove_namespace|fix_keyword if e.ref else e.name|fix_keyword }}{% endif %}{% endfor %}):
         instance = cls()
-        {%- for e in elements %}
-        {%- if e.minOccurs == 1 or e.minOccurs == None %}
-        instance.{{ e.name }} = {{ e.name }}
-        {%- endif %}
+        {%- for element in elements %}
+        {%- if element.minOccurs is not none and element.minOccurs != 1 %}{% continue %}{% endif %}
+        {%- set name = element.ref|remove_namespace if element.ref else element.name %}
+        instance.{{ name|fix_keyword }} = {{ name|fix_keyword }}
         {%- endfor %}
         return instance
-{# [blank line] #}
 {%- endmacro %}
 {#- vim:set et ft=django nowrap sts=4 sw=4 ts=4: -#}

@@ -84,6 +84,7 @@ class Attribute(xsd.ComplexType):
     ref = xsd.Attribute(xsd.String)
     type = xsd.Attribute(xsd.String)
     use = xsd.Attribute(xsd.String)
+    simpleType = xsd.Element(SimpleType, minOccurs=0)
 
 
 class AttributeGroup(xsd.ComplexType):

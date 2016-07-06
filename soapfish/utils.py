@@ -15,7 +15,6 @@ from . import namespaces as ns
 
 logger = logging.getLogger('soapfish')
 
-
 # --- File Functions ----------------------------------------------------------
 def resolve_location(path, cwd):
     if '://' in path:
@@ -39,56 +38,14 @@ def open_document(path):
 
 
 # --- Template Filters --------------------------------------------------------
-def remove_namespace(full_typename):
-    if not full_typename:
-        return None
-    return full_typename.split(':')[-1]
-
-
-def capitalize(value):
-    return value[0].upper() + value[1:]
+def remove_namespace(qname):
+    return qname.split(':')[-1] if qname else None
 
 
 def uncapitalize(value):
     if value == 'QName':
         return value
     return value[0].lower() + value[1:]
-
-
-def use(value):
-    from . import xsd
-    if value == xsd.Use.OPTIONAL:
-        return 'xsd.Use.OPTIONAL'
-    if value == xsd.Use.REQUIRED:
-        return 'xsd.Use.REQUIRED'
-    if value == xsd.Use.PROHIBITED:
-        return 'xsd.Use.PROHIBITED'
-    raise ValueError('Unknown value for use attribute: %s' % value)
-
-
-def url_regex(url):
-    '''
-    http://example.net/ws/endpoint --> ^ws/endpoint$
-    '''
-    o = six.moves.urllib.parse.urlparse(url)
-    return r'^%s$' % o.path.lstrip('/')
-
-
-def url_component(url, item):
-    parts = six.moves.urllib.parse.urlparse(url)
-    try:
-        return getattr(parts, item)
-    except AttributeError:
-        raise ValueError('Unknown URL component: %s' % item)
-
-
-def url_template(url):
-    '''
-    http://example.net/ws/endpoint --> %s/ws/endpoint
-    '''
-    o = list(six.moves.urllib.parse.urlparse(url))
-    o[0:2] = ['{scheme}', '{host}']
-    return six.moves.urllib.parse.urlunparse(o)
 
 
 def schema_name(obj, location=None):
@@ -118,8 +75,6 @@ def schema_name(obj, location=None):
 def schema_select(schemas, elements):
     selected = None
     elements = [remove_namespace(x) for x in elements]
-    print(elements)
-    # {{ part.element|remove_namespace }}')
     for schema in schemas:
         if all(schema.get_element_by_name(x) for x in elements):
             selected = schema
@@ -131,22 +86,68 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
     '''
     Returns a rendering environment to use with code generation templates.
     '''
-    from . import soap, xsd, wsdl
+    from . import soap, xsd, xsdspec, wsdl
 
-    def get_type(full_typename, known_types=None):
-        if not full_typename:
-            return None
-        typename = full_typename.split(':')
-        if len(typename) < 2:
-            typename.insert(0, None)
-        ns, typename = typename
+    def capitalize(value):
+        return value[0].upper() + value[1:]
+
+    def use(value):
+        from . import xsd
+        if value == xsd.Use.OPTIONAL:
+            return 'xsd.Use.OPTIONAL'
+        if value == xsd.Use.REQUIRED:
+            return 'xsd.Use.REQUIRED'
+        if value == xsd.Use.PROHIBITED:
+            return 'xsd.Use.PROHIBITED'
+        raise ValueError('Unknown value for use attribute: %s' % value)
+
+    def url_regex(url):
+        o = six.moves.urllib.parse.urlparse(url)
+        return r'^%s$' % o.path.lstrip('/')
+
+    def url_component(url, item):
+        parts = six.moves.urllib.parse.urlparse(url)
+        try:
+            return getattr(parts, item)
+        except AttributeError:
+            raise ValueError('Unknown URL component: %s' % item)
+
+    def url_template(url):
+        o = list(six.moves.urllib.parse.urlparse(url))
+        o[0:2] = ['{scheme}', '{host}']
+        return six.moves.urllib.parse.urlunparse(o)
+
+    def get_type(obj, known_types=None):
+        if isinstance(obj, (xsdspec.Attribute, xsdspec.Element)):
+            if obj.ref:
+                qname = obj.ref
+            elif obj.type:
+                qname = obj.type
+            elif obj.simpleType:
+                # FIXME: Determine how to handle embedded types...
+                raise NotImplementedError('Unable to handle embedded type.')
+        elif isinstance(obj, (xsdspec.Extension, xsdspec.Restriction)):
+            if obj.base:
+                qname = obj.base
+        elif isinstance(obj, six.string_types):
+            qname = obj
+
+        if not qname:
+            raise ValueError('Unable to determine type of %s' % obj)
+
+        qname = qname.split(':')
+        if len(qname) < 2:
+            qname.insert(0, None)
+        ns, name = qname
+
         if ns in xsd_namespaces:
-            return 'xsd.%s' % capitalize(typename)
+            return 'xsd.%s' % capitalize(name)
+        elif known_types is not None and name in known_types:
+            return '%s' % capitalize(name)
         else:
-            if known_types is not None and typename in known_types:
-                return "%s" % capitalize(typename)
-            else:
-                return "__name__ + '.%s'" % capitalize(typename)
+            return "__name__ + '.%s'" % capitalize(name)
+
+    keywords = set(keyword.kwlist + ['False', 'None', 'True'])
 
     env = Environment(
         extensions=['jinja2.ext.do', 'jinja2.ext.loopcontrols'],
@@ -154,7 +155,8 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
     )
     env.filters.update(
         capitalize=capitalize,
-        max_occurs_to_code=lambda x: 'xsd.UNBOUNDED' if x is xsd.UNBOUNDED else str(x),
+        fix_keyword=lambda x: '_%s' % str(x) if str(x) in keywords else str(x),
+        max_occurs=lambda x: 'xsd.UNBOUNDED' if x is xsd.UNBOUNDED else str(x),
         remove_namespace=remove_namespace,
         type=get_type,
         url_component=url_component,
@@ -164,7 +166,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
     )
     env.globals.update(
         SOAPTransport=soap.SOAP_HTTP_Transport,
-        keywords=keyword.kwlist,
+        keywords=keywords,
         get_by_name=wsdl.get_by_name,
         get_message_header=wsdl.get_message_header,
         get_message_object=wsdl.get_message_object,
