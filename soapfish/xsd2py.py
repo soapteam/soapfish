@@ -153,7 +153,7 @@ def schema_to_py(schema, xsd_namespaces, known_paths=None, location=None,
         del env.globals['preamble']
     tpl = env.get_template('xsd')
 
-    return tpl.render(schema=schema, cwd=cwd, base_path=base_path).strip()
+    return tpl.render(schema=schema, cwd=cwd, base_path=base_path)
 
 
 # --- Program -----------------------------------------------------------------
@@ -177,7 +177,7 @@ def main(argv=None):
     cwd = os.path.dirname(os.path.abspath(opt.xsd))
     code = generate_code_from_xsd(xml, encoding='utf-8', cwd=cwd)
 
-    opt.output.write(code)
+    opt.output.write(code.strip())
 
     return 0
 

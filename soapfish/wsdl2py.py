@@ -109,7 +109,7 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
         schemas=schemas,
         is_server=bool(target == 'server'),
         use_wsa=use_wsa,
-    ).strip()
+    )
 
     return code.encode(encoding) if encoding else code
 
@@ -142,7 +142,7 @@ def main(argv=None):
     cwd = os.path.dirname(os.path.abspath(opt.wsdl))
     code = generate_code_from_wsdl(xml, opt.target, opt.use_wsa, cwd=cwd)
 
-    opt.output.write(code)
+    opt.output.write(code.strip())
 
     return 0
 
