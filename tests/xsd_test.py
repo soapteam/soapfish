@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import iso8601
 from lxml import etree
-from pythonic_testcase import assert_raises, assert_equals
+from pythonic_testcase import assert_equals, assert_raises
 
 from soapfish import xsd, xsdspec
 

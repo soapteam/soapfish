@@ -9,7 +9,6 @@ import requests
 import six
 
 from . import core, namespaces as ns, soap11, soap12, wsa
-from six.moves.urllib.parse import urlparse
 from .utils import uncapitalize
 
 SOAP_HTTP_Transport = ns.wsdl_soap_http

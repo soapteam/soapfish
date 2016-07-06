@@ -1,10 +1,15 @@
 from __future__ import print_function
 
 from nose import SkipTest
-from pythonic_testcase import PythonicTestCase, assert_length, assert_equals, assert_not_none, assert_isinstance
+from pythonic_testcase import (
+    PythonicTestCase,
+    assert_equals,
+    assert_isinstance,
+    assert_length,
+    assert_not_none,
+)
 
-from soapfish import xsd
-from soapfish import wsdl2py
+from soapfish import wsdl2py, xsd
 from soapfish.testutil import generated_symbols
 
 

@@ -1,7 +1,7 @@
 import unittest
 
 from lxml import etree
-from pythonic_testcase import assert_none, assert_equals, assert_raises
+from pythonic_testcase import assert_equals, assert_none, assert_raises
 
 from soapfish import core, soap, soap11, soap12
 

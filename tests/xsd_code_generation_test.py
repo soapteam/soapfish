@@ -3,10 +3,16 @@ from __future__ import print_function
 from lxml import etree
 from nose import SkipTest
 from pythonic_testcase import (
-    PythonicTestCase, assert_length, assert_equals, assert_not_none, assert_isinstance, assert_contains, assert_true,
+    PythonicTestCase,
+    assert_contains,
+    assert_equals,
+    assert_isinstance,
+    assert_length,
+    assert_not_none,
+    assert_true,
 )
-from soapfish import xsd, xsdspec
-from soapfish import xsd2py
+
+from soapfish import xsd, xsd2py, xsdspec
 from soapfish.testutil import generated_symbols
 
 

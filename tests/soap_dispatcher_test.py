@@ -1,11 +1,18 @@
 from __future__ import absolute_import
 
+import six
 from lxml import etree
 from pythonic_testcase import (
-    PythonicTestCase, assert_false, assert_equals, assert_not_none, assert_contains, assert_raises,
-    assert_not_contains, assert_true, assert_length,
+    PythonicTestCase,
+    assert_contains,
+    assert_equals,
+    assert_false,
+    assert_length,
+    assert_not_contains,
+    assert_not_none,
+    assert_raises,
+    assert_true,
 )
-import six
 
 from soapfish import wsa, xsd
 from soapfish.core import SOAPError, SOAPRequest, SOAPResponse

@@ -4,7 +4,13 @@ from __future__ import absolute_import
 
 from datetime import datetime as DateTime
 
-from pythonic_testcase import PythonicTestCase, assert_equals, assert_contains, assert_none
+from pythonic_testcase import (
+    PythonicTestCase,
+    assert_contains,
+    assert_equals,
+    assert_none,
+)
+
 from soapfish.flask_ import flask_dispatcher
 from soapfish.testutil import echo_service
 

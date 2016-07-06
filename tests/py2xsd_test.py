@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from lxml import etree
-from pythonic_testcase import PythonicTestCase, assert_true, assert_false
+from pythonic_testcase import PythonicTestCase, assert_false, assert_true
 
 from soapfish import xsd
 from soapfish.py2xsd import generate_xsd

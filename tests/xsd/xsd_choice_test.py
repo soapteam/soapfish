@@ -1,7 +1,12 @@
 import unittest
 
 from lxml import etree
-from pythonic_testcase import assert_none, assert_equals, assert_true, assert_false
+from pythonic_testcase import (
+    assert_equals,
+    assert_false,
+    assert_none,
+    assert_true,
+)
 
 from soapfish import xsd
 from soapfish.py2xsd import generate_xsd

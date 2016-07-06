@@ -1,5 +1,5 @@
 
-from pythonic_testcase import PythonicTestCase, assert_none, assert_equals
+from pythonic_testcase import PythonicTestCase, assert_equals, assert_none
 
 from soapfish import xsdspec
 
