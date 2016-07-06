@@ -10,7 +10,7 @@ The main purpose of this library is a neat implementation of the SOAP protocol,
 but the `soapfish.xsd` module can used for any XML as it gives a means of
 mapping XML to an object. The object description generally is similar to fields
 in the Django ORM - the static fields that define instance fields. The main
-difference would be that type is passed as first parameter, rather then being a
+difference would be that type is passed as first parameter, rather than being a
 field e.g.
 
 .. code-block:: python
