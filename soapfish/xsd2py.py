@@ -153,7 +153,7 @@ def schema_to_py(schema, xsd_namespaces, known_paths=None, location=None,
         del env.globals['preamble']
     tpl = env.get_template('xsd')
 
-    return tpl.render(schema=schema, cwd=cwd, base_path=base_path)
+    return tpl.render(schema=schema, cwd=cwd, base_path=base_path).strip()
 
 
 # --- Program -----------------------------------------------------------------
