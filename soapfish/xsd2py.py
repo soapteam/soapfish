@@ -161,7 +161,7 @@ def schema_to_py(schema, xsd_namespaces, known_paths=None, location=None,
 
 def main(argv=None):
     stdin = getattr(sys.stdin, 'buffer', sys.stdin)
-    stdout = getattr(sys.stdout, 'buffer', sys.stdin)
+    stdout = getattr(sys.stdout, 'buffer', sys.stdout)
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,

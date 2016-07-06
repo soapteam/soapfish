@@ -119,7 +119,7 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
 
 def main(argv=None):
     stdin = getattr(sys.stdin, 'buffer', sys.stdin)
-    stdout = getattr(sys.stdout, 'buffer', sys.stdin)
+    stdout = getattr(sys.stdout, 'buffer', sys.stdout)
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,

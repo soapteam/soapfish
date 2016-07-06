@@ -258,7 +258,7 @@ def schema_validator(schemas):
 
 
 def main(argv=None):
-    stdout = getattr(sys.stdout, 'buffer', sys.stdin)
+    stdout = getattr(sys.stdout, 'buffer', sys.stdout)
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
