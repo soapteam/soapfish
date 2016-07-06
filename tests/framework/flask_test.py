@@ -3,8 +3,6 @@ from __future__ import absolute_import
 import unittest
 from datetime import datetime
 
-from pythonic_testcase import *  # noqa
-
 from soapfish.flask_ import flask_dispatcher
 from soapfish.testutil import echo_service, framework
 
@@ -19,7 +17,7 @@ if not hasattr(unittest, 'skip'):
 
 
 @unittest.skipIf(flask is None, 'Flask is not installed.')
-class FlaskDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
+class FlaskDispatchTest(framework.DispatchTestMixin, unittest.TestCase):
 
     def setUp(self):  # noqa
         # XXX: Python 2.6 and unittest2 still call this method for skipped class.
@@ -33,14 +31,14 @@ class FlaskDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
 
     def test_can_retrieve_wsdl(self):
         response = self.client.get('/ws/', query_string='wsdl')
-        assert_equals(200, response.status_code)
-        assert_equals('text/xml', response.headers['Content-Type'])
-        assert_contains(b'<wsdl:definitions', response.data)
+        self.assertEquals(200, response.status_code)
+        self.assertEquals('text/xml', response.headers['Content-Type'])
+        self.assertIn(b'<wsdl:definitions', response.data)
 
     def test_can_dispatch_simple_request(self):
         input_value = str(datetime.now())
         headers, body = self._soap_request(input_value)
         response = self.client.post('/ws/', data=body, headers=headers)
-        assert_equals(200, response.status_code)
+        self.assertEquals(200, response.status_code)
         body = self._soap_response(response.data)
-        assert_equals(input_value, body.value)
+        self.assertEquals(input_value, body.value)

@@ -4,8 +4,6 @@ import unittest
 from collections import namedtuple
 from datetime import datetime
 
-from pythonic_testcase import *  # noqa
-
 from soapfish.django_ import django_dispatcher
 from soapfish.testutil import echo_service, framework
 
@@ -37,7 +35,7 @@ urlconf = namedtuple('urlconf', 'urlpatterns')
 
 
 @unittest.skipIf(django is None, 'Django is not installed.')
-class DjangoDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
+class DjangoDispatchTest(framework.DispatchTestMixin, unittest.TestCase):
 
     def setUp(self):  # noqa
         # XXX: Python 2.6 and unittest2 still call this method for skipped class.
@@ -55,15 +53,15 @@ class DjangoDispatchTest(framework.DispatchTestMixin, PythonicTestCase):
 
     def test_can_retrieve_wsdl(self):
         response = self.client.get('/ws/', {'wsdl': None})
-        assert_equals(200, response.status_code)
-        assert_equals('text/xml', response['Content-Type'])
-        assert_contains(b'<wsdl:definitions', response.content)
+        self.assertEquals(200, response.status_code)
+        self.assertEquals('text/xml', response['Content-Type'])
+        self.assertIn(b'<wsdl:definitions', response.content)
 
     def test_can_dispatch_simple_request(self):
         input_value = str(datetime.now())
         headers, body = self._soap_request(input_value)
         extras = self._prepare_extras(headers)
         response = self.client.post('/ws/', body, **extras)
-        assert_equals(200, response.status_code)
+        self.assertEquals(200, response.status_code)
         body = self._soap_response(response.content)
-        assert_equals(input_value, body.value)
+        self.assertEquals(input_value, body.value)

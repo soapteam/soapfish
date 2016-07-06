@@ -1,6 +1,3 @@
-from pythonic_testcase import *  # noqa
-
-
 class DispatchTestMixin(object):
 
     def _soap_request(self, input_value):
@@ -17,6 +14,6 @@ class DispatchTestMixin(object):
         soap = self.service.version
         method = self.service.get_method('echoOperation')
         envelope = soap.Envelope.parsexml(response_body)
-        assert_none(envelope.Body.Fault)
+        self.assertIsNone(envelope.Body.Fault)
         element = self.service.find_element_by_name(method.output)
         return envelope.Body.parse_as(element._type.__class__)
