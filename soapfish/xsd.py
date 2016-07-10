@@ -547,7 +547,7 @@ class Element(object):
                         keyword e.g. "import"
         :param nillable: bool, is object nilable.
         '''
-        if minOccurs not in {0, 1}:
+        if minOccurs not in (0, 1):
             raise ValueError('minOccurs for Element can be only 0 or 1, use ListElement instead.')
         self._creation_number = Element._creation_counter
         Element._creation_counter += 1
