@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import namespaces as ns, wsdl, xsd, xsdspec
+from . import namespaces as ns, xsd, xsdspec
 
 
 # FIXME: With the current implementation of schema we cannot share classes
@@ -133,6 +133,7 @@ class Operation(xsd.ComplexType):
 
     # Extensibility Elements:
     operation = xsd.Element(SOAP_Operation, minOccurs=0, namespace=ns.wsdl_soap)
+
 
 class PortType(xsd.ComplexType):
     name = xsd.Attribute(xsd.String)

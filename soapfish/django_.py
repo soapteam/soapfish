@@ -21,7 +21,6 @@ class DjangoEnvironWrapper(object):
 
 
 def django_dispatcher(service, **dispatcher_kwargs):
-    import django
     from django.http import HttpResponse
     from django.views.decorators.csrf import csrf_exempt
 

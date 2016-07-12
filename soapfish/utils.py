@@ -15,6 +15,7 @@ from . import namespaces as ns
 
 logger = logging.getLogger('soapfish')
 
+
 # --- File Functions ----------------------------------------------------------
 def resolve_location(path, cwd):
     if '://' in path:
