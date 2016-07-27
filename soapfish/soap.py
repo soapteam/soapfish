@@ -44,7 +44,6 @@ class SOAPVersion:
             return cls.SOAP11
 
 
-
 class Service(object):
     '''
     Describes service aggregating information required for dispatching and
@@ -72,7 +71,7 @@ class Service(object):
         if use_wsa and output_header is None:
             output_header = wsa.WSAHeader
         self.input_header = input_header
-        self.output_header= output_header
+        self.output_header = output_header
 
     def get_method(self, operationName):
         return tuple(filter(lambda m: m.operationName == operationName, self.methods))[0]
@@ -118,8 +117,8 @@ class Stub(object):
             self.location = self.service.location.format(**parts)
 
     def _handle_response(self, method, http_headers, content):
-        SOAP = self.SERVICE.version
-        envelope = SOAP.Envelope.parsexml(content)
+        soap = self.service.version
+        envelope = soap.Envelope.parsexml(content)
 
         if envelope.Header and method and method.output_header:
             response_header = envelope.Header.parse_as(method.output_header)
@@ -127,13 +126,12 @@ class Stub(object):
             response_header = None
 
         if envelope.Body.Fault:
-            code, message, actor = SOAP.parse_fault_message(envelope.Body.Fault)
+            code, message, actor = soap.parse_fault_message(envelope.Body.Fault)
             error = core.SOAPError(code=code, message=message, actor=actor)
             raise error
 
         if isinstance(method.output, six.string_types):
-            element = self.SERVICE.find_element_by_name(method.output)
-            _type = element._type.__class__
+            _type = self.service.find_element_by_name(method.output)._type.__class__
         else:
             _type = method.output
 
@@ -144,8 +142,8 @@ class Stub(object):
         '''
         :raises: lxml.etree.XMLSyntaxError -- validation problems.
         '''
-        SOAP = self.SERVICE.version
-        method = self.SERVICE.get_method(operationName)
+        soap = self.service.version
+        method = self.service.get_method(operationName)
 
         if isinstance(method.input, six.string_types):
             tagname = method.input
@@ -153,8 +151,8 @@ class Stub(object):
             tagname = uncapitalize(parameter.__class__.__name__)
 
         auth = (self.username, self.password) if self.username else None
-        data = SOAP.Envelope.response(tagname, parameter, header=header)
-        headers = SOAP.build_http_request_headers(method.soapAction)
+        data = soap.Envelope.response(tagname, parameter, header=header)
+        headers = soap.build_http_request_headers(method.soapAction)
 
         logger.info("Call '%s' on '%s'", operationName, self.location)
         logger.debug('Request Headers: %s', headers)
