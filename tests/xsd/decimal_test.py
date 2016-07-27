@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from pythonic_testcase import *
-
 from soapfish import xsd
 from soapfish.testutil import SimpleTypeTestCase
 

@@ -44,7 +44,6 @@ class SOAPVersion:
             return cls.SOAP11
 
 
-
 class Service(object):
     '''
     Describes service aggregating information required for dispatching and
@@ -72,7 +71,7 @@ class Service(object):
         if use_wsa and output_header is None:
             output_header = wsa.WSAHeader
         self.input_header = input_header
-        self.output_header= output_header
+        self.output_header = output_header
 
     def get_method(self, operationName):
         return tuple(filter(lambda m: m.operationName == operationName, self.methods))[0]
