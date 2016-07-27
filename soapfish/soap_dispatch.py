@@ -51,7 +51,7 @@ class SOAPDispatcher(object):
             def callback(item):
                 xsdelement = py2xsd.generate_xsd(item)
                 self._rewrite_locations(xsdelement)
-                xsd = etree.tostring(xsdelement, pretty_print=True)
+                return etree.tostring(xsdelement, pretty_print=True)
             xsds = walk_schema_tree(self.service.schemas, callback)
         self.xsds = xsds
 
