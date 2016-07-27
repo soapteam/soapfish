@@ -47,7 +47,6 @@ import re
 from copy import copy
 from datetime import datetime
 from decimal import Decimal as _Decimal
-from importlib import import_module
 
 import iso8601
 import six
@@ -59,6 +58,11 @@ from .xsd_types import XSDDate
 
 # TODO: Change import we update to iso8601 > 0.1.11 (fixed in 031688e)
 from iso8601.iso8601 import UTC, FixedOffset  # isort:skip
+
+try:
+    import importlib
+except ImportError:
+    importlib = None
 
 
 logger = logging.getLogger(__name__)
@@ -520,7 +524,10 @@ def import_type(type_name):
     if '.' not in type_name:
         raise ValueError('We need the full namepath to be able to import it: %s' % type_name)
     module, name = type_name.rsplit('.', 1)
-    module = import_module(module)
+    if importlib:
+        module = importlib.import_module(module)
+    else:
+        module = __import__(module, globals(), {}, [name])  # XXX: Python 2.6
     return getattr(module, name)
 
 
