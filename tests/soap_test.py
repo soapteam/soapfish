@@ -80,14 +80,15 @@ class ErrorHandling(unittest.TestCase):
         assert_none(actor)
         
     def test_soap11_fault_handling(self):
-        stub = soap.Stub(location="empty")
-        stub.SERVICE = soap.Service(
+        service = soap.Service(
+            location='mock_location',
+            methods=[],
             name=None,
-            targetNamespace=None,
-            location="mock_location",
             schemas=[],
+            targetNamespace=None,
             version=soap.SOAPVersion.SOAP11,
-            methods=[])
+        )
+        stub = soap.Stub(location='empty', service=service)
         
         e = assert_raises(core.SOAPError, lambda: stub._handle_response(None, None, SOAP11_ERROR_MESSAGE))
         assert_equals('Result', e.code)
@@ -109,14 +110,15 @@ class ErrorHandling(unittest.TestCase):
         assert_none(actor)
         
     def test_soap12_fault_handling(self):
-        stub = soap.Stub(location="empty")
-        stub.SERVICE = soap.Service(
+        service = soap.Service(
+            location='mock_location',
+            methods=[],
             name=None,
-            targetNamespace=None,
-            location="mock_location",
             schemas=[],
+            targetNamespace=None,
             version=soap.SOAPVersion.SOAP12,
-            methods=[])
+        )
+        stub = soap.Stub(location='empty', service=service)
         
         e = assert_raises(core.SOAPError, lambda: stub._handle_response(None, None, SOAP12_ERROR_ROLE))
         assert_equals('env:Sender', e.code)
