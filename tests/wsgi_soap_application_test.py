@@ -26,7 +26,7 @@ class WsgiSoapApplicationTest(PythonicTestCase):
             b'</senv:Envelope>'
         )
         response = app(self._wsgi_env(soap_message), start_response)
-        assert_equals(WsgiSoapApplication.HTTP_200, start_response.code)
+        assert_equals('200 OK', start_response.code)
         assert_equals('text/xml', dict(start_response.headers)['Content-Type'])
         expected_xml = (
             b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">'

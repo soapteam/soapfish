@@ -233,9 +233,6 @@ class SOAPDispatcher(object):
 
 
 class WsgiSoapApplication(object):
-    HTTP_500 = '500 Internal server error'
-    HTTP_200 = '200 OK'
-    HTTP_405 = '405 Method Not Allowed'
 
     def __init__(self, dispatcher):
         self.dispatcher = dispatcher
@@ -245,17 +242,5 @@ class WsgiSoapApplication(object):
         content = req_env['wsgi.input'].read(content_length)
         soap_request = SOAPRequest(req_env, content)
         response = self.dispatcher.dispatch(soap_request)
-        start_response(self._get_http_status(response.http_status_code), response.http_headers.items())
+        start_response(response.http_status_text, response.http_headers.items())
         return [response.http_content]
-
-    def _get_http_status(self, response_status):
-        if response_status == 200:
-            return self.HTTP_200
-        elif response_status == 500:
-            return self.HTTP_500
-        elif response_status == 405:
-            return self.HTTP_405
-        else:
-            # wsgi wants an http status of len >= 4
-            # TODO do a better status code transformation
-            return str(response_status) + ' '
