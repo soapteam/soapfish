@@ -2,7 +2,6 @@
 import imp
 
 import settings
-
 from django.core.management import execute_manager
 
 try:

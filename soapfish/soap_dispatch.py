@@ -61,7 +61,7 @@ class SOAPDispatcher(object):
         if i == len(self.middlewares):
             # at the end call the method
             return call_method
-        return functools.partial(self.middlewares[i], next_call=self.middleware(i+1))
+        return functools.partial(self.middlewares[i], next_call=self.middleware(i + 1))
 
     def _parse_soap_content(self, xml):
         SOAP = self.service.version

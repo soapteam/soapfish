@@ -13,7 +13,7 @@ class DjangoEnvironWrapper(object):
         self.environ = environ
 
     def get(self, name, default=None):
-        cgi_name = 'HTTP_'+name
+        cgi_name = 'HTTP_' + name
         for key in (name, cgi_name):
             if key in self.environ:
                 return self.environ[key]

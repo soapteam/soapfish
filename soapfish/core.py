@@ -2,7 +2,6 @@
 
 import six
 
-
 __all__ = ['SOAPError', 'SOAPRequest', 'SOAPResponse']
 
 

@@ -318,7 +318,7 @@ class Date(SimpleType):
         sign = 1 if (match.group('tz_sign') == '+') else -1
         offset_hours = sign * int(match.group('tz_hour'))
         offset_minutes = sign * int(match.group('tz_minute'))
-        return FixedOffset(offset_hours, offset_minutes, name=u'UTC'+offset_string)
+        return FixedOffset(offset_hours, offset_minutes, name=u'UTC' + offset_string)
 
 
 class DateTime(SimpleType):
