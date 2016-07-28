@@ -5,6 +5,7 @@ import itertools
 import keyword
 import logging
 import os
+import re
 from datetime import datetime, timedelta
 
 import requests
@@ -104,7 +105,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
 
     def url_regex(url):
         o = six.moves.urllib.parse.urlparse(url)
-        return r'^%s$' % o.path.lstrip('/')
+        return r'^%s$' % re.escape(o.path.lstrip('/'))
 
     def url_component(url, item):
         parts = six.moves.urllib.parse.urlparse(url)
