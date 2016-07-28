@@ -102,19 +102,21 @@ class Stub(object):
     SCHEME = 'http'
     HOST = 'www.example.net'
 
-    def __init__(self, username=None, password=None, service=None, location=None, base_url=None):
+    def __init__(self, username=None, password=None, service=None, location=None):
         self.username = username
         self.password = password
         self.service = service if service else self.SERVICE
-        if location:
+
+        context = {'scheme': self.SCHEME, 'host': self.HOST}
+        if location is None:
+            location = lambda template, context: template.format(**context)
+
+        if callable(location):
+            self.location = location(self.service.location, context)
+        elif isinstance(location, six.string_types):
             self.location = location
         else:
-            if base_url:
-                p = six.moves.urllib.parse.urlparse(base_url)
-                parts = {'scheme': p.scheme, 'host': p.netloc}
-            else:
-                parts = {'scheme': self.SCHEME, 'host': self.HOST}
-            self.location = self.service.location.format(**parts)
+            raise TypeError('Expected string or callable for location.')
 
     def _handle_response(self, method, http_headers, content):
         soap = self.service.version
