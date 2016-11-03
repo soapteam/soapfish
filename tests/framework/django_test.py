@@ -15,6 +15,7 @@ except (ImportError, SyntaxError):
     django = None
 else:
     settings.configure(
+        ALLOWED_HOSTS=['testserver'],
         ROOT_URLCONF=None,
         DEBUG=True,
         DEBUG_PROPAGATE_EXCEPTIONS=True,
