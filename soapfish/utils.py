@@ -140,13 +140,14 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         if len(qname) < 2:
             qname.insert(0, None)
         ns, name = qname
+        name = capitalize(name)
 
         if ns in xsd_namespaces:
-            return 'xsd.%s' % capitalize(name)
+            return 'xsd.%s' % name
         elif known_types is not None and name in known_types:
-            return '%s' % capitalize(name)
+            return '%s' % name
         else:
-            return "__name__ + '.%s'" % capitalize(name)
+            return "__name__ + '.%s'" % name
 
     keywords = set(keyword.kwlist + ['False', 'None', 'True'])
 
