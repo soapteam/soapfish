@@ -27,7 +27,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
 
         schemas, symbols = generated_symbols(code)
         assert_is_not_empty(schemas)
-        assert_length(1, symbols)
+        assert_length(1, tuple(filter(lambda name: name.startswith("Schema_"), symbols)))
 
         assert_equals(['simpleElement'], list(schemas[0].elements))
         simple_element = schemas[0].elements['simpleElement']
