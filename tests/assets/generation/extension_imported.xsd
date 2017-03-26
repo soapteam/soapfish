@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://example.org" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:parent="http://example.org/parent">
+  <xs:import namespace="http://example.org/parent" schemaLocation="extension_imported_parent.xsd" />
+  <xs:complexType name="ComplexType">
+    <xs:complexContent>
+      <xs:extension base="parent:Base">
+        <xs:sequence>
+          <xs:element maxOccurs="1" minOccurs="0" name="Field2" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>
