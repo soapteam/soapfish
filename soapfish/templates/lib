@@ -155,7 +155,7 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
     {%- if element.simpleType.restriction.maxExclusive %}maxExclusive={{ element.simpleType.restriction.maxExclusive.value }},{% endif %}
     {%- if element.simpleType.restriction.fractionDigits %}fractionDigits={{ element.simpleType.restriction.fractionDigits.value }},{% endif %}
     {%- if element.simpleType.restriction.totalDigits %}totalDigits={{ element.simpleType.restriction.totalDigits.value }},{% endif %}
-    {%- if element.simpleType.restriction.pattern %}pattern={{ element.simpleType.restriction.pattern.value }},{% endif %}
+    {%- if element.simpleType.restriction.pattern %}pattern=r'{{ element.simpleType.restriction.pattern.value }}',{% endif %}
     {%- if element.simpleType.restriction.length %}length={{ element.simpleType.restriction.length.value }},{% endif %}
     {%- if element.simpleType.restriction.minLength %}minLength={{ element.simpleType.restriction.minLength.value }},{% endif %}
     {%- if element.simpleType.restriction.maxLength %}maxLength={{ element.simpleType.restriction.maxLength.value }},{% endif %}

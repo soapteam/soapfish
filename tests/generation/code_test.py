@@ -95,6 +95,7 @@ class CodeGenerationTest(unittest.TestCase):
         if six.PY3:
             code = code.decode()
         assert_contains('RestrictedString', code)
+        assert_contains("pattern=r'[a-z]+'", code)
 
     def test_create_method_list_param(self):
         xml = utils.open_document('tests/assets/generation/list_param.xsd')
