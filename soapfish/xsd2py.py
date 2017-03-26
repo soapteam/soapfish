@@ -9,6 +9,10 @@ import itertools
 import logging
 import os
 import sys
+try:
+    from urllib.parse import urljoin  # python 3
+except ImportError:
+    from urllib import basejoin as urljoin  # python 2
 
 import six
 from lxml import etree
@@ -31,11 +35,22 @@ def rewrite_paths(schema, cwd, base_path):
 
     This location is the unique identification for each file, they must match.
     """
-    f = lambda x: os.path.relpath(os.path.normpath(os.path.join(cwd, x)), base_path)
     for i in itertools.chain(schema.includes, schema.imports):
-        if i.schemaLocation is None or '://' in i.schemaLocation:
+        if i.schemaLocation is None:
+            # nothing to rewrite
             continue
-        i.schemaLocation = f(i.schemaLocation)
+        if '://' in i.schemaLocation:
+            # absolute URL, no need to rewrite
+            continue
+
+        if '://' in cwd:
+            # remote files, must handle paths as URLs
+            i.schemaLocation = urljoin(cwd, i.schemaLocation)
+        else:
+            # local files. path is relative
+            fullpath = os.path.join(cwd, i.schemaLocation)
+            normpath = os.path.normpath(fullpath)
+            i.schemaLocation = os.path.relpath(normpath, base_path)
 
 
 def resolve_import(i, known_paths, parent_namespace, cwd, base_path):
@@ -174,7 +189,12 @@ def main(argv=None):
 
     logger.info('Generating code for XSD document: %s' % opt.xsd)
     xml = stdin.read() if opt.xsd == '-' else open_document(opt.xsd)
-    cwd = os.path.dirname(os.path.abspath(opt.xsd))
+
+    if '://' in opt.xsd:
+        cwd = opt.xsd
+    else:
+        cwd = os.path.abspath(opt.xsd)
+    cwd = os.path.dirname(cwd)
     code = generate_code_from_xsd(xml, encoding='utf-8', cwd=cwd)
 
     opt.output.write(code.strip())

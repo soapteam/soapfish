@@ -1,3 +1,4 @@
+import mock
 import os
 import unittest
 
@@ -59,3 +60,22 @@ class WSDLCodeGenerationTest(PythonicTestCase):
         assert_equals(['B', 'A'], list(schemas[0].elements))
         assert_isinstance(schemas[0].elements['B']._type, xsd.String)
         assert_isinstance(schemas[0].elements['A']._type, schemas[0].elements['B']._type.__class__)
+
+    def test_can_generate_remote_tree(self):
+        def _mock(path):
+            if path == 'http://example.org/xsd/simple_element.xsd':
+                filename = 'tests/assets/generation/simple_element.xsd'
+            else:
+                self.fail("Unexpected remote path: %s" % path)
+
+            with open(filename, 'rb') as f:
+                return f.read()
+
+        xml = utils.open_document('tests/assets/generation/import_remote.wsdl')
+        with mock.patch('soapfish.xsd2py.open_document') as p:
+            p.side_effect = _mock
+            code = wsdl2py.generate_code_from_wsdl(
+                xml,
+                'client',
+                cwd='http://example.org/code/')
+            schemas, symbols = generated_symbols(code)
