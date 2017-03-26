@@ -38,21 +38,22 @@ def rewrite_paths(schema, cwd, base_path):
         i.schemaLocation = f(i.schemaLocation)
 
 
-def resolve_import(i, known_paths, parent_namespace, cwd, base_path):
+def resolve_import(i, known_paths, known_types, parent_namespace, cwd, base_path):
     assert isinstance(i, (xsdspec.Import, xsdspec.Include))
     path, cwd, location = resolve_location(i.schemaLocation, base_path)
     tag = i.__class__.__name__.lower()
     logger.info('Generating code for xsd:%s=%s' % (tag, path))
     xml = open_document(path)
 
-    return generate_code_from_xsd(xml, known_paths, location,
+    return generate_code_from_xsd(xml, known_paths, known_types, location,
                                   parent_namespace, encoding=None, cwd=cwd,
                                   base_path=base_path, standalone=False)
 
 
-def generate_code_from_xsd(xml, known_paths=None, location=None,
-                           parent_namespace=None, encoding='utf8',
-                           cwd=None, base_path=None, standalone=True):
+def generate_code_from_xsd(xml, known_paths=None, known_types=None,
+                           location=None, parent_namespace=None,
+                           encoding='utf8', cwd=None, base_path=None,
+                           standalone=True):
 
     if isinstance(xml, six.binary_type):
         xml = etree.fromstring(xml)
@@ -71,7 +72,7 @@ def generate_code_from_xsd(xml, known_paths=None, location=None,
     if location and location in known_paths:
         return ''
 
-    code = schema_to_py(schema, xsd_namespaces, known_paths,
+    code = schema_to_py(schema, xsd_namespaces, known_paths, known_types,
                         location, cwd=cwd, base_path=base_path,
                         standalone=standalone)
 
@@ -125,7 +126,8 @@ def _reorder_complexTypes(schema):
     schema.complexTypes.sort(**kw)
 
 
-def schema_to_py(schema, xsd_namespaces, known_paths=None, location=None,
+def schema_to_py(schema, xsd_namespaces,
+                 known_paths=None, known_types=None, location=None,
                  parent_namespace=None, cwd=None, base_path=None,
                  standalone=False):
     if base_path is None:
@@ -143,9 +145,13 @@ def schema_to_py(schema, xsd_namespaces, known_paths=None, location=None,
     if schema.targetNamespace is None:
         schema.targetNamespace = parent_namespace
 
+    if known_types is None:
+        known_types = []
+
     env = get_rendering_environment(xsd_namespaces, module='soapfish.xsd2py')
     env.globals.update(
         known_paths=known_paths,
+        known_types=known_types,
         location=location,
         resolve_import=resolve_import,
     )

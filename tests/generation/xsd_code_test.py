@@ -117,3 +117,22 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml = utils.open_document('tests/assets/generation/extension.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
         schemas, symbols = generated_symbols(code)
+
+    def test_can_generate_extension_imported(self):
+        xml = utils.open_document('tests/assets/generation/extension_imported.xsd')
+        code = xsd2py.generate_code_from_xsd(xml, cwd='tests/assets/generation')
+        schemas, symbols = generated_symbols(code)
+        assert_is_not_empty(schemas)
+
+        base = symbols['Base']
+        base.Field1
+        try:
+            base.Field2
+        except AttributeError:
+            pass
+        else:
+            self.fail('Unexpected base.Field2')
+
+        ct = symbols['ComplexType']
+        ct.Field1
+        ct.Field2
