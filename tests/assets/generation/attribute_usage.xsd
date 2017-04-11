@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ns1"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:complexType name="sampleType">
+      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="value" type="xs:string"/>
+      <xs:attribute name="type" use="optional" type="xs:string"/>
+  </xs:complexType>
+</xs:schema>
