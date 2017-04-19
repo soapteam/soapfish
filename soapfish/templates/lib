@@ -53,7 +53,7 @@ class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
 {# [blank line] #}
 {%- endmacro %}
 
-{% macro render_xsd_Group(element, known_types=None) -%}
+{% macro render_xsd_Group(group, known_types=None) -%}
 class {{ group.name|capitalize }}(xsd.Group):
     {%- for element in group.sequence.elements %}
     {%- set name = element.ref|remove_namespace if element.ref else element.name %}
