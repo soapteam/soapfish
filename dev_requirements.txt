@@ -2,5 +2,6 @@
 
 coverage
 isort
+mock
 nose>=1.0
 unittest2

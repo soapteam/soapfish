@@ -31,11 +31,17 @@ def rewrite_paths(schema, cwd, base_path):
 
     This location is the unique identification for each file, they must match.
     """
-    f = lambda x: os.path.relpath(os.path.normpath(os.path.join(cwd, x)), base_path)
     for i in itertools.chain(schema.includes, schema.imports):
         if i.schemaLocation is None or '://' in i.schemaLocation:
+            # skip if nothing to rewrite or absolute url.
             continue
-        i.schemaLocation = f(i.schemaLocation)
+        elif '://' in cwd:
+            # remote files must handle paths as url.
+            i.schemaLocation = six.moves.urllib.parse.urljoin(cwd, i.schemaLocation)
+        else:
+            # local files should handle relative paths.
+            path = os.path.normpath(os.path.join(cwd, i.schemaLocation))
+            i.schemaLocation = os.path.relpath(path, base_path)
 
 
 def resolve_import(i, known_paths, known_types, parent_namespace, cwd, base_path):
@@ -180,7 +186,8 @@ def main(argv=None):
 
     logger.info('Generating code for XSD document: %s' % opt.xsd)
     xml = stdin.read() if opt.xsd == '-' else open_document(opt.xsd)
-    cwd = os.path.dirname(os.path.abspath(opt.xsd))
+    cwd = opt.xsd if '://' in opt.xsd else os.path.abspath(opt.xsd)
+    cwd = os.path.dirname(cwd)
     code = generate_code_from_xsd(xml, encoding='utf-8', cwd=cwd)
 
     opt.output.write(code.strip())

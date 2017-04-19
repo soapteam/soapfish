@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import hashlib
 import itertools
 import keyword
@@ -20,8 +19,7 @@ logger = logging.getLogger('soapfish')
 # --- File Functions ----------------------------------------------------------
 def resolve_location(path, cwd):
     if '://' in path:
-        path = location = path
-        cwd = None
+        location = path
     else:
         path = os.path.join(cwd, path)
         location = os.path.relpath(path, cwd)
