@@ -118,6 +118,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         return six.moves.urllib.parse.urlunparse(o)
 
     def get_type(obj, known_types=None):
+        qname = None
         if isinstance(obj, (xsdspec.Attribute, xsdspec.Element)):
             if obj.ref:
                 qname = obj.ref
