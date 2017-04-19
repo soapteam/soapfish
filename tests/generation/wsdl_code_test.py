@@ -1,5 +1,5 @@
-import mock
 import os
+import mock
 import unittest
 
 from pythonic_testcase import (

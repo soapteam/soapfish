@@ -139,12 +139,8 @@ def main(argv=None):
 
     logger.info('Generating %s code for WSDL document: %s' % (opt.target, opt.wsdl))
     xml = stdin.read() if opt.wsdl == '-' else open_document(opt.wsdl)
-    if '://' in opt.wsdl:
-        cwd = opt.wsdl
-    else:
-        cwd = os.path.abspath(opt.wsdl)
+    cwd = opt.wsdl if '://' in opt.wsdl else os.path.abspath(opt.wsdl)
     cwd = os.path.dirname(cwd)
-
     code = generate_code_from_wsdl(xml, opt.target, opt.use_wsa, cwd=cwd)
 
     opt.output.write(code.strip())
