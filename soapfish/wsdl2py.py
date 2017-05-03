@@ -101,7 +101,7 @@ def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=Non
     schemas = ''.join(schema_to_py(schema, xsd_namespaces, **kw) for schema in schemas)
 
     env = get_rendering_environment(xsd_namespaces, module='soapfish.wsdl2py')
-    tpl = env.get_template('wsdl')
+    tpl = env.get_template('wsdl.jinja2')
 
     code = tpl.render(
         soap_version=soap_version,
