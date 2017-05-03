@@ -163,7 +163,7 @@ def schema_to_py(schema, xsd_namespaces,
     )
     if not standalone:
         del env.globals['preamble']
-    tpl = env.get_template('xsd')
+    tpl = env.get_template('xsd.jinja2')
 
     return tpl.render(schema=schema, cwd=cwd, base_path=base_path)
 
