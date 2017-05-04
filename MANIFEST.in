@@ -1,7 +1,7 @@
 graft docs
 graft examples
 include *.ini *.md *.py *.rst *.txt LICENSE
-recursive-include soapfish/raw *
+recursive-include soapfish/templates *
 recursive-include soapfish *.py *.xml *.xsd *.wsdl
 recursive-include tests *.py *.xml *.xsd *.wsdl
 prune docs/_build
