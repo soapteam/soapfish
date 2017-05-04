@@ -143,7 +143,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
 
         if ns in xsd_namespaces:
             return 'xsd.%s' % capitalize(name)
-        elif known_types is not None and name in known_types:
+        elif known_types is not None and capitalize(name) in known_types:
             return '%s' % capitalize(name)
         else:
             return "__name__ + '.%s'" % capitalize(name)

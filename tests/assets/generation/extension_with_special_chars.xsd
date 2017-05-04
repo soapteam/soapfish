@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://example.com" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:complexType name="ComplexType">
+    <xs:complexContent>
+      <xs:extension base="baseType_with_special_chars_123">
+        <xs:sequence>
+          <xs:element maxOccurs="1" minOccurs="0" name="Field3" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="baseType_with_special_chars_123">
+    <!-- starting with lowercase letter and using some non-alphabetic characters to test
+         if corresponding Python class can still be found -->
+    <!-- TODO: add dash and dot to the type name as these are also legal in type name -->
+    <xs:sequence>
+      <xs:element name="Field1" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

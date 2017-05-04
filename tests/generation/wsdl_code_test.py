@@ -46,7 +46,7 @@ class WSDLCodeGenerationTest(PythonicTestCase):
         code = wsdl2py.generate_code_from_wsdl(xml, 'client')
         schemas, symbols = generated_symbols(code)
         assert_is_not_empty(schemas)
-        assert_length(4, symbols)
+        assert_length(2, tuple(filter(lambda name: name.startswith("Schema_"), symbols)))
         assert_equals(['A'], list(schemas[0].elements))
         assert_equals(['B'], list(schemas[1].elements))
 
