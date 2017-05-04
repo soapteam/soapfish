@@ -24,7 +24,6 @@ BaseHeader = {% if use_wsa %}wsa.Header{% else %}xsd.ComplexType{% endif %}
 ##############################################################################
 # Operations
 {# [blank line] #}
-{# [blank line] #}
 {%- for operation in binding.operations -%}
 {%- set _im = get_message_object(definitions, binding, operation, 'input') %}
 {%- set _om = get_message_object(definitions, binding, operation, 'output') %}
@@ -70,7 +69,8 @@ class {{ _om.name }}Headers(BaseHeader):
 {# [blank line] #}
 {%- endif %}
 {{ operation.name }}_method = xsd.Method(
-    {%- if is_server %}function={{ operation.name }},{% endif %}
+    {% if is_server %}function={{ operation.name }},
+    {% endif -%}
     soapAction='{{ operation.operation.soapAction }}',
     {%- if _im.parts -%}
     {%- if _im.part.element %}
