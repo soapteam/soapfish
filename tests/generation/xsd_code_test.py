@@ -27,7 +27,7 @@ class XSDCodeGenerationTest(PythonicTestCase):
 
         schemas, symbols = generated_symbols(code)
         assert_is_not_empty(schemas)
-        assert_length(1, symbols)
+        assert_length(1, [s for s in symbols if s.startswith('Schema_')])
 
         assert_equals(['simpleElement'], list(schemas[0].elements))
         simple_element = schemas[0].elements['simpleElement']
@@ -136,3 +136,11 @@ class XSDCodeGenerationTest(PythonicTestCase):
         ct = symbols['ComplexType']
         ct.Field1
         ct.Field2
+
+    def test_can_generate_extension_of_type_with_special_chars(self):
+        xml = utils.open_document('tests/assets/generation/extension_with_special_chars.xsd')
+        code = xsd2py.generate_code_from_xsd(xml)
+        schemas, symbols = generated_symbols(code)
+        assert_true("BaseType_with_special_chars_123" in symbols)
+        assert_equals("BaseType_with_special_chars_123", symbols["ComplexType"].__base__.__name__)
+

@@ -21,13 +21,13 @@ class CodeGenerationTest(unittest.TestCase):
         header = textwrap.dedent('''\
             # -*- coding: utf-8 -*-
             import sys
-            sys.path.append('{0}')
-        ''').format(os.path.dirname(fn)).encode('utf8')
+            sys.path.append(r'{0}')
+        ''').format(os.path.dirname(fn).rstrip('\\').encode('utf8')
         code = header + b'\n' + code + b'\n'
         with open(fn, 'wb') as f:
             f.write(code)
         compile(code, fn, 'exec')
-        globalz['__name__'] = fn.rsplit('/', 1)[-1].rsplit('.', 1)[0]
+        globalz['__name__'] = os.path.basename(fn).rsplit('.', 1)[0]
         six.exec_(code, globalz)
 
     def _check_reparse_wsdl(self, base, target):
