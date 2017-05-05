@@ -22,7 +22,7 @@ class CodeGenerationTest(unittest.TestCase):
             # -*- coding: utf-8 -*-
             import sys
             sys.path.append(r'{0}')
-        ''').format(os.path.dirname(fn).rstrip('\\').encode('utf8')
+        ''').format(os.path.dirname(fn).rstrip('\\')).encode('utf8')
         code = header + b'\n' + code + b'\n'
         with open(fn, 'wb') as f:
             f.write(code)

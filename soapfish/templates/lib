@@ -47,7 +47,7 @@ class {{ name|capitalize }}(xsd.List):
 class {{ attrGroup.name|capitalize }}(xsd.AttributeGroup):
     {%- for attribute in attrGroup.attributes %}
     {%- set name = attribute.ref|remove_namespace if attribute.ref else attribute.name %}
-    {{ name|fix_keyword }} = xsd.Attribute({{ attribute|type(known_types) }}{% if name in keywords %}, tagname='{{ name }}'{% endif %}, use={{ attribute.use|default('optional')|use }})
+    {{ name|fix_keyword }} = xsd.Attribute({{ attribute|type(known_types) }}{% if name in keywords %}, tagname='{{ name }}'{% endif %}, use={{ attribute.use|default('optional', true)|use }})
     {%- endfor %}
 {# [blank line] #}
 {# [blank line] #}
@@ -123,7 +123,7 @@ class {{ class_name|capitalize }}(xsd.ComplexType):
 {%- endif %}
 {%- for attribute in content.attributes %}
     {%- set name = attribute.ref|remove_namespace if attribute.ref else attribute.name %}
-    {{ name|fix_keyword }} = xsd.Attribute({{ attribute|type(known_types) }}{% if name in keywords %}, tagname='{{ name }}'{% endif %}, use={{ attribute.use|default('optional')|use }})
+    {{ name|fix_keyword }} = xsd.Attribute({{ attribute|type(known_types) }}{% if name in keywords %}, tagname='{{ name }}'{% endif %}, use={{ attribute.use|default('optional', true)|use }})
 {%- endfor %}
 {%- for attrGroupRef in content.attributeGroups %}
     {{ attrGroupRef.ref|remove_namespace }} = xsd.Ref({{ attrGroupRef.ref|type(known_types) }})
