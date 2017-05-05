@@ -1,7 +1,7 @@
 Changes
 =======
 
-0.6.0 (2016-??-??)
+0.6.0 (2017-??-??)
 ------------------
 
 Project has been renamed to `soapfish` to distinguish it from the legacy
@@ -30,6 +30,7 @@ the `soapfish` fork.
   - Support for reordering of schema imports and includes and handle circular imports.
 - **Bug Fixes:**
   - Make xsd.Decimal field accept Python Decimal (#52)
+  - Fix relative imports with remote files. (#96)
   - Schema validation now also uses imported schemas correctly
   - Various fixes for `wsdl2py` and `xsd2py` when using Python 3
   - Fix exception in `SOAPDispatcher` when a handler does not return a `SOAPResponse`
@@ -48,9 +49,9 @@ the `soapfish` fork.
   - Attempts to fix handling of remote vs local imports.
 - **Miscellaneous:**
   - Renamed `SoapboxRequest` and `SoapboxResponse` to `SOAPRequest` and `SOAPResponse` respectively.
+  - Support Python 2.6, 2.7 and 3.3 - 3.6, and Django 1.6 - 1.11.
   - Improved testing against different versions of Python, Django & Flask.
   - Improved entry points for generation scripts - additional flags, etc.
-  - Dropped support for Django < 1.6
   - Moved to using an external dependency for `iso8601`
 
 0.5.1 (2014-06-12)

@@ -18,9 +18,9 @@ Data Services retired the unmaintained Soapbox project in favour of Soapfish.
 
 - Felix Schwarz (sponsored by Rechenzentrum für Berliner Apotheken Stein & Reichwald GmbH)
 - Nick Pope (Flight Data Services)
+- Iuri de Silvio (Pricez)
 
 **Major Contributors:**
 
-- Iuri de Silvio (Pricez)
 - Thomas Recouvreux (Polyconseil)
 - Xavier Fernandez (Polyconseil)
