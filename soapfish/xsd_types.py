@@ -8,6 +8,8 @@ For example xsd.Date might contain a timezone reference but that is not allowed
 for datetime.date.
 """
 
+from __future__ import absolute_import
+
 from datetime import date
 
 

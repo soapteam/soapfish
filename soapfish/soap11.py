@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+
 from . import namespaces as ns, xsd
 
 ENVELOPE_NAMESPACE = ns.soap11_envelope

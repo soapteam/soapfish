@@ -3,6 +3,8 @@
 SOAP protocol implementation, dispatchers and client stub.
 '''
 
+from __future__ import absolute_import
+
 import logging
 
 import requests
@@ -74,7 +76,7 @@ class Service(object):
         self.output_header = output_header
 
     def get_method(self, operationName):
-        return tuple(filter(lambda m: m.operationName == operationName, self.methods))[0]
+        return next(m for m in self.methods if m.operationName == operationName)
 
     def find_element_by_name(self, name):
         element = None

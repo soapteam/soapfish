@@ -40,6 +40,8 @@ For information on XML schema validation:
 '''
 
 
+from __future__ import absolute_import
+
 import functools
 import itertools
 import logging
@@ -282,7 +284,7 @@ class Date(SimpleType):
         elif isinstance(value, XSDDate):
             return value
         time_components = ('hour', 'minute', 'second', 'microsecond')
-        has_time_compontent = any(map(lambda key: hasattr(value, key), time_components))
+        has_time_compontent = any(hasattr(value, key) for key in time_components)
         if (hasattr(value, 'year') and hasattr(value, 'month') and hasattr(value, 'day')) and not has_time_compontent:
             tz = getattr(value, 'tzinfo', None)  # support datetime.date
             return XSDDate(value.year, value.month, value.day, tzinfo=tz)
@@ -322,7 +324,7 @@ class Date(SimpleType):
         sign = 1 if (match.group('tz_sign') == '+') else -1
         offset_hours = sign * int(match.group('tz_hour'))
         offset_minutes = sign * int(match.group('tz_minute'))
-        return FixedOffset(offset_hours, offset_minutes, name=u'UTC' + offset_string)
+        return FixedOffset(offset_hours, offset_minutes, name='UTC' + offset_string)
 
 
 class DateTime(SimpleType):
@@ -970,7 +972,7 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
     @classmethod
     def _find_field(cls, fields, name):
         try:
-            return next(iter(filter(lambda f: f._name == name, fields)))
+            return next(f for f in fields if f._name == name)
         except StopIteration:
             pass
         raise ValueError("%s has no field '%s'" % (cls.__name__, name))

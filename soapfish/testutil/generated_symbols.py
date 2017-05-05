@@ -12,6 +12,8 @@ import string
 import sys
 import tempfile
 
+from six.moves import range
+
 try:
     import importlib
 except ImportError:
@@ -29,7 +31,7 @@ def generated_symbols(code):
     try:
         # Let's trust our own code generation...
         six.exec_(code, globals_)
-    except Exception as ex:
+    except Exception:
         logging.warning('Code could not be imported:\n%s', code)
         raise
 

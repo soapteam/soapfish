@@ -244,5 +244,5 @@ class WsgiSoapApplication(object):
         content = req_env['wsgi.input'].read(content_length)
         soap_request = SOAPRequest(req_env, content)
         response = self.dispatcher.dispatch(soap_request)
-        start_response(response.http_status_text, response.http_headers.items())
+        start_response(response.http_status_text, list(response.http_headers.items()))
         return [response.http_content]

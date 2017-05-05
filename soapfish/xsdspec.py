@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+
 from . import namespaces as ns, xsd
 
 XSD_NAMESPACE = ns.xsd
@@ -46,8 +48,7 @@ class Restriction(xsd.ComplexType):
     whiteSpace = xsd.Element(RestrictionValue)
 
     def to_python(self):
-        enum_values = map(lambda e: '\'%s\'' % e.value, self.enumerations)
-        return '[%s]' % ','.join(enum_values)
+        return '[%s]' % ', '.join("'%s'" % e.value for e in self.enumerations)
 
 
 class List(xsd.ComplexType):

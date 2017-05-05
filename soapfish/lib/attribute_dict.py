@@ -8,6 +8,8 @@
 # 1.0 (06.02.2010)
 #   - initial release
 
+from __future__ import absolute_import
+
 from unittest import TestCase
 
 __all__ = ['AttrDict']

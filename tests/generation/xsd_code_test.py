@@ -143,4 +143,3 @@ class XSDCodeGenerationTest(PythonicTestCase):
         schemas, symbols = generated_symbols(code)
         assert_true("BaseType_with_special_chars_123" in symbols)
         assert_equals("BaseType_with_special_chars_123", symbols["ComplexType"].__base__.__name__)
-
