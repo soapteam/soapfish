@@ -226,8 +226,13 @@ class SOAPDispatcher(object):
     def handle_xsd_request(self, request):
         qs = request.environ.get('QUERY_STRING')
         qs = six.moves.urllib.parse.parse_qs(qs, keep_blank_values=True)
-        xsd = self.xsds[qs['xsd'][0] or 'xsd']
-        return SOAPResponse('xsd', http_content=xsd, http_headers={'Content-Type': 'text/xml'})
+        try:
+            xsd = self.xsds[qs['xsd'][0] or 'xsd']
+        except KeyError:
+            return SOAPResponse('not found', http_status_code=404, http_content='not_found',
+                                http_headers={'Content-Type': 'text/plain'})
+        else:
+            return SOAPResponse('xsd', http_content=xsd, http_headers={'Content-Type': 'text/xml'})
 
     def _rewrite_locations(self, element):
         for e in element.xpath('//xsd:import|//xsd:include', namespaces=element.nsmap):
