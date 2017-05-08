@@ -13,10 +13,6 @@ from pythonic_testcase import (
 from soapfish import utils, wsdl2py, xsd
 from soapfish.testutil import generated_symbols
 
-if not hasattr(unittest, 'skip'):
-    # XXX: Skipping tests not supported in Python 2.6
-    import unittest2 as unittest
-
 
 class WSDLCodeGenerationTest(PythonicTestCase):
 

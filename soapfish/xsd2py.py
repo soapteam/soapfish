@@ -125,11 +125,7 @@ def _reorder_complexTypes(schema):
         # inconclusive, do the same test with their bases
         return _cmp(base_a or a, base_b or b)
 
-    if hasattr(functools, 'cmp_to_key'):
-        kw = {'key': functools.cmp_to_key(_cmp)}
-    else:
-        kw = {'cmp': _cmp}  # XXX: Python < 2.7 and < 3.2
-    schema.complexTypes.sort(**kw)
+    schema.complexTypes.sort(key=functools.cmp_to_key(_cmp))
 
 
 def schema_to_py(schema, xsd_namespaces,

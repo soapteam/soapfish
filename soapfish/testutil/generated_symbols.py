@@ -3,6 +3,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import contextlib
+import importlib
 import logging
 import os
 import random
@@ -13,11 +14,6 @@ import sys
 import tempfile
 
 from six.moves import range
-
-try:
-    import importlib
-except ImportError:
-    importlib = None
 
 __all__ = ['generated_symbols', 'import_code']
 
@@ -57,10 +53,7 @@ def import_code(code):
         with open(os.path.join(tmp_dir, module_name) + ".py", 'w+b') as f:
             f.write(code)
         sys.path.append(tmp_dir)
-        if importlib:
-            code_module = importlib.import_module(module_name)
-        else:
-            code_module = __import__(module_name, globals(), {})  # XXX: Python 2.6
+        code_module = importlib.import_module(module_name)
         yield code_module
     finally:
         if code_module is not None:

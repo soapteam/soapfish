@@ -49,6 +49,7 @@ import re
 from copy import copy
 from datetime import datetime
 from decimal import Decimal as _Decimal
+from importlib import import_module
 
 import iso8601
 import six
@@ -60,11 +61,6 @@ from .xsd_types import XSDDate
 
 # TODO: Change import we update to iso8601 > 0.1.11 (fixed in 031688e)
 from iso8601.iso8601 import UTC, FixedOffset  # isort:skip
-
-try:
-    import importlib
-except ImportError:
-    importlib = None
 
 
 logger = logging.getLogger(__name__)
@@ -526,10 +522,7 @@ def import_type(type_name):
     if '.' not in type_name:
         raise ValueError('We need the full namepath to be able to import it: %s' % type_name)
     module, name = type_name.rsplit('.', 1)
-    if importlib:
-        module = importlib.import_module(module)
-    else:
-        module = __import__(module, globals(), {}, [name])  # XXX: Python 2.6
+    module = import_module(module)
     return getattr(module, name)
 
 
@@ -880,6 +873,7 @@ class Complex_PythonType(type):
         return newcls
 
 
+@functools.total_ordering
 class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
     '''
     Parent for XML elements that have sub-elements.
@@ -909,7 +903,7 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
                 raise AttributeError("Model '%s' doesn't have attribute '%s'." % (self.__class__.__name__, attr))
 
     def __str__(self):
-        fields = dict((f._name, getattr(self, f._name, '<UNKNOWN FIELD>')) for f in self._meta.fields)
+        fields = {f._name: getattr(self, f._name, '<UNKNOWN FIELD>') for f in self._meta.fields}
         str_fields = ', '.join('%s=%s' % item for item in fields.items())
         return '<{class_name}: {fields}>'.format(class_name=self.__class__.__name__, fields=str_fields)
 
@@ -926,21 +920,6 @@ class ComplexType(six.with_metaclass(Complex_PythonType, Type)):
         # FIXME: We should do this without the conversion back to XML.
         return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
             and etree.tostring(self._xmlelement) < etree.tostring(other._xmlelement)
-
-    def __gt__(self, other):
-        # FIXME: We should do this without the conversion back to XML.
-        return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
-            and etree.tostring(self._xmlelement) > etree.tostring(other._xmlelement)
-
-    def __le__(self, other):
-        # FIXME: We should do this without the conversion back to XML.
-        return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
-            and etree.tostring(self._xmlelement) <= etree.tostring(other._xmlelement)
-
-    def __ge__(self, other):
-        # FIXME: We should do this without the conversion back to XML.
-        return hasattr(self, '_xmlelement') and hasattr(other, '_xmlelement') \
-            and etree.tostring(self._xmlelement) >= etree.tostring(other._xmlelement)
 
     def __ne__(self, other):
         return not self.__eq__(other)
