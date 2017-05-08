@@ -44,21 +44,14 @@ def generated_symbols(code):
 
 @contextlib.contextmanager
 def import_code(code):
-    code_module = None
-    tmp_dir = None
+    tmp_dir = tempfile.mkdtemp()
     try:
-        if tmp_dir is None:
-            tmp_dir = tempfile.mkdtemp()
-        module_name = "import_code_" + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
-        with open(os.path.join(tmp_dir, module_name) + ".py", 'w+b') as f:
+        name = 'import_code_' + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+        with open(os.path.join(tmp_dir, name) + '.py', 'w+b') as f:
             f.write(code)
         sys.path.append(tmp_dir)
-        code_module = importlib.import_module(module_name)
-        yield code_module
+        yield importlib.import_module(name)
     finally:
-        if code_module is not None:
-            del code_module
-        if tmp_dir:
-            if tmp_dir in sys.path:
-                sys.path.remove(tmp_dir)
-            shutil.rmtree(tmp_dir, ignore_errors=True)
+        if tmp_dir in sys.path:
+            sys.path.remove(tmp_dir)
+        shutil.rmtree(tmp_dir, ignore_errors=True)

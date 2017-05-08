@@ -20,9 +20,9 @@ class ExceptionToSoapFault():
         try:
             return next_call(request)
         except Exception:
-            message = "Internal Error" if not self.return_tb else traceback.format_exc()
+            message = 'Internal Error' if not self.return_tb else traceback.format_exc()
             if six.PY2:
-                message = message.decode("utf8")
+                message = message.decode('utf8')
             return core.SOAPError(request.dispatcher.service.version.Code.SERVER, message)
 
 

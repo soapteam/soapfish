@@ -6,7 +6,7 @@ from pythonic_testcase import assert_equals, assert_none, assert_raises
 from soapfish import core, soap, soap11, soap12
 
 
-SOAP11_ERROR_MESSAGE = """
+SOAP11_ERROR_MESSAGE = '''
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Body>
       <SOAP-ENV:Fault>
@@ -17,9 +17,9 @@ SOAP11_ERROR_MESSAGE = """
       </SOAP-ENV:Fault>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-"""
+'''
 
-SOAP11_ERROR_MESSAGE_NO_ACTOR = """
+SOAP11_ERROR_MESSAGE_NO_ACTOR = '''
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Body>
       <SOAP-ENV:Fault>
@@ -29,9 +29,9 @@ SOAP11_ERROR_MESSAGE_NO_ACTOR = """
       </SOAP-ENV:Fault>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-"""
+'''
 
-SOAP12_ERROR_ROLE = """<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+SOAP12_ERROR_ROLE = '''<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
 <env:Header/><env:Body>
 <env:Fault>
 <env:Code><env:Value>env:Sender</env:Value></env:Code>
@@ -46,9 +46,9 @@ Quantity element does not have a value</PO:order>
 Incomplete address: no zip code</PO:confirmation>
 </env:Detail></env:Fault>
 </env:Body></env:Envelope>
-"""
+'''
 
-SOAP12_ERROR_NOROLE = """<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+SOAP12_ERROR_NOROLE = '''<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
 <env:Header/><env:Body>
 <env:Fault>
 <env:Code><env:Value>env:Sender</env:Value></env:Code>
@@ -62,7 +62,7 @@ Quantity element does not have a value</PO:order>
 Incomplete address: no zip code</PO:confirmation>
 </env:Detail></env:Fault>
 </env:Body></env:Envelope>
-"""
+'''
 
 
 class ErrorHandling(unittest.TestCase):
@@ -162,5 +162,5 @@ class SOAPVersionTest(unittest.TestCase):
         assert_equals(soap12.NAME, v.NAME)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

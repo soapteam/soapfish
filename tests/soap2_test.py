@@ -7,32 +7,32 @@ from soapfish import soap11, soap12, wsa, xsd
 from soapfish.py2xsd import generate_xsd
 
 
-SOAP11_ENVELOPE = """\
+SOAP11_ENVELOPE = '''\
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
     {0}<soap:Body>{1}</soap:Body>
 </soap:Envelope>
-"""
+'''
 
-SOAP11_FAULT = """
+SOAP11_FAULT = '''
 <soap:Fault>
     <faultcode>soap:Server</faultcode>
     <faultstring>Server was unable to process request.</faultstring>
     <detail />
 </soap:Fault>
-"""
+'''
 
-MESSAGE_QUALIFIED = """
+MESSAGE_QUALIFIED = '''
 <ns0:GetWeatherByPlaceName xmlns:ns0="http://www.example.org">
     <ns0:Place><ns0:Name>Weatharia</ns0:Name></ns0:Place>
 </ns0:GetWeatherByPlaceName>
-"""
+'''
 
-MESSAGE_UNQUALIFIED = """
+MESSAGE_UNQUALIFIED = '''
 <ns0:GetWeatherByPlaceName xmlns:ns0="http://www.example.org">
     <Place><Name>Weatharia</Name></Place>
 </ns0:GetWeatherByPlaceName>
-"""
+'''
 
 
 class Place(xsd.ComplexType):
@@ -149,7 +149,7 @@ class SOAP_TBase(object):
 
     def test_wsa_inherited_header(self):
         message = GetWeatherByPlaceName(Place=Place(Name='Skypia'))
-        header = WsaAppHeader(MessageID='1234', Identity="coucou")
+        header = WsaAppHeader(MessageID='1234', Identity='coucou')
         xml = self.SOAP.Envelope.response('GetWeatherByPlaceName', message, header)
         expected_xml = (
             '<ns0:Envelope xmlns:ns0="{}">'
@@ -188,14 +188,14 @@ class SOAP11_Test(SOAP_TBase, unittest.TestCase):
         self.assertEqual(code, 'soap:Client')
 
 
-SOAP12_ENVELOPE = """\
+SOAP12_ENVELOPE = '''\
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
     {0}<soap:Body>{1}</soap:Body>
 </soap:Envelope>
-"""
+'''
 
-SOAP12_FAULT = """
+SOAP12_FAULT = '''
 <soap:Fault>
     <soap:Code>
         <soap:Value>soap:Receiver</soap:Value>
@@ -208,7 +208,7 @@ SOAP12_FAULT = """
     </soap:Reason>
     <soap:Detail />
 </soap:Fault>
-"""
+'''
 
 
 class SOAP12_Test(SOAP_TBase, unittest.TestCase):

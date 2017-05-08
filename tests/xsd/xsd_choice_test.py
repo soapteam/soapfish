@@ -67,7 +67,7 @@ class XSDChoiceTest(unittest.TestCase):
         xmlschema = etree.XMLSchema(generate_xsd(soapfish_schema))
         assert_true(
             xmlschema.validate(xml),
-            message="XML did not validate: %r" % xml_string
+            message='XML did not validate: %r' % xml_string
         )
 
     def assert_is_invalid(self, xml_string, soapfish_schema):
@@ -75,5 +75,5 @@ class XSDChoiceTest(unittest.TestCase):
         xmlschema = etree.XMLSchema(generate_xsd(soapfish_schema))
         assert_false(
             xmlschema.validate(xml),
-            message="XML should fail to validate: %r" % xml_string
+            message='XML should fail to validate: %r' % xml_string
         )

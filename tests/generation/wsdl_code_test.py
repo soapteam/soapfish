@@ -62,7 +62,7 @@ class WSDLCodeGenerationTest(PythonicTestCase):
             if path == 'http://example.org/xsd/simple_element.xsd':
                 filename = 'tests/assets/generation/simple_element.xsd'
             else:
-                self.fail("Unexpected remote path: %s" % path)
+                self.fail('Unexpected remote path: %s' % path)
 
             with open(filename, 'rb') as f:
                 return f.read()

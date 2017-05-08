@@ -77,7 +77,7 @@ class SOAPDispatcher(object):
         # SOAP 1.1: http://schemas.xmlsoap.org/soap/envelope/
         # SOAP 1.2: http://www.w3.org/2003/05/soap-envelope/
         if envelope.Body is None:
-            raise SOAPError(SOAP.Code.CLIENT, "Missing SOAP body")
+            raise SOAPError(SOAP.Code.CLIENT, 'Missing SOAP body')
         return envelope
 
     def _find_handler_for_request(self, request, body_document):

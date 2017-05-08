@@ -26,7 +26,7 @@ class Airport(xsd.ComplexType):
 
 
 class Pilot(xsd.String):
-    enumeration = ["CAPTAIN", "FIRST_OFFICER"]
+    enumeration = ['CAPTAIN', 'FIRST_OFFICER']
 
 
 class Flight(xsd.ComplexType):
@@ -36,7 +36,7 @@ class Flight(xsd.ComplexType):
     landing_airport = xsd.Element(Airport)
     takeoff_pilot = xsd.Element(Pilot, minOccurs=0)
     landing_pilot = xsd.Element(Pilot, minOccurs=0)
-    passengers = xsd.ListElement(xsd.String, "passenger", maxOccurs=10, minOccurs=0)
+    passengers = xsd.ListElement(xsd.String, 'passenger', maxOccurs=10, minOccurs=0)
 
 
 class ElementTest(unittest.TestCase):
@@ -44,48 +44,48 @@ class ElementTest(unittest.TestCase):
     # def test_required(self):
     #     tail_number = xsd.Element(xsd.String)
     #     try:
-    #         xmlelement = etree.Element("aircraft")
-    #         tail_number.render(xmlelement, "tail_number", None)
+    #         xmlelement = etree.Element('aircraft')
+    #         tail_number.render(xmlelement, 'tail_number', None)
     #     except ValueError:
     #         pass
     #     else:
-    #         raise AssertionError("Should get here")
+    #         raise AssertionError('Should get here')
 
     def test_string_element(self):
         tail_number = xsd.Element(xsd.String())
-        xmlelement = etree.Element("aircraft")
-        tail_number.render(xmlelement, "tail_number", "LN-KKU")
-        self.assertEqual(b"""<aircraft>
+        xmlelement = etree.Element('aircraft')
+        tail_number.render(xmlelement, 'tail_number', 'LN-KKU')
+        self.assertEqual(b'''<aircraft>
   <tail_number>LN-KKU</tail_number>
 </aircraft>
-""",
+''',
                          etree.tostring(xmlelement, pretty_print=True))
 
     def test_complex_type_element(self):
         airport = Airport()
-        airport.type = "IATA"
-        airport.code = "WAW"
-        xmlelement = etree.Element("takeoff_airport")
+        airport.type = 'IATA'
+        airport.code = 'WAW'
+        xmlelement = etree.Element('takeoff_airport')
         airport.render(xmlelement, airport)
-        expected_xml = b"""<takeoff_airport>
+        expected_xml = b'''<takeoff_airport>
   <type>IATA</type>
   <code>WAW</code>
 </takeoff_airport>
-"""
+'''
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
     def test_tagname_parsexml(self):
         class TestType(xsd.ComplexType):
             foo = xsd.Element(xsd.String, tagname='bar')
-        xml = b"<T><bar>coucou</bar></T>"
+        xml = b'<T><bar>coucou</bar></T>'
         obj = TestType.parsexml(xml)
         self.assertEquals('coucou', obj.foo)
 
     def test_tagname_parse_xmlelement(self):
         class TestType(xsd.ComplexType):
             foo = xsd.Element(xsd.String, tagname='bar')
-        xml = b"<T><bar>coucou</bar></T>"
+        xml = b'<T><bar>coucou</bar></T>'
         xmlelement = etree.fromstring(xml)
         obj = TestType.parse_xmlelement(xmlelement)
         self.assertEquals('coucou', obj.foo)
@@ -94,10 +94,10 @@ class ElementTest(unittest.TestCase):
         class TestType(xsd.ComplexType):
             foo = xsd.Element(xsd.String, tagname='bar')
         obj = TestType(foo='coucou')
-        xmlelement = etree.Element("T")
+        xmlelement = etree.Element('T')
         obj.render(xmlelement, obj)
         xml = etree.tostring(xmlelement)
-        self.assertEquals(b"<T><bar>coucou</bar></T>", xml)
+        self.assertEquals(b'<T><bar>coucou</bar></T>', xml)
 
     def test_stringify_complextype(self):
         flight = Flight(takeoff_airport=Airport())
@@ -107,26 +107,26 @@ class ElementTest(unittest.TestCase):
 class ListElementTest(unittest.TestCase):
 
     def test_rendering_simple_type(self):
-        passengers = xsd.ListElement(xsd.String, "passenger", maxOccurs=10, minOccurs=0)
-        passengers_list = ["abc", "123"]
-        xmlelement = etree.Element("flight")
-        passengers.render(xmlelement, "passenger", passengers_list)
-        expected_xml = b"""<flight>
+        passengers = xsd.ListElement(xsd.String, 'passenger', maxOccurs=10, minOccurs=0)
+        passengers_list = ['abc', '123']
+        xmlelement = etree.Element('flight')
+        passengers.render(xmlelement, 'passenger', passengers_list)
+        expected_xml = b'''<flight>
   <passenger>abc</passenger>
   <passenger>123</passenger>
 </flight>
-"""
+'''
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
     def test_parsing(self):
         class Test(xsd.ComplexType):
-            values = xsd.ListElement(xsd.Int, "value")
-        XML = b"""
+            values = xsd.ListElement(xsd.Int, 'value')
+        XML = b'''
         <test>
             <value>1</value>
             <value>2</value>
-        </test>"""
+        </test>'''
         test = Test.parsexml(XML)
         self.assertEqual(2, len(test.values))
         self.assertEqual(1, test.values[0])
@@ -147,12 +147,12 @@ class BooleanTypeTest(unittest.TestCase):
 
     def test_element_true(self):
         mixed = xsd.Element(xsd.Boolean,)
-        xmlelement = etree.Element("complexType")
-        mixed.render(xmlelement, "mixed", True)
-        expected_xml = b"""<complexType>
+        xmlelement = etree.Element('complexType')
+        mixed.render(xmlelement, 'mixed', True)
+        expected_xml = b'''<complexType>
   <mixed>true</mixed>
 </complexType>
-"""
+'''
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
@@ -170,17 +170,17 @@ class BooleanTypeTest(unittest.TestCase):
 
     def test_attribute_false(self):
         mixed = xsd.Attribute(xsd.Boolean)
-        xmlelement = etree.Element("complexType")
-        mixed.render(xmlelement, "mixed", True)
-        expected_xml = b"""<complexType mixed="true"/>\n"""
+        xmlelement = etree.Element('complexType')
+        mixed.render(xmlelement, 'mixed', True)
+        expected_xml = b'<complexType mixed="true"/>\n'
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
     def test_attribute_nil(self):
         mixed = xsd.Attribute(xsd.Boolean, nillable=True, use=xsd.Use.OPTIONAL)
-        xmlelement = etree.Element("complexType")
-        mixed.render(xmlelement, "mixed", xsd.NIL)
-        expected_xml = b"""<complexType mixed="nil"/>\n"""
+        xmlelement = etree.Element('complexType')
+        mixed.render(xmlelement, 'mixed', xsd.NIL)
+        expected_xml = b'<complexType mixed="nil"/>\n'
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
@@ -206,7 +206,7 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_fractionDigits(self):
 
@@ -220,7 +220,7 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_Inclusive(self):
 
@@ -236,13 +236,13 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
         try:
             test.value = 101
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_Exclusive(self):
 
@@ -258,25 +258,25 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
         try:
             test.value = 0
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
         try:
             test.value = 1
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
         try:
             test.value = -101
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_pattern(self):
 
@@ -291,7 +291,7 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_totalDigits(self):
 
@@ -307,13 +307,13 @@ class DecimalTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
         try:
             test.value = 12345
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_rendring(self):
 
@@ -322,17 +322,17 @@ class DecimalTypeTest(unittest.TestCase):
 
         test = Test()
         test.value = 4.13
-        xml = test.xml("test")
-        self.assertEqual(b"<test>\n  <value>4.13</value>\n</test>\n", xml)
+        xml = test.xml('test')
+        self.assertEqual(b'<test>\n  <value>4.13</value>\n</test>\n', xml)
 
     def test_parsing(self):
-        xml = b"<test><value>3.14</value></test>"
+        xml = b'<test><value>3.14</value></test>'
 
         class Test(xsd.ComplexType):
             value = xsd.Element(xsd.Decimal)
 
         test = Test.parsexml(xml)
-        self.assertEqual(test.value, 3.14, "PI value is wrong OMG!")
+        self.assertEqual(test.value, 3.14, 'PI value is wrong OMG!')
 
 
 class IntegerTypeTest(unittest.TestCase):
@@ -342,8 +342,8 @@ class IntegerTypeTest(unittest.TestCase):
             value = xsd.Element(xsd.Integer(totalDigits=2))
         test = Test()
         test.value = 22
-        xml = test.xml("test")
-        XML = b"<test>\n  <value>22</value>\n</test>\n"
+        xml = test.xml('test')
+        XML = b'<test>\n  <value>22</value>\n</test>\n'
         self.assertEqual(XML, xml)
 
         test1 = Test.parsexml(XML)
@@ -360,14 +360,14 @@ class IntegerTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
         try:
             test.value = -2147483649
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_Long(self):
 
@@ -382,63 +382,63 @@ class IntegerTypeTest(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
         try:
             test.value = -9223372036854775808 - 1
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
 
 class ComplexTest(unittest.TestCase):
 
     def test_rendering(self):
         airport = Airport()
-        airport.type = "IATA"
-        airport.code = "WAW"
-        xmlelement = etree.Element("airport")
+        airport.type = 'IATA'
+        airport.code = 'WAW'
+        xmlelement = etree.Element('airport')
         airport.render(xmlelement, airport)
         xml = etree.tostring(xmlelement, pretty_print=True)
-        expected_xml = b"""<airport>
+        expected_xml = b'''<airport>
   <type>IATA</type>
   <code>WAW</code>
 </airport>
-"""
+'''
         self.assertEqual(expected_xml, xml)
 
     def test_attribute_rendering(self):
         aircraft = Aircraft()
-        aircraft.tail_number = "LN-KKX"
-        xmlelement = etree.Element("aircraft")
+        aircraft.tail_number = 'LN-KKX'
+        xmlelement = etree.Element('aircraft')
         aircraft.render(xmlelement, aircraft)
-        expected_xml = b"""<aircraft tail_number="LN-KKX"/>\n"""
+        expected_xml = b'<aircraft tail_number="LN-KKX"/>\n'
         xml = etree.tostring(xmlelement, pretty_print=True)
         self.assertEqual(expected_xml, xml)
 
     def test_attribute_parsing(self):
-        XML = b"""<aircraft tail_number="LN-KKX"/>\n"""
+        XML = b'<aircraft tail_number="LN-KKX"/>\n'
         aircraft = Aircraft.parsexml(XML)
-        self.assertEqual("LN-KKX", aircraft.tail_number)
+        self.assertEqual('LN-KKX', aircraft.tail_number)
 
     def test_multilayer_complex(self):
         flight = Flight()
-        flight.tail_number = "LN-KKA"
-        flight.takeoff_airport = Airport.create("IATA", "WAW")
-        flight.landing_airport = Airport.create("ICAO", "EGLL")
+        flight.tail_number = 'LN-KKA'
+        flight.takeoff_airport = Airport.create('IATA', 'WAW')
+        flight.landing_airport = Airport.create('ICAO', 'EGLL')
 
         try:
-            flight.takeoff_pilot = "ABC"
+            flight.takeoff_pilot = 'ABC'
         except ValueError:
             pass
         else:
             self.fail()
-        flight.takeoff_pilot = "CAPTAIN"
+        flight.takeoff_pilot = 'CAPTAIN'
 
-        xmlelement = etree.Element("flight")
+        xmlelement = etree.Element('flight')
         flight.render(xmlelement, flight)
         xml = etree.tostring(xmlelement, pretty_print=True)
-        expected_xml = b"""<flight>
+        expected_xml = b'''<flight>
   <tail_number>LN-KKA</tail_number>
   <takeoff_airport>
     <type>IATA</type>
@@ -450,21 +450,21 @@ class ComplexTest(unittest.TestCase):
   </landing_airport>
   <takeoff_pilot>CAPTAIN</takeoff_pilot>
 </flight>
-"""
+'''
         self.assertEqual(expected_xml, xml)
 
     def test_complex_with_list(self):
         flight = Flight()
-        flight.tail_number = "LN-KKA"
-        flight.takeoff_airport = Airport.create("IATA", "WAW")
-        flight.landing_airport = Airport.create("ICAO", "EGLL")
-        flight.passengers.append("abc")
-        flight.passengers.append("123")
+        flight.tail_number = 'LN-KKA'
+        flight.takeoff_airport = Airport.create('IATA', 'WAW')
+        flight.landing_airport = Airport.create('ICAO', 'EGLL')
+        flight.passengers.append('abc')
+        flight.passengers.append('123')
 
-        xmlelement = etree.Element("flight")
+        xmlelement = etree.Element('flight')
         flight.render(xmlelement, flight)
         xml = etree.tostring(xmlelement, pretty_print=True)
-        expected_xml = b"""<flight>
+        expected_xml = b'''<flight>
   <tail_number>LN-KKA</tail_number>
   <takeoff_airport>
     <type>IATA</type>
@@ -477,7 +477,7 @@ class ComplexTest(unittest.TestCase):
   <passenger>abc</passenger>
   <passenger>123</passenger>
 </flight>
-"""
+'''
         self.assertEqual(expected_xml, xml)
 
     def test_inheritance_rendering(self):
@@ -489,10 +489,10 @@ class ComplexTest(unittest.TestCase):
             type = xsd.Attribute(xsd.String)
 
         b = B()
-        b.name = "b"
-        b.type = "B"
-        xml = b.xml("inheritance")
-        EXPECTED_XML = b"""<inheritance name="b" type="B"/>\n"""
+        b.name = 'b'
+        b.type = 'B'
+        xml = b.xml('inheritance')
+        EXPECTED_XML = b'<inheritance name="b" type="B"/>\n'
         self.assertEqual(EXPECTED_XML, xml)
 
     def test_inheritance_parsing(self):
@@ -503,12 +503,12 @@ class ComplexTest(unittest.TestCase):
         class B(A):
             type = xsd.Element(xsd.String)
 
-        XML = b"""<inheritance name="b">
+        XML = b'''<inheritance name="b">
   <type>B</type>
-</inheritance>\n"""
+</inheritance>\n'''
         b = B.parsexml(XML)
-        self.assertEqual(b.name, "b")
-        self.assertEqual(b.type, "B")
+        self.assertEqual(b.name, 'b')
+        self.assertEqual(b.type, 'B')
 
     def test_parsexml_with_soapfish_schema(self):
         # sometimes it comes handy that soapfish can validate some XML against a
@@ -532,7 +532,7 @@ class ComplexTest(unittest.TestCase):
 
 
 class XMLParsingTest(unittest.TestCase):
-    SIMPLE_XML = b"""<flight>
+    SIMPLE_XML = b'''<flight>
   <landing_airport>
     <code>EGLL</code>
     <type>ICAO</type>
@@ -544,18 +544,18 @@ class XMLParsingTest(unittest.TestCase):
     <type>IATA</type>
   </takeoff_airport>
 </flight>
-"""
+'''
 
     def test_simple_parsing(self):
         flight = Flight.parse_xmlelement(etree.fromstring(self.SIMPLE_XML))
-        self.assertEqual("LN-KKA", flight.tail_number)
-        self.assertEqual("WAW", flight.takeoff_airport.code)
-        self.assertEqual("IATA", flight.takeoff_airport.type)
-        self.assertEqual("EGLL", flight.landing_airport.code)
-        self.assertEqual("ICAO", flight.landing_airport.type)
-        self.assertEqual(iso8601.parse_date("2001-10-26T21:32:52Z"), flight.takeoff_datetime)
+        self.assertEqual('LN-KKA', flight.tail_number)
+        self.assertEqual('WAW', flight.takeoff_airport.code)
+        self.assertEqual('IATA', flight.takeoff_airport.type)
+        self.assertEqual('EGLL', flight.landing_airport.code)
+        self.assertEqual('ICAO', flight.landing_airport.type)
+        self.assertEqual(iso8601.parse_date('2001-10-26T21:32:52Z'), flight.takeoff_datetime)
 
-    LIST_XML = b"""<flight>
+    LIST_XML = b'''<flight>
   <landing_airport>
     <code>EGLL</code>
     <type>ICAO</type>
@@ -568,20 +568,20 @@ class XMLParsingTest(unittest.TestCase):
     <type>IATA</type>
   </takeoff_airport>
 </flight>
-"""
+'''
 
     def test_list_parsing(self):
         flight = Flight.parse_xmlelement(etree.fromstring(self.LIST_XML))
-        self.assertEqual("LN-KKA", flight.tail_number)
-        self.assertEqual("WAW", flight.takeoff_airport.code)
-        self.assertEqual("IATA", flight.takeoff_airport.type)
-        self.assertEqual("EGLL", flight.landing_airport.code)
-        self.assertEqual("ICAO", flight.landing_airport.type)
-        self.assertEqual(["abc", "123"], flight.passengers)
+        self.assertEqual('LN-KKA', flight.tail_number)
+        self.assertEqual('WAW', flight.takeoff_airport.code)
+        self.assertEqual('IATA', flight.takeoff_airport.type)
+        self.assertEqual('EGLL', flight.landing_airport.code)
+        self.assertEqual('ICAO', flight.landing_airport.type)
+        self.assertEqual(['abc', '123'], flight.passengers)
 
 
 class XSD_Spec_Test(unittest.TestCase):
-    AIRPORT_XML = """
+    AIRPORT_XML = '''
     <xs:complexType name="airport" xmlns:xs="http://www.w3.org/2001/XMLSchema">
         <xs:sequence>
             <xs:element name="code_type">
@@ -595,21 +595,21 @@ class XSD_Spec_Test(unittest.TestCase):
             </xs:element>
             <xs:element name="code" type="xs:string"/>
         </xs:sequence>
-    </xs:complexType>"""
+    </xs:complexType>'''
 
     def test_complexType(self):
         airport = xsdspec.XSDComplexType.parse_xmlelement(etree.fromstring(self.AIRPORT_XML))
-        self.assertEqual("airport", airport.name)
+        self.assertEqual('airport', airport.name)
         code_type_element = airport.sequence.elements[0]
         code_element = airport.sequence.elements[1]
-        self.assertEqual("code_type", code_type_element.name)
-        self.assertEqual("xs:string", code_type_element.simpleType.restriction.base)
+        self.assertEqual('code_type', code_type_element.name)
+        self.assertEqual('xs:string', code_type_element.simpleType.restriction.base)
         self.assertEqual(3, len(code_type_element.simpleType.restriction.enumerations))
-        self.assertEqual("ICAO", code_type_element.simpleType.restriction.enumerations[0].value)
-        self.assertEqual("code", code_element.name)
+        self.assertEqual('ICAO', code_type_element.simpleType.restriction.enumerations[0].value)
+        self.assertEqual('code', code_element.name)
 
 
-SCHEMA_XML = """
+SCHEMA_XML = '''
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://flightdataservices.com/ops.xsd">
     <xs:complexType name="airport">
         <xs:sequence>
@@ -696,7 +696,7 @@ SCHEMA_XML = """
     </xs:complexType>
     <xs:element name="ops" type="fds:ops"/>
     <xs:element name="status" type="fds:status"/>
-</xs:schema>"""
+</xs:schema>'''
 
 
 class SchemaTest(unittest.TestCase):
@@ -706,13 +706,13 @@ class SchemaTest(unittest.TestCase):
         self.assertEqual(1, len(schema.simpleTypes))
         self.assertEqual(2, len(schema.elements))
 
-        self.assertEqual("ops", schema.elements[0].name)
-        self.assertEqual("fds:ops", schema.elements[0].type)
+        self.assertEqual('ops', schema.elements[0].name)
+        self.assertEqual('fds:ops', schema.elements[0].type)
 
         ops_type = schema.complexTypes[2]
-        self.assertEqual("ops", ops_type.name)
-        self.assertEqual("aircraft", ops_type.sequence.elements[0].name)
-        self.assertEqual("xs:string", ops_type.sequence.elements[0].type)
+        self.assertEqual('ops', ops_type.name)
+        self.assertEqual('aircraft', ops_type.sequence.elements[0].name)
+        self.assertEqual('xs:string', ops_type.sequence.elements[0].type)
 
 
 class RequestResponseOperation(xsd.Group):
@@ -726,33 +726,33 @@ class Operation(xsd.ComplexType):
 
 
 class GroupTest(unittest.TestCase):
-    XML = b"""<operation>
+    XML = b'''<operation>
   <name>TEST-Operation</name>
   <input>IN</input>
   <output>OUT</output>
-</operation>\n"""
+</operation>\n'''
 
     def test_rendering(self):
         operation = Operation()
-        operation.name = "TEST-Operation"
-        operation.requestResponseOperation.input = "IN"
-        operation.requestResponseOperation.output = "OUT"
-        xml = operation.xml("operation")
+        operation.name = 'TEST-Operation'
+        operation.requestResponseOperation.input = 'IN'
+        operation.requestResponseOperation.output = 'OUT'
+        xml = operation.xml('operation')
         self.assertEqual(self.XML, xml)
 
     def test_parsing(self):
         operation = Operation.parsexml(self.XML)
-        self.assertEqual(operation.name, "TEST-Operation")
-        self.assertEqual(operation.requestResponseOperation.input, "IN")
-        self.assertEqual(operation.requestResponseOperation.output, "OUT")
+        self.assertEqual(operation.name, 'TEST-Operation')
+        self.assertEqual(operation.requestResponseOperation.input, 'IN')
+        self.assertEqual(operation.requestResponseOperation.output, 'OUT')
 
     def test_rendering_empty_group(self):
         operation = Operation()
-        operation.name = "TEST-Operation"
-        xml = operation.xml("operation")
-        expected_xml = b"""<operation>
+        operation.name = 'TEST-Operation'
+        xml = operation.xml('operation')
+        expected_xml = b'''<operation>
   <name>TEST-Operation</name>
-</operation>\n"""
+</operation>\n'''
         self.assertEqual(expected_xml, xml)
 
 
@@ -778,19 +778,19 @@ class AttributeGroupTest(unittest.TestCase):
 
     def test_rendering(self):
         body = TBody()
-        body.parts = "Parts"
-        body.tBodyAttributes.use = "required"
-        body.tBodyAttributes.namespace = "xs"
-        expected_xml = b"""<body parts="Parts" use="required" namespace="xs"/>\n"""
-        xml = body.xml("body")
+        body.parts = 'Parts'
+        body.tBodyAttributes.use = 'required'
+        body.tBodyAttributes.namespace = 'xs'
+        expected_xml = b'<body parts="Parts" use="required" namespace="xs"/>\n'
+        xml = body.xml('body')
         self.assertEqual(expected_xml, xml)
 
     def test_parsing(self):
-        xml = b"""<body parts="Parts" use="required" namespace="xs"/>\n"""
+        xml = b'<body parts="Parts" use="required" namespace="xs"/>\n'
         body = TBody.parsexml(xml)
-        self.assertEqual(body.parts, "Parts")
-        self.assertEqual(body.tBodyAttributes.use, "required")
-        self.assertEqual(body.tBodyAttributes.namespace, "xs")
+        self.assertEqual(body.parts, 'Parts')
+        self.assertEqual(body.tBodyAttributes.use, 'required')
+        self.assertEqual(body.tBodyAttributes.namespace, 'xs')
         self.assertEqual(body.tBodyAttributes.encodingStyle, None)
 
 
@@ -802,12 +802,12 @@ class DocumentTest(unittest.TestCase):
 
     def test_document_rendering(self):
         document = AirporttDocument()
-        document.airport = Airport(code="XXX", type="IATA")
+        document.airport = Airport(code='XXX', type='IATA')
         xml = document.render()
-        expected_xml = b"""<airport>
+        expected_xml = b'''<airport>
   <type>IATA</type>
   <code>XXX</code>
-</airport>\n"""
+</airport>\n'''
         self.assertEqual(xml, expected_xml)
 
 
@@ -821,41 +821,41 @@ class NillableTest(unittest.TestCase):
 
         test = Test()
         test.value = xsd.NIL
-        xml = test.xml("test")
-        EXPECTED_XML = b"""<test>
+        xml = test.xml('test')
+        EXPECTED_XML = b'''<test>
   <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
-</test>\n"""
+</test>\n'''
         self.assertEqual(xml, EXPECTED_XML)
         try:
             test.notnillable = xsd.NIL
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
     def test_nillable_element_parsing(self):
 
         class Test(xsd.ComplexType):
             value = xsd.Element(xsd.Long, nillable=True)
 
-        xml = b"""<test><value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/></test>"""
+        xml = b'<test><value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/></test>'
         test = Test.parsexml(xml)
         self.assertEqual(test.value, xsd.NIL)
 
     def test_nillable_list_rendering(self):
 
         class Test(xsd.ComplexType):
-            values = xsd.ListElement(xsd.String, "value", nillable=True)
-            notnillable = xsd.ListElement(xsd.String, "notnillable", minOccurs=0)
+            values = xsd.ListElement(xsd.String, 'value', nillable=True)
+            notnillable = xsd.ListElement(xsd.String, 'notnillable', minOccurs=0)
 
         test = Test()
-        test.values.append("XXX")
+        test.values.append('XXX')
         test.values.append(xsd.NIL)
-        xml = test.xml("test")
-        EXPECTED_XML = b"""<test>
+        xml = test.xml('test')
+        EXPECTED_XML = b'''<test>
   <value>XXX</value>
   <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
-</test>\n"""
+</test>\n'''
         self.assertEqual(xml, EXPECTED_XML)
 
         self.assertRaises(Exception, lambda: test.notnillable.append(xsd.NIL))
@@ -863,15 +863,15 @@ class NillableTest(unittest.TestCase):
     def test_nillable_list_parsing(self):
 
         class Test(xsd.ComplexType):
-            values = xsd.ListElement(xsd.Int, "value", nillable=True)
+            values = xsd.ListElement(xsd.Int, 'value', nillable=True)
 
-        XML = b"""<test>
+        XML = b'''<test>
                     <value>1</value>
                     <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                     <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                     <value>2</value>
                 </test>
-                """
+                '''
         test = Test.parsexml(XML)
         self.assertEqual(test.values[0], 1)
         self.assertEqual(test.values[1], xsd.NIL)
@@ -884,9 +884,9 @@ class NillableTest(unittest.TestCase):
             value = xsd.Attribute(xsd.String, nillable=True, use=xsd.Use.OPTIONAL)
 
         test = Test()
-        self.assertEqual(test.xml("test"), b"<test/>\n")
+        self.assertEqual(test.xml('test'), b'<test/>\n')
         test.value = xsd.NIL
-        self.assertEqual(b'<test value="nil"/>\n', test.xml("test"))
+        self.assertEqual(b'<test value="nil"/>\n', test.xml('test'))
 
 
 class ElementTypeEvaluation(unittest.TestCase):
@@ -894,11 +894,11 @@ class ElementTypeEvaluation(unittest.TestCase):
     def test_string_type_evalutation(self):
 
         class B1(xsd.ComplexType):
-            a = xsd.Element("soapfish.xsd.String")
-            b = xsd.Element("soapfish.xsd.Integer")
+            a = xsd.Element('soapfish.xsd.String')
+            b = xsd.Element('soapfish.xsd.Integer')
 
         b = B1()
-        b.a = "test"
+        b.a = 'test'
         b.b = 123
 
 
@@ -907,17 +907,17 @@ class PatternTest(unittest.TestCase):
     def test_string_pattern(self):
 
         class Test(xsd.ComplexType):
-            value = xsd.Element(xsd.String(pattern=r"^a*$"))
+            value = xsd.Element(xsd.String(pattern=r'^a*$'))
 
         test = Test()
-        test.value = "a"
-        test.value = "aaa"
+        test.value = 'a'
+        test.value = 'aaa'
         try:
-            test.value = "b"
+            test.value = 'b'
         except ValueError:
             pass
         else:
-            self.fail("Should not get here.")
+            self.fail('Should not get here.')
 
 
 class MaxOccursTest(unittest.TestCase):
@@ -947,5 +947,5 @@ class MaxOccursTest(unittest.TestCase):
         self.assertEqual(xsd.UNBOUNDED, value)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

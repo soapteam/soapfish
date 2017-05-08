@@ -41,7 +41,7 @@ class SimpleTypeTestCase(PythonicTestCase):
             foo = xsd.Element(xsd.Date)
         if string_value is None:
             string_value = ''
-        xml = "<container><foo>%s</foo></container>" % string_value
+        xml = '<container><foo>%s</foo></container>' % string_value
         return Container.parsexml(xml).foo
 
     def _normalize(self, xml):

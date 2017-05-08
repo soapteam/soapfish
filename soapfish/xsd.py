@@ -209,15 +209,15 @@ class String(SimpleType):
         return xmlvalue
 
     def _clean_whitespace(self, value):
-        if self.whiteSpace == "preserve":
+        if self.whiteSpace == 'preserve':
             # do nothing, just preserve the value
             pass
-        elif self.whiteSpace == "replace":
+        elif self.whiteSpace == 'replace':
             # replace line feeds, tabs, spaces, and carriage returns with whitespaces
-            value = re.sub(r"[\t\r\n\s]", " ", value)
-        elif self.whiteSpace == "collapse":
+            value = re.sub(r'[\t\r\n\s]', ' ', value)
+        elif self.whiteSpace == 'collapse':
             # clean line feeds, tabs, spaces, and carriage returns with one whitespace
-            value = re.sub(r"[\t\r\n\s]+", " ", value)
+            value = re.sub(r'[\t\r\n\s]+', ' ', value)
 
         return value
 
@@ -248,7 +248,7 @@ class Boolean(SimpleType):
         elif value == 'nil' or value is None:
             return None
         else:
-            raise ValueError("Boolean value error - %s" % value)
+            raise ValueError('Boolean value error - %s' % value)
 
 
 class Date(SimpleType):
@@ -764,12 +764,12 @@ class TypedList(list):
         self._list._evaluate_type()
         if value == NIL:
             if not self._list.nillable:
-                raise ValueError("Nil value in not nillable list.")
+                raise ValueError('Nil value in not nillable list.')
             accepted_value = NIL
         else:
             accepted_value = self._list._type.accept(value)
         if self._list._maxOccurs is not None and (len(self) + 1 > self._list._maxOccurs):
-            raise ValueError("You must not add more than %s items to this list." % self._list._maxOccurs)
+            raise ValueError('You must not add more than %s items to this list.' % self._list._maxOccurs)
         super(TypedList, self).append(accepted_value)
 
 
@@ -1237,7 +1237,7 @@ class Method(object):
     '''
 
     def __init__(self, operationName, soapAction, input=None, output=None, function=None,
-                 inputPartName="body", outputPartName="body",
+                 inputPartName='body', outputPartName='body',
                  input_header=None, output_header=None, style=CallStyle.DOCUMENT):
         '''
         :param function: The function that should be called. Required only for

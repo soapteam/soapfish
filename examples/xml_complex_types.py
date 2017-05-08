@@ -1,4 +1,4 @@
-#Example 3. Nested ComplexTypes with attributes.
+# Example 3. Nested ComplexTypes with attributes.
 
 from __future__ import print_function
 
@@ -21,12 +21,11 @@ class Flight(xsd.ComplexType):
     landing_datetime = xsd.Element(xsd.DateTime, minOccurs=0)
 
 
-flight = Flight(tail_number="G-DEMO")  # Constructor handles field inititailization.
-flight.takeoff_airport = Airport(type="IATA", code="WAW")
-flight.landing_airport = Airport(type="ICAO", code="EGLL")
+flight = Flight(tail_number='G-DEMO')  # Constructor handles field inititailization.
+flight.takeoff_airport = Airport(type='IATA', code='WAW')
+flight.landing_airport = Airport(type='ICAO', code='EGLL')
 
-print(flight.xml("flight"))
-#datetime field types will accept, datetime object or string,
-#that parses correctly to such object.
+print(flight.xml('flight'))
+# datetime field types will accept, datetime object or string, that parses correctly to such object.
 flight.takeoff_datetime = datetime.now()
-print(flight.xml("flight"))
+print(flight.xml('flight'))

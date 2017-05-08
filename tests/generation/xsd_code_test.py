@@ -137,5 +137,5 @@ class XSDCodeGenerationTest(PythonicTestCase):
         xml = utils.open_document('tests/assets/generation/extension_with_special_chars.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
         schemas, symbols = generated_symbols(code)
-        assert_true("BaseType_with_special_chars_123" in symbols)
-        assert_equals("BaseType_with_special_chars_123", symbols["ComplexType"].__base__.__name__)
+        assert_true('BaseType_with_special_chars_123' in symbols)
+        assert_equals('BaseType_with_special_chars_123', symbols['ComplexType'].__base__.__name__)

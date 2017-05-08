@@ -1,4 +1,4 @@
-#Example 2. Parsing XML to object.
+# Example 2. Parsing XML to object.
 
 from __future__ import print_function
 
@@ -10,12 +10,12 @@ class Airport(xsd.ComplexType):
     code = xsd.Element(xsd.String)
 
 
-XML = """<takeoff_airport>
+XML = '''<takeoff_airport>
   <type>IATA</type>
   <code>WAW</code>
-</takeoff_airport>"""
+</takeoff_airport>'''
 
 
 airport = Airport.parsexml(XML)
-print("Type:", airport.type)
-print("Code:", airport.code)
+print('Type:', airport.type)
+print('Code:', airport.code)

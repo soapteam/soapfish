@@ -1,4 +1,4 @@
-#Example 1. Rendering object to XML.
+# Example 1. Rendering object to XML.
 
 from __future__ import print_function
 
@@ -11,6 +11,6 @@ class Airport(xsd.ComplexType):
 
 
 airport = Airport()
-airport.type = "IATA"
-airport.code = "WAW"
-print(airport.xml("takeoff_airport"))
+airport.type = 'IATA'
+airport.code = 'WAW'
+print(airport.xml('takeoff_airport'))

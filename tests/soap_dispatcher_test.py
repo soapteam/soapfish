@@ -68,7 +68,7 @@ class SOAPDispatcherTest(PythonicTestCase):
         response = dispatcher.dispatch(request)
         assert_false(handler_state.was_called)
         self.assert_is_soap_fault(response, partial_fault_string=u"Element 'invalid': This element is not expected. "
-                                  u"Expected is ( value ).")
+                                  u'Expected is ( value ).')
 
     def test_can_reject_malformed_xml_soap_message(self):
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), 'garbage')
@@ -138,7 +138,7 @@ class SOAPDispatcherTest(PythonicTestCase):
         request = SOAPRequest(dict(REQUEST_METHOD='POST'), request_message)
         dispatcher = SOAPDispatcher(echo_service())
         response = dispatcher.dispatch(request)
-        self.assert_is_soap_fault(response, partial_fault_string="DocumentInvalid")
+        self.assert_is_soap_fault(response, partial_fault_string='DocumentInvalid')
 
     def test_can_dispatch_requests_based_on_soap_body(self):
         handler, handler_state = echo_handler()
@@ -231,7 +231,7 @@ class SOAPDispatcherTest(PythonicTestCase):
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
-        self.assert_is_soap_fault(response, partial_fault_string="DocumentInvalid")
+        self.assert_is_soap_fault(response, partial_fault_string='DocumentInvalid')
 
     def test_can_propagate_custom_output_header(self):
         handler, handler_state = echo_handler()
