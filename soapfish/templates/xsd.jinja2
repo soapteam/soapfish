@@ -1,4 +1,4 @@
-{%- import 'lib' as lib with context -%}
+{%- import 'lib.jinja2' as lib with context -%}
 {%- if preamble -%}
 {{- lib.render_preamble(preamble) -}}
 from soapfish import xsd
