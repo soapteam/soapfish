@@ -32,7 +32,7 @@ class DateTest(SimpleTypeTestCase):
     def test_wrong_type(self):
         mixed = xsd.Element(xsd.DateTime)
         xmlelement = etree.Element('foo')
-        assert_raises(Exception, lambda: mixed.render(xmlelement, 'bar', 1))
+        self.assertRaises(Exception, mixed.render, xmlelement, 'bar', 1)
 
     def test_parsing_utctimezone(self):
         class Test(xsd.ComplexType):

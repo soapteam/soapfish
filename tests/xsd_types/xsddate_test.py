@@ -12,9 +12,9 @@ class XSDDateTest(PythonicTestCase):
         assert_equals(2012, XSDDate(2012, 2, 29).year)
 
     def test_raises_exception_when_instantiating_invalid_dates(self):
-        assert_raises(ValueError, lambda: XSDDate(2014, 2, 50))
-        assert_raises(ValueError, lambda: XSDDate(2014, 13, 10))
-        assert_raises(ValueError, lambda: XSDDate(2011, 2, 29))
+        self.assertRaises(ValueError, XSDDate, 2014, 2, 50)
+        self.assertRaises(ValueError, XSDDate, 2014, 13, 10)
+        self.assertRaises(ValueError, XSDDate, 2011, 2, 29)
 
     def test_supports_very_distant_dates(self):
         raise SkipTest('XSDDate can currently only represent the value range of datetime.date')
