@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/CreditCardFaults-1G/credit-card-faults.xsd -->
+<!-- Copyright © 2006-02-19 23:27 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://finance.example.com/CreditCardFaults/xsd"
+	xmlns:tns="http://finance.example.com/CreditCardFaults/xsd">
+
+	<element name="CreditCardNumber" type="string"></element>
+
+	<element name="CreditCardType">
+		<simpleType>
+			<restriction base="string">
+				<enumeration value="AMEX" />
+				<enumeration value="MASTERCARD" />
+				<enumeration value="VISA" />
+			</restriction>
+		</simpleType>
+	</element>
+
+	<element name="ExpirationDate" type="date"></element>
+
+	<element name="InvalidCreditCardNumber">
+		<complexType>
+			<sequence>
+				<element ref="tns:CreditCardType"></element>
+				<element ref="tns:CreditCardNumber"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="InvalidExpirationDate">
+		<complexType>
+			<sequence>
+				<element ref="tns:CreditCardNumber"></element>
+				<element ref="tns:ExpirationDate"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="ExpiredCreditCard">
+		<complexType>
+			<sequence>
+				<element ref="tns:CreditCardNumber"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="CancelledCreditCard">
+		<complexType>
+			<sequence>
+				<element ref="tns:CreditCardNumber"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+</schema>

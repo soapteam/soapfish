@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm-base.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 Component Model Interchange Format Base Types
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2006-05-08 Arthur Ryman (ryman@ca.ibm.com)
+	- refactored wsdlcm.xsd
+	
+	2006-06-10: Arthur Ryman (ryman@ca.ibm.com)
+	- moved parent, features, and properties into base
+	
+	2006-10-30: Jonathan Marsh (jonathan@wso2.com)
+	- removed features and properties
+	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+	elementFormDefault="qualified">
+
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
+		schemaLocation="http://www.w3.org/2001/xml.xsd" />
+
+	<xs:complexType name="Any">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="Direction">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="in" />
+			<xs:enumeration value="out" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="MessageContentModel">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="#any" />
+			<xs:enumeration value="#none" />
+			<xs:enumeration value="#other" />
+			<xs:enumeration value="#element" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="QName">
+		<xs:annotation>
+			<xs:documentation>
+				QName is used as the key type for several component
+				types such as Interface, Binding, Service, Element
+				Declaration, and Type Definition. The key of a QName is
+				(namespaceName, localName).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="namespaceName" type="xs:anyURI" />
+			<xs:element name="localName" type="xs:NCName" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Ref">
+		<xs:attribute name="ref" type="xs:IDREF" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="Uris">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by uri.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="uri" type="xs:anyURI"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ZeroOrMoreUris">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by uri.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="uri" type="xs:anyURI"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Component" abstract="true">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="strict"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute ref="xml:id" use="required" />
+		<xs:anyAttribute namespace="##other" processContents="lax" />
+	</xs:complexType>
+
+	<xs:element name="parent" type="Ref" />
+
+</xs:schema>

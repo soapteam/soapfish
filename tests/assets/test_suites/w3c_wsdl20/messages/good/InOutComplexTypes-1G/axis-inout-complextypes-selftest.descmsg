@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOutComplexTypes-1G/axis-inout-complextypes-selftest.descmsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log xmlns="http://www.w3.org/2002/ws/desc/logs/">
+<message timestamp="2006-07-06T10:31:57.261Z" conversation="1" number="1" type="request">
+<senderHostAndPort>199.43.208.130:1151</senderHostAndPort>
+<receiverHostAndPort>chathura.dyndns.ws:8080</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/axis2/services/Axis2SampleDocLitService</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoString</SOAPAction>
+<Host>chathura.dyndns.ws:8080</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStringParam xmlns="http://userguide.axis2.apache.org/xsd">Echo Me </echoStringParam></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:31:57.431Z" conversation="1" number="2" type="response">
+<senderHostAndPort>chathura.dyndns.ws:8080</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1151</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Server>Apache-Coyote/1.1</Server>
+<Set-Cookie>JSESSIONID=367BC688CB59974BDD40426BD77C10B1; Path=/axis2</Set-Cookie>
+<Content-Type type="text/xml">text/xml;charset=UTF-8</Content-Type>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Date>Thu, 06 Jul 2006 15:31:47 GMT</Date>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStringReturn xmlns="http://userguide.axis2.apache.org/xsd">Echo Me </echoStringReturn></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:32:02.148Z" conversation="2" number="3" type="request">
+<senderHostAndPort>199.43.208.130:1152</senderHostAndPort>
+<receiverHostAndPort>chathura.dyndns.ws:8080</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/axis2/services/Axis2SampleDocLitService</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoStringArray</SOAPAction>
+<Cookie>JSESSIONID=367BC688CB59974BDD40426BD77C10B1</Cookie>
+<Host>chathura.dyndns.ws:8080</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStringArrayParam xmlns="http://userguide.axis2.apache.org/xsd"><string>value1</string><string>value2</string><string>value3</string></echoStringArrayParam></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:32:02.328Z" conversation="2" number="4" type="response">
+<senderHostAndPort>chathura.dyndns.ws:8080</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1152</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Server>Apache-Coyote/1.1</Server>
+<Content-Type type="text/xml">text/xml;charset=UTF-8</Content-Type>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Date>Thu, 06 Jul 2006 15:31:52 GMT</Date>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStringArrayReturn xmlns="http://userguide.axis2.apache.org/xsd"><string>value1</string><string>value2</string><string>value3</string></echoStringArrayReturn></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:32:06.905Z" conversation="3" number="5" type="request">
+<senderHostAndPort>199.43.208.130:1153</senderHostAndPort>
+<receiverHostAndPort>chathura.dyndns.ws:8080</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/axis2/services/Axis2SampleDocLitService</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoStruct</SOAPAction>
+<Cookie>JSESSIONID=367BC688CB59974BDD40426BD77C10B1</Cookie>
+<Host>chathura.dyndns.ws:8080</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStructParam xmlns="http://userguide.axis2.apache.org/xsd"><varFloat>5.5</varFloat><varInt>6565</varInt><varString>String Value</varString></echoStructParam></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:32:07.055Z" conversation="3" number="6" type="response">
+<senderHostAndPort>chathura.dyndns.ws:8080</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1153</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Server>Apache-Coyote/1.1</Server>
+<Content-Type type="text/xml">text/xml;charset=UTF-8</Content-Type>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Date>Thu, 06 Jul 2006 15:31:57 GMT</Date>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStructReturn xmlns="http://userguide.axis2.apache.org/xsd"><varFloat>5.5</varFloat><varInt>6565</varInt><varString>String Value</varString></echoStructReturn></soapenv:Body></soapenv:Envelope></content>
+</message>
+</log>

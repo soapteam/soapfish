@@ -1,0 +1,134 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageTest-6G/SOAPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+    targetNamespace="http://example.org/message-test" xmlns:tns="http://example.org/message-test"
+    xmlns:wsoap="http://www.w3.org/ns/wsdl/soap" xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+    xmlns:whttp="http://www.w3.org/ns/wsdl/http" xmlns:xsmt="http://example.org/message-test/xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+
+  <documentation><![CDATA[
+    This test is a simplified clone of MessageTest-1G (Send and GuaranteedFault have explicit
+    content models to enable operation name-based dispatched), binding an interface to a 
+    generic soap binding.
+    
+    When running a test pass against this WSDL, each endpoint should be invoked in order, and 
+    each operation within the interface bound by that binding should be invoked in the order 
+    it appears in the interface, extended interfaces first.  Thus the order will be:
+        EchoString - simple string echoing in-out operation.
+        EchoStringFault - simple sting echoing in-out operation, but defined to return a fault.
+        EchoInt - simple int echoing in-out operation.
+          The value of the <int> element must be "42".
+        EchoIntSimpleFault - simple int echoing in-out operation, but defined to return a simple fault.
+        EchoIntFault - simple int echoing in-out operation, but define to return a complex fault structure.
+        Send - one-way operation sending arbitrary XML payload.
+        GuaranteedFault - robust-one-way operation, defined to return a simple fault.
+
+    This test scenario defines the following extensions, which are necessary to the test framework
+    to verify facilities not testable without them.
+    - A test SOAP module.  Identified by the URI http://www.w3.org/2002/ws/desc/6/10/test-module, 
+      this module simply inserts an empty header in messages where the module is in effect. 
+      The header is of the form <module-test xmlns="http://www.w3.org/2002/ws/desc/6/10/test-module"/>.
+  ]]></documentation>
+
+  <types>
+    <import xmlns="http://www.w3.org/2001/XMLSchema" schemaLocation="servicetypes.xsd"
+      namespace="http://example.org/message-test/xsd"/>
+  </types>
+
+  <interface name="SimpleEcho">
+    <documentation>This minimal interface defines a simplistic echo service, and associated fault.
+    This interface is not directly bound, but is extended by another interface.</documentation>
+    <fault name="MessageTestSimpleFault" element="xsmt:messageTestSimpleFault">
+      <documentation>
+        This fault structure is populated with the operation name (local part only)
+        when a fault is thrown.</documentation>
+    </fault>
+    <operation name="EchoString" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation>Simple echo service - pass in a string, get that string back.</documentation>
+      <input element="xsmt:echoString"/>
+      <output element="xsmt:echoStringReturn"/>
+    </operation>
+    <operation name="EchoStringFault" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation><![CDATA[
+        Operation is given a string, but is intended to fail - 
+        MessageTestSimpleFault should be thrown with the messageTestSimpleFault value
+          <messageTestSimpleFault>EchoStringFault</messageTestSimpleFault>
+      ]]></documentation>
+      <input element="xsmt:echoString3"/>
+      <output element="xsmt:echoString3Return"/>
+      <outfault ref="tns:MessageTestSimpleFault"/>
+    </operation>
+  </interface>
+
+  <interface name="ComplexEcho" extends="tns:SimpleEcho">
+    <fault name="MessageTestFault" element="xsmt:messageTestFault">
+      <documentation>This fault structure is populated with the operation name (local part only)
+      and the integer input that caused the fault when a fault is thrown.</documentation>
+    </fault>
+   <operation name="EchoInt" pattern="http://www.w3.org/ns/wsdl/in-out"
+      style="http://www.w3.org/ns/wsdl/style/iri">
+      <documentation>This operation returns the same int it is given.  This operation is 
+      intended to succeed - no fault should be thrown.</documentation>
+      <input element="xsmt:EchoInt"/>
+      <output element="xsmt:echoIntReturn"/>
+      <outfault ref="tns:MessageTestSimpleFault"/>
+      <outfault ref="tns:MessageTestFault"/>
+    </operation>
+    <operation name="EchoIntSimpleFault" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation><![CDATA[
+        This operation is given an int, but is intended to fail - 
+        MessageTestSimpleFault should be thrown with the messageTestSimpleFault value
+          <messageTestSimpleFault>EchoIntSimpleFault</messageTestSimpleFault>
+      ]]></documentation>
+      <input element="xsmt:echoInt2"/>
+      <output element="xsmt:echoInt2Return"/>
+      <outfault ref="tns:MessageTestSimpleFault"/>
+      <outfault ref="tns:MessageTestFault"/>
+    </operation>
+    <operation name="EchoIntFault" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation><![CDATA[
+        This operation is given an int, but is intended to fail - 
+        MessageTestFault should be thrown with the messageTestFault value:
+          <messageTestFault>
+            <faultNumber>{input int}</faultNumber>
+            <faultOperationName>EchoIntFault</faultOperationName>
+          </messageTestFault>
+      ]]></documentation> 
+      <input element="xsmt:echoInt3"/>
+      <output element="xsmt:echoInt3Return"/>
+      <outfault ref="tns:MessageTestFault"/>
+      <outfault ref="tns:MessageTestSimpleFault"/>
+    </operation>
+    <operation name="Send" pattern="http://www.w3.org/ns/wsdl/in-only">
+      <documentation>Fire and forget any xml structure.</documentation>
+      <input element="xsmt:sendString"/>
+    </operation>
+    <operation name="GuaranteedFault" pattern="http://www.w3.org/ns/wsdl/robust-in-only">
+      <documentation><![CDATA[
+        This operation is intended to fail - 
+        MessageTestSimpleFault should be thrown with the value:
+          <messageTestSimpleFault>GuaranteedFault</messageTestSimpleFault>
+      ]]></documentation>
+      <input element="xsmt:sendInt"/>
+      <outfault ref="tns:MessageTestSimpleFault"/>
+    </operation>
+  </interface>
+
+  <binding name="GenericSOAPBinding" 
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/"
+    wsoap:mepDefault="http://www.w3.org/2003/05/soap/mep/request-response/">
+    <documentation>
+      This SOAP 1.2/HTTP binding is generic to any interface.  The only constraint 
+      it imposes is the engagement of the http://www.w3.org/2002/ws/desc/6/10/test-module
+      module over the whole binding.  All other binding details are defaulted.
+    </documentation>
+    <wsoap:module ref="http://www.w3.org/2002/ws/desc/6/10/test-module"/>
+  </binding>
+
+  <service name="MessageTest6GService" interface="tns:ComplexEcho">
+    <documentation>Exercise each endpoint in order.</documentation>
+    <endpoint name="MessageTestGenericSOAP" binding="tns:GenericSOAPBinding"
+      address="http://example.org/MessageTest-6G/endpoint-1"/>
+  </service>
+</description>

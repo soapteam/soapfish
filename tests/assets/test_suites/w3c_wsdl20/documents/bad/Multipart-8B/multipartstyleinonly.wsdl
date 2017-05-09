@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Multipart-8B/multipartstyleinonly.wsdl -->
+<!-- Copyright © 2007-03-23 05:52 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://example.org/">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a WSDL 2.0 interface with multipart style
+		and in-only MEP. The localpart of the element's name is not the same as
+		that of the interface operation.
+		
+		This test violates assertion MultipartStyle-2061.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:schema targetNamespace="http://example.org/">
+			<xs:element name="myElement">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="element1" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+
+	<wsdl:interface name="myInterface"
+		styleDefault="http://www.w3.org/ns/wsdl/style/multipart">
+		<wsdl:operation name="myOperation"
+			pattern="http://www.w3.org/ns/wsdl/in-only"
+			style="http://www.w3.org/ns/wsdl/style/multipart">
+			<wsdl:input messageLabel="In" element="tns:myElement" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

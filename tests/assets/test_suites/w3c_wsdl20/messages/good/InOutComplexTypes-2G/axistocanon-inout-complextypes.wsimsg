@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOutComplexTypes-2G/axistocanon-inout-complextypes.wsimsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log timestamp="2006-07-06T10:54:53.390"
+    xmlns="http://www.ws-i.org/testing/2004/07/log/"
+    xmlns:wsi-monConfig="http://www.ws-i.org/testing/2004/07/monitorConfig/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <monitor version="1.0" releaseDate="2003-03-20">
+    <implementer name="IBM" location=""/>
+    <environment>
+      <runtime name="Java(TM) 2 Runtime Environment, Standard Edition" version="1.5.0_06-b05"/>
+      <operatingSystem name="Windows XP" version="5.1"/>
+      <xmlParser name="Apache Xerces" version="Xerces-J 2.8.0"/>
+    </environment>
+    <wsi-monConfig:configuration>
+    <wsi-monConfig:comment>Comment</wsi-monConfig:comment>
+      <wsi-monConfig:logFile replace="true" location="URL">
+      <wsi-monConfig:addStyleSheet href="null" type="null" />
+    </wsi-monConfig:logFile>
+      <wsi-monConfig:logDuration>600</wsi-monConfig:logDuration>
+      <wsi-monConfig:cleanupTimeoutSeconds>3</wsi-monConfig:cleanupTimeoutSeconds>
+      <wsi-monConfig:manInTheMiddle>
+      </wsi-monConfig:manInTheMiddle>
+    </wsi-monConfig:configuration>
+  </monitor>
+
+<messageEntry xsi:type="httpMessageEntry" ID="1" conversationID="1" type="request" timestamp="2006-07-06T10:53:30.190Z">
+<messageContent>&lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body&gt;&lt;echoStringParam xmlns=&quot;http://userguide.axis2.apache.org/xsd&quot;&gt;Echo Me &lt;/echoStringParam&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</messageContent>
+<senderHostAndPort>199.43.208.130:1168</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>POST /wss/echoAxis2 HTTP/1.1&#xd;
+User-Agent: Axis2&#xd;
+SOAPAction: urn:echoString&#xd;
+Host: youenn.dyndns.ws&#xd;
+Transfer-Encoding: chunked&#xd;
+Content-Type: text/xml; charset=UTF-8&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="2" conversationID="1" type="response" timestamp="2006-07-06T10:53:30.380Z">
+<messageContent>&lt;?xml version=&quot;1.0&quot;?&gt;&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;env:Body&gt;&lt;ns1:echoStringReturn xmlns:ns1=&quot;http://userguide.axis2.apache.org/xsd&quot;&gt;Echo Me&lt;/ns1:echoStringReturn&gt;&lt;/env:Body&gt;&lt;/env:Envelope&gt;</messageContent>
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1168</receiverHostAndPort>
+<httpHeaders>HTTP/1.1 200 OK&#xd;
+Date: Thu, 06 Jul 2006 14:53:24 GMT&#xd;
+Server: Apache/2.0.50 (Win32)&#xd;
+Content-Length: 227&#xd;
+Content-Type: text/xml&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="3" conversationID="2" type="request" timestamp="2006-07-06T10:53:35.197Z">
+<messageContent>&lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body&gt;&lt;echoStringArrayParam xmlns=&quot;http://userguide.axis2.apache.org/xsd&quot;&gt;&lt;string&gt;value1&lt;/string&gt;&lt;string&gt;value2&lt;/string&gt;&lt;string&gt;value3&lt;/string&gt;&lt;/echoStringArrayParam&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</messageContent>
+<senderHostAndPort>199.43.208.130:1169</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>POST /wss/echoAxis2 HTTP/1.1&#xd;
+User-Agent: Axis2&#xd;
+SOAPAction: urn:echoStringArray&#xd;
+Host: youenn.dyndns.ws&#xd;
+Transfer-Encoding: chunked&#xd;
+Content-Type: text/xml; charset=UTF-8&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="4" conversationID="2" type="response" timestamp="2006-07-06T10:53:35.408Z">
+<messageContent>&lt;?xml version=&quot;1.0&quot;?&gt;&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;env:Body&gt;&lt;ns1:echoStringArrayReturn xmlns:ns1=&quot;http://userguide.axis2.apache.org/xsd&quot;&gt;&lt;ns1:string&gt;value1&lt;/ns1:string&gt;&lt;ns1:string&gt;value2&lt;/ns1:string&gt;&lt;ns1:string&gt;value3&lt;/ns1:string&gt;&lt;/ns1:echoStringArrayReturn&gt;&lt;/env:Body&gt;&lt;/env:Envelope&gt;</messageContent>
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1169</receiverHostAndPort>
+<httpHeaders>HTTP/1.1 200 OK&#xd;
+Date: Thu, 06 Jul 2006 14:53:29 GMT&#xd;
+Server: Apache/2.0.50 (Win32)&#xd;
+Content-Length: 323&#xd;
+Content-Type: text/xml&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="5" conversationID="3" type="request" timestamp="2006-07-06T10:53:40.044Z">
+<messageContent>&lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body&gt;&lt;echoStructParam xmlns=&quot;http://userguide.axis2.apache.org/xsd&quot;&gt;&lt;varFloat&gt;5.5&lt;/varFloat&gt;&lt;varInt&gt;6565&lt;/varInt&gt;&lt;varString&gt;String Value&lt;/varString&gt;&lt;/echoStructParam&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</messageContent>
+<senderHostAndPort>199.43.208.130:1170</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>POST /wss/echoAxis2 HTTP/1.1&#xd;
+User-Agent: Axis2&#xd;
+SOAPAction: urn:echoStruct&#xd;
+Host: youenn.dyndns.ws&#xd;
+Transfer-Encoding: chunked&#xd;
+Content-Type: text/xml; charset=UTF-8&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="6" conversationID="3" type="response" timestamp="2006-07-06T10:53:40.224Z">
+<messageContent>&lt;?xml version=&quot;1.0&quot;?&gt;&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;env:Body&gt;&lt;ns1:echoStructReturn xmlns:ns1=&quot;http://userguide.axis2.apache.org/xsd&quot;&gt;&lt;ns1:varFloat&gt;5.500000&lt;/ns1:varFloat&gt;&lt;ns1:varInt&gt;6565&lt;/ns1:varInt&gt;&lt;ns1:varString&gt;String Value&lt;/ns1:varString&gt;&lt;/ns1:echoStructReturn&gt;&lt;/env:Body&gt;&lt;/env:Envelope&gt;</messageContent>
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1170</receiverHostAndPort>
+<httpHeaders>HTTP/1.1 200 OK&#xd;
+Date: Thu, 06 Jul 2006 14:53:34 GMT&#xd;
+Server: Apache/2.0.50 (Win32)&#xd;
+Content-Length: 329&#xd;
+Content-Type: text/xml&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+</log>

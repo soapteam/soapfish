@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOut-2G/axistocanon-inout.descmsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log xmlns="http://www.w3.org/2002/ws/desc/logs/">
+<message timestamp="2006-07-06T14:14:38.273Z" conversation="1" number="1" type="request">
+<senderHostAndPort>199.43.208.130:1559</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/echo</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoString</SOAPAction>
+<Host>youenn.dyndns.ws</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoString xmlns="http://www.wso2.com/schemas/2006/interop/EchoService"><echoStringParam xmlns="">Echo me</echoStringParam></echoString></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T14:14:38.654Z" conversation="1" number="2" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1559</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 18:14:35 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>246</Content-Length>
+<Content-Type type="text/xml">text/xml</Content-Type>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStringResponse xmlns:ns1="http://www.wso2.com/schemas/2006/interop/EchoService">Echo me</ns1:echoStringResponse></env:Body></env:Envelope></content>
+</message>
+</log>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/W3CBugzillaHttp-1G/w3c-bugzilla.xsd -->
+<!-- Copyright © 2007-04-18 06:17 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.example.org/w3c-bugzilla/xsd"
+	xmlns:msg="http://www.example.org/w3c-bugzilla/xsd"
+	elementFormDefault="qualified">
+
+	<simpleType name="Column">
+		<annotation>
+			<documentation>
+				Column is the name of a data item that appears in the
+				result set of the query.
+			</documentation>
+		</annotation>
+		<restriction base="string">
+			<enumeration value="actual_time" />
+			<enumeration value="alias" />
+			<enumeration value="all" />
+			<enumeration value="assigned_to" />
+			<enumeration value="bug_id" />
+			<enumeration value="bug_severity" />
+			<enumeration value="bug_status" />
+			<enumeration value="classification" />
+			<enumeration value="component" />
+			<enumeration value="changeddate" />
+			<enumeration value="deadline" />
+			<enumeration value="estimated_time" />
+			<enumeration value="keywords" />
+			<enumeration value="op_sys" />
+			<enumeration value="opendate" />
+			<enumeration value="percentage_complete" />
+			<enumeration value="priority" />
+			<enumeration value="product" />
+			<enumeration value="qa_contact" />
+			<enumeration value="relevance" />
+			<enumeration value="remaining_time" />
+			<enumeration value="rep_platform" />
+			<enumeration value="reporter" />
+			<enumeration value="resolution" />
+			<enumeration value="short_desc" />
+			<enumeration value="short_short_desc" />
+			<enumeration value="status_whiteboard" />
+			<enumeration value="target_milestone" />
+			<enumeration value="version" />
+			<enumeration value="votes" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="ColumnList">
+		<annotation>
+			<documentation>
+				ColumnList of the list of column names to appear in the
+				result set.
+			</documentation>
+		</annotation>
+		<list itemType="msg:Column" />
+	</simpleType>
+
+	<simpleType name="KeywordSearchType">
+		<annotation>
+			<documentation>
+				KeyworkSearchType defines the type of search for
+				keywords: all, any, none.
+			</documentation>
+		</annotation>
+		<restriction base="string">
+			<enumeration value="allwords" />
+			<enumeration value="anywords" />
+			<enumeration value="nowords" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="TextSearchType">
+		<annotation>
+			<documentation>
+				TextSearchType defines the type of search for words and
+				strings.
+			</documentation>
+		</annotation>
+		<restriction base="string">
+			<enumeration value="allwordssubstr" />
+			<enumeration value="anywordssubstr" />
+			<enumeration value="substring" />
+			<enumeration value="casesubstring" />
+			<enumeration value="allwords" />
+			<enumeration value="anywords" />
+			<enumeration value="regexp" />
+			<enumeration value="notregexp" />
+		</restriction>
+	</simpleType>
+
+	<element name="getBuglist">
+		<annotation>
+			<documentation>
+				getBuglist defines the input parameters to the
+				operation. Note that this is only a partial description
+				of the full set of input parameters.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+
+				<element name="columnlist" type="msg:ColumnList"
+					minOccurs="0" />
+
+				<element name="keywords_type"
+					type="msg:KeywordSearchType" minOccurs="0" />
+				<element name="keywords" type="string" minOccurs="0" />
+
+				<element name="bug_file_loc_type"
+					type="msg:TextSearchType" minOccurs="0" />
+				<element name="bug_file_loc" type="string"
+					minOccurs="0" />
+
+				<element name="long_desc_type" type="msg:TextSearchType"
+					minOccurs="0" />
+				<element name="long_desc" type="string" minOccurs="0" />
+
+				<element name="short_desc_type"
+					type="msg:TextSearchType" minOccurs="0" />
+				<element name="short_desc" type="string" minOccurs="0" />
+
+				<element name="status_whiteboard_type"
+					type="msg:TextSearchType" minOccurs="0" />
+				<element name="status_whiteboard" type="string"
+					minOccurs="0" />
+
+				<element name="bug_severity" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="bug_status" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="component" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="op_sys" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="priority" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="product" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="rep_platform" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="resolution" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+				<element name="target_milestone" type="string"
+					minOccurs="0" maxOccurs="unbounded" />
+				<element name="version" type="string" minOccurs="0"
+					maxOccurs="unbounded" />
+
+				<element name="votes" type="int" minOccurs="0" />
+
+			</sequence>
+		</complexType>
+	</element>
+
+</schema>

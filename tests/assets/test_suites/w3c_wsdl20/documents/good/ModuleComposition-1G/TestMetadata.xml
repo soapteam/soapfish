@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ModuleComposition-1G/TestMetadata.xml -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/good/ModuleComposition-1G
+	</Identifier>
+	<Title>Good Document</Title>
+	<Purpose>For testing interoperability</Purpose>
+	<Description>Test the composition of modules at different levels</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">SOAPservice.wsdl</Input>
+		<Input role="required-extension">http://www.w3.org/ns/wsdl/soap</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>true</Successful>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Jonathan Marsh</Name>
+		<Affiliation>WSO2</Affiliation>
+		<EMail>jonathan@wso2.com</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/documents/good</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20</Reference></SeeAlso>
+</TestMetadata>

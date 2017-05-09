@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/BindingOperation-1B/BindingOperation.wsdl -->
+<!-- Copyright © 2007-03-23 05:52 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:tns="http://example.org"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows a invalid use of a WSDL 2.0 binding
+		operation. Each binding operation in a binding
+		component must reference a unique interface operation.
+		
+		This document violates assertion BindingOperation-1051.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:schema targetNamespace="http://example.org/">
+			<xs:element name="element" type="xs:string"/>
+		</xs:schema>
+	</wsdl:types>
+	
+	<wsdl:interface name="interface">
+		<wsdl:operation name="operation" pattern="http://www.w3.org/ns/wsdl/in-only">
+			<wsdl:input messageLabel="In"
+				element="tns:element" />
+		</wsdl:operation>
+	</wsdl:interface>
+
+	<wsdl:binding name="binding" type="http://www.w3.org/ns/wsdl/http" interface="tns:interface">
+		<wsdl:operation ref="tns:operation"/>
+		<wsdl:operation ref="tns:operation"/>
+	</wsdl:binding>
+</wsdl:description>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/Chameleon-2G/getBalance.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description xmlns:tns="http://example.org/getBalance/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://example.org/getBalance/">
+
+	<wsdl:documentation>
+		This test shows how to use elements and types from an included
+		no-target namespace xsd (i.e. chameleon include) in an inline
+		schema.
+	</wsdl:documentation>
+
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://example.org/getBalance/">
+			<xsd:include schemaLocation="getBalance.xsd" />
+
+			<xsd:element name="newCustomer">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="details" type="tns:cinfoct" />
+						<xsd:element name="id" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="customerId">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:interface name="getBalanceInf">
+		<wsdl:operation name="getBalance"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="tns:custInfo" />
+			<wsdl:output element="tns:accInfo" />
+		</wsdl:operation>
+
+		<wsdl:operation name="register"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="tns:newCustomer" />
+			<wsdl:output element="tns:customerId" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

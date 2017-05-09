@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/FlickrHTTP-1G/TestMetadata.xml -->
+<!-- Copyright © 2007-04-19 06:32 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/good/FlickrHTTP-1G
+	</Identifier>
+	<Title>Good Document doc/lit</Title>
+	<Purpose>Demonstrating the use of the HTTP binding for describing the Flickr service.</Purpose>
+	<Description>Flickr API: http://www.flickr.com/services/api/</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">flickr.wsdl</Input>
+		<Input role="required-extension">http://www.w3.org/ns/wsdl/http</Input>
+		<Input role="required-extension">http://www.w3.org/ns/wsdl-extensions</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>true</Successful>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Joanthan Marsh</Name>
+		<Affiliation>WSO2</Affiliation>
+		<EMail>jonathan@wso2.com</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/documents/good</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20</Reference></SeeAlso>
+</TestMetadata>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Description-1B/Description.wsdl -->
+<!-- Copyright © 2007-03-23 05:52 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Description"
+	xmlns:name="http://example.org/name"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:othertns="http://example.org/Description2">
+
+	<wsdl:documentation>
+		This test shows an invalid reference of a WSDL
+		component. A WSDL document that contains 
+		WSDL components that reference other
+		WSDL components from a different namespace
+		must include a wsdl:import of the different
+		namespace.
+		
+		This document violates assertion Import-0001.
+	</wsdl:documentation>
+
+	
+	<wsdl:binding name="Names" interface="othertns:interface" type="http://www.w3.org/ns/wsdl/http">
+	</wsdl:binding>
+</wsdl:description>

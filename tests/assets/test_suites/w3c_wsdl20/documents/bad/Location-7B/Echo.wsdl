@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Location-7B/Echo.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Echo"
+	xmlns:tns="http://example.org/Echo"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a 
+		wsdli:wsdlLocation attribute. This attribute,
+		which is located on the Echo.xsd schema, must reference
+		a WSDL 2.0 document and must contain the same namespace
+		as that declared by the WSDL 2.0 document.
+		
+		This document violates assertion Location-1094.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:import namespace="http://example.org/Echo" schemaLocation="Echo.xsd"/>
+	</wsdl:types>
+
+	<wsdl:interface name="EchoInterface">
+		<wsdl:operation name="echoOperation"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="tns:parameter" />
+			<wsdl:output element="tns:parameter" />
+		</wsdl:operation>
+	</wsdl:interface>
+	
+	<wsdl:binding name="EchoSOAPBinding"
+		type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/" />
+
+	<wsdl:service name="EchoService" interface="tns:EchoInterface">
+		<wsdl:documentation>The Echo service.</wsdl:documentation>
+		<wsdl:endpoint name="SOAPEndpoint"
+			binding="tns:EchoSOAPBinding" />
+	</wsdl:service>
+	
+</wsdl:description>

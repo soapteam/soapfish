@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/LocationTemplate-1G/dateSpace.xsd -->
+<!-- Copyright © 2007-01-31 20:05 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xs:schema elementFormDefault="qualified" targetNamespace="http://example.org/date-space/xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://example.org/date-space/xsd">
+
+  <xs:element name="dateSpace" type="ds:dateSpaceType"/>
+
+  <xs:complexType name="dateSpaceType">
+    <xs:sequence>
+      <xs:element name="year" type="xs:int"/>
+      <xs:element name="month" type="xs:int" nillable="true"/>
+      <xs:element name="day" type="xs:int" nillable="true"/>
+      <xs:element name="time" type="xs:time" minOccurs="1" maxOccurs="2"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="result" type="xs:anyURI"/>
+
+</xs:schema>

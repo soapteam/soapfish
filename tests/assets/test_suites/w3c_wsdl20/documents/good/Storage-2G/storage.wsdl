@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/Storage-2G/storage.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+		 targetNamespace="http://example.org/soapStorage"
+		 xmlns:tns="http://example.org/soapStorage"
+		 xmlns:wsoap="http://www.w3.org/ns/wsdl/soap">
+
+		 <types>
+		 		 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		 		 		 targetNamespace="http://example.org/soapStorage">
+
+		 		 		 <xs:element name="storedContent" type="xs:base64Binary"/>
+		 		 		 
+		 		 		 <xs:element name="acknowledgement" type="tns:tAcknowledgement" />
+		 		 		 
+		 		 		 <xs:complexType name="tAcknowledgement">
+		 		 		 		 <xs:sequence>
+		 		 		 		 		 <xs:element name="date" type="xs:date" />
+		 		 		 		 		 <xs:element name="status" type="xs:string" />
+		 		 		 		 		 <xs:element name="size" type="xs:int" />
+		 		 		 		 </xs:sequence>
+		 		 		 </xs:complexType>
+		 		 </xs:schema>
+		 </types>
+
+		 <interface name="storageInterface">
+		 		 <operation name="acknowledgedStorage"
+		 		 		 pattern="http://www.w3.org/ns/wsdl/in-out">
+		 		 		 <input element="#any" />
+		 		 		 <output element="tns:acknowledgement" />
+		 		 </operation>
+		 </interface>
+
+		 <binding name="storageBinding"
+		 		 interface="tns:storageInterface"
+		 		 type="http://www.w3.org/ns/wsdl/soap"
+		 		 wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+
+		 </binding>
+
+		 <service name="storageService"
+		 		 interface="tns:storageInterface">
+
+		 		 <endpoint name="storageEndpoint"
+		 		 		 binding="tns:storageBinding"
+		 		 		 address="http://example.org/storageService" />
+
+		 </service>
+
+</description>

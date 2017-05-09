@@ -1,0 +1,66 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SOAPHeader-1G/SOAPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+  targetNamespace="http://example.org/message-test" xmlns:tns="http://example.org/message-test"
+  xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+  xmlns:xsmt="http://example.org/message-test/xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tm="http://www.w3.org/2002/ws/desc/6/10/test-module">
+  
+  <documentation><![CDATA[
+    This test checks that a wsoap:header element can be specified required="false".
+ ]]></documentation>
+  <types>
+    <import xmlns="http://www.w3.org/2001/XMLSchema" schemaLocation="TestHeader.xsd"
+      namespace="http://www.w3.org/2002/ws/desc/6/10/test-module"/>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://example.org/message-test/xsd"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsmt="http://example.org/message-test/xsd">
+      <xs:element name="echoString3" type="xs:string"/>
+      <xs:element name="echoString3Return" type="xs:string"/>
+    </xs:schema>
+  </types>
+  <interface name="SimpleEcho">
+    <documentation>This minimal interface defines four operations, to test bindings for input
+      messages, output messages, and fault messages.</documentation>
+    <operation name="EchoString3" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation>Simple echo service - pass in a string, get that string back.</documentation>
+      <input element="xsmt:echoString3"/>
+      <output element="xsmt:echoString3Return"/>
+    </operation>
+  </interface>
+ 
+  <binding name="SimpleEchoSOAPBindingMU" interface="tns:SimpleEcho"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the composition of soap modules specified at various levels. </documentation>
+    <operation ref="tns:EchoString3"
+      wsoap:action="http://example.org/message-test/action/EchoString3">
+      <input/>
+      <output>
+        <wsoap:header element="tm:TestSOAPHeader" required="false" mustUnderstand="true"/>
+      </output>
+    </operation>
+  </binding>
+
+  <binding name="SimpleEchoSOAPBinding" interface="tns:SimpleEcho"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the composition of soap modules specified at various levels. </documentation>
+    <operation ref="tns:EchoString3"
+      wsoap:action="http://example.org/message-test/action/EchoString3">
+      <input/>
+      <output>
+        <wsoap:header element="tm:TestSOAPHeader" required="false"/>
+      </output>
+    </operation>
+
+  </binding>
+  
+  <service name="SOAPHeaderService" interface="tns:SimpleEcho">
+    <documentation>Exercise each endpoint in order.</documentation>
+    <endpoint name="SOAPHeaderMustUnderstand" binding="tns:SimpleEchoSOAPBindingMU"
+      address="http://example.org/SOAPHeader-1G/endpoint-1"/>
+    <endpoint name="SOAPHeader" binding="tns:SimpleEchoSOAPBinding"
+      address="http://example.org/SOAPHeader-1G/endpoint-2"/>
+  </service>
+</description>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/W3CBugzillaHttp-1G/bz.xsd -->
+<!-- Copyright © 2007-04-18 06:17 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.bugzilla.org/rdf#"
+	xmlns:bz="http://www.bugzilla.org/rdf#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:nc="http://home.netscape.com/NC-rdf#"
+	elementFormDefault="qualified">
+
+	<import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		schemaLocation="rdf.xsd">
+	</import>
+
+	<import namespace="http://home.netscape.com/NC-rdf#"
+		schemaLocation="nc.xsd">
+	</import>
+
+	<complexType name="InstallationType">
+		<attribute ref="rdf:resource" />
+	</complexType>
+
+	<complexType name="BugsType">
+		<sequence>
+			<element ref="rdf:Seq"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ParseType">
+		<simpleContent>
+			<extension base="string">
+				<attribute ref="nc:parseType"></attribute>
+			</extension>
+		</simpleContent>
+	</complexType>
+
+	<element name="result">
+		<complexType>
+			<sequence>
+				<element name="installation" type="bz:InstallationType" />
+				<element name="bugs" type="bz:BugsType" />
+			</sequence>
+			<attribute ref="rdf:about" />
+		</complexType>
+	</element>
+
+	<element name="bug">
+		<complexType>
+			<all>
+				<element name="id" type="bz:ParseType" />
+
+				<element name="alias" type="string" minOccurs="0" />
+				<element name="assigned_to" type="string" minOccurs="0" />
+				<element name="assigned_to_realname" type="string"
+					minOccurs="0" />
+				<element name="bug_severity" type="string"
+					minOccurs="0" />
+				<element name="bug_status" type="string" minOccurs="0" />
+				<element name="changeddate" type="string" minOccurs="0" />
+				<element name="classification" type="string"
+					minOccurs="0" />
+				<element name="component" type="string" minOccurs="0" />
+				<element name="keywords" type="string" minOccurs="0" />
+				<element name="op_sys" type="string" minOccurs="0" />
+				<element name="opendate" type="string" minOccurs="0" />
+				<element name="priority" type="string" minOccurs="0" />
+				<element name="product" type="string" minOccurs="0" />
+				<element name="qa_contact" type="string" minOccurs="0" />
+				<element name="qa_contact_realname" type="string"
+					minOccurs="0" />
+				<element name="rep_platform" type="string"
+					minOccurs="0" />
+				<element name="reporter" type="string" minOccurs="0" />
+				<element name="reporter_realname" type="string"
+					minOccurs="0" />
+				<element name="resolution" type="string" minOccurs="0" />
+				<element name="short_short_desc" type="string"
+					minOccurs="0" />
+				<element name="status_whiteboard" type="string"
+					minOccurs="0" />
+				<element name="target_milestone" type="string"
+					minOccurs="0" />
+				<element name="version" type="string" minOccurs="0" />
+				<element name="votes" type="bz:ParseType" minOccurs="0" />
+			</all>
+			<attribute ref="rdf:about" />
+		</complexType>
+	</element>
+
+</schema>

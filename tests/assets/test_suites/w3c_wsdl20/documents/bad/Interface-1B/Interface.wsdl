@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Interface-1B/Interface.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows a invalid use of a WSDL 2.0 interface with
+		default relative style. Style must be an absolute URI as
+		specified in 2.2.2.3.
+		
+		This document violates assertion Interface-1012.
+	</wsdl:documentation>
+
+	<!-- The style below is intentionally not valid. -->
+	<wsdl:interface name="myInterface" styleDefault="wsdl/style/iri">
+		<wsdl:documentation>Some documentation</wsdl:documentation>
+	</wsdl:interface>
+</wsdl:description>

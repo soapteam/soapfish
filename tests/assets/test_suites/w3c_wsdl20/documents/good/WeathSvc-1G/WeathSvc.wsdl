@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/WeathSvc-1G/WeathSvc.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://greath.example.com/2004/wsdl/weathSvc.wsdl"
+	xmlns:tns="http://greath.example.com/2004/wsdl/weathSvc.wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tnss="http://greath.example.com/2004/wsdl/weathSvc.wsdl#types"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:email="http://www.example.com/webservices/email">
+
+	<types>
+		<xs:schema
+			targetNamespace="http://greath.example.com/2004/wsdl/weathSvc.wsdl#types"
+			elementFormDefault="qualified">
+
+			<xs:element name="address" type="xs:anyURI" />
+			<xs:element name="service" type="xs:QName" />
+			<xs:element name="secret" type="xs:string" />
+			<xs:element name="status" type="xs:string" />
+			<xs:element name="start-date" type="xs:date" />
+			<xs:element name="report-date" type="xs:dateTime" />
+			<xs:element name="high-temp" type="xs:integer" />
+			<xs:element name="low-temp" type="xs:integer" />
+			<xs:element name="wind-speed" type="xs:integer" />
+			<xs:element name="pressure" type="xs:integer" />
+			<xs:element name="precip-percent" type="xs:integer" />
+			<xs:element name="precip-amount" type="xs:integer" />
+			<xs:element name="description">
+				<xs:complexType mixed="true">
+					<xs:sequence>
+						<xs:any processContents="lax" minOccurs="0"
+							maxOccurs="unbounded" namespace="##any" />
+					</xs:sequence>
+					<xs:anyAttribute namespace="##other"
+						processContents="lax" />
+				</xs:complexType>
+			</xs:element>
+
+			<xs:complexType name="admin-request">
+				<xs:sequence>
+					<xs:element ref="tnss:address" />
+					<xs:element ref="tnss:service" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="admin-challenge">
+				<xs:sequence>
+					<xs:element ref="tnss:address" />
+					<xs:element ref="tnss:service" />
+					<xs:element ref="tnss:secret" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="admin-confirmation">
+				<xs:sequence>
+					<xs:element ref="tnss:address" />
+					<xs:element ref="tnss:service" />
+					<xs:element ref="tnss:secret" />
+					<xs:element ref="tnss:start-date" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="admin-info">
+				<xs:sequence>
+					<xs:element ref="tnss:address" />
+					<xs:element ref="tnss:service" />
+					<xs:element ref="tnss:secret" />
+					<xs:element ref="tnss:start-date" />
+					<xs:element ref="tnss:start-date" />
+					<xs:element ref="tnss:description" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="notification">
+				<xs:sequence>
+					<xs:element ref="tnss:description" />
+					<xs:element ref="tnss:report-date" />
+					<xs:element ref="tnss:high-temp" />
+					<xs:element ref="tnss:low-temp" />
+					<xs:element ref="tnss:wind-speed" />
+					<xs:element ref="tnss:pressure" />
+					<xs:element ref="tnss:precip-percent" />
+					<xs:element ref="tnss:precip-amount" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:element name="sub-weather" type="tnss:admin-request" />
+			<xs:element name="unsub-weather" type="tnss:admin-request" />
+
+			<xs:element name="sub-weather-challenge"
+				type="tnss:admin-challenge" />
+			<xs:element name="unsub-weather-challenge"
+				type="tnss:admin-challenge" />
+
+			<xs:element name="sub-weather-confirm"
+				type="tnss:admin-confirmation" />
+			<xs:element name="unsub-weather-confirm"
+				type="tnss:admin-confirmation" />
+
+			<xs:element name="sub-weather-info" type="tnss:admin-info" />
+			<xs:element name="unsub-weather-info"
+				type="tnss:admin-info" />
+
+			<xs:element name="notify-weather" type="tnss:notification" />
+
+		</xs:schema>
+	</types>
+
+	<interface name="weatherInterface">
+		<operation name="opSubscribeWeather"
+			pattern="http://www.example.com/webservices/meps/confirmed-challenge">
+			<input messageLabel="Request" element="tnss:sub-weather" />
+			<output messageLabel="Challenge"
+				element="tnss:sub-weather-challenge" />
+			<input messageLabel="Confirmation"
+				element="tnss:sub-weather-confirm" />
+			<output messageLabel="Response"
+				element="tnss:sub-weather-info" />
+		</operation>
+
+		<operation name="opUnsubscribeWeather"
+			pattern="http://www.example.com/webservices/meps/confirmed-challenge">
+			<output messageLabel="Challenge"
+				element="tnss:unsub-weather-challenge" />
+			<output messageLabel="Response"
+				element="tnss:unsub-weather-info" />
+			<input messageLabel="Confirmation"
+				element="tnss:unsub-weather-confirm" />
+			<input messageLabel="Request" element="tnss:unsub-weather" />
+		</operation>
+
+		<operation name="opNotifyWeather"
+			pattern="http://www.w3.org/ns/wsdl/robust-out-only">
+			<output element="tnss:notify-weather" />
+		</operation>
+	</interface>
+</description>

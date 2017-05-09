@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/HTTPBinding-2G/Echo.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Echo"
+	xmlns:tns="http://example.org/Echo"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:whttp="http://www.w3.org/ns/wsdl/http"
+	xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test exercises various ways to control the HTTP input serialization.
+	</wsdl:documentation>
+
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			elementFormDefault="qualified"
+			targetNamespace="http://example.org/Echo">
+			<xsd:element name="Echo" type="xsd:string" />
+			<xsd:element name="EchoResponse" type="xsd:string" />
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:interface name="EchoInterface">
+		<wsdl:operation name="echo1"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="tns:Echo" />
+			<wsdl:output element="tns:EchoResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="echo2"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="tns:Echo" />
+			<wsdl:output element="tns:EchoResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="echo3"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="tns:Echo" />
+			<wsdl:output element="tns:EchoResponse" />
+		</wsdl:operation>
+	</wsdl:interface>
+	<wsdl:interface name="SafeEchoInterface">
+		<wsdl:operation name="echo4"
+			pattern="http://www.w3.org/ns/wsdl/in-out" wsdlx:safe="true">
+			<wsdl:input element="tns:Echo" />
+			<wsdl:output element="tns:EchoResponse" />
+		</wsdl:operation>
+	</wsdl:interface>
+
+	<wsdl:binding name="PostEchoHTTPBinding" interface="tns:EchoInterface"
+		type="http://www.w3.org/ns/wsdl/http" whttp:version="1.1" whttp:methodDefault="POST">
+		<!-- {http input serialization} could be explicitly specified -->
+		<wsdl:operation ref="tns:echo1" whttp:inputSerialization="application/echo+xml" />
+		<!-- {http input serialization} could be based on the whttp:method -->
+		<wsdl:operation ref="tns:echo2" whttp:method="GET" />
+		<!-- {http input serialization} could be based on the whttp:methodDefault -->
+		<wsdl:operation ref="tns:echo3" />
+	</wsdl:binding>
+
+	<wsdl:binding name="EchoHTTPBinding" interface="tns:SafeEchoInterface"
+		type="http://www.w3.org/ns/wsdl/http" whttp:version="1.1" >
+		<!-- {http input serialization} could be based on safety-->
+		<wsdl:operation ref="tns:echo4" />
+	</wsdl:binding>
+
+	<wsdl:service name="EchoService" interface="tns:EchoInterface">
+		<wsdl:documentation>The Echo service.</wsdl:documentation>
+		<wsdl:endpoint name="PostEchoHTTPEndpoint"
+			binding="tns:PostEchoHTTPBinding" />
+	</wsdl:service>
+
+	<wsdl:service name="SafeEchoService" interface="tns:SafeEchoInterface">
+		<wsdl:documentation>The SafeEcho service.</wsdl:documentation>
+		<wsdl:endpoint name="EchoHTTPEndpoint"
+			binding="tns:EchoHTTPBinding" />
+	</wsdl:service>
+</wsdl:description>

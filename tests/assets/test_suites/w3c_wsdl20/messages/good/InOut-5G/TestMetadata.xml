@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOut-5G/TestMetadata.xml -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/messages/good/InOut-5G
+	</Identifier>
+	<Title>Good Messages From InOut Interoperability Test</Title>
+	<Purpose>For testing interoperability of Canon and Axis2</Purpose>
+	<Description>IN-Out MEP Operation with SOAP and HTTP Headers</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">echo.wsdl</Input>
+		<Input>canontoaxis-inout.wsilog</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>true</Successful>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Philippe Le Hégaret</Name>
+		<Affiliation>W3C</Affiliation>
+		<EMail>plh@w3.org</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/messages/good</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20</Reference></SeeAlso>
+</TestMetadata>

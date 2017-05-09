@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOut-4G/canontoaxis-inout.wsimsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log timestamp="2006-07-06T14:13:50.965"
+    xmlns="http://www.ws-i.org/testing/2004/07/log/"
+    xmlns:wsi-monConfig="http://www.ws-i.org/testing/2004/07/monitorConfig/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <monitor version="1.0" releaseDate="2003-03-20">
+    <implementer name="IBM" location=""/>
+    <environment>
+      <runtime name="Java(TM) 2 Runtime Environment, Standard Edition" version="1.5.0_06-b05"/>
+      <operatingSystem name="Windows XP" version="5.1"/>
+      <xmlParser name="Apache Xerces" version="Xerces-J 2.8.0"/>
+    </environment>
+    <wsi-monConfig:configuration>
+    <wsi-monConfig:comment>Comment</wsi-monConfig:comment>
+      <wsi-monConfig:logFile replace="true" location="URL">
+      <wsi-monConfig:addStyleSheet href="null" type="null" />
+    </wsi-monConfig:logFile>
+      <wsi-monConfig:logDuration>600</wsi-monConfig:logDuration>
+      <wsi-monConfig:cleanupTimeoutSeconds>3</wsi-monConfig:cleanupTimeoutSeconds>
+      <wsi-monConfig:manInTheMiddle>
+      </wsi-monConfig:manInTheMiddle>
+    </wsi-monConfig:configuration>
+  </monitor>
+
+<messageEntry xsi:type="httpMessageEntry" ID="1" conversationID="1" type="request" timestamp="2006-07-06T14:13:33.720Z">
+<messageContent>&lt;?xml version=&quot;1.0&quot;?&gt;&lt;env:Envelope xmlns:env=&quot;http://www.w3.org/2003/05/soap-envelope&quot;&gt;&lt;env:Body&gt;&lt;ns1:echoXML xmlns:ns1=&quot;http://www.wso2.com/schemas/2006/interop/EchoService&quot;&gt;&lt;echoXMLParam&gt;&lt;ns2:testName xmlns:ns2=&quot;testNs&quot;&gt;testValue&lt;/ns2:testName&gt;&lt;/echoXMLParam&gt;&lt;/ns1:echoXML&gt;&lt;/env:Body&gt;&lt;/env:Envelope&gt;</messageContent>
+<senderHostAndPort>KERGUELEN:1596</senderHostAndPort>
+<receiverHostAndPort>chathura.dyndns.ws:8080</receiverHostAndPort>
+<httpHeaders>POST /axis2/services/echoService HTTP/1.1&#xd;
+Host: chathura.dyndns.ws:8080&#xd;
+Pragma: no-cache&#xd;
+Accept: */*&#xd;
+Content-Type: application/soap+xml;action=&quot;&quot;&#xd;
+Content-Length: 301&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="2" conversationID="1" type="response" timestamp="2006-07-06T14:13:33.911Z">
+<messageContent>&lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;soapenv:Envelope xmlns:soapenv=&quot;http://www.w3.org/2003/05/soap-envelope&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body&gt;&lt;echoXMLResponse xmlns=&quot;http://www.wso2.com/schemas/2006/interop/EchoService&quot;&gt;&lt;echoXMLParam xmlns=&quot;&quot;&gt;&lt;ns2:testName xmlns:ns2=&quot;testNs&quot;&gt;testValue&lt;/ns2:testName&gt;&lt;/echoXMLParam&gt;&lt;/echoXMLResponse&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</messageContent>
+<senderHostAndPort>chathura.dyndns.ws:8080</senderHostAndPort>
+<receiverHostAndPort>KERGUELEN:1596</receiverHostAndPort>
+<httpHeaders>HTTP/1.1 200 OK&#xd;
+Server: Apache-Coyote/1.1&#xd;
+Set-Cookie: JSESSIONID=73EE3E7EAC092AD3A5BFD4896E2F55DB; Path=/axis2&#xd;
+Content-Type: application/soap+xml;charset=UTF-8&#xd;
+Transfer-Encoding: chunked&#xd;
+Date: Thu, 06 Jul 2006 19:13:23 GMT&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+</log>

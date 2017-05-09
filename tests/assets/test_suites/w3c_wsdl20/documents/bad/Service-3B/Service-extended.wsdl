@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Service-3B/Service-extended.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Service"
+	xmlns:tns="http://example.org/Service"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows an invalid Service. The service name
+		is not unique within the namespace.
+		
+		This document violates assertions Service-1060 and
+		Description-0024.
+	</wsdl:documentation>
+	
+	<wsdl:include location="Service.wsdl"/>
+	
+	<wsdl:service name="EchoService"
+		interface="tns:EchoInterface">
+		<wsdl:endpoint name="MySOAPEndpoint"
+			binding="tns:EchoSOAPBinding" />
+	</wsdl:service>
+</wsdl:description>

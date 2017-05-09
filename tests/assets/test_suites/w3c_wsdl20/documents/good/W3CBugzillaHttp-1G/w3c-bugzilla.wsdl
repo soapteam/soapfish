@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/W3CBugzillaHttp-1G/w3c-bugzilla.wsdl -->
+<!-- Copyright © 2007-04-18 06:17 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description
+	targetNamespace="http://www.example.org/w3c-bugzilla/wsdl"
+	xmlns:tns="http://www.example.org/w3c-bugzilla/wsdl"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:whttp="http://www.w3.org/ns/wsdl/http"
+	xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:msg="http://www.example.org/w3c-bugzilla/xsd"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+	<wsdl:documentation>
+		This is a WSDL 2.0 description of the Bugzilla buglist.cgi Perl
+		script using the HTTP binding. The buglist.cgi Perl script
+		returns bug information in RDF format. This description contains
+		a simplified XML schema for RDF which is adequate for the
+		present purposes.
+	</wsdl:documentation>
+
+	<wsdl:types>
+		<xs:import namespace="http://www.example.org/w3c-bugzilla/xsd"
+			schemaLocation="w3c-bugzilla.xsd">
+		</xs:import>
+		<xs:import
+			namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+			schemaLocation="rdf.xsd">
+		</xs:import>
+	</wsdl:types>
+
+	<wsdl:interface name="BuglistInterface">
+		<wsdl:operation name="getBuglist"
+			pattern="http://www.w3.org/ns/wsdl/in-out"
+			style="http://www.w3.org/ns/wsdl/style/iri" wsdlx:safe="true">
+			<wsdl:input element="msg:getBuglist" />
+			<wsdl:output element="rdf:RDF" />
+		</wsdl:operation>
+	</wsdl:interface>
+
+	<wsdl:binding name="BuglistHTTPBinding"
+		interface="tns:BuglistInterface" type="http://www.w3.org/ns/wsdl/http"
+		whttp:version="1.1">
+		<wsdl:operation ref="tns:getBuglist" whttp:method="GET"
+			whttp:location="buglist.cgi?ctype=rdf" />
+	</wsdl:binding>
+
+
+	<wsdl:service name="BuglistService"
+		interface="tns:BuglistInterface">
+		<wsdl:documentation>
+			The W3C Buglist service.
+		</wsdl:documentation>
+		<wsdl:endpoint name="BuglistHTTPEndpoint"
+			binding="tns:BuglistHTTPBinding"
+			address="http://www.w3.org/Bugs/Public/">
+		</wsdl:endpoint>
+	</wsdl:service>
+
+</wsdl:description>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Interface-6B/reservation.wsdl -->
+<!-- Copyright © 2008-02-13 19:00 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://greath.example.com/2004/services/reservation"
+	xmlns:tns="http://greath.example.com/2004/services/reservation"
+	xmlns:details="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<documentation>
+		This test shows an invalid use of a WSDL 2.0 interface. The
+		interface extends itself. As specified in section 2.1.1 "an
+		interface MUST NOT appear as an element of the set of interfaces
+		it extends, either directly or indirectly."
+		
+		This document violates assertion Interface-1009.
+		
+		This test includes interface faults and operations and bindings,
+		so any attempt to process these must detect the circular reference
+		correctly to avoid an infinite loop.
+	</documentation>
+
+	<types>
+
+		<xs:schema
+			targetNamespace="http://greath.example.com/2004/schemas/reservationDetails">
+
+			<xs:element name="confirmationNumber" type="string" />
+			<xs:element name="checkInDate" type="date" />
+			<xs:element name="checkOutDate" type="date" />
+			<xs:element name="roomType" type="string" />
+			<xs:element name="smoking" type="boolean" />
+			<xs:element name="reservationDetails" type="string" />
+		</xs:schema>
+
+	</types>
+
+	<interface name="retrieveDetailsInterface" extends="tns:retrieveDetailsInterface2">
+	    <fault name="retrieveFault" element="details:reservationDetails"/>
+		<operation name="retrieve"
+			pattern="http://www.w3.org/2004/03/wsdl/in-out">
+			<input messageLabel="In" element="details:checkInDate" />
+			<output messageLabel="Out"
+				element="details:reservationDetails" />
+		</operation>
+	</interface>
+	
+	<interface name="retrieveDetailsInterface2" extends="tns:retrieveDetailsInterface">
+	    <fault name="retrieveFault2" element="details:reservationDetails"/>
+		<operation name="retrieve2"
+			pattern="http://www.w3.org/2004/03/wsdl/in-out">
+			<input messageLabel="In" element="details:roomType" />
+			<output messageLabel="Out"
+				element="details:confirmationNumber" />
+		</operation>
+	</interface>
+	
+    <binding name="retrieveDetailsBinding" 
+        interface="tns:retrieveDetailsInterface"
+        type="http://www.w3.org/2005/12/wsdl/soap">
+        <fault ref="tns:retrieveFault"/>
+        <fault ref="tns:retrieveFault2"/>
+        <operation ref="tns:retrieve">
+            <input messageLabel="In"/>
+            <output messageLabel="Out"/>
+        </operation> 
+        <operation ref="tns:retrieve2">
+            <input messageLabel="In"/>
+            <output messageLabel="Out"/>
+        </operation> 
+    </binding>
+
+</description>

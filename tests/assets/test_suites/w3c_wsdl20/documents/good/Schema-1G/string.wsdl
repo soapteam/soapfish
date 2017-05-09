@@ -1,0 +1,19 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/Schema-1G/string.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	xmlns:tns="http://www.example.org/Schema-1G"
+	targetNamespace="http://www.example.org/Schema-1G">
+
+	<documentation>
+		This test contains an inline schema that has no targetnamespace.
+		This situation was prohibited in the CR spec by assertion
+		Schema-0019 but is now valid.
+	</documentation>
+
+	<types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:element type="xs:string" name="String" />
+		</xs:schema>
+	</types>
+
+</description>

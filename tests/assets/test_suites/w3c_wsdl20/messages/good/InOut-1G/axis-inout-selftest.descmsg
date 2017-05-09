@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOut-1G/axis-inout-selftest.descmsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log xmlns="http://www.w3.org/2002/ws/desc/logs/">
+<message timestamp="2006-07-06T14:16:13.160Z" conversation="1" number="1" type="request">
+<senderHostAndPort>199.43.208.130:1560</senderHostAndPort>
+<receiverHostAndPort>chathura.dyndns.ws:8080</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/axis2/services/echoService</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoString</SOAPAction>
+<Host>chathura.dyndns.ws:8080</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoString xmlns="http://www.wso2.com/schemas/2006/interop/EchoService"><echoStringParam xmlns="">Echo me</echoStringParam></echoString></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T14:16:13.330Z" conversation="1" number="2" type="response">
+<senderHostAndPort>chathura.dyndns.ws:8080</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1560</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Server>Apache-Coyote/1.1</Server>
+<Set-Cookie>JSESSIONID=7FFDE7FA6C91A2EAB2FC13F060CE9863; Path=/axis2</Set-Cookie>
+<Content-Type type="text/xml">text/xml;charset=UTF-8</Content-Type>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Date>Thu, 06 Jul 2006 19:16:03 GMT</Date>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStringResponse xmlns="http://www.wso2.com/schemas/2006/interop/EchoService">Echo me</echoStringResponse></soapenv:Body></soapenv:Envelope></content>
+</message>
+</log>

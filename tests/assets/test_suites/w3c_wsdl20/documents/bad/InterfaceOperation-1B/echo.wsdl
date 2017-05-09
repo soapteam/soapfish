@@ -1,0 +1,50 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/InterfaceOperation-1B/echo.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	xmlns:tns="http://www.wso2.com/wsdl/2006/interop/EchoService"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+	targetNamespace="http://www.wso2.com/wsdl/2006/interop/EchoService"
+	xmlns:wwis="http://www.wso2.com/schemas/2006/interop/EchoService">
+
+	<documentation>
+		This violates the assertion that requires if two operation that
+		ended up in the same interface have the same name due to
+		interface extension that they should be equivalent
+	</documentation>
+
+	<types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns="http://www.wso2.com/schemas/2006/interop/EchoService"
+			targetNamespace="http://www.wso2.com/schemas/2006/interop/EchoService"
+			elementFormDefault="unqualified"
+			attributeFormDefault="unqualified">
+			<xs:element type="tEchoString" name="echoString" />
+			<xs:complexType name="tEchoString">
+				<xs:sequence>
+					<xs:element type="xs:string" name="echoStringParam" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element type="xs:string" name="echoStringResponse" />
+
+			<xs:element type="tEchoXML" name="echoXML" />
+			<xs:complexType name="tEchoXML">
+				<xs:sequence>
+					<xs:element type="xs:anyType" name="echoXMLParam" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element type="xs:anyType" name="echoXMLResponse" />
+
+		</xs:schema>
+	</types>
+	<interface name="echoServiceInterface">
+		<operation pattern="http://www.w3.org/ns/wsdl/in-out"
+			name="echo">
+			<input element="wwis:echoString" messageLabel="In" />
+			<output element="wwis:echoStringResponse"
+				messageLabel="Out" />
+		</operation>
+
+	</interface>
+
+</description>

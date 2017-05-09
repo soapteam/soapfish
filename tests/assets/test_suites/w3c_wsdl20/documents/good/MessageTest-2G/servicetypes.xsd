@@ -1,0 +1,33 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageTest-2G/servicetypes.xsd -->
+<!-- Copyright © 2007-02-08 20:19 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://example.org/message-test/xsd"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      xmlns:xsmt="http://example.org/message-test/xsd">
+      
+      <xs:element name="EchoName" type="xsmt:EchoStructType"/>
+      <xs:element name="EchoName2" type="xsmt:EchoStructType"/>
+      <xs:complexType name="EchoStructType">
+        <xs:sequence>
+          <xs:element name="FirstName" type="xs:string"/>
+          <xs:element name="MiddleName" type="xs:string" minOccurs="0"/>
+          <xs:element name="LastName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:element name="EchoNameFault" type="xsmt:FaultStructType"/>
+      <xs:complexType name="FaultStructType">
+        <xs:sequence>
+          <xs:element name="Fault" type="xs:string"/>
+          <xs:element name="FirstName" type="xs:string"/>
+          <xs:element name="MiddleName" type="xs:string" minOccurs="0"/>
+          <xs:element name="LastName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="messageTestFault" type="xsmt:IntFaultStruct"/>
+      <xs:complexType name="IntFaultStruct">
+        <xs:all>
+          <xs:element name="faultNumber" type="xs:int"/>
+          <xs:element name="faultOperationName" type="xs:string"/>
+        </xs:all>
+      </xs:complexType>
+    </xs:schema>

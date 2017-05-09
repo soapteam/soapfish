@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SchemaLocationFragment-1G/Items.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://greath.example.com/2004/services/retrieveDetails"
+	xmlns:tns="http://greath.example.com/2004/services/retrieveDetails"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<documentation>
+		This document describes the GreatH Retrieve Reservation Details
+		Web service.
+	</documentation>
+
+	<types>
+
+		<xs:schema id="items"
+			targetNamespace="http://greath.example.com/2004/schemas/reservationItems">
+
+			<xs:element name="confirmationNumber" type="xs:string" />
+			<xs:element name="checkInDate" type="xs:date" />
+			<xs:element name="checkOutDate" type="xs:date" />
+			<xs:element name="roomType" type="xs:string" />
+			<xs:element name="smoking" type="xs:boolean" />
+
+		</xs:schema>
+
+	</types>
+
+</description>

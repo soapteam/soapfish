@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Schema-5B/SchemaContainer.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Container/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://example.org/Container/"
+	xmlns:person="http://example.org/Person/">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a schema QName
+		reference. The input and output elements reference
+		the name element in the namespace 
+		http://example.org/Person/ but this namespace has
+		not been imported properly. Inline schemas defined
+		in an imported WSDL document are not imported along
+		with the WSDL document.
+		
+		This test violates assertions Types-1300000,
+		Types-1300001, Types-1300003 and Description-0024.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:schema targetNamespace="http://example.org/Person/">
+			<xs:element name="name" type="string"/>
+		</xs:schema>
+	</wsdl:types>
+</wsdl:description>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Import-4B/EchoImpl.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/EchoImpl"
+	xmlns:tns="http://example.org/EchoImpl"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a WSDL document
+		composition. Any namespace referenced in a WSDL
+		document other than the namespace of the WSDL
+		document itself must be imported. 
+		
+		This document violates assertion Import-1082.
+	</wsdl:documentation>
+
+	<wsdl:binding name="EchoSOAPBinding"
+		type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/" />
+
+	<wsdl:service name="EchoService" interface="tns:EchoInterface">
+		<wsdl:documentation>The Echo service.</wsdl:documentation>
+		<wsdl:endpoint name="SOAPEndpoint"
+			binding="tns:EchoSOAPBinding" />
+	</wsdl:service>
+		
+	
+</wsdl:description>

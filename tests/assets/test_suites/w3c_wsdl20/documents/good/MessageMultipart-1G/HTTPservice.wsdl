@@ -1,0 +1,103 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageMultipart-1G/HTTPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+    targetNamespace="http://example.org/message-test" xmlns:tns="http://example.org/message-test"
+    xmlns:whttp="http://www.w3.org/ns/wsdl/http" 
+    xmlns:xsmt="http://example.org/message-test/xsd" xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions">
+
+  <documentation><![CDATA[
+    This test is factors the multipart binding out of MessageTest-2G, enabling separate testing
+    and results for this case.
+      
+    When running a test pass against this WSDL, each endpoint should be invoked in order, and 
+    each operation within the interface bound by that binding should be invoked in the order 
+    it appears in the interface, extended interfaces first.  Thus the order will be:
+        EchoName - simple structure echoing in-out operation.
+          For the purposes of this test, the structure must match:
+            <EchoName xmlns="http://example.org/message-test/xsd">
+              <FirstName>myfirst</FirstName>
+              <MiddleName>mymiddle</MiddleName>
+              <LastName>mylast</LastName>
+            </EchoName>
+        EchoNameExpectFault - simple structure echoing in-out operation, but defined to return a fault.
+        Send - one-way operation sending arbitrary XML payload.
+        GuaranteedFault - robust-one-way operation, defined to return a simple fault.
+  
+  ]]></documentation>
+
+  <types>
+    <import xmlns="http://www.w3.org/2001/XMLSchema" schemaLocation="servicetypes.xsd"
+      namespace="http://example.org/message-test/xsd"/>
+  </types>
+
+  <interface name="Echo">
+    <fault name="EchoNameFault" element="xsmt:EchoNameFault"></fault>
+    <operation name="EchoName" pattern="http://www.w3.org/ns/wsdl/in-out"
+      style="http://www.w3.org/ns/wsdl/style/iri http://www.w3.org/ns/wsdl/style/multipart">
+      <documentation>Invoke this operation with an EchoName element, and recieve the same EchoName element back.</documentation>
+      <input element="xsmt:EchoName"/>
+      <output element="xsmt:EchoName"/>
+      <outfault ref="tns:EchoNameFault"/>
+    </operation>
+    <operation name="EchoNameExpectFault" pattern="http://www.w3.org/ns/wsdl/in-out"
+      style="http://www.w3.org/ns/wsdl/style/iri">
+      <documentation>Invoke this operation with an EchoName element, and recieve an EchoNameFault back, 
+        with the text "rejected" and the first, middle and last names from the input message.</documentation>
+      <input element="xsmt:EchoName2"/>
+      <output element="xsmt:EchoName2"/>
+      <outfault ref="tns:EchoNameFault"/>
+    </operation>
+    <operation name="Send" pattern="http://www.w3.org/ns/wsdl/in-only">
+      <documentation>Invoke this operation with any XML payload.</documentation>
+      <input element="#any"/>
+    </operation>
+    <operation name="GuaranteedFault" pattern="http://www.w3.org/ns/wsdl/robust-in-only">
+      <documentation>Invoke this operation no input, and receive back an EchoNameFault, with the text
+      "default" and some random first, middle, and last name information.</documentation>
+      <input element="#none"/>
+      <outfault ref="tns:EchoNameFault"/>
+    </operation>
+  </interface>
+
+  <binding name="EchoMultipartHTTPBinding" interface="tns:Echo" type="http://www.w3.org/ns/wsdl/http"
+    whttp:queryParameterSeparatorDefault=";">
+    <documentation>
+      This binding tests inputSerialization="multipart/form-data" and 
+      [output|fault]Serialization="application/xml"
+    </documentation>
+    <fault ref="tns:EchoNameFault"/>
+    <operation ref="tns:EchoName" whttp:location="EchoName?first={FirstName};middle={MiddleName};last={LastName}"
+      whttp:ignoreUncited="true"
+      whttp:inputSerialization="multipart/form-data"
+      whttp:outputSerialization="application/xml"
+      whttp:faultSerialization="application/xml">
+      <input />
+      <output />
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+    <operation ref="tns:EchoNameExpectFault" whttp:location="EchoNameExpectFault"
+      whttp:inputSerialization="multipart/form-data"
+      whttp:outputSerialization="application/xml"
+      whttp:faultSerialization="application/xml">
+      <input />
+      <output />
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+    <operation ref="tns:Send" whttp:location="Send"
+      whttp:inputSerialization="application/xml">
+      <input />
+    </operation>
+    <operation ref="tns:GuaranteedFault" whttp:location="GuaranteedFault"
+      whttp:inputSerialization="multipart/form-data"
+      whttp:faultSerialization="application/xml">
+      <input />
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+  </binding>
+  
+  <service name="MessageMultipart1GService" interface="tns:Echo">
+    <documentation>Exercise each endpoint in order.</documentation>
+    <endpoint name="MessageTestMultipartHTTP" binding="tns:EchoMultipartHTTPBinding"
+      address="http://example.org/MessageMultipart-1G/endpoint-1/"/>
+  </service>
+</description>

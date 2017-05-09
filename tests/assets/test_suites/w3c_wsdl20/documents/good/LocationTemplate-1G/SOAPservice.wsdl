@@ -1,0 +1,126 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/LocationTemplate-1G/SOAPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+  targetNamespace="http://example.org/message-test" xmlns:tns="http://example.org/message-test"
+  xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+  xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+  xmlns:whttp="http://www.w3.org/ns/wsdl/http" xmlns:ds="http://example.org/date-space/xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  
+  <documentation><![CDATA[
+    This test exercises http templating.
+    
+    The constructReference is provided a structure (dateSpace), and returns a URI corresponding to
+    the structure, in particular, the URI constructed from the template.
+    
+    For test purposes, invoke the operation with the following structure:
+      <dateSpace xmlns="http://example.org/date-space/xsd">
+        <year>2006</year>
+        <month>11</month>
+        <day>18</day>
+        <time>16:40:00</time>
+        <time>20:00:42</time>
+      </dateSpace>
+    
+    When running a test pass against this WSDL, each endpoint should be invoked in order, and 
+    each operation within the interface bound by that binding should be invoked in the order 
+    it appears in the interface, extended interfaces first.
+  
+ ]]></documentation>
+  <types>
+    <xs:import namespace="http://example.org/date-space/xsd" schemaLocation="dateSpace.xsd"/>
+  </types>
+  
+  <interface name="ProbeSpace">
+    <documentation>This minimal interface defines a single operation which can be bound
+    in a variety of ways.</documentation>
+    <operation name="constructReference" pattern="http://www.w3.org/ns/wsdl/in-out" style="http://www.w3.org/ns/wsdl/style/iri">
+      <documentation>Simple probe service - pass in a query structure, get a uri constructed from that structure back.
+      </documentation>
+      <input element="ds:dateSpace"/>
+      <output element="ds:result"/>
+    </operation>
+  </interface>
+ 
+  <binding name="Paths" interface="tns:ProbeSpace"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the that parameters can be successfully inserted as path segments.
+      Expect: http://example.org/datespace/2006/11/18/16:40:00-20:00:42.html
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="datespace/{year}/{month}/{day}/{time}-{time}.html"/>
+  </binding>
+
+  <binding name="MixedPathsQueryParams" interface="tns:ProbeSpace"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/"
+    whttp:queryParameterSeparatorDefault=";">
+    <documentation> This binding tests the that parameters can be successfully inserted as path segments.
+      Expect: http://example.org/datespace/2006/11.html?day=18;start=16:40:00;end=20:00:42
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="datespace/{year}/{month}.html?day={day};start={time};end={time}"/>
+  </binding>
+
+  <binding name="AutoQueryParams" interface="tns:ProbeSpace"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the that parameters are automatically appended as query parameters.
+      Expect: http://example.org/datespace.html?year=2006;month=11;day=18;time=16:40:00;time=20:00:42
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="datespace.html" whttp:queryParameterSeparator=";"/>
+  </binding>
+  
+  <binding name="AutoRemainder" interface="tns:ProbeSpace"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the that parameters can be successfully inserted as path segments, with remaining ones becoming query parameters.
+      Expect: http://example.org/datespace/2006/11.html?day=18&amp;time=16:40:00&amp;time=20:00:42
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="datespace/{year}/{month}.html"/>
+  </binding>
+
+  <binding name="IgnoreUncited" interface="tns:ProbeSpace"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the that parameters can be suppressed.
+      Expect: http://example.org/datespace/2006.html?start=16:40:00
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="datespace/{year}.html?start={time}" whttp:ignoreUncited="true"/>
+  </binding>
+
+  <binding name="AdditionalQueryParams" interface="tns:ProbeSpace"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests that the parameters can be suppressed.
+      Expect: http://example.org/datespace/2006.html?timezone=utc&amp;month=11&amp;day=18&amp;time=16:40:00&amp;time=20:00:42
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="datespace/{year}.html?timezone=utc"/>
+  </binding>
+  
+  <binding name="Escaping" interface="tns:ProbeSpace"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests that escaping of curly braces is done correctly.
+      Expect: http://example.org/datespace/2006.html?passphrase=%7B4(%23^$@!%7D4^@*%23%7D
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="datespace/{year}.html?passphrase={time}{{4(^$@!}}4^@*}}" whttp:ignoreUncited="true"/> 
+  </binding>
+
+  <service name="ProbeSpaceService" interface="tns:ProbeSpace">
+    <documentation>Exercise each endpoint in order.</documentation>
+    <endpoint name="PathsEndpoint" binding="tns:Paths" address="http://example.org/"/>
+    <endpoint name="MixedPathsQueryParamsEndpoint" binding="tns:MixedPathsQueryParams" address="http://example.org/"/>
+    <endpoint name="AutoQueryParamsEndpoint" binding="tns:AutoQueryParams" address="http://example.org/"/>
+    <endpoint name="AutoRemainderEndpoint" binding="tns:AutoRemainder" address="http://example.org/"/>
+    <endpoint name="IgnoreUncidedEndpoint" binding="tns:IgnoreUncited" address="http://example.org/"/>
+    <endpoint name="AdditionalQueryParamsEndpoint" binding="tns:AdditionalQueryParams" address="http://example.org/"/>
+    <endpoint name="EscapingEndpoint" binding="tns:Escaping" address="http://example.org/"/>
+  </service>
+</description>

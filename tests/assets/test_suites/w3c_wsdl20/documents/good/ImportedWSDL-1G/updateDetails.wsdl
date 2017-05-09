@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ImportedWSDL-1G/updateDetails.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://greath.example.com/2004/services/updateDetails"
+	xmlns:tns="http://greath.example.com/2004/services/updateetails"
+	xmlns:retrieve="http://greath.example.com/2004/services/retrieveDetails"
+	xmlns:details="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<documentation>
+		This document describes the GreatH Update Reservation Details
+		Web service.
+	</documentation>
+
+	<import
+		namespace="http://greath.example.com/2004/services/retrieveDetails"
+		location="retrieveDetails.wsdl" />
+
+	<types>
+		<xs:import
+			namespace="http://greath.example.com/2004/schemas/reservationDetails" />
+	</types>
+
+	<interface name="updateDetailsInterface"
+		extends="retrieve:retrieveDetailsInterface">
+
+		<operation name="update"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<input messageLabel="In"
+				element="details:reservationDetails" />
+			<output messageLabel="Out"
+				element="details:reservationDetails" />
+		</operation>
+
+	</interface>
+
+</description>

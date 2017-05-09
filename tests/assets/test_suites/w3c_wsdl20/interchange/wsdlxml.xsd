@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlxml.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2002/ws/desc/wsdl/component" targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component" elementFormDefault="qualified">
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+	<xs:complexType name="Component.type" abstract="true">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute ref="xml:id"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+	<xs:element name="component.description" type="component.description.type"/>
+	<xs:complexType name="component.description.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="interfaces" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.interface" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="bindings" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.binding" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="services" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.service" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="element-declarations" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.element-declaration" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="type-definitions" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.type-definition" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.interface" type="component.interface.type"/>
+	<xs:complexType name="component.interface.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="extended-interfaces" minOccurs="0">
+						<!-- TBD -->
+					</xs:element>
+					<xs:element name="interface-faults" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.interface-fault" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="interface-operations" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.interface-operation" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.interface-fault" type="component.interface-fault.type"/>
+	<xs:complexType name="component.interface-fault.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="element-declaration" minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.interface-operation" type="component.interface-operation.type"/>
+	<xs:complexType name="component.interface-operation.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="message-exchange-pattern" type="xs:anyURI"/>
+					<xs:element name="interface-message-references" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.interface-message-reference" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="interface-fault-references" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.interface-fault-reference" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="style" minOccurs="0">
+						<xs:simpleType>
+							<xs:list itemType="xs:anyURI"/>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.interface-message-reference" type="component.interface-message-reference.type"/>
+	<xs:complexType name="component.interface-message-reference.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="message-label" type="xs:NCName"/>
+					<xs:element name="direction">
+						<xs:simpleType>
+							<xs:restriction base="xs:token">
+								<xs:enumeration value="in"/>
+								<xs:enumeration value="out"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="message-content-model">
+						<xs:simpleType>
+							<xs:restriction base="xs:token">
+								<xs:enumeration value="#any"/>
+								<xs:enumeration value="#none"/>
+								<xs:enumeration value="#other"/>
+								<xs:enumeration value="#element"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="element-declaration" minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.interface-fault-reference" type="component.interface-fault-reference.type"/>
+	<xs:complexType name="component.interface-fault-reference.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="interface-fault">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="message-label" type="xs:NCName"/>
+					<xs:element name="direction">
+						<xs:simpleType>
+							<xs:restriction base="xs:token">
+								<xs:enumeration value="in"/>
+								<xs:enumeration value="out"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.binding" type="component.binding.type"/>
+	<xs:complexType name="component.binding.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="0"/>
+					<xs:element name="interface" minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="type" type="xs:anyURI"/>
+					<xs:element name="binding-faults" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.binding-fault" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="binding-operations" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.binding-operation" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.binding-fault" type="component.binding-fault.type"/>
+	<xs:complexType name="component.binding-fault.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="interface-fault">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.binding-operation" type="component.binding-operation.type"/>
+	<xs:complexType name="component.binding-operation.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="interface-operation">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="binding-fault-references" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.binding-fault-reference" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="binding-message-references" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.binding-message-reference" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.binding-message-reference" type="component.binding-message-reference.type"/>
+	<xs:complexType name="component.binding-message-reference.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="interface-message-reference">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.binding-fault-reference" type="component.binding-fault-reference.type"/>
+	<xs:complexType name="component.binding-fault-reference.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="interface-message-reference">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.service" type="component.service.type"/>
+	<xs:complexType name="component.service.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="interface">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="endpoints">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="component.endpoint" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.endpoint" type="component.endpoint.type"/>
+	<xs:complexType name="component.endpoint.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="binding">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="address" type="xs:anyURI" minOccurs="0"/>
+					<xs:element name="parent">
+						<xs:complexType>
+							<xs:attribute name="ref" type="xs:IDREF"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.element-declaration" type="component.element-declaration.type"/>
+	<xs:complexType name="component.element-declaration.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="system" type="xs:anyURI"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="component.type-definition" type="component.type-definition.type"/>
+	<xs:complexType name="component.type-definition.type">
+		<xs:complexContent>
+			<xs:restriction base="Component.type">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string"/>
+					<xs:element name="system" type="xs:anyURI"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

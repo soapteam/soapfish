@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Import-3B/XSDImport2.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/XSDImport"
+	xmlns:name="http://example.org/name"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows that the XML schema import from the
+		XSDImport.wsdl document is not visible in this document.
+		The references to the elements name:SIN and name:Name fail
+		because their namespace is not defined by xs:schema or xs:import
+		as child elements of wsdl:types.
+		
+		This document violates assertion Schema-1066.
+	</wsdl:documentation>
+	
+	<wsdl:include location="XSDImportValid.wsdl" />
+
+	<wsdl:interface name="Names">
+		<wsdl:operation name="getNameFromSIN"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="name:SIN" />
+			<wsdl:output element="name:Name" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

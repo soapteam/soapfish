@@ -1,0 +1,20 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Binding-3B/NonUniqueBinding-Extended.wsdl -->
+<!-- Copyright © 2007-03-23 05:52 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	xmlns:tns="http://www.wso2.com/wsdl/2006/interop/EchoService"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:whttp="http://www.w3.org/ns/wsdl/http"
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+	targetNamespace="http://www.wso2.com/wsdl/2006/interop/EchoService"
+	
+	xmlns:wwis="http://www.wso2.com/schemas/2006/interop/EchoService">
+
+	<include location="NonUniqueBinding.wsdl"></include>
+	<binding interface="tns:echoServiceInterface"
+		type="http://www.w3.org/ns/wsdl/http"
+		name="echoServiceBinding">
+		<operation ref="tns:echoString" whttp:method="GET" />
+		<operation ref="echoXML" whttp:method="GET" />
+	</binding>
+
+</description>

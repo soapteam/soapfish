@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ServiceReference-1G/reservationDetails.xsd -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	targetNamespace="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:tns="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:wdetails="http://greath.example.com/2004/services/reservationDetails"
+	xmlns:wsdli="http://www.w3.org/ns/wsdl-instance"
+	xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+	wsdli:wsdlLocation="http://greath.example.com/2004/services/reservationDetails reservationDetails.wsdl">
+
+	<element name="confirmationNumber" type="string" />
+
+	<element name="checkInDate" type="date" />
+
+	<element name="checkOutDate" type="date" />
+
+	<element name="reservationDetails">
+		<complexType>
+			<sequence>
+				<element ref="tns:confirmationNumber" />
+				<element ref="tns:checkInDate" />
+				<element ref="tns:checkOutDate" />
+				<element name="roomType" type="string" />
+				<element name="smoking" type="boolean" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<simpleType name="reservationDetailsSOAPEndpointType"
+		wsdlx:binding="wdetails:reservationDetailsSOAPBinding">
+		<restriction base="anyURI" />
+	</simpleType>
+
+	<element name="reservationDetailsSOAPEndpoint"
+		type="tns:reservationDetailsSOAPEndpointType" />
+
+	<element name="reservationDetailsService">
+		<annotation>
+			<documentation>
+				This element contains references to the Reservation
+				Details Web Service endpoints for this reservation.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="soap"
+					type="tns:reservationDetailsSOAPEndpointType" />
+				<element name="secure-soap"
+					type="tns:reservationDetailsSOAPEndpointType" />
+			</sequence>
+		</complexType>
+	</element>
+
+</schema>

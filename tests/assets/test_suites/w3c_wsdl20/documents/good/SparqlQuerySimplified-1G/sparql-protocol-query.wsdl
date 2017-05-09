@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SparqlQuerySimplified-1G/sparql-protocol-query.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+
+<!-- $Id: sparql-protocol-query.wsdl,v 1.2 2007/03/23 05:50:30 jonathanMarsh Exp $ -->
+
+<description xmlns="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:whttp="http://www.w3.org/ns/wsdl/http"
+	xmlns:st="http://www.w3.org/2005/09/sparql-protocol-types/#"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+	xmlns:tns="http://www.w3.org/2005/08/sparql-protocol-query/#"
+	targetNamespace="http://www.w3.org/2005/08/sparql-protocol-query/#">
+
+	<documentation>
+		This document describes the SPARQL Protocol for RDF as a web
+		service with one interface, SparqlQuery, containing one
+		operation, query; as welll as HTTP and SOAP bindings of that
+		interface. See http://www.w3.org/2001/sw/DataAccess/proto-wd/
+		for the SPARQL Protocol for RDF specification.
+	</documentation>
+
+	<!-- type imports -->
+	<types>
+
+		<!-- the SPARQL XML Results Format namespace -->
+		<xs:import namespace="http://www.w3.org/2005/sparql-results#"
+			schemaLocation="result2.xsd" />
+
+<xs:schema
+	version="$Id: sparql-protocol-query.wsdl,v 1.2 2007/03/23 05:50:30 jonathanMarsh Exp $"
+	targetNamespace="http://www.w3.org/2005/09/sparql-protocol-types/#"
+	xmlns:st="http://www.w3.org/2005/09/sparql-protocol-types/#"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:vbr="http://www.w3.org/2005/sparql-results#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+	<xs:import namespace="http://www.w3.org/2005/sparql-results#"
+		schemaLocation="result2.xsd" />
+
+	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		schemaLocation="rdf.xsd" />
+
+	<xs:element name="query-request">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="1" maxOccurs="1" name="query"
+					type="xs:string">
+					<xs:annotation>
+						<xs:documentation>
+							query is an xs:string constrained by the
+							language definition,
+							http://www.w3.org/TR/rdf-sparql-query/#grammar,
+							as "a sequence of characters in the language
+							defined by the [SPARQL] grammar, starting
+							with the Query production"
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" maxOccurs="unbounded"
+					name="default-graph-uri" type="xs:anyURI" />
+				<xs:element minOccurs="0" maxOccurs="unbounded"
+					name="named-graph-uri" type="xs:anyURI" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="query-result">
+		<xs:annotation>
+			<xs:documentation>
+				The type for serializing query results, either as XML or
+				RDF/XML.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element maxOccurs="1" ref="vbr:sparql" />
+				<xs:element maxOccurs="1" ref="rdf:RDF" />
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element type="xs:string" name="fault-details">
+		<xs:annotation>
+			<xs:documentation>
+				This element contains human-readable information about
+				the fault returned by the SPARQL query processing
+				service.
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="malformed-query">
+		<xs:complexType>
+			<xs:all>
+				<xs:element minOccurs="0" maxOccurs="1"
+					ref="st:fault-details" />
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="query-request-refused">
+		<xs:complexType>
+			<xs:all>
+				<xs:element minOccurs="0" maxOccurs="1"
+					ref="st:fault-details" />
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
+
+	</types>
+
+	<!-- Abstract SparqlQuery Interface -->
+	<interface name="SparqlQuery"
+		styleDefault="http://www.w3.org/ns/wsdl/style/iri">
+
+		<!-- the Interface Faults -->
+		<fault name="MalformedQuery" element="st:malformed-query" />
+		<fault name="QueryRequestRefused"
+			element="st:query-request-refused" />
+
+		<!-- the Interface Operation -->
+		<operation name="query"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+
+			<documentation>
+				The operation is used to convey queries and their
+				results from clients to services and back again.
+			</documentation>
+
+			<input messageLabel="In" element="st:query-request" />
+			<output messageLabel="Out" element="st:query-result" />
+
+			<!-- the interface faults are out faults -->
+			<outfault ref="tns:MalformedQuery" messageLabel="Out" />
+			<outfault ref="tns:QueryRequestRefused" messageLabel="Out" />
+		</operation>
+
+	</interface>
+
+	<!-- the HTTP GET binding for query operation -->
+	<binding name="queryHttpGet" interface="tns:SparqlQuery"
+		type="http://www.w3.org/ns/wsdl/http" whttp:version="1.1">
+
+		<fault ref="tns:MalformedQuery" whttp:code="400" />
+		<fault ref="tns:QueryRequestRefused" whttp:code="500" />
+
+		<operation ref="tns:query" whttp:method="GET"
+			whttp:faultSerialization="*/*"
+			whttp:inputSerialization="application/x-www-form-urlencoded"
+			whttp:outputSerialization="application/sparql-results+xml, application/rdf+xml, */*" />
+	</binding>
+
+	<!-- the HTTP POST binding for query operation -->
+	<binding name="queryHttpPost" interface="tns:SparqlQuery"
+		type="http://www.w3.org/ns/wsdl/http" whttp:version="1.1">
+
+		<fault ref="tns:MalformedQuery" whttp:code="400" />
+		<fault ref="tns:QueryRequestRefused" whttp:code="500" />
+
+		<operation ref="tns:query" whttp:method="POST"
+			whttp:faultSerialization="*/*"
+			whttp:inputSerialization="application/x-www-form-urlencoded, application/xml"
+			whttp:outputSerialization="application/sparql-results+xml, application/rdf+xml, */*" />
+	</binding>
+
+	<!-- the SOAP 1.2 binding (HTTP is underlying protocol; POST is the method.) -->
+	<binding name="querySoap" interface="tns:SparqlQuery"
+		type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+
+		<fault ref="tns:MalformedQuery" wsoap:code="soap:Sender" />
+		<fault ref="tns:QueryRequestRefused" wsoap:code="soap:Sender" />
+
+		<operation ref="tns:query"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+
+	</binding>
+</description>

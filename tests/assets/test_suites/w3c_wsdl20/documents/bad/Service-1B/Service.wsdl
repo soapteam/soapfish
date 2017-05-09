@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Service-1B/Service.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Service"
+	xmlns:tns="http://example.org/Service"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows an invalid Service interface reference.
+		Note that the interface attribute value is missing a namespace prefix.
+		
+		This document violates assertion QName-resolution-1064.
+	</wsdl:documentation>
+
+	<wsdl:interface name="EchoInterface">
+		<wsdl:operation name="Echo"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="#any" />
+			<wsdl:output element="#any" />
+		</wsdl:operation>
+	</wsdl:interface>
+
+	<wsdl:binding name="EchoSOAPBinding"
+		type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/" />
+
+	<wsdl:service name="EchoService" interface="EchoInterface">
+		<wsdl:endpoint name="SOAPEndpoint"
+			binding="tns:EchoSOAPBinding" />
+	</wsdl:service>
+</wsdl:description>

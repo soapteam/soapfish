@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOutComplexTypes-2G/axistocanon-inout-complextypes.descmsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log xmlns="http://www.w3.org/2002/ws/desc/logs/">
+<message timestamp="2006-07-06T10:53:30.190Z" conversation="1" number="1" type="request">
+<senderHostAndPort>199.43.208.130:1168</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/echoAxis2</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoString</SOAPAction>
+<Host>youenn.dyndns.ws</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStringParam xmlns="http://userguide.axis2.apache.org/xsd">Echo Me </echoStringParam></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:53:30.380Z" conversation="1" number="2" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1168</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 14:53:24 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>227</Content-Length>
+<Content-Type type="text/xml">text/xml</Content-Type>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStringReturn xmlns:ns1="http://userguide.axis2.apache.org/xsd">Echo Me</ns1:echoStringReturn></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:53:35.197Z" conversation="2" number="3" type="request">
+<senderHostAndPort>199.43.208.130:1169</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/echoAxis2</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoStringArray</SOAPAction>
+<Host>youenn.dyndns.ws</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStringArrayParam xmlns="http://userguide.axis2.apache.org/xsd"><string>value1</string><string>value2</string><string>value3</string></echoStringArrayParam></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:53:35.408Z" conversation="2" number="4" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1169</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 14:53:29 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>323</Content-Length>
+<Content-Type type="text/xml">text/xml</Content-Type>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStringArrayReturn xmlns:ns1="http://userguide.axis2.apache.org/xsd"><ns1:string>value1</ns1:string><ns1:string>value2</ns1:string><ns1:string>value3</ns1:string></ns1:echoStringArrayReturn></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:53:40.044Z" conversation="3" number="5" type="request">
+<senderHostAndPort>199.43.208.130:1170</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/echoAxis2</uri>
+</Method>
+<User-Agent>Axis2</User-Agent>
+<SOAPAction>urn:echoStruct</SOAPAction>
+<Host>youenn.dyndns.ws</Host>
+<Transfer-Encoding>chunked</Transfer-Encoding>
+<Content-Type type="text/xml">text/xml; charset=UTF-8</Content-Type>
+
+</httpHeaders>
+<content><?_xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header /><soapenv:Body><echoStructParam xmlns="http://userguide.axis2.apache.org/xsd"><varFloat>5.5</varFloat><varInt>6565</varInt><varString>String Value</varString></echoStructParam></soapenv:Body></soapenv:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:53:40.224Z" conversation="3" number="6" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1170</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 14:53:34 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>329</Content-Length>
+<Content-Type type="text/xml">text/xml</Content-Type>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStructReturn xmlns:ns1="http://userguide.axis2.apache.org/xsd"><ns1:varFloat>5.500000</ns1:varFloat><ns1:varInt>6565</ns1:varInt><ns1:varString>String Value</ns1:varString></ns1:echoStructReturn></env:Body></env:Envelope></content>
+</message>
+</log>

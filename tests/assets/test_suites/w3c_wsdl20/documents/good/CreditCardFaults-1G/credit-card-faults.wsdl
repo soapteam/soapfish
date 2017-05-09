@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/CreditCardFaults-1G/credit-card-faults.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://finance.example.com/CreditCards/wsdl"
+	xmlns:tns="http://finance.example.com/CreditCards/wsdl"
+	xmlns:cc="http://finance.example.com/CreditCardFaults/xsd">
+
+	<documentation>
+		This document describes standard faults for use by Web services
+		that process credit cards.
+	</documentation>
+
+	<types>
+		<xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			namespace="http://finance.example.com/CreditCardFaults/xsd"
+			schemaLocation="credit-card-faults.xsd" />
+	</types>
+
+	<interface name="creditCardFaults">
+
+		<fault name="cancelledCreditCard"
+			element="cc:CancelledCreditCard">
+			<documentation>
+				Thrown when the credit card has been cancelled.
+			</documentation>
+		</fault>
+
+		<fault name="expiredCreditCard"
+			element="cc:ExpiredCreditCard">
+			<documentation>
+				Thrown when the credit card has expired.
+			</documentation>
+		</fault>
+
+		<fault name="invalidCreditCardNumber"
+			element="cc:InvalidCreditCardNumber">
+			<documentation>
+				Thrown when the credit card number is invalid. This
+				fault will occur if the wrong credit card type is
+				specified.
+			</documentation>
+		</fault>
+
+		<fault name="invalidExpirationDate"
+			element="cc:InvalidExpirationDate">
+			<documentation>
+				Thrown when the expiration date is invalid.
+			</documentation>
+		</fault>
+
+	</interface>
+
+</description>

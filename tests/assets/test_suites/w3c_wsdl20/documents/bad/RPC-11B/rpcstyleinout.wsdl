@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/RPC-11B/rpcstyleinout.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://example.org/">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a WSDL 2.0 interface with rpc style
+		and in-out MEP. The output element complex type contains a local attribute.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:schema targetNamespace="http://example.org/">
+			<xs:element name="myOperation">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="element1" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="myOperationOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="element2" type="xs:string"/>
+					</xs:sequence>
+					<xs:attribute name="att1" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+
+	<wsdl:interface name="myInterface"
+		styleDefault="http://www.w3.org/ns/wsdl/style/rpc">
+		<wsdl:operation name="myOperation"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input messageLabel="In" element="tns:myOperation" />
+			<wsdl:output messageLabel="Out" element="tns:myOperationOutput" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

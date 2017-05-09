@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/HTTPBinding-2B/TestMetadata.xml -->
+<!-- Copyright © 2007-02-26 04:36 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/bad/HTTPBinding-2B
+	</Identifier>
+	<Title>Bad Document HTTPBinding-2B</Title>
+	<Purpose>Illustrates the HTTP assertion HTTPBindingFault-2105.</Purpose>
+	<Description>The fault definition SHOULD agree with the definition of the HTTP error codes, as specified in section 8 of IETF RFC 3205.</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">Echo.wsdl</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>false</Successful>
+		<ViolatesAssertion>HTTPBindingFault-2105</ViolatesAssertion>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Philippe Le Hégaret</Name>
+		<Affiliation>W3C</Affiliation>
+		<EMail>plh@w3.org</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/documents/bad</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20-adjuncts</Reference></SeeAlso>
+</TestMetadata>

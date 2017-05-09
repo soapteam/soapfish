@@ -1,0 +1,167 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageTest-3G/HTTPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+    targetNamespace="http://example.org/message-test" xmlns:tns="http://example.org/message-test"
+    xmlns:wsoap="http://www.w3.org/ns/wsdl/soap" xmlns:whttp="http://www.w3.org/ns/wsdl/http" 
+    xmlns:xsmt="http://example.org/message-test/xsd" xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <documentation><![CDATA[
+    This test is part of a set representing functionality manifesting changes in the
+    wire format of messages.  This testcase specificially exercises certain features available 
+    in the HTTP Binding, namely:
+      whttp:method and whttp:methodDefault
+      whttp:cookies
+      whttp:contentEncoding and whttp:contentEncodingDefault
+      whttp:code
+      whttp:header
+      whttp:authenticationScheme 
+      whttp:authenticationRealm
+      
+    When running a test pass against this WSDL, each endpoint should be invoked in order, and 
+    each operation within the interface bound by that binding should be invoked in the order 
+    it appears in the interface, extended interfaces first.  Thus the order of the Echo interface
+    will be:
+        EchoString - simple string echoing in-out operation.
+        EchoName - simple structure echoing in-out operation.
+        EchoNameExpectFault - simple structure echoing in-out operation, but defined to return a fault.
+        Send - one-way operation sending arbitrary XML payload.
+        GuaranteedFault - robust-one-way operation, defined to return a simple fault.
+    
+  ]]></documentation>
+
+  <types>
+    <xs:import schemaLocation="servicetypes.xsd"
+      namespace="http://example.org/message-test/xsd"/>
+  </types>
+
+  <interface name="Echo">
+    <fault name="EchoNameFault" element="xsmt:EchoNameFault"></fault>
+    <operation name="EchoString" pattern="http://www.w3.org/ns/wsdl/in-out"
+      wsdlx:safe="true">
+      <documentation>Invoke this operation with an EchoString element, and recieve the 
+        same EchoString element back.</documentation>
+      <input element="xsmt:EchoString"/>
+      <output element="xsmt:EchoString"/>
+    </operation>
+    <operation name="EchoName" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation>Invoke this operation with an EchoName element, and recieve the same EchoName element back.</documentation>
+      <input element="xsmt:EchoName"/>
+      <output element="xsmt:EchoName"/>
+      <outfault ref="tns:EchoNameFault"/>
+    </operation>
+    <operation name="EchoNameExpectFault" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation>
+        Invoke this operation with an EchoName element, and recieve an EchoNameFault 
+        back, with the text "rejected" and the first, middle and last names from the input 
+        message.
+      </documentation>
+      <input element="xsmt:EchoName"/>
+      <output element="xsmt:EchoName"/>
+      <outfault ref="tns:EchoNameFault"/>
+    </operation>
+    <operation name="Send" pattern="http://www.w3.org/ns/wsdl/in-only">
+      <documentation>Invoke this operation with any XML payload.</documentation>
+      <input element="#any"/>
+    </operation>
+    <operation name="GuaranteedFault" pattern="http://www.w3.org/ns/wsdl/robust-in-only">
+      <documentation>Invoke this operation no input, and receive back an EchoNameFault, with the text
+      "default" and some random first, middle, and last name information.</documentation>
+      <input element="#none"/>
+      <outfault ref="tns:EchoNameFault"/>
+    </operation>
+  </interface>
+
+  <binding name="EchoHTTPBinding" interface="tns:Echo" type="http://www.w3.org/ns/wsdl/http"
+    whttp:cookies="true"
+    whttp:methodDefault="PUT">
+    <documentation>
+      This binding tests the four HTTP methods, GET, PUT, POST, DELETE.
+      It also tests cookies, headers, and fault codes
+    </documentation>
+    <fault ref="tns:EchoNameFault" whttp:code="402">
+      <whttp:header name="X-WSDLTestHeader" type="xs:string" required="true"/> 
+    </fault>
+    <operation ref="tns:EchoString" whttp:location="EchoString">
+      <input />
+      <output />
+    </operation>
+    <operation ref="tns:EchoName" whttp:method="POST" whttp:location="EchoName">
+      <input>
+        <whttp:header name="X-WSDLTestHeader" type="xs:string" required="true"/> 
+      </input>
+      <output>
+        <whttp:header name="X-WSDLTestHeader" type="xs:string" required="true"/> 
+      </output>
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+    <operation ref="tns:EchoNameExpectFault" whttp:method="DELETE" whttp:location="EchoNameExpectFault">
+      <input />
+      <output />
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+    <operation ref="tns:Send" whttp:location="Send">
+      <input />
+    </operation>
+    <operation ref="tns:GuaranteedFault" whttp:method="GET" whttp:location="GuaranteedFault">
+      <input/>
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+  </binding>
+  
+  <binding name="CodedEchoHTTPBinding" interface="tns:Echo" type="http://www.w3.org/ns/wsdl/http"
+    whttp:contentEncodingDefault="gzip">
+    <documentation>
+      This binding tests the engagement of content encodings.
+    </documentation>
+    <fault ref="tns:EchoNameFault" whttp:contentEncoding=""/>
+    <operation ref="tns:EchoString" whttp:contentEncodingDefault="" whttp:location="EchoString">
+      <input />
+      <output />
+    </operation>
+    <operation ref="tns:EchoName" whttp:contentEncodingDefault="gzip" whttp:location="EchoName"> <!-- gzip should never be used -->
+      <input whttp:contentEncoding=""/>
+      <output whttp:contentEncoding=""/>
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+    <operation ref="tns:EchoNameExpectFault" whttp:contentEncodingDefault="" whttp:location="EchoNameExpectFault">
+      <input whttp:contentEncoding="gzip"/>
+      <output whttp:contentEncoding="gzip"/>
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+    <operation ref="tns:Send" whttp:contentEncodingDefault="" whttp:location="Send">
+      <input />
+    </operation>
+    <operation ref="tns:GuaranteedFault"  whttp:location="GuaranteedFault">
+      <input whttp:contentEncoding=""/>
+      <outfault ref="tns:EchoNameFault" />
+    </operation>
+  </binding>
+  
+  <binding name="SafeEchoHTTPBinding" interface="tns:Echo" type="http://www.w3.org/ns/wsdl/http">
+    <documentation>
+      This binding tests wsdlx:safe's impact on the HTTP method.
+    </documentation>
+    <fault ref="tns:EchoNameFault"/>
+    <operation ref="tns:EchoString" whttp:location="EchoString"/>
+    <operation ref="tns:EchoName" whttp:location="EchoName"/>
+    <operation ref="tns:EchoNameExpectFault" whttp:location="EchoNameExpectFault"/>
+    <operation ref="tns:Send" whttp:location="Send"/>
+    <operation ref="tns:GuaranteedFault" whttp:location="GuaranteedFault"/>
+  </binding>
+
+  <service name="MessageTest3GService" interface="tns:Echo">
+    <documentation>Exercise each endpoint in order.</documentation>
+    <endpoint name="MessageTestGeneric" binding="tns:SafeEchoHTTPBinding"
+      address="http://example.org/MessageTest-3G/endpoint-1/"/>
+    <endpoint name="MessageTestCodedHTTP" binding="tns:CodedEchoHTTPBinding"
+      address="http://example.org/MessageTest-3G/endpoint-2/"/>
+    <endpoint name="MessageTestHTTP" binding="tns:EchoHTTPBinding"
+      address="http://example.org/MessageTest-3G/endpoint-3/"/>
+    <endpoint name="AuthenticMessageTestHTTP" binding="tns:EchoHTTPBinding"
+      address="http://example.org/MessageTest-3G/endpoint-4/"
+      whttp:authenticationScheme="basic"
+      whttp:authenticationRealm="example.org Realm"/>
+  </service>
+
+</description>

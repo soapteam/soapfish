@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 Component Model Interchange Format
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2006-05-07 Arthur Ryman (ryman@ca.ibm.com)
+	- added documentation about canonical order of set-valued properties
+	
+	2006-06-10: Arthur Ryman (ryman@ca.ibm.com)
+	- moved parent, features, and properties into base
+	- added wrapper elements for extensions
+	
+	2006-06-18: Arthur Ryman (ryman@ca.ibm.com)
+	- added missing soap endpoint extension
+	- corrected soap extension co-occurence comments
+
+	2006-10-30: Jonathan Marsh (jonathan@wso2.com)
+	- removed features and properties
+	
+	2006-11-17: Arthur Ryman (ryman@ca.ibm.com)
+	- corrected comment for soapEndpointExtension
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.w3.org/2002/ws/desc/wsdl/component"
+	xmlns:cmbase="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+	xmlns:cmextensions="http://www.w3.org/2002/ws/desc/wsdl/component-extensions"
+	xmlns:cmhttp="http://www.w3.org/2002/ws/desc/wsdl/component-http"
+	xmlns:cmrpc="http://www.w3.org/2002/ws/desc/wsdl/component-rpc"
+	xmlns:cmsoap="http://www.w3.org/2002/ws/desc/wsdl/component-soap"
+	xmlns:cmwsa="http://www.w3.org/2002/ws/desc/wsdl/component-ws-addressing"
+	xmlns:cmsawsdl="http://www.w3.org/2002/ws/desc/wsdl/component-sawsdl"
+	xmlns:cmwsp="http://www.w3.org/2002/ws/desc/wsdl/component-ws-policy"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component"
+	elementFormDefault="qualified">
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+		schemaLocation="wsdlcm-base.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-extensions"
+		schemaLocation="wsdlcm-extensions.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-http"
+		schemaLocation="wsdlcm-http.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-rpc"
+		schemaLocation="wsdlcm-rpc.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-soap"
+		schemaLocation="wsdlcm-soap.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-ws-addressing"
+		schemaLocation="wsdlcm-ws-addressing.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-ws-policy"
+		schemaLocation="wsdlcm-ws-policy.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-sawsdl"
+		schemaLocation="wsdlcm-sawsdl.xsd" />
+
+	<xs:annotation>
+		<xs:documentation>
+			This schema represents the WSDL 2.0 Component Model. The
+			following rules have been used to map the WSDL 2.0
+			specification to this schema.
+			<ol>
+				<li>
+					All element names start with a lowercase letter.
+				</li>
+				<li>All type names start with an uppercase letter.</li>
+				<li>
+					There are no anonymous types. This allows types to
+					be reused and simplifies bindings to prgramming
+					languages.
+				</li>
+				<li>
+					Each component type is mapped to a complex type. The
+					name of the complex type is the name of the
+					component with the suffix Component appended. If the
+					component name has several parts, these are
+					concatenated. For example the Interface Operation
+					component is mapped to the
+					InterfaceOperationComponent complex type. All
+					component complex type derive from the base
+					Component type which has an id attribute.
+				</li>
+				<li>
+					Each property name is mapped to an element of its
+					component complex type. The name of element is the
+					camel-cased name of the property. For example, the
+					{message label} property is mapped to the
+					messageLabel element.
+				</li>
+				<li>
+					A property that contains a set has minoccurs="0".
+					The type of the property is a sequence of elements
+					with minoccurs="1". If the set is empty then the
+					element is absent. If the set is non-empty then the
+					element is present and contains at least one item.
+				</li>
+				<li>
+					QNames are mapped to a complex type that contains
+					both the namespace name and the local name rather
+					then a usual QName with namespace prefix. This
+					design makes it easier to compare QNames.
+				</li>
+				<li>
+					The order of members of set-valued properties is
+					irrelevant. However, a canonical ordering is imposed
+					in this format to simplify comparisons. The ordering
+					is defined by requiring that members of set-valued
+					properties have a defined key, that the keys have a
+					defined total order relation, and that the canonical
+					order is the order in which the members are sorted
+					in ascending order according to their keys. We
+					assume that the components of keys are Unicode
+					strings and that their standard ordering is used. If
+					a key is composed of more than one string then the
+					ordering is defined by comparing the components in
+					order, i.e. the lexicographic ordering.
+				</li>
+				<li>
+					All extensions are enclosed in an optional wrapper
+					element. The wrapper element may occur only if the
+					extension is supported. The presence of the wrapper
+					element may also depend on the document content.
+				</li>
+			</ol>
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="descriptionComponent" type="DescriptionComponent" />
+
+	<xs:complexType name="DescriptionComponent">
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="extensions" type="cmbase:Uris"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								The set of supported extensions.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="interfaces"
+						type="InterfaceComponents" minOccurs="0" />
+					<xs:element name="bindings" type="BindingComponents"
+						minOccurs="0" />
+					<xs:element name="services" type="ServiceComponents"
+						minOccurs="0" />
+					<xs:element name="elementDeclarations"
+						type="ElementDeclarationComponents" minOccurs="0" />
+					<xs:element name="typeDefinitions"
+						type="TypeDefinitionComponents" minOccurs="0" />
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Interface.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="interfaceComponent"
+				type="InterfaceComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Interface is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="cmbase:QName" />
+					<xs:element name="extendedInterfaces"
+						type="InterfaceRefs" minOccurs="0" />
+					<xs:element name="interfaceFaults"
+						type="InterfaceFaultComponents" minOccurs="0" />
+					<xs:element name="interfaceOperations"
+						type="InterfaceOperationComponents" minOccurs="0" />
+					<xs:element ref="cmwsp:wspInterfaceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmsawsdl:sawsdlInterfaceExtension"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the sawsdl extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceRefs">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Interface.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="interface" type="cmbase:Ref"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceFaultComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Interface Fault.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="interfaceFaultComponent"
+				type="InterfaceFaultComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceFaultComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Interface Fault is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="cmbase:QName" />
+					<xs:element name="messageContentModel"
+						type="cmbase:MessageContentModel" />
+					<xs:element name="elementDeclaration"
+						type="cmbase:Ref" minOccurs="0" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmwsp:wspInterfaceFaultExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmsawsdl:sawsdlInterfaceFaultExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the sawsdl extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceOperationComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Interface
+				Operation.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="interfaceOperationComponent"
+				type="InterfaceOperationComponent" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceOperationComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Interface Operation is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="cmbase:QName" />
+					<xs:element name="messageExchangePattern"
+						type="xs:anyURI" />
+					<xs:element name="interfaceMessageReferences"
+						type="InterfaceMessageReferenceComponents" minOccurs="0" />
+					<xs:element name="interfaceFaultReferences"
+						type="InterfaceFaultReferenceComponents" minOccurs="0" />
+					<xs:element name="style" type="cmbase:Uris"
+						minOccurs="0" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element
+						ref="cmextensions:wsdlInterfaceOperationExtension"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the wsdlx extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element
+						ref="cmrpc:rpcInterfaceOperationExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the rpc extension is
+								supported AND the {style} property of
+								the Interface Operation component
+								contains
+								http://www.w3.org/ns/wsdl/style/rpc.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsp:wspInterfaceOperationExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element
+						ref="cmsawsdl:sawsdlInterfaceOperationExtension"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the sawsdl extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceMessageReferenceComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Interface Message
+				Reference.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="interfaceMessageReferenceComponent"
+				type="InterfaceMessageReferenceComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceMessageReferenceComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Interface Message Reference is
+				(messageLabel).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="messageLabel" type="xs:NCName" />
+					<xs:element name="direction"
+						type="cmbase:Direction" />
+					<xs:element name="messageContentModel"
+						type="cmbase:MessageContentModel" />
+					<xs:element name="elementDeclaration"
+						type="cmbase:Ref" minOccurs="0" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmwsp:wspInterfaceMessageReferenceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsa:wsaInterfaceMessageReferenceExtension"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the WS-Addressing 1.0 extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceFaultReferenceComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Interface Fault
+				Reference.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="interfaceFaultReferenceComponent"
+				type="InterfaceFaultReferenceComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="InterfaceFaultReferenceComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Interface Fault Reference is (name of
+				interfaceFault, messageLabel).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="interfaceFault" type="cmbase:Ref" />
+					<xs:element name="messageLabel" type="xs:NCName" />
+					<xs:element name="direction"
+						type="cmbase:Direction" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmwsp:wspInterfaceFaultReferenceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsa:wsaInterfaceFaultReferenceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the WS-Addressing 1.0 extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="BindingComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Binding.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="bindingComponent" type="BindingComponent"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="BindingComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Binding is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="cmbase:QName" />
+					<xs:element name="interface" type="cmbase:Ref"
+						minOccurs="0" />
+					<xs:element name="type" type="xs:anyURI" />
+					<xs:element name="bindingFaults"
+						type="BindingFaultComponents" minOccurs="0" />
+					<xs:element name="bindingOperations"
+						type="BindingOperationComponents" minOccurs="0" />
+					<xs:element ref="cmhttp:httpBindingExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the http extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/http.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmsoap:soapBindingExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the soap extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/soap.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsp:wspBindingExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="BindingFaultComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Binding Fault.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="bindingFaultComponent"
+				type="BindingFaultComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="BindingFaultComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Binding Fault is (name of interfaceFault).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="interfaceFault" type="cmbase:Ref" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmhttp:httpBindingFaultExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the http extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/http.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmsoap:soapBindingFaultExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the soap extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/soap.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsp:wspBindingFaultExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="BindingOperationComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Binding Operation.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="bindingOperationComponent"
+				type="BindingOperationComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="BindingOperationComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Binding Operation is (name of
+				interfaceOperation).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="interfaceOperation"
+						type="cmbase:Ref" />
+					<xs:element name="bindingMessageReferences"
+						type="BindingMessageReferenceComponents" minOccurs="0" />
+					<xs:element name="bindingFaultReferences"
+						type="BindingFaultReferenceComponents" minOccurs="0" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmhttp:httpBindingOperationExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the http extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/http.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element
+						ref="cmsoap:soapBindingOperationExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the soap extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/soap.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsp:wspBindingOperationExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="BindingMessageReferenceComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Binding Message
+				Reference.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="bindingMessageReferenceComponent"
+				type="BindingMessageReferenceComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="BindingMessageReferenceComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Binding Message Reference is (messageLabel of
+				interfaceMessageReference).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="interfaceMessageReference"
+						type="cmbase:Ref" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmhttp:httpBindingMessageReferenceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the http extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/http.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmsoap:soapBindingMessageReferenceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the soap extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/soap.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsp:wspBindingMessageReferenceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="BindingFaultReferenceComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Binding Fault
+				Reference.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="bindingFaultReferenceComponent"
+				type="BindingFaultReferenceComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="BindingFaultReferenceComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Binding Fault Reference is (name of
+				interfaceFault of interfaceFaultReference, messageLabel
+				of interfaceFaultReference).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="interfaceFaultReference"
+						type="cmbase:Ref" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmsoap:soapBindingFaultReferenceExtension" minOccurs="0"/>
+					<xs:element ref="cmwsp:wspBindingFaultReferenceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ServiceComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Service.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="serviceComponent" type="ServiceComponent"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ServiceComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Service is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="cmbase:QName" />
+					<xs:element name="interface" type="cmbase:Ref" />
+					<xs:element name="endpoints" type="EndpointComponents" />
+					<xs:element ref="cmwsp:wspServiceExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="EndpointComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Endpoint.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="endpointComponent"
+				type="EndpointComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="EndpointComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Endpoint is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="xs:NCName" />
+					<xs:element name="binding" type="cmbase:Ref" />
+					<xs:element name="address" type="xs:anyURI"
+						minOccurs="0" />
+					<xs:element ref="cmbase:parent" />
+					<xs:element ref="cmhttp:httpEndpointExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the http extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/http.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmsoap:soapEndpointExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the soap extension is
+								supported AND the {type} property of the
+								Binding component is
+								http://www.w3.org/ns/wsdl/soap.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsp:wspEndpointExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the ws-policy extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="cmwsa:wsaEndpointExtension" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the WS-Addressing 1.0 extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ElementDeclarationComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Element
+				Declaration.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="elementDeclarationComponent"
+				type="ElementDeclarationComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ElementDeclarationComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Element Declaration is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="cmbase:QName" />
+					<xs:element name="system" type="xs:anyURI" />
+					<xs:element ref="cmsawsdl:sawsdlElementDeclarationExtension"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the sawsdl extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TypeDefinitionComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of Type Definition.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="typeDefinitionComponent"
+				type="TypeDefinitionComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TypeDefinitionComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of Type Definition is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="cmbase:QName" />
+					<xs:element name="system" type="xs:anyURI" />
+					<xs:element ref="cmsawsdl:sawsdlTypeDefinitionExtension"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								MUST occur if the sawsdl extension is
+								supported.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

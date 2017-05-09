@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Chameleon-2B/getBalance.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description xmlns:tns="http://example.org/getBalance/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://example.org/getBalance/"
+	xmlns:customer="http://example.org/getBalance/customer/"
+	xmlns:account="http://example.org/getBalance/account/">
+
+	<wsdl:documentation>
+		This test shows how a wsdl import statement should not be used.
+		A wsdl import statement is meant to import WSDL documents only.
+		It cannot be used to import no-target namespace xsd as below.
+		
+		This document violates assertion Import-1085.
+	</wsdl:documentation>
+
+	<wsdl:import namespace="" location="accountInfo.xsd" />
+
+	<wsdl:interface name="getBalanceInf">
+		<wsdl:operation name="getBalance"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="customer:custInfo" />
+			<wsdl:output element="account:accInfo" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

@@ -1,0 +1,143 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Echo-2B/echo.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:tns="http://www.wso2.com/wsdl/2006/interop/EchoService"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+	targetNamespace="http://www.wso2.com/wsdl/2006/interop/EchoService"
+	xmlns:wwis="http://www.wso2.com/schemas/2006/interop/EchoService"
+	xmlns:unknown="http://example.org/unknown-wsdl-extension">
+
+	<documentation>
+		This test contains simple echo operations which can be used for
+		iteroperability testing.
+	</documentation>
+
+	<types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns="http://www.wso2.com/schemas/2006/interop/EchoService"
+			targetNamespace="http://www.wso2.com/schemas/2006/interop/EchoService"
+			elementFormDefault="unqualified"
+			attributeFormDefault="unqualified">
+			<xs:element type="tEchoString" name="echoString" />
+			<xs:complexType name="tEchoString">
+				<xs:sequence>
+					<xs:element type="xs:string" name="echoStringParam" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element type="xs:string" name="echoStringResponse" />
+
+			<xs:element type="tEchoXML" name="echoXML" />
+			<xs:complexType name="tEchoXML">
+				<xs:sequence>
+					<xs:element type="xs:anyType" name="echoXMLParam" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element type="xs:anyType" name="echoXMLResponse" />
+
+			<xs:element name="sortCode">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="[0-9]{2}[\-][0-9]{2}[\-][0-9]{2}" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:schema>
+		
+	</types>
+	<interface name="echoServiceInterface">
+		<fault name="echoFault" element="wwis:echoString"/>
+		<operation pattern="http://www.w3.org/ns/wsdl/in-out"
+			name="echoString">
+			<input element="wwis:echoString" messageLabel="In" />
+			<output element="wwis:echoStringResponse"
+				messageLabel="Out" />
+			<infault ref="tns:echoFault" messageLabel="In" />
+			<outfault ref="tns:echoFault" messageLabel="Out" />						
+		</operation>
+		
+		<operation pattern="http://www.w3.org/ns/wsdl/in-out"
+			name="echoXMLOne">
+			<input element="wwis:echoXML" messageLabel="In" />
+			<output element="wwis:echoXMLResponse" messageLabel="Out" />
+			<infault ref="tns:echoFault" messageLabel="In" />
+			<outfault ref="tns:echoFault" messageLabel="Out" />						
+		</operation>
+		
+		<operation pattern="http://www.w3.org/ns/wsdl/in-opt-out"
+			name="echoXMLTwo">
+			<input element="wwis:echoXML" messageLabel="In" />
+			<output element="#other" messageLabel="Out"/>
+		</operation>
+		
+		<operation pattern="http://www.w3.org/ns/wsdl/out-only"
+			name="echoXMLThree">
+			<output element="wwis:echoXML" messageLabel="Out" />
+			<output element="#other" />
+		</operation>
+
+		<operation pattern="http://www.w3.org/ns/wsdl/out-in"
+			name="echoXMLFour">
+			<input element="wwis:echoXML" messageLabel="In" />
+			<output element="#none"  messageLabel="Out"/>
+		</operation>
+		
+		<operation pattern="http://www.w3.org/ns/wsdl/out-opt-in"
+			name="getSortCode">
+			<output element="wwis:sortCode" messageLabel="Out" />
+		</operation>
+			
+		<operation 	pattern="http://www.w3.org/ns/wsdl/out-opt-in"
+			name="echoXMLFive">
+			<input element="wwis:echoXML" messageLabel="In" />
+			<output element="#none" />
+			<infault ref="tns:echoFault" messageLabel="In" />
+			<outfault ref="tns:echoFault" messageLabel="Out" />
+		</operation>
+		
+		<unknown:extension wsdl:required="true" />
+	</interface>
+	
+	<binding interface="tns:echoServiceInterface"
+		type="http://www.w3.org/ns/wsdl/soap"
+		name="echoServiceSOAPBinding"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+		<operation
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response"
+			ref="tns:echoString" >
+		</operation>
+		<operation
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response"
+			ref="tns:echoXMLOne" />
+		<operation
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response"
+			ref="tns:echoXMLTwo" />
+		<operation
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response"
+			ref="tns:echoXMLThree" />
+		<operation
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response"
+			ref="tns:echoXMLFour" />
+
+		<operation
+			wsoap:mep="http://wwww.w3.org/2003/05/soap/mep/soap-response"
+			ref="tns:getSortCode" />
+
+		<operation 
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response"
+			ref="tns:echoXMLFive">
+			<input messageLabel="In" />
+			<output messageLabel="Out"/>
+			<infault ref="tns:echoFault" messageLabel="In" />
+			<outfault ref="tns:echoFault" messageLabel="Out" />						
+		</operation>		
+	</binding>
+	
+	<service name="echoService" interface="tns:echoServiceInterface">
+		<endpoint
+			address="http://www-lk.wso2.com/axis2/services/EchoService"
+			binding="tns:echoServiceSOAPBinding"
+			name="echoServiceSOAPBinding_http" />
+	</service>
+</description>

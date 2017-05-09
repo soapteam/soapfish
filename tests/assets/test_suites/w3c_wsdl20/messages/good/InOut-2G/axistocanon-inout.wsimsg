@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOut-2G/axistocanon-inout.wsimsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log timestamp="2006-07-06T14:14:53.845"
+    xmlns="http://www.ws-i.org/testing/2004/07/log/"
+    xmlns:wsi-monConfig="http://www.ws-i.org/testing/2004/07/monitorConfig/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <monitor version="1.0" releaseDate="2003-03-20">
+    <implementer name="IBM" location=""/>
+    <environment>
+      <runtime name="Java(TM) 2 Runtime Environment, Standard Edition" version="1.5.0_06-b05"/>
+      <operatingSystem name="Windows XP" version="5.1"/>
+      <xmlParser name="Apache Xerces" version="Xerces-J 2.8.0"/>
+    </environment>
+    <wsi-monConfig:configuration>
+    <wsi-monConfig:comment>Comment</wsi-monConfig:comment>
+      <wsi-monConfig:logFile replace="true" location="URL">
+      <wsi-monConfig:addStyleSheet href="null" type="null" />
+    </wsi-monConfig:logFile>
+      <wsi-monConfig:logDuration>600</wsi-monConfig:logDuration>
+      <wsi-monConfig:cleanupTimeoutSeconds>3</wsi-monConfig:cleanupTimeoutSeconds>
+      <wsi-monConfig:manInTheMiddle>
+      </wsi-monConfig:manInTheMiddle>
+    </wsi-monConfig:configuration>
+  </monitor>
+
+<messageEntry xsi:type="httpMessageEntry" ID="1" conversationID="1" type="request" timestamp="2006-07-06T14:14:38.273Z">
+<messageContent>&lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body&gt;&lt;echoString xmlns=&quot;http://www.wso2.com/schemas/2006/interop/EchoService&quot;&gt;&lt;echoStringParam xmlns=&quot;&quot;&gt;Echo me&lt;/echoStringParam&gt;&lt;/echoString&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</messageContent>
+<senderHostAndPort>199.43.208.130:1559</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>POST /wss/echo HTTP/1.1&#xd;
+User-Agent: Axis2&#xd;
+SOAPAction: urn:echoString&#xd;
+Host: youenn.dyndns.ws&#xd;
+Transfer-Encoding: chunked&#xd;
+Content-Type: text/xml; charset=UTF-8&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="2" conversationID="1" type="response" timestamp="2006-07-06T14:14:38.654Z">
+<messageContent>&lt;?xml version=&quot;1.0&quot;?&gt;&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;env:Body&gt;&lt;ns1:echoStringResponse xmlns:ns1=&quot;http://www.wso2.com/schemas/2006/interop/EchoService&quot;&gt;Echo me&lt;/ns1:echoStringResponse&gt;&lt;/env:Body&gt;&lt;/env:Envelope&gt;</messageContent>
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1559</receiverHostAndPort>
+<httpHeaders>HTTP/1.1 200 OK&#xd;
+Date: Thu, 06 Jul 2006 18:14:35 GMT&#xd;
+Server: Apache/2.0.50 (Win32)&#xd;
+Content-Length: 246&#xd;
+Content-Type: text/xml&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+</log>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Chat-2B/Chat-MissBindOperation.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description xmlns:wsdl="http://www.w3.org/ns/wsdl"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.w3.org/ns/wsdl http://www.w3.org/ns/wsdl/wsdl20.xsd"
+  targetNamespace="http://example.org/chat.wsdl"
+  xmlns:tns="http://example.org/chat.wsdl"
+  xmlns:chatns="http://example.org/chat/schema"
+  xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+  xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  
+  <wsdl:documentation>
+    Test what happens when you neglect to define all the operations in
+    a binding. This description violates assertion Binding-1045.
+  </wsdl:documentation>
+  
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      targetNamespace="http://example.org/chat/schema"
+      xmlns="http://example.org/chat/schema">
+
+      <xs:element name="registerRequestElement" type="xs:string" />
+
+      <xs:element name="registerResponseElement" type="xs:string" />
+
+      <xs:complexType name="sayRequestType">
+        <xs:sequence>
+          <xs:element name="handle" type="xs:string"/>
+          <xs:element name="contents" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="sayRequestElement" type="sayRequestType"/>
+
+      <xs:element name="invalidHandleError" type="xs:string"/>
+
+    </xs:schema>
+  </wsdl:types>
+
+  <wsdl:interface name="chatInterface">
+
+    <wsdl:fault name="invalidHandleFault" element="chatns:invalidHandleError"/>
+
+    <wsdl:operation name="register" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="chatns:registerRequestElement"/>
+      <wsdl:output messageLabel="Out" element="chatns:registerResponseElement"/>
+      <wsdl:outfault messageLabel="Out" ref="tns:invalidHandleFault"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="say" pattern="http://www.w3.org/ns/wsdl/robust-in-only">
+      <wsdl:input messageLabel="In" element="chatns:sayRequestElement"/>
+      <wsdl:outfault messageLabel="Out" ref="tns:invalidHandleFault"/>
+    </wsdl:operation>
+
+  </wsdl:interface>
+
+  <wsdl:binding name="chatSOAPBinding"
+    interface="tns:chatInterface"
+    type="http://www.w3.org/ns/wsdl/soap">
+
+    <wsdl:documentation>
+      Missing a binding operation for "say".
+    </wsdl:documentation>
+
+    <wsdl:fault ref="tns:invalidHandleError" wsoap:code="soap:Sender"/>
+
+    <wsdl:operation ref="tns:register" wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response/"/>
+
+  </wsdl:binding>
+
+  <wsdl:service name="chatService" interface="tns:chatInterface">
+
+    <wsdl:endpoint name="chatEndpoint"
+     binding="tns:chatSOAPBinding"
+     address="http://chat.example.com/chat/Chat"/>
+
+  </wsdl:service>
+
+</wsdl:description>

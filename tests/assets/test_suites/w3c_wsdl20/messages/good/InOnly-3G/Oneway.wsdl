@@ -1,0 +1,46 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOnly-3G/Oneway.wsdl -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	xmlns:tns="http://www.wso2.com/wsdl/2006/interop/pingService"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+	targetNamespace="http://www.wso2.com/wsdl/2006/interop/pingService"
+	xmlns:wwis="http://www.wso2.com/schemas/2006/interop/pingService">
+
+	<documentation>
+		Oneway mesaging for woden interop		
+	</documentation>
+
+	<types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns="http://www.wso2.com/schemas/2006/interop/pingService"
+			targetNamespace="http://www.wso2.com/schemas/2006/interop/pingService"
+			elementFormDefault="unqualified"
+			attributeFormDefault="unqualified">
+			<xs:element type="tPingString" name="ping" />
+			<xs:complexType name="tPingString">
+				<xs:sequence>
+					<xs:element type="xs:string" name="pingStringParam" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</types>
+	<interface name="pingServiceInterface">
+		<operation pattern="http://www.w3.org/ns/wsdl/in-only"
+			name="ping">
+			<input element="wwis:ping" messageLabel="In" />			
+		</operation>
+	</interface>
+	<binding interface="tns:pingServiceInterface"
+		type="http://www.w3.org/ns/wsdl/soap"
+		name="pingServiceSOAPBinding"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+		<operation ref="tns:ping" />
+	</binding>
+	<service name="pingService" interface="tns:pingServiceInterface">
+		<endpoint
+			address="http://www-lk.wso2.com/axis2/services/EchoService"
+			binding="tns:pingServiceSOAPBinding"
+			name="pingServiceSOAPBinding_http" />
+	</service>
+</description>
