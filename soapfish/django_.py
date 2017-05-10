@@ -9,6 +9,7 @@ __all__ = ['django_dispatcher']
 
 
 class DjangoEnvironWrapper(object):
+
     def __init__(self, environ):
         self.environ = environ
 
@@ -25,14 +26,15 @@ def django_dispatcher(service, **dispatcher_kwargs):
     from django.views.decorators.csrf import csrf_exempt
 
     def django_dispatch(request):
-        body = request.body
-        soap_request = SOAPRequest(DjangoEnvironWrapper(request.environ), body)
+        soap_request = SOAPRequest(DjangoEnvironWrapper(request.environ), request.body)
+        soap_request._original_request = request
         soap_dispatcher = SOAPDispatcher(service, **dispatcher_kwargs)
         soap_response = soap_dispatcher.dispatch(soap_request)
 
         response = HttpResponse(soap_response.http_content)
         response.status_code = soap_response.http_status_code
-        for header_key, value in soap_response.http_headers.items():
-            response[header_key] = value
+        for k, v in soap_response.http_headers.items():
+            response[k] = v
         return response
+
     return csrf_exempt(django_dispatch)
