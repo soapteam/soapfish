@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import functools
 import logging
+import string
 
 import six
 from lxml import etree
@@ -216,7 +217,7 @@ class SOAPDispatcher(object):
             if six.PY3:
                 wsdl = wsdl.decode()
 
-            wsdl = wsdl.format(scheme=scheme, host=host)
+            wsdl = string.Template(wsdl).safe_substitute(scheme=scheme, host=host)
 
             if six.PY3:
                 wsdl = wsdl.encode()

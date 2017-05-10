@@ -301,14 +301,14 @@ class SOAPDispatcherTest(PythonicTestCase):
     def test_evaluate_service_location(self):
         handler, _ = echo_handler()
         service = echo_service(handler)
-        service.location = '{scheme}://{host}/ws'
+        service.location = '${scheme}://${host}/ws'
         dispatcher = SOAPDispatcher(service)
         request = SOAPRequest(dict(REQUEST_METHOD='GET', QUERY_STRING='wsdl',
                                    HTTP_HOST='soap.example'), '')
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response)
-        assert_not_contains('{scheme}', response.http_content.decode())
-        assert_not_contains('{http}', response.http_content.decode())
+        assert_not_contains('${scheme}', response.http_content.decode())
+        assert_not_contains('${host}', response.http_content.decode())
 
     def test_service_bind_function(self):
         handler, handler_state = echo_handler()

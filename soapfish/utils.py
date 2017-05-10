@@ -117,7 +117,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
 
     def url_template(url):
         o = list(six.moves.urllib.parse.urlparse(url))
-        o[0:2] = ['{scheme}', '{host}']
+        o[0:2] = ['${scheme}', '${host}']
         return six.moves.urllib.parse.urlunparse(o)
 
     def get_type(obj, known_types=None):
