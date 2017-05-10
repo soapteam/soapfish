@@ -280,7 +280,7 @@ class SOAPDispatcherTest(PythonicTestCase):
         request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, fault_code=service.version.Code.SERVER,
-                                  partial_fault_string=u'Internal Error')
+                                  partial_fault_string='unexpected exception')
         assert_equals('text/xml', response.http_headers['Content-Type'])
         assert_equals(500, response.http_status_code)
 

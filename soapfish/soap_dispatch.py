@@ -37,9 +37,7 @@ class SOAPDispatcher(object):
                 in the schema
         """
         self.service = service
-        if middlewares is None:
-            middlewares = []
-        self.middlewares = middlewares
+        self.middlewares = middlewares if middlewares is not None else []
         self.schema_validator = py2xsd.schema_validator(self.service.schemas)
 
         if wsdl is None:
