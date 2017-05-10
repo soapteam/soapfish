@@ -31,6 +31,8 @@ class ExceptionToSoapFault(object):
 class ExceptionLogger(object):
 
     def __init__(self, logger=None, exceptions=(Exception,), traceback=True):
+        if not isinstance(exceptions, tuple):
+            raise TypeError('exceptions must be a tuple.')
         self.logger = logger if logger is not None else logging.getLogger(__name__)
         self.traceback = traceback
         self.exceptions = exceptions
