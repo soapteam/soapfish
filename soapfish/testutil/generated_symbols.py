@@ -31,7 +31,7 @@ def generated_symbols(code):
         logging.warning('Code could not be imported:\n%s', code)
         raise
 
-    variables = set(globals_).difference(globals_old)
+    variables = six.viewkeys(globals_) - six.viewkeys(globals_old)
 
     schemas, symbols = [], {}
     for name in sorted(variables):

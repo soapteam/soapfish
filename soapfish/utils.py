@@ -152,6 +152,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         else:
             return "__name__ + '.%s'" % name
 
+    # XXX: Python 2: Add extra values that should be considered keywords.
     keywords = set(keyword.kwlist + ['False', 'None', 'True'])
 
     env = Environment(

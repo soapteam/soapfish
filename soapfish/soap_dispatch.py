@@ -157,7 +157,7 @@ class SOAPDispatcher(object):
         request_method = request.environ.get('REQUEST_METHOD', '')
         qs = request.environ.get('QUERY_STRING', '')
         qs = six.moves.urllib.parse.parse_qs(qs, keep_blank_values=True)
-        if request_method == 'GET' and set(qs.keys()) & set(('wsdl', 'singleWsdl')):
+        if request_method == 'GET' and six.viewkeys(qs) & {'wsdl', 'singleWsdl'}:
             return self.handle_wsdl_request(request)
         elif request_method == 'GET' and 'xsd' in qs:
             return self.handle_xsd_request(request)
