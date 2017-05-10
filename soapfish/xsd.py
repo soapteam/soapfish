@@ -462,8 +462,8 @@ class Integer(Decimal):
     def __init__(self, enumeration=None, fractionDigits=None,
                  maxExclusive=None, maxInclusive=None, minExclusive=None,
                  minInclusive=None, pattern=None, totalDigits=None):
-        facets = {k: v for k, v in locals().items() if k != 'self'}
-        for c in itertools.dropwhile(lambda x: x != Integer, reversed(self.__class__.mro())):
+        facets = {k: v for k, v in locals().items() if k not in {'self', '__class__'}}
+        for c in itertools.dropwhile(lambda x: x != Integer, reversed(self.__class__.__mro__)):
             facets.update(c.overrides)
         super(Integer, self).__init__(**facets)
 
