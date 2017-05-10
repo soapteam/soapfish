@@ -457,12 +457,15 @@ class Float(Decimal):
 
 class Integer(Decimal):
 
-    def __init__(self, enumeration=None, maxExclusive=None,
-                 maxInclusive=None, minExclusive=None, minInclusive=None,
-                 pattern=None, totalDigits=None):
-        super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
-                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
-                                      pattern=pattern, totalDigits=totalDigits)
+    overrides = {'fractionDigits': 0, 'pattern': r'[-+]?[0-9]+'}
+
+    def __init__(self, enumeration=None, fractionDigits=None,
+                 maxExclusive=None, maxInclusive=None, minExclusive=None,
+                 minInclusive=None, pattern=None, totalDigits=None):
+        facets = {k: v for k, v in locals().items() if k != 'self'}
+        for c in itertools.dropwhile(lambda x: x != Integer, reversed(self.__class__.mro())):
+            facets.update(c.overrides)
+        super(Integer, self).__init__(**facets)
 
     def accept(self, value):
         if value is None:
@@ -470,7 +473,7 @@ class Integer(Decimal):
         elif isinstance(value, six.integer_types):
             pass  # value is just value continue.
         elif isinstance(value, six.string_types):
-            value = int(value)
+            value = (long if six.PY2 else int)(value)
         else:
             raise ValueError("Incorrect value '%s' for Decimal field." % value)
 
@@ -478,24 +481,64 @@ class Integer(Decimal):
         return value
 
 
+class NonNegativeInteger(Integer):
+
+    overrides = {'minInclusive': 0}
+
+
+class NonPositiveInteger(Integer):
+
+    overrides = {'maxInclusive': 0}
+
+
+class NegativeInteger(NonPositiveInteger):
+
+    overrides = {'maxInclusive': -1}
+
+
+class PositiveInteger(NonNegativeInteger):
+
+    overrides = {'minInclusive': 1}
+
+
 class Long(Integer):
 
-    def __init__(self, enumeration=None, maxExclusive=None,
-                 maxInclusive=9223372036854775807, minExclusive=None, minInclusive=-9223372036854775808,
-                 pattern=None, totalDigits=None):
-        super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
-                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
-                                      pattern=pattern, totalDigits=totalDigits)
+    overrides = {'maxInclusive': 9223372036854775807, 'minInclusive': -9223372036854775808}
 
 
 class Int(Long):
 
-    def __init__(self, enumeration=None, maxExclusive=None,
-                 maxInclusive=2147483647, minExclusive=None, minInclusive=-2147483648,
-                 pattern=None, totalDigits=None):
-        super(Integer, self).__init__(enumeration=enumeration, fractionDigits=0, maxExclusive=maxExclusive,
-                                      maxInclusive=maxInclusive, minExclusive=minExclusive, minInclusive=minInclusive,
-                                      pattern=pattern, totalDigits=totalDigits)
+    overrides = {'maxInclusive': 2147483647, 'minInclusive': -2147483648}
+
+
+class Short(Int):
+
+    overrides = {'maxInclusive': 32767, 'minInclusive': -32768}
+
+
+class Byte(Short):
+
+    overrides = {'maxInclusive': 127, 'minInclusive': -128}
+
+
+class UnsignedLong(NonNegativeInteger):
+
+    overrides = {'minInclusive': 0, 'maxInclusive': 18446744073709551615}
+
+
+class UnsignedInt(UnsignedLong):
+
+    overrides = {'minInclusive': 0, 'maxInclusive': 4294967295}
+
+
+class UnsignedShort(UnsignedInt):
+
+    overrides = {'minInclusive': 0, 'maxInclusive': 65535}
+
+
+class UnsignedByte(UnsignedShort):
+
+    overrides = {'minInclusive': 0, 'maxInclusive': 255}
 
 
 class MaxOccurs(SimpleType):
@@ -1101,14 +1144,6 @@ class Document(ComplexType):
         field.parse(cls, field._name, xmlelement)
 
 
-class UnsignedLong(Long):
-    pass
-
-
-class UnsignedInt(Int):
-    pass
-
-
 class List(SimpleType):
     pass
 
@@ -1139,22 +1174,6 @@ class Base64Binary(String):
 
 
 class Duration(String):
-    pass
-
-
-class UnsignedShort(Int):
-    pass
-
-
-class UnsignedByte(UnsignedShort):
-    pass
-
-
-class Short(Int):
-    pass
-
-
-class Byte(Short):
     pass
 
 
