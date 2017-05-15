@@ -6,6 +6,7 @@ SOAP protocol implementation, dispatchers and client stub.
 from __future__ import absolute_import
 
 import logging
+import string
 
 import requests
 import six
@@ -111,7 +112,7 @@ class Stub(object):
 
         context = {'scheme': self.SCHEME, 'host': self.HOST}
         if location is None:
-            location = lambda template, context: template.format(**context)
+            location = lambda template, context: string.Template(template).safe_substitute(**context)
 
         if callable(location):
             self.location = location(self.service.location, context)
