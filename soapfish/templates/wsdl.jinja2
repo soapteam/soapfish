@@ -27,7 +27,6 @@ BaseHeader = {% if use_wsa %}wsa.Header{% else %}xsd.ComplexType{% endif %}
 {%- for operation in binding.operations -%}
 {%- set _im = get_message_object(definitions, binding, operation, 'input') %}
 {%- set _om = get_message_object(definitions, binding, operation, 'output') %}
-{# [blank line] #}
 def {{ operation.name }}(request, {{ _im.part.element|remove_namespace }}):
     # TODO: Put your implementation here.
     return {{ _om.part.element|remove_namespace }}
