@@ -19,10 +19,9 @@ logger = logging.getLogger(__name__)
 
 
 def call_method(request):
+    request = request.dispatcher._prepare_request(request)
     response = request.method.function(request, request.soap_body)
-    if not isinstance(response, SOAPResponse):
-        response = SOAPResponse(response)
-    return response
+    return response if isinstance(response, SOAPResponse) else SOAPResponse(response)
 
 
 class SOAPDispatcher(object):
@@ -150,6 +149,22 @@ class SOAPDispatcher(object):
         self._validate_header(envelope.Header)
         self._validate_body(envelope.Body)
 
+    def _prepare_request(self, request):
+        SOAP = self.service.version
+
+        soap_envelope = self._parse_soap_content(request.http_content)
+        soap_body_content = soap_envelope.Body.content()
+        soap_header = soap_envelope.Header
+
+        try:
+            self._validate_input(soap_envelope)
+        except (etree.DocumentInvalid, etree.XMLSyntaxError) as e:
+            raise SOAPError(SOAP.Code.CLIENT, '%s: %s' % (e.__class__.__name__, e))
+
+        request.method = self._find_handler_for_request(request, soap_body_content)
+        request.soap_header = self._parse_header(request.method, soap_header)
+        request.soap_body = self._parse_input(request.method, soap_body_content)
+
     def dispatch(self, request):
         request_method = request.environ.get('REQUEST_METHOD', '')
         qs = request.environ.get('QUERY_STRING', '')
@@ -169,22 +184,9 @@ class SOAPDispatcher(object):
         SOAP = self.service.version
 
         try:
-            soap_envelope = self._parse_soap_content(request.http_content)
-            soap_body_content = soap_envelope.Body.content()
-            soap_header = soap_envelope.Header
-
-            try:
-                self._validate_input(soap_envelope)
-            except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
-                raise SOAPError(SOAP.Code.CLIENT, '%s: %s' % (e.__class__.__name__, e))
-
-            request.method = self._find_handler_for_request(request, soap_body_content)
-            request.soap_header = self._parse_header(request.method, soap_header)
-            request.soap_body = self._parse_input(request.method, soap_body_content)
-        except SOAPError as ex:
-            response = ex
-        else:
             response = self.middleware()(request)
+        except SOAPError as e:
+            response = e
 
         if not isinstance(response, SOAPResponse):
             response = SOAPResponse(response)

@@ -18,6 +18,8 @@ class ExceptionToSoapFault(object):
     def __call__(self, request, next_call):
         try:
             return next_call(request)
+        except core.SOAPError as e:
+            return e
         except Exception as e:
             if self.traceback:
                 message = traceback.format_exc()
