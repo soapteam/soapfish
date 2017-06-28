@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def call_method(request):
-    request = request.dispatcher._prepare_request(request)
+    request.dispatcher._prepare_request(request)
     response = request.method.function(request, request.soap_body)
     return response if isinstance(response, SOAPResponse) else SOAPResponse(response)
 
