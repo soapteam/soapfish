@@ -130,7 +130,7 @@ class SOAPDispatcherTest(PythonicTestCase):
         request = SOAPRequest(dict(SOAPACTION='invalid', REQUEST_METHOD='POST'), request_message)
         dispatcher = SOAPDispatcher(echo_service())
         response = dispatcher.dispatch(request)
-        self.assert_is_soap_fault(response, partial_fault_string=u"Invalid soap action 'invalid'")
+        self.assert_is_soap_fault(response, partial_fault_string=u"Invalid SOAP action: invalid")
 
     def test_can_reject_invalid_root_tag(self):
         soap_message = ('<ns0:invalid xmlns:ns0="invalid"/>')
