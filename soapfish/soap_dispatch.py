@@ -68,7 +68,7 @@ class SOAPDispatcher(object):
             # note : no validation is performed
             envelope = SOAP.Envelope.parsexml(xml)
         except etree.XMLSyntaxError as e:
-            raise SOAPError(SOAP.Code.CLIENT, repr(e))
+            raise SOAPError(SOAP.Code.CLIENT, '%s: %s' % (e.__class__.__name__, e))
         # Actually this is more a stopgap measure than a real fix. The real
         # fix is to change SOAP.Envelope/ComplexType so it raises some kind of
         # validation error. A missing SOAP body is not allowed by the SOAP
@@ -96,10 +96,9 @@ class SOAPDispatcher(object):
             elif root_tag == method.input:
                 return method
         if soap_action is not None:
-            error_msg = "Invalid soap action '%s'" % soap_action
+            raise SOAPError(SOAP.Code.CLIENT, 'Invalid SOAP action: %s' % soap_action)
         else:
-            error_msg = "Missing soap action and invalid root tag '%s'" % root_tag
-        raise SOAPError(SOAP.Code.CLIENT, error_msg)
+            raise SOAPError(SOAP.Code.CLIENT, 'Missing SOAP action and invalid root tag: %s' % root_tag)
 
     def _find_root_tag(self, body_document):
         root = body_document
@@ -177,7 +176,7 @@ class SOAPDispatcher(object):
             try:
                 self._validate_input(soap_envelope)
             except (etree.XMLSyntaxError, etree.DocumentInvalid) as e:
-                raise SOAPError(SOAP.Code.CLIENT, repr(e))
+                raise SOAPError(SOAP.Code.CLIENT, '%s: %s' % (e.__class__.__name__, e))
 
             request.method = self._find_handler_for_request(request, soap_body_content)
             request.soap_header = self._parse_header(request.method, soap_header)
