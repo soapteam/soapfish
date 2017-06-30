@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import functools
 import logging
+import re
 import string
 
 import six
@@ -26,7 +27,7 @@ def call_method(request):
 
 class SOAPDispatcher(object):
 
-    def __init__(self, service, middlewares=None, wsdl=None, xsds=None, strict_soap_header=True):
+    def __init__(self, service, middlewares=None, hooks=None, wsdl=None, xsds=None, strict_soap_header=True):
         """
         Args:
             service: the service to expose
@@ -38,6 +39,14 @@ class SOAPDispatcher(object):
         self.service = service
         self.middlewares = middlewares if middlewares is not None else []
         self.schema_validator = py2xsd.schema_validator(self.service.schemas)
+
+        if hooks is None:
+            hooks = {}
+        else:
+            for hook in hooks:
+                if not re.match(r'(soap|wsdl|xsd)-(request|response)', hook):
+                    raise KeyError('Invalid dispatcher hook name: %s' % hook)
+        self.hooks = hooks
 
         if wsdl is None:
             wsdlelement = py2wsdl.generate_wsdl(self.service)
@@ -180,6 +189,7 @@ class SOAPDispatcher(object):
                                 http_headers={'Content-Type': 'text/plain'})
 
     def handle_soap_request(self, request):
+        request = self._call_hook('soap-request', dispatcher=self, request=request)
         request.dispatcher = self
         SOAP = self.service.version
 
@@ -206,9 +216,11 @@ class SOAPDispatcher(object):
             else:
                 tagname = uncapitalize(response.content.__class__.__name__)
             response.http_content = SOAP.Envelope.response(tagname, response.soap_body, header=response.soap_header)
-        return response
+
+        return self._call_hook('soap-response', dispatcher=self, request=request, response=response)
 
     def handle_wsdl_request(self, request):
+        request = self._call_hook('wsdl-request', dispatcher=self, request=request)
         scheme = request.environ.get('X-Forwarded-Proto', request.environ.get('wsgi.url_scheme', 'http'))
         host = request.environ.get('HTTP_HOST')
         wsdl = self.wsdl
@@ -221,22 +233,35 @@ class SOAPDispatcher(object):
             if six.PY3:
                 wsdl = wsdl.encode()
 
-        return SOAPResponse('wsdl', http_content=wsdl, http_headers={'Content-Type': 'text/xml'})
+        response = SOAPResponse('wsdl', http_content=wsdl, http_headers={'Content-Type': 'text/xml'})
+        return self._call_hook('wsdl-response', dispatcher=self, request=request, response=response)
 
     def handle_xsd_request(self, request):
+        request = self._call_hook('xsd-request', dispatcher=self, request=request)
         qs = request.environ.get('QUERY_STRING')
         qs = six.moves.urllib.parse.parse_qs(qs, keep_blank_values=True)
         try:
             xsd = self.xsds[qs['xsd'][0] or 'xsd']
         except KeyError:
-            return SOAPResponse('not found', http_status_code=404, http_content='not_found',
-                                http_headers={'Content-Type': 'text/plain'})
+            response = SOAPResponse('not found', http_status_code=404, http_content='not_found',
+                                    http_headers={'Content-Type': 'text/plain'})
         else:
-            return SOAPResponse('xsd', http_content=xsd, http_headers={'Content-Type': 'text/xml'})
+            response = SOAPResponse('xsd', http_content=xsd, http_headers={'Content-Type': 'text/xml'})
+
+        return self._call_hook('wsdl-response', dispatcher=self, request=request, response=response)
 
     def _rewrite_locations(self, element):
         for e in element.xpath('//xsd:import|//xsd:include', namespaces=element.nsmap):
             e.attrib['schemaLocation'] = '?xsd=%s' % e.attrib['schemaLocation']
+
+    def _call_hook(self, name, **kw):
+        hook = self.hooks.get(name)
+        obj = hook(**kw) if hook is not None else kw[name.split('-').pop()]
+        if name.endswith('-request') and not isinstance(obj, SOAPRequest):
+            raise TypeError('Request hooks must return a SOAPRequest.')
+        if name.endswith('-response') and not isinstance(obj, SOAPResponse):
+            raise TypeError('Response hooks must return a SOAPResponse.')
+        return obj
 
 
 class WsgiSoapApplication(object):

@@ -333,6 +333,44 @@ class SOAPDispatcherTest(PythonicTestCase):
         assert_true(handler_state.new_func_was_called)
         self.assert_is_successful_response(response, handler_state)
 
+    def test_hook_soap_request(self):
+        message = (
+            '<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+            '<value>Cast a hook to catch a soapfish.</value>'
+            '</tns:echoRequest>'
+        )
+        request = SOAPRequest(
+            {'REQUEST_METHOD': 'POST', 'SOAPACTION':'echo'},
+            self._wrap_with_soap_envelope(message),
+        )
+
+        def hook(dispatcher, request):
+            request.http_content = request.http_content.replace(b'catch', b'snare')
+            return request
+
+        dispatcher = SOAPDispatcher(echo_service(), hooks={'soap-request': hook})
+        response = dispatcher.dispatch(request)
+        self.assertIn(b'Cast a hook to snare a soapfish.', response.http_content)
+
+    def test_hook_soap_response(self):
+        message = (
+            '<tns:echoRequest xmlns:tns="http://soap.example/echo/types">'
+            '<value>Cast a hook to catch a soapfish.</value>'
+            '</tns:echoRequest>'
+        )
+        request = SOAPRequest(
+            {'REQUEST_METHOD': 'POST', 'SOAPACTION':'echo'},
+            self._wrap_with_soap_envelope(message),
+        )
+
+        def hook(dispatcher, request, response):
+            response.http_status_code = 999
+            return response
+
+        dispatcher = SOAPDispatcher(echo_service(), hooks={'soap-response': hook})
+        response = dispatcher.dispatch(request)
+        self.assertEqual(response.http_status_code, 999)
+
     # --- custom assertions ---------------------------------------------------
 
     def assert_is_successful_response(self, response, handler_state=None):
