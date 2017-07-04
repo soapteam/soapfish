@@ -19,14 +19,13 @@ class DateTest(SimpleTypeTestCase):
     def test_can_render_python_date(self):
         date_ = date(2001, 10, 26)
         xmlelement = etree.Element('foo')
-        xsd.Element(xsd.Date).render(xmlelement, 'bar', date_)
+        xsd.Element(self.xsd_type).render(xmlelement, 'bar', date_)
         xml = self._normalize(etree.tostring(xmlelement, pretty_print=True))
         assert_equals(b'<foo><bar>2001-10-26</bar></foo>', xml)
 
     def test_rendering_timezones(self):
-        fake_tz = FixedOffset(1, 15, 'dummy zone')
-        date_ = XSDDate(2001, 10, 26, tzinfo=fake_tz)
-        rendered_xml = xsd.Date().xmlvalue(date_)
+        date_ = XSDDate(2001, 10, 26, tzinfo=FixedOffset(1, 15, 'dummy zone'))
+        rendered_xml = self.xsd_type().xmlvalue(date_)
         assert_equals('2001-10-26+01:15', rendered_xml)
 
     def test_wrong_type(self):
@@ -37,16 +36,14 @@ class DateTest(SimpleTypeTestCase):
     def test_parsing_utctimezone(self):
         class Test(xsd.ComplexType):
             datetime_ = xsd.Element(xsd.DateTime, tagname='datetime')
-        XML = '''<root><datetime>2011-06-30T00:19:00+0000</datetime></root>'''
-        test = Test.parsexml(XML)
-        assert_equals(datetime(2011, 6, 30, 0, 19, 0), test.datetime_.replace(tzinfo=None))
+        parsed = Test.parsexml('<root><datetime>2011-06-30T00:19:00+0000</datetime></root>')
+        assert_equals(datetime(2011, 6, 30, 0, 19, 0, tzinfo=UTC), parsed.datetime_)
 
     def test_parsing_timezone(self):
         class Test(xsd.ComplexType):
             datetime_ = xsd.Element(xsd.DateTime, tagname='datetime')
-        XML = '''<root><datetime>2011-06-30T20:19:00+01:00</datetime></root>'''
-        test = Test.parsexml(XML)
-        assert_equals(datetime(2011, 6, 30, 19, 19, 0), test.datetime_.astimezone(UTC).replace(tzinfo=None))
+        parsed = Test.parsexml('<root><datetime>2011-06-30T20:19:00+01:00</datetime></root>')
+        assert_equals(datetime(2011, 6, 30, 20, 19, 0, tzinfo=FixedOffset(1, 0, '+01:00')), parsed.datetime_)
 
     def test_can_correctly_determine_utc_offset(self):
         # Ensure that the DateTime type really uses the correct UTC offset

@@ -38,7 +38,7 @@ class SimpleTypeTestCase(PythonicTestCase):
     # --- internal helpers ----------------------------------------------------
     def _parse(self, string_value):
         class Container(xsd.ComplexType):
-            foo = xsd.Element(xsd.Date)
+            foo = xsd.Element(self.xsd_type)
         if string_value is None:
             string_value = ''
         xml = '<container><foo>%s</foo></container>' % string_value

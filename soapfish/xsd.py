@@ -47,7 +47,7 @@ import itertools
 import logging
 import re
 from copy import copy
-from datetime import datetime
+from datetime import datetime, time
 from decimal import Decimal as _Decimal
 from importlib import import_module
 
@@ -354,6 +354,49 @@ class DateTime(SimpleType):
             return None
         else:
             return iso8601.parse_date(value)
+
+
+class Time(SimpleType):
+    '''
+    Example text value: 21:32:52
+    '''
+
+    def accept(self, value):
+        if value is None:
+            return None
+        elif isinstance(value, time):
+            return value
+        elif isinstance(value, six.string_types):
+            return self._parse(value)
+        raise ValueError("Incorrect type value '%s' for Time field." % value)
+
+    def xmlvalue(self, value):
+        if value is None:
+            return 'nil'
+        else:
+            timestring_without_tz = value.strftime('%H:%M:%S')
+            tz = value.tzinfo
+            if not tz:
+                return timestring_without_tz
+            utc_offset = tz.utcoffset(value)
+            formatted_tz = timezone_offset_to_string(utc_offset)
+            return timestring_without_tz + formatted_tz
+
+    def pythonvalue(self, value):
+        if value is None or value == 'nil':
+            return None
+        else:
+            return self._parse(value)
+
+    @staticmethod
+    def _parse(value):
+        # Horrible hacky approach to implement this quickly:
+        try:
+            dt = iso8601.parse_date('1900-01-01T' + value)
+        except Exception as e:
+            raise ValueError(e)
+        else:
+            return dt.time().replace(tzinfo=dt.tzinfo)
 
 
 class Decimal(SimpleType):
