@@ -20,16 +20,16 @@ def determine_soap_action(request):
         return None
 
 
+def build_http_request_headers(soapAction):
+    return {'Content-Type': CONTENT_TYPE, 'SOAPAction': soapAction}
+
+
 def get_error_response(code, message, actor=None, header=None):
     return Envelope.error_response(code, message, actor=actor, header=header)
 
 
 def parse_fault_message(fault):
     return fault.faultcode, fault.faultstring, fault.faultactor
-
-
-def build_http_request_headers(soapAction):
-    return {'content-type': CONTENT_TYPE, 'SOAPAction': soapAction}
 
 
 class Code:

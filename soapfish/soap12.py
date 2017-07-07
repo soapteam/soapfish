@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import
 
+import cgi
+
 from . import namespaces as ns, soap11, xsd
 
 ENVELOPE_NAMESPACE = ns.soap12_envelope
@@ -12,16 +14,12 @@ NAME = 'soap12'
 
 # --- Functions ---------------------------------------------------------------
 def determine_soap_action(request):
-    content_types = request.environ.get('CONTENT_TYPE', '').split(';')
-    for content_type in content_types:
-        if content_type.strip(' ').startswith('action='):
-            action = content_type.split('=')[1]
-            return action.replace('"', '')
-    return None
+    ct, cp = cgi.parse_header(request.environ.get('CONTENT_TYPE', ''))
+    return cp.get('action') if ct == CONTENT_TYPE else None
 
 
 def build_http_request_headers(soapAction):
-    return {'content-type': CONTENT_TYPE + ';action="%s"' % soapAction}
+    return {'Content-Type': CONTENT_TYPE + '; action="%s"' % soapAction}
 
 
 def get_error_response(code, message, actor=None, header=None):

@@ -39,7 +39,7 @@ class DjangoDispatchTest(framework.DispatchTestMixin, unittest.TestCase):
 
     def _prepare_extras(self, headers):
         extras = {'HTTP_' + k.replace('-', '_').upper(): v for k, v in headers.items()}
-        extras.update(content_type=headers['content-type'])
+        extras.update(content_type=headers['Content-Type'])
         return extras
 
     def test_can_retrieve_wsdl(self):

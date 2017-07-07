@@ -221,7 +221,7 @@ class SOAPDispatcher(object):
 
     def handle_wsdl_request(self, request):
         request = self._call_hook('wsdl-request', dispatcher=self, request=request)
-        scheme = request.environ.get('X-Forwarded-Proto', request.environ.get('wsgi.url_scheme', 'http'))
+        scheme = request.environ.get('X_FORWARDED_PROTO', request.environ.get('wsgi.url_scheme', 'http'))
         host = request.environ.get('HTTP_HOST')
         wsdl = self.wsdl
         if scheme and host:

@@ -14,8 +14,8 @@ class DjangoEnvironWrapper(object):
         self.environ = environ
 
     def get(self, name, default=None):
-        cgi_name = 'HTTP_' + name.replace('-', '_').upper()
-        for key in (name, cgi_name):
+        name = name.replace('-', '_').upper()
+        for key in (name, 'HTTP_' + name):
             if key in self.environ:
                 return self.environ[key]
         return default
