@@ -71,6 +71,7 @@ class Element(xsd.ComplexType):
     minOccurs = xsd.Attribute(xsd.Integer, use=xsd.Use.OPTIONAL)
     maxOccurs = xsd.Attribute(xsd.MaxOccurs, use=xsd.Use.OPTIONAL)
     nillable = xsd.Attribute(xsd.Boolean, use=xsd.Use.OPTIONAL)
+    substitutionGroup = xsd.Attribute(xsd.String, use=xsd.Use.OPTIONAL)  # FIXME: Should use xsd.List(xsd.QName)?
     simpleType = xsd.Element(SimpleType, minOccurs=0)
     complexType = xsd.Element('soapfish.xsdspec.XSDComplexType')
 

@@ -189,10 +189,17 @@ def generate_elements(xsd_schema, schema):
     for name, element in six.iteritems(schema.elements):
         xsd_element = xsdspec.Element()
         xsd_element.name = name
+
+        # TODO: Support non-string values for substitutionGroup:
+        if element.substitutionGroup is not None:
+            value = element.substitutionGroup
+            xsd_element.substitutionGroup = value if value.startswith('sns:') else 'sns:%s' % value
+
         if isinstance(element._passed_type, six.string_types) or inspect.isclass(element._passed_type):
             xsd_element.type = get_xsd_type(element._type)
         else:
             xsd_element.complexType = xsd_complexType(element._type.__class__, named=False)
+
         xsd_schema.elements.append(xsd_element)
 
 

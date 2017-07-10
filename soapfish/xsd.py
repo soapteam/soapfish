@@ -622,7 +622,7 @@ class Element(object):
     _creation_counter = 0
 
     def __init__(self, _type, minOccurs=1, tagname=None, nillable=False,
-                 default=None, namespace=None):
+                 default=None, namespace=None, substitutionGroup=None):
         '''
         :param _type: Class or instance of class that inherits from Type,
                       usually a child of SimpleType from the xsd package, or
@@ -646,6 +646,7 @@ class Element(object):
         self.default = default
         self.nillable = nillable
         self.namespace = namespace
+        self.substitutionGroup = substitutionGroup
 
     def _evaluate_type(self):
         if self._type is None:

@@ -25,7 +25,7 @@ Schema_{{ schema_name(schema) }} = xsd.Schema(
     attributeGroups=[{% for ag in schema.attributeGroups %}{{ ag.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
     groups=[{% for g in schema.groups %}{{ g.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
     complexTypes=[{% for ct in schema.complexTypes %}{{ ct.name|capitalize }}{% if not loop.last %}, {% endif %}{% endfor %}],
-    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
+    elements={{ '{' }}{% for e in schema.elements %}'{{ e.name }}': xsd.Element({% if e.type %}{{ e|type(known_types) }}{% else %}{{ e.name|capitalize }}(){% endif %}{% if e.substitutionGroup %}, substitutionGroup="{{ e.substitutionGroup }}"{% endif %}){% if not loop.last %}, {% endif %}{% endfor %}{{ '}' }},
 )
 {%- if location %}
 {# [blank line] #}

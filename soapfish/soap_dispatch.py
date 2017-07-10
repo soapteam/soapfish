@@ -87,31 +87,32 @@ class SOAPDispatcher(object):
             raise SOAPError(SOAP.Code.CLIENT, 'Missing SOAP body')
         return envelope
 
-    def _find_handler_for_request(self, request, body_document):
+    def _find_handler_for_request(self, request, body):
+        # TODO: Properly handle invalid XML.
         SOAP = self.service.version
-        soap_action = SOAP.determine_soap_action(request)
-        root_tag = None
-        if not soap_action:
-            root_tag = self._find_root_tag(body_document)
-            logger.debug('Soap action not found in http headers, use root tag "%s".', root_tag)
-        else:
-            logger.debug('Soap action found in http headers: %s', soap_action)
-        # TODO: handle invalid xml
-        for method in self.service.methods:
-            if soap_action:
-                if soap_action == method.soapAction:
-                    return method
-            elif root_tag == method.input:
-                return method
-        if soap_action is not None:
-            raise SOAPError(SOAP.Code.CLIENT, 'Invalid SOAP action: %s' % soap_action)
-        else:
-            raise SOAPError(SOAP.Code.CLIENT, 'Missing SOAP action and invalid root tag: %s' % root_tag)
 
-    def _find_root_tag(self, body_document):
-        root = body_document
-        ns = root.nsmap[root.prefix]
-        return root.tag[len('{%s}' % ns):]
+        action = SOAP.determine_soap_action(request)
+        root_tag = etree.QName(body.tag).localname
+
+        if action:
+            logger.debug('Finding handler using SOAP action found in HTTP headers: %s', action)
+            try:
+                return next(m for m in self.service.methods if m.soapAction == action)
+            except StopIteration:
+                raise SOAPError(SOAP.Code.CLIENT, 'Invalid SOAP action: %s' % action)
+
+        else:
+            logger.debug('Finding handler using root tag of the SOAP body: %s', root_tag)
+            try:
+                return next(m for m in self.service.methods if m.input == root_tag)
+            except StopIteration:
+                pass  # fall through and check for substitution group element
+            try:
+                # FIXME: Improve handling of namespaces to be less hacky...
+                e = next(e for s in self.service.schemas for n, e in s.elements.items() if n == root_tag)
+                return next(m for m in self.service.methods if m.input == e.substitutionGroup.split(':')[-1])
+            except StopIteration:
+                raise SOAPError(SOAP.Code.CLIENT, 'Missing SOAP action and invalid root tag: %s' % root_tag)
 
     def _parse_header(self, handler, soap_header):
         # TODO return soap fault if header is required but missing in the input
@@ -162,17 +163,17 @@ class SOAPDispatcher(object):
         SOAP = self.service.version
 
         soap_envelope = self._parse_soap_content(request.http_content)
-        soap_body_content = soap_envelope.Body.content()
         soap_header = soap_envelope.Header
+        soap_body = soap_envelope.Body.content()
 
         try:
             self._validate_input(soap_envelope)
         except (etree.DocumentInvalid, etree.XMLSyntaxError) as e:
             raise SOAPError(SOAP.Code.CLIENT, '%s: %s' % (e.__class__.__name__, e))
 
-        request.method = self._find_handler_for_request(request, soap_body_content)
+        request.method = self._find_handler_for_request(request, soap_body)
         request.soap_header = self._parse_header(request.method, soap_header)
-        request.soap_body = self._parse_input(request.method, soap_body_content)
+        request.soap_body = self._parse_input(request.method, soap_body)
 
     def dispatch(self, request):
         request_method = request.environ.get('REQUEST_METHOD', '')
