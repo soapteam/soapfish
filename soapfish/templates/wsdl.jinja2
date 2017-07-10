@@ -46,7 +46,7 @@ def {{ operation.name }}(request, {{ _im.part.element|remove_namespace }}):
 {%- set _omh = get_message_header(definitions, binding, operation, 'output') %}
 {%- if _imh %}
 class {{ _im.name }}Headers(BaseHeader):
-    SCHEMA = Schema_{{ schema_name(schema_select(definitions.types.schemas, _imh)) }}
+    SCHEMA = Schema_{{ schema_name(schema_select(definitions.types.schemas, _imh|map(attribute='element'))) }}
     {%- for part in _imh -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')
@@ -58,7 +58,7 @@ class {{ _im.name }}Headers(BaseHeader):
 {%- endif -%}
 {%- if _omh %}
 class {{ _om.name }}Headers(BaseHeader):
-    SCHEMA = Schema_{{ schema_name(schema_select(definitions.types.schemas, _omh)) }}
+    SCHEMA = Schema_{{ schema_name(schema_select(definitions.types.schemas, _omh|map(attribute='element'))) }}
     {%- for part in _omh -%}
     {%- if part.element %}
     {{ part.name }} = SCHEMA.get_element_by_name('{{ part.element|remove_namespace }}')

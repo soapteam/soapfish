@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import
 
+import itertools
+
 from . import namespaces as ns, xsd
 
 XSD_NAMESPACE = ns.xsd
@@ -161,6 +163,14 @@ class Schema(xsd.ComplexType):
     attributeGroups = xsd.ListElement(AttributeGroup, 'attributeGroup')
     complexTypes = xsd.ListElement(XSDComplexType, 'complexType')
     elements = xsd.ListElement(Element, 'element')
+
+    def get_element_by_name(self, name):
+        # FIXME: Handle imported and included schemas.
+        for element in self.elements:
+            if name == element.name:
+                return element
+        else:
+            return None
 
 
 SCHEMA = xsd.Schema(
