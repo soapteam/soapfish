@@ -1,13 +1,10 @@
 import unittest
 from datetime import datetime, timedelta, tzinfo
 
+import iso8601
 from lxml import etree
 
 from soapfish import xsd
-
-# TODO: Change import on update to iso8601 > 0.1.11 (fixed in 031688e)
-from iso8601.iso8601 import FixedOffset, UTC  # isort:skip
-
 
 class DatetimeTest(unittest.TestCase):
 
@@ -24,7 +21,7 @@ class DatetimeTest(unittest.TestCase):
         self.assertEqual(expected_xml, xml)
 
     def test_rendering_timezones(self):
-        fake_tz = FixedOffset(1, 15, 'dummy zone')
+        fake_tz = iso8601.FixedOffset(1, 15, 'dummy zone')
         dt = datetime(2001, 10, 26, 21, 32, 52, tzinfo=fake_tz)
         rendered_xml = xsd.DateTime().xmlvalue(dt)
         self.assertEqual('2001-10-26T21:32:52+01:15', rendered_xml)
@@ -46,7 +43,7 @@ class DatetimeTest(unittest.TestCase):
             datetime = xsd.Element(xsd.DateTime)
         XML = '<root><datetime>2011-06-30T20:19:00+01:00</datetime></root>'
         test = Test.parsexml(XML)
-        self.assertEqual(datetime(2011, 6, 30, 19, 19, 0), test.datetime.astimezone(UTC).replace(tzinfo=None))
+        self.assertEqual(datetime(2011, 6, 30, 19, 19, 0), test.datetime.astimezone(iso8601.UTC).replace(tzinfo=None))
 
     def test_can_correctly_determine_utc_offset(self):
         # Ensure that the DateTime type really uses the correct UTC offset

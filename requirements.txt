@@ -1,4 +1,4 @@
-iso8601
+iso8601>=0.1.12
 jinja2
 lxml
 pythonic_testcase

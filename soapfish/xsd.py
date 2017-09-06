@@ -59,9 +59,6 @@ from . import namespaces as ns
 from .utils import timezone_offset_to_string
 from .xsd_types import XSDDate
 
-# TODO: Change import we update to iso8601 > 0.1.11 (fixed in 031688e)
-from iso8601.iso8601 import UTC, FixedOffset  # isort:skip
-
 
 logger = logging.getLogger(__name__)
 
@@ -291,7 +288,7 @@ class Date(SimpleType):
         tz = getattr(value, 'tzinfo', None)
         if not tz:
             return timestring_without_tz
-        utc_offset = tz.utcoffset(value)
+        utc_offset = tz.utcoffset(None)
         formatted_tz = timezone_offset_to_string(utc_offset)
         return timestring_without_tz + formatted_tz
 
@@ -315,12 +312,12 @@ class Date(SimpleType):
         if not offset_string:
             return None
         elif offset_string == 'Z':
-            return UTC
+            return iso8601.UTC
 
         sign = 1 if (match.group('tz_sign') == '+') else -1
         offset_hours = sign * int(match.group('tz_hour'))
         offset_minutes = sign * int(match.group('tz_minute'))
-        return FixedOffset(offset_hours, offset_minutes, name='UTC' + offset_string)
+        return iso8601.FixedOffset(offset_hours, offset_minutes, name='UTC' + offset_string)
 
 
 class DateTime(SimpleType):
@@ -378,7 +375,7 @@ class Time(SimpleType):
             tz = value.tzinfo
             if not tz:
                 return timestring_without_tz
-            utc_offset = tz.utcoffset(value)
+            utc_offset = tz.utcoffset(None)
             formatted_tz = timezone_offset_to_string(utc_offset)
             return timestring_without_tz + formatted_tz
 
