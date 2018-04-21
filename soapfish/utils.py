@@ -20,6 +20,31 @@ logger = logging.getLogger('soapfish')
 
 
 # --- File Functions ----------------------------------------------------------
+
+def get_requests_ssl_context(obj=None):
+    kwargs={}
+    
+    requests_ca_check = os.getenv('REQUESTS_CA_CHECK', 'True')=='True'
+    if hasattr(obj, 'REQUESTS_CA_CHECK'):
+        requests_ca_check = getattr(obj, 'REQUESTS_CA_CHECK', True)  
+    requests_ca = getattr(obj, 'REQUESTS_CA_PATH', '') \
+                        or  os.getenv('REQUESTS_CA_PATH', '')
+    requests_cert = getattr(obj,'REQUESTS_CERT_PATH', '') \
+                        or  os.getenv('REQUESTS_CERT_PATH', '')
+    requests_key = getattr(obj,'REQUESTS_KEY_PATH', '') \
+                        or os.getenv('REQUESTS_KEY_PATH', '')    
+        
+    if requests_ca:
+        kwargs['verify'] = requests_ca
+    elif requests_ca_check is False:
+        kwargs['verify'] = requests_ca_check
+
+    if requests_cert and requests_key:
+        kwargs['cert']=(requests_cert, requests_key)
+    elif requests_cert: # PEM format cert + key
+        kwargs['cert']=requests_cert
+    return kwargs
+
 def resolve_location(path, cwd):
     if '://' in path:
         location = path
@@ -33,7 +58,8 @@ def resolve_location(path, cwd):
 def open_document(path):
     if '://' in path:
         logger.info('Opening remote document: %s', path)
-        return requests.get(path).content
+        kwargs=get_requests_ssl_context()
+        return requests.get(path, **kwargs).content
     else:
         logger.info('Opening local document: %s', path)
         with open(path, 'rb') as f:

@@ -12,7 +12,7 @@ import requests
 import six
 
 from . import core, namespaces as ns, soap11, soap12, wsa
-from .utils import uncapitalize
+from .utils import uncapitalize, get_requests_ssl_context
 
 SOAP_HTTP_Transport = ns.wsdl_soap_http
 
@@ -162,7 +162,13 @@ class Stub(object):
         logger.info("Call '%s' on '%s'", operationName, self.location)
         logger.debug('Request Headers: %s', headers)
         logger.debug('Request Envelope: %s', data)
-        r = requests.post(self.location, auth=auth, headers=headers, data=data)
+        kwargs={
+            'auth': auth, 
+            'headers': headers, 
+            'data': data
+        }
+        kwargs.update(get_requests_ssl_context(self))
+        r = requests.post(self.location, **kwargs)
         logger.debug('Response Headers: %s', r.headers)
         logger.debug('Response Envelope: %s', r.content)
         return self._handle_response(method, r.headers, r.content)
