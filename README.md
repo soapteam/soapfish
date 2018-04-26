@@ -2,12 +2,12 @@ Soapfish
 ========
 
 [![Travis](https://img.shields.io/travis/soapteam/soapfish/master.svg)](https://travis-ci.org/soapteam/soapfish)
-[![PyPI](https://img.shields.io/pypi/v/soapfish.svg)](https://pypi.python.org/pypi/soapfish)
-[![PyPI](https://img.shields.io/pypi/l/soapfish.svg)](https://pypi.python.org/pypi/soapfish)
-[![PyPI](https://img.shields.io/pypi/dm/soapfish.svg)](https://pypi.python.org/pypi/soapfish)
-[![PyPI](https://img.shields.io/pypi/pyversions/soapfish.svg)](https://pypi.python.org/pypi/soapfish)
-[![PyPI](https://img.shields.io/pypi/status/soapfish.svg)](https://pypi.python.org/pypi/soapfish)
-[![PyPI](https://img.shields.io/pypi/wheel/soapfish.svg)](https://pypi.python.org/pypi/soapfish)
+[![PyPI](https://img.shields.io/pypi/v/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI](https://img.shields.io/pypi/l/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI](https://img.shields.io/pypi/dm/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI](https://img.shields.io/pypi/pyversions/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI](https://img.shields.io/pypi/status/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI](https://img.shields.io/pypi/wheel/soapfish.svg)](https://pypi.org/project/soapfish/)
 
 Introduction
 ------------

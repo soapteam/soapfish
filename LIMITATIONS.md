@@ -92,7 +92,7 @@ subclassing Python's standard library `datetime.date` which has a much more
 narrow definition.
 
 Very likely the best solution is to back our implementation with an alternative
-date implementation such as [`mxDateTime`](https://pypi.python.org/pypi/egenix-mx-base/)
+date implementation such as [`mxDateTime`](https://pypi.org/project/egenix-mx-base/)
 which seems to represent all possible values from `xs:date`. As `mxDateTime`
 currently (2014-11-13) uses compiled components (making it harder to install in
 some environments) and does not support Python 3 this should likely be an
