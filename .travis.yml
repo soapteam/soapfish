@@ -1,7 +1,5 @@
 sudo: false
 language: python
-dist: xenial
-sudo: true
 python:
     - 2.7
     - 3.4
@@ -28,6 +26,10 @@ matrix:
           env: FRAMEWORK=django~=2.1.0
         - python: 3.7
           env: FRAMEWORK=django~=1.11.0
+    include:
+        - python: 3.7
+          dist: xenial
+          sudo: true
     fast_finish: true
 branches:
     except:
