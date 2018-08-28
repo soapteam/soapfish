@@ -89,6 +89,17 @@ class CodeGenerationTest(unittest.TestCase):
             code = code.decode()
         assert_contains('Schema1_Element', code)
 
+    def test_schema_xsd_enumeration(self):
+        xml = utils.open_document('tests/assets/generation/enumeration2.xsd')
+        code = xsd2py.generate_code_from_xsd(xml)
+        if six.PY3:
+            code = code.decode()
+        m = {}
+        try:
+            self._exec(code, m)
+        except SyntaxError as e:
+            self.fail('%s: %s' % (e.__class__.__name__, e))
+
     def test_schema_xsd_restriction(self):
         xml = utils.open_document('tests/assets/generation/restriction.xsd')
         code = xsd2py.generate_code_from_xsd(xml)
