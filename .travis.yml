@@ -20,13 +20,10 @@ matrix:
     exclude:
         - python: 2.7
           env: FRAMEWORK=django~=2.0.0
-    exclude:
         - python: 2.7
           env: FRAMEWORK=django~=2.1.0
-    exclude:
         - python: 3.4
           env: FRAMEWORK=django~=2.1.0
-    exclude:
         - python: 3.7
           env: FRAMEWORK=django~=1.11.0
     fast_finish: true
