@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
-import itertools
-
 from . import namespaces as ns, xsd
 
 XSD_NAMESPACE = ns.xsd
@@ -103,6 +97,7 @@ class AttributeGroupReference(xsd.ComplexType):
     ref = xsd.Attribute(xsd.String)
 
     def to_python(self):
+        from .utils import get_type
         typename = get_type(self.ref)
         data = {'name': typename.lower(), 'type': typename}
         return '''    %(name)s = xsd.Ref(%(type)s)\n''' % data

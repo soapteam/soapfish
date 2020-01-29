@@ -1,43 +1,32 @@
 sudo: false
 language: python
 python:
-    - 2.7
-    - 3.4
-    - 3.5
     - 3.6
     - 3.7
+    - 3.8
     - nightly
 env:
     - FRAMEWORK=django~=1.11.0
-    - FRAMEWORK=django~=2.0.0
-    - FRAMEWORK=django~=2.1.0
-    - FRAMEWORK=flask~=0.11.0
-    - FRAMEWORK=flask~=0.12.0
+    - FRAMEWORK=django~=2.2.0
+    - FRAMEWORK=django~=3.0.0
     - FRAMEWORK=flask~=1.0.0
+    - FRAMEWORK=flask~=1.1.0
 matrix:
     allow_failures:
         - python: nightly
     exclude:
-        - python: 2.7
-          env: FRAMEWORK=django~=2.0.0
-        - python: 2.7
-          env: FRAMEWORK=django~=2.1.0
-        - python: 3.4
-          env: FRAMEWORK=django~=2.1.0
-        - python: 3.7
+        - python: 3.8
           env: FRAMEWORK=django~=1.11.0
-    include:
-        - python: 3.7
-          dist: xenial
-          sudo: true
+        - python: nightly
+          env: FRAMEWORK=django~=1.11.0
     fast_finish: true
 branches:
     except:
         - mrosemartin84
         - soapbox
 install:
-    - pip install -q "${FRAMEWORK}"
-    - pip install -q -r dev_requirements.txt
-    - pip install -q -e .
+    - pip install --quiet "${FRAMEWORK}"
+    - pip install --quiet --requirement=tests/requirements.txt
+    - pip install --quiet --editable .
 script:
-    - nosetests --nocapture
+    - pytest --cov=soapfish

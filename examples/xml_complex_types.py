@@ -1,7 +1,5 @@
 # Example 3. Nested ComplexTypes with attributes.
 
-from __future__ import print_function
-
 from datetime import datetime
 
 from soapfish import xsd

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
 from . import namespaces as ns
 
 
@@ -43,4 +39,4 @@ def get_wsdl_classes(soap_namespace):
     elif soap_namespace == ns.wsdl_soap12:
         return wsdl12
     else:
-        raise NotImplementedError()
+        raise NotImplementedError

@@ -1,10 +1,9 @@
+include *.ini *.md *.py *.rst *.txt LICENSE
 graft docs
 graft examples
-include *.ini *.md *.py *.rst *.txt LICENSE
-recursive-include soapfish/templates *
-recursive-include soapfish *.py *.xml *.xsd *.wsdl
-recursive-include tests *.py *.xml *.xsd *.wsdl
+graft soapfish
+graft tests
 prune docs/_build
-prune soapfish.egg-info
+prune *.egg-info
 exclude build dist
 global-exclude *.py[co] .*.sw?

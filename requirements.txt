@@ -1,6 +1,0 @@
-iso8601>=0.1.12
-jinja2
-lxml
-PythonicTestcase
-requests
-six>=1.10.0

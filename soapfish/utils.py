@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
 import hashlib
 import itertools
 import keyword
 import logging
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse, urlunparse
 
 import requests
-import six
 from jinja2 import Environment, PackageLoader
 
 from . import namespaces as ns
@@ -46,9 +42,7 @@ def remove_namespace(qname):
 
 
 def uncapitalize(value):
-    if value == 'QName':
-        return value
-    return value[0].lower() + value[1:]
+    return value if value == 'QName' else value[0].lower() + value[1:]
 
 
 def schema_name(obj, location=None):
@@ -63,8 +57,7 @@ def schema_name(obj, location=None):
     elif isinstance(obj, xsdspec.Include):
         value = obj.schemaLocation
     else:
-        raise TypeError('Unable to generate schema name for %s.%s'
-                        % (obj.__class__.__module__, obj.__class__.__name__))
+        raise TypeError(f'Unable to generate schema name for {obj.__class__.__module__}.{obj.__class__.__name__}')
 
     try:
         value = value.encode()
@@ -86,9 +79,7 @@ def schema_select(schemas, elements):
 
 
 def get_rendering_environment(xsd_namespaces, module='soapfish'):
-    '''
-    Returns a rendering environment to use with code generation templates.
-    '''
+    """Return a rendering environment to use with code generation templates."""
     from . import soap, xsd, xsdspec, wsdl
 
     def capitalize(value):
@@ -105,20 +96,19 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         raise ValueError('Unknown value for use attribute: %s' % value)
 
     def url_regex(url):
-        o = six.moves.urllib.parse.urlparse(url)
-        return r'^%s$' % re.escape(o.path.lstrip('/'))
+        return r'^%s$' % re.escape(urlparse(url).path.lstrip('/'))
 
     def url_component(url, item):
-        parts = six.moves.urllib.parse.urlparse(url)
+        parts = urlparse(url)
         try:
             return getattr(parts, item)
-        except AttributeError:
-            raise ValueError('Unknown URL component: %s' % item)
+        except AttributeError as e:
+            raise ValueError(f'Unknown URL component: {item}') from e
 
     def url_template(url):
-        o = list(six.moves.urllib.parse.urlparse(url))
+        o = list(urlparse(url))
         o[0:2] = ['${scheme}', '${host}']
-        return six.moves.urllib.parse.urlunparse(o)
+        return urlunparse(o)
 
     def get_type(obj, known_types=None):
         qname = None
@@ -133,11 +123,11 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         elif isinstance(obj, (xsdspec.Extension, xsdspec.Restriction)):
             if obj.base:
                 qname = obj.base
-        elif isinstance(obj, six.string_types):
+        elif isinstance(obj, str):
             qname = obj
 
         if not qname:
-            raise ValueError('Unable to determine type of %s' % obj)
+            raise ValueError(f'Unable to determine type of {obj}')
 
         qname = qname.split(':')
         if len(qname) < 2:
@@ -146,14 +136,13 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         name = capitalize(name)
 
         if ns in xsd_namespaces:
-            return 'xsd.%s' % name
+            return f'xsd.{name}'
         elif known_types is not None and name in known_types:
-            return '%s' % name
+            return str(name)
         else:
-            return "__name__ + '.%s'" % name
+            return f"__name__ + '.{name}'"
 
-    # XXX: Python 2: Add extra values that should be considered keywords.
-    keywords = set(keyword.kwlist + ['False', 'None', 'True'])
+    keywords = set(keyword.kwlist)
 
     env = Environment(
         extensions=['jinja2.ext.do', 'jinja2.ext.loopcontrols'],
@@ -161,7 +150,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
     )
     env.filters.update(
         capitalize=capitalize,
-        fix_keyword=lambda x: '_%s' % str(x) if str(x) in keywords else str(x),
+        fix_keyword=lambda x: f'_{x}' if str(x) in keywords else str(x),
         max_occurs=lambda x: 'xsd.UNBOUNDED' if x is xsd.UNBOUNDED else str(x),
         remove_namespace=remove_namespace,
         type=get_type,
@@ -176,10 +165,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         get_by_name=wsdl.get_by_name,
         get_message_header=wsdl.get_message_header,
         get_message_object=wsdl.get_message_object,
-        preamble={
-            'module': module,
-            'generated': datetime.now(),
-        },
+        preamble={'module': module, 'generated': datetime.now(timezone.utc)},
         schema_name=schema_name,
         schema_select=schema_select,
     )
@@ -191,7 +177,7 @@ def find_xsd_namespaces(xml):
     nsmap = xml.nsmap.copy()
     for x in xml.xpath('//*[local-name()="schema"]'):
         nsmap.update(x.nsmap)
-    return {k for k, v in six.iteritems(nsmap) if v in (ns.xsd, ns.xsd2000)}
+    return {k for k, v in nsmap.items() if v in (ns.xsd, ns.xsd2000)}
 
 
 def walk_schema_tree(schemas, callback, seen=None):
@@ -206,11 +192,11 @@ def walk_schema_tree(schemas, callback, seen=None):
 
 
 def timezone_offset_to_string(offset):
-    '''
-    Returns a XSD-compatible string representation of a time zone UTC offset
-    (timedelta).
+    """
+    Return a XSD-compatible string representation of a time zone UTC offset (timedelta).
+
     e.g. timedelta(hours=1, minutes=30) -> '+01:30'
-    '''
+    """
     # Please note that this code never uses 'Z' for UTC but returns always the
     # full offset (which is completely valid as far as the XSD spec goes).
     # The main reason for that (besides slightly simpler code) is that checking
@@ -220,8 +206,8 @@ def timezone_offset_to_string(offset):
     # criteria as well but are NOT UTC. In particular the local government may
     # decide to introduce some kind of winter/summer time while UTC is
     # guaranteed to have no such things.
-    sign = '+' if (offset >= timedelta(0)) else '-'
+    sign = '+' if offset >= timedelta(0) else '-'
     offset_seconds = abs((offset.days * 24 * 60 * 60) + offset.seconds)
     hours = offset_seconds // 3600
     minutes = (offset_seconds % 3600) // 60
-    return '%s%02d:%02d' % (sign, hours, minutes)
+    return f'{sign}{hours:02d}:{minutes:02d}'

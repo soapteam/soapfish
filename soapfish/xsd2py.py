@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, print_function
 
 import argparse
 import functools
@@ -9,17 +6,12 @@ import itertools
 import logging
 import os
 import sys
+from urllib.parse import urljoin
 
-import six
 from lxml import etree
 
 from . import xsdspec
-from .utils import (
-    find_xsd_namespaces,
-    get_rendering_environment,
-    open_document,
-    resolve_location,
-)
+from .utils import find_xsd_namespaces, get_rendering_environment, open_document, resolve_location
 
 logger = logging.getLogger('soapfish')
 
@@ -37,7 +29,7 @@ def rewrite_paths(schema, cwd, base_path):
             continue
         elif '://' in cwd:
             # remote files must handle paths as url.
-            i.schemaLocation = six.moves.urllib.parse.urljoin(cwd, i.schemaLocation)
+            i.schemaLocation = urljoin(cwd, i.schemaLocation)
         else:
             # local files should handle relative paths.
             path = os.path.normpath(os.path.join(cwd, i.schemaLocation))
@@ -48,7 +40,7 @@ def resolve_import(i, known_paths, known_types, parent_namespace, cwd, base_path
     assert isinstance(i, (xsdspec.Import, xsdspec.Include))
     path, cwd, location = resolve_location(i.schemaLocation, base_path)
     tag = i.__class__.__name__.lower()
-    logger.info('Generating code for xsd:%s=%s' % (tag, path))
+    logger.info('Generating code for xsd:%s=%s', tag, path)
     xml = open_document(path)
 
     return generate_code_from_xsd(xml, known_paths, known_types, location,
@@ -61,11 +53,11 @@ def generate_code_from_xsd(xml, known_paths=None, known_types=None,
                            encoding='utf8', cwd=None, base_path=None,
                            standalone=True):
 
-    if isinstance(xml, six.binary_type):
+    if isinstance(xml, bytes):
         xml = etree.fromstring(xml)
 
     if cwd is None:
-        cwd = six.moves.getcwd()
+        cwd = os.getcwd()
 
     if known_paths is None:
         known_paths = []
@@ -86,10 +78,7 @@ def generate_code_from_xsd(xml, known_paths=None, known_types=None,
 
 
 def _reorder_complexTypes(schema):
-    """
-    Reorder complexTypes to render base extension/restriction elements
-    render before the children.
-    """
+    """Reorder complexTypes to render base extension/restriction elements render before the children."""
     weights = {}
     for n, complex_type in enumerate(schema.complexTypes):
         content = complex_type.complexContent
@@ -180,7 +169,7 @@ def main(argv=None):
                         type=argparse.FileType('wb'), default=stdout)
     opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
-    logger.info('Generating code for XSD document: %s' % opt.xsd)
+    logger.info('Generating code for XSD document: %s', opt.xsd)
     xml = stdin.read() if opt.xsd == '-' else open_document(opt.xsd)
     cwd = opt.xsd if '://' in opt.xsd else os.path.abspath(opt.xsd)
     cwd = os.path.dirname(cwd)

@@ -1,5 +1,4 @@
-class DispatchTestMixin(object):
-
+class DispatchTestMixin:
     def _soap_request(self, input_value):
         soap = self.service.version
         method = self.service.get_method('echoOperation')

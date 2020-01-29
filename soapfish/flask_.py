@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
-from soapfish.core import SOAPRequest
-from soapfish.soap_dispatch import SOAPDispatcher
+from .core import SOAPRequest
+from .soap_dispatch import SOAPDispatcher
 
 __all__ = ['flask_dispatcher']
 

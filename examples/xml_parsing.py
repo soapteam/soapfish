@@ -1,7 +1,5 @@
 # Example 2. Parsing XML to object.
 
-from __future__ import print_function
-
 from soapfish import xsd
 
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from soapfish import xsd
 from soapfish.testutil import SimpleTypeTestCase
 

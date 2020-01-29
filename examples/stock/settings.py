@@ -17,7 +17,7 @@ DATABASES = {
         'PASSWORD': '',                   # Not used with sqlite3.
         'HOST': '',                       # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                       # Set to empty string for default. Not used with sqlite3.
-    }
+    },
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -92,7 +92,7 @@ TEMPLATE_LOADERS = (
     # 'django.template.loaders.eggs.Loader',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -132,8 +132,8 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
     },
     'loggers': {
         'django.request': {
@@ -141,5 +141,5 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    }
+    },
 }

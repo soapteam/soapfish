@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
-import six
+import http.client
 
 __all__ = ['SOAPError', 'SOAPRequest', 'SOAPResponse']
 
 
 class SOAPError(Exception):
-
     def __init__(self, code, message, actor=None):
-        super(SOAPError, self).__init__(code, message, actor)
+        super().__init__(code, message, actor)
         self.code = code
         self.message = message
         self.actor = actor
@@ -19,8 +14,7 @@ class SOAPError(Exception):
         return '[%s] %s; actor=%s' % (self.code, self.message, self.actor)
 
 
-class SOAPResponse(object):
-
+class SOAPResponse:
     def __init__(self, soap_body, soap_header=None, http_status_code=200, http_content=None, http_headers=None):
         self.soap_header = soap_header
         self.soap_body = soap_body
@@ -30,11 +24,11 @@ class SOAPResponse(object):
 
     @property
     def http_status_text(self):
-        return '%d %s' % (self.http_status_code, six.moves.http_client.responses.get(self.http_status_code))
+        text = http.client.responses.get(self.http_status_code)
+        return f'{self.http_status_code:d} {text}'
 
 
-class SOAPRequest(object):
-
+class SOAPRequest:
     def __init__(self, environ, http_content):
         self.environ = environ
         self.http_content = http_content

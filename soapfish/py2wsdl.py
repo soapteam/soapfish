@@ -1,14 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, print_function
 
 import argparse
-import imp
 import logging
 import sys
+from importlib.machinery import SourceFileLoader
 
-import six
 from lxml import etree
 
 from . import namespaces as ns, xsd
@@ -73,7 +69,7 @@ def build_messages(wsdl, definitions, service):
     for method in service.methods:
         inputMessage = wsdl.Message(name=method.operationName + 'Input')
         part = wsdl.Part(name='body')
-        if isinstance(method.input, six.string_types):
+        if isinstance(method.input, str):
             part.element = 'sns:' + method.input
         else:
             part.type = 'sns:' + uncapitalize(method.input.__name__)
@@ -82,7 +78,7 @@ def build_messages(wsdl, definitions, service):
 
         outputMessage = wsdl.Message(name=method.operationName + 'Output')
         part = wsdl.Part(name='body')
-        if isinstance(method.output, six.string_types):
+        if isinstance(method.output, str):
             part.element = 'sns:' + method.output
         else:
             part.type = 'sns:' + uncapitalize(method.output.__name__)
@@ -139,9 +135,10 @@ def main(argv=None):
                         nargs='?', type=argparse.FileType('wb'), default=stdout)
     opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
-    logger.info('Generating WSDL for Python module: %s' % opt.module)
-    module = imp.load_source('', opt.module)
-    tree = generate_wsdl(getattr(module, 'SERVICE'))
+    logger.info('Generating WSDL for Python module: %s', opt.module)
+
+    module = SourceFileLoader('', opt.module).load_module()
+    tree = generate_wsdl(module.SERVICE)
 
     opt.output.write(etree.tostring(tree, pretty_print=True))
 

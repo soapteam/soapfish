@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # XML namespace
 xml = 'http://www.w3.org/XML/1998/namespace'
 # Schema namespace as defined by XSD

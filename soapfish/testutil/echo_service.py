@@ -1,18 +1,9 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, unicode_literals
-
 from .. import xsd
 from ..core import SOAPResponse
 from ..lib.attribute_dict import AttrDict
 from ..soap import Service, SOAPVersion
 
-__all__ = [
-    'echo_handler',
-    'echo_service',
-    'EchoInputHeader',
-    'EchoOutputHeader'
-]
+__all__ = ['echo_handler', 'echo_service', 'EchoInputHeader', 'EchoOutputHeader']
 
 
 class EchoType(xsd.ComplexType):

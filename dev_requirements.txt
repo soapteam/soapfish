@@ -1,6 +1,0 @@
--r requirements.txt
-
-coverage
-isort
-mock
-nose>=1.0

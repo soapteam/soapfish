@@ -1,24 +1,15 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, print_function
 
 import argparse
+import collections
 import logging
 import os
 import sys
-from collections import deque
 
-import six
 from lxml import etree
 
 from .soap import SOAPVersion
-from .utils import (
-    find_xsd_namespaces,
-    get_rendering_environment,
-    open_document,
-    resolve_location,
-)
+from .utils import find_xsd_namespaces, get_rendering_environment, open_document, resolve_location
 from .wsdl import get_wsdl_classes
 from .xsd2py import schema_to_py
 
@@ -27,7 +18,7 @@ logger = logging.getLogger('soapfish')
 
 # --- Helpers -----------------------------------------------------------------
 def reorder_schemas(schemas):
-    schemas, targets, counter, x = [], set(), len(schemas), deque(schemas)
+    schemas, targets, counter, x = [], set(), len(schemas), collections.deque(schemas)
     while x and counter > 0:
         counter -= 1
         schema = x.popleft()
@@ -81,11 +72,11 @@ def merge_imports(wsdl, definitions, xsd_namespaces, cwd=None, seen=None):
 
 def generate_code_from_wsdl(xml, target, use_wsa=False, encoding='utf8', cwd=None):
 
-    if isinstance(xml, six.binary_type):
+    if isinstance(xml, bytes):
         xml = etree.fromstring(xml)
 
     if cwd is None:
-        cwd = six.moves.getcwd()
+        cwd = os.getcwd()
 
     xsd_namespaces = find_xsd_namespaces(xml)
 
@@ -137,7 +128,7 @@ def main(argv=None):
                         type=argparse.FileType('wb'), default=stdout)
     opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
-    logger.info('Generating %s code for WSDL document: %s' % (opt.target, opt.wsdl))
+    logger.info('Generating %s code for WSDL document: %s', opt.target, opt.wsdl)
     xml = stdin.read() if opt.wsdl == '-' else open_document(opt.wsdl)
     cwd = opt.wsdl if '://' in opt.wsdl else os.path.abspath(opt.wsdl)
     cwd = os.path.dirname(cwd)

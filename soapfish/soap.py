@@ -1,28 +1,21 @@
-# -*- coding: utf-8 -*-
-'''
-SOAP protocol implementation, dispatchers and client stub.
-'''
-
-from __future__ import absolute_import
+"""SOAP protocol implementation, dispatchers and client stub."""
 
 import logging
 import string
 
 import requests
-import six
 
 from . import core, namespaces as ns, soap11, soap12, wsa
 from .utils import uncapitalize
 
 SOAP_HTTP_Transport = ns.wsdl_soap_http
 
-
 logger = logging.getLogger('soapfish')
 
 
 class SOAPVersion:
-    SOAP12 = soap12
     SOAP11 = soap11
+    SOAP12 = soap12
 
     @classmethod
     def get_version(cls, namespace):
@@ -35,33 +28,19 @@ class SOAPVersion:
 
     @classmethod
     def get_version_name(cls, namespace):
-        version = cls.get_version(namespace)
-        return version.__name__
+        return cls.get_version(namespace).__name__
 
     @classmethod
     def get_version_from_xml(cls, xml):
         namespaces = {'wsdl': ns.wsdl, 'soap12': ns.wsdl_soap12}
-        if xml.xpath('wsdl:binding/soap12:binding', namespaces=namespaces):
-            return cls.SOAP12
-        else:
-            return cls.SOAP11
+        return cls.SOAP12 if xml.xpath('wsdl:binding/soap12:binding', namespaces=namespaces) else cls.SOAP11
 
 
-class Service(object):
-    '''
-    Describes service aggregating information required for dispatching and
-    WSDL generation.
-    '''
+class Service:
+    """Describe service aggregating information required for dispatching and WSDL generation."""
 
-    def __init__(self, targetNamespace, location, schemas, methods,
-                 version=SOAPVersion.SOAP11, name='Service',
+    def __init__(self, targetNamespace, location, schemas, methods, version=SOAPVersion.SOAP11, name='Service',
                  input_header=None, output_header=None, use_wsa=False):
-        '''
-        :param targetNamespace: string
-        :param location: string, endpoint url.
-        :param schemas: xsd.Schema instances.
-        :param methods: list of xsd.Methods
-        '''
         self.name = name
         self.targetNamespace = targetNamespace
         self.location = location
@@ -88,19 +67,19 @@ class Service(object):
         return element
 
     def route(self, operationName):
-        """Decorator to bind a Python function to service method."""
+        """Return a decorator that binds a Python function to service method."""
         method = self.get_method(operationName)
 
         def wrapper(func):
             method.function = func
             return func
+
         return wrapper
 
 
-class Stub(object):
-    '''
-    Client stub. Handles only document style calls.
-    '''
+class Stub:
+    """Client stub. Handles only document style calls."""
+
     SERVICE = None
     SCHEME = 'http'
     HOST = 'www.example.net'
@@ -116,7 +95,7 @@ class Stub(object):
 
         if callable(location):
             self.location = location(self.service.location, context)
-        elif isinstance(location, six.string_types):
+        elif isinstance(location, str):
             self.location = location
         else:
             raise TypeError('Expected string or callable for location.')
@@ -135,7 +114,7 @@ class Stub(object):
             error = core.SOAPError(code=code, message=message, actor=actor)
             raise error
 
-        if isinstance(method.output, six.string_types):
+        if isinstance(method.output, str):
             _type = self.service.find_element_by_name(method.output)._type.__class__
         else:
             _type = method.output
@@ -144,16 +123,9 @@ class Stub(object):
         return core.SOAPResponse(body, soap_header=response_header)
 
     def call(self, operationName, parameter, header=None):
-        '''
-        :raises: lxml.etree.XMLSyntaxError -- validation problems.
-        '''
         soap = self.service.version
         method = self.service.get_method(operationName)
-
-        if isinstance(method.input, six.string_types):
-            tagname = method.input
-        else:
-            tagname = uncapitalize(parameter.__class__.__name__)
+        tagname = method.input if isinstance(method.input, str) else uncapitalize(parameter.__class__.__name__)
 
         auth = (self.username, self.password) if self.username else None
         data = soap.Envelope.response(tagname, parameter, header=header)

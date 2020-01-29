@@ -1,7 +1,7 @@
 Changes
 =======
 
-0.6.0 (2017-??-??)
+0.6.0 (2020-??-??)
 ------------------
 
 Project has been renamed to `soapfish` to distinguish it from the legacy
@@ -49,7 +49,7 @@ the `soapfish` fork.
   - Attempts to fix handling of remote vs local imports.
 - **Miscellaneous:**
   - Renamed `SoapboxRequest` and `SoapboxResponse` to `SOAPRequest` and `SOAPResponse` respectively.
-  - Support Python 2.7 & 3.4 - 3.6 and Django 1.11 & 2.0.
+  - Support Python 3.6+, Django 1.11, 2.2 & 3.0, and Flask 1.0.0+
   - Improved testing against different versions of Python, Django & Flask.
   - Improved entry points for generation scripts - additional flags, etc.
   - Moved to using an external dependency for `iso8601`

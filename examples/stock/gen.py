@@ -16,17 +16,18 @@ Schema = xsd.Schema(
     targetNamespace='http://code.google.com/p/soapfish/stock.xsd',
     # Register all complex types to schema.
     complexTypes=[GetStockPrice, StockPrice],
-    elements={'getStockPrice': xsd.Element(GetStockPrice), 'stockPrice': xsd.Element(StockPrice)}
+    elements={'getStockPrice': xsd.Element(GetStockPrice), 'stockPrice': xsd.Element(StockPrice)},
 )
 
 
 def get_stock_price(request, gsp):
-    print gsp.company, gsp.datetime
+    print((gsp.company, gsp.datetime))
     sp = StockPrice(nillable=xsd.NIL)
     sp.prices.append(13.29)
     sp.prices.append(4.56)
     sp.prices.append(xsd.NIL)
     return sp
+
 
 get_stock_price_method = xsd.Method(
     function=get_stock_price,
@@ -97,7 +98,9 @@ class Ops(xsd.ComplexType):
     INDICATOR = xsd.Sequence
     aircraft = xsd.Element(xsd.String)
     flight_number = xsd.Element(xsd.String)
-    type = xsd.Element(xsd.String(enumeration=['COMMERCIAL', 'INCOMPLETE', 'ENGINE_RUN_UP', 'TEST', 'TRAINING', 'FERRY', 'POSITIONING', 'LINE_TRAINING']))
+    type = xsd.Element(xsd.String(
+        enumeration=['COMMERCIAL', 'INCOMPLETE', 'ENGINE_RUN_UP', 'TEST', 'TRAINING', 'FERRY', 'POSITIONING', 'LINE_TRAINING'],
+    ))
     takeoff_airport = xsd.Element(Airport)
     takeoff_gate_datetime = xsd.Element(xsd.DateTime, minOccurs=0)
     takeoff_datetime = xsd.Element(xsd.DateTime)
@@ -154,7 +157,7 @@ Schema = xsd.Schema(
 
 
 def PutOps(request, ops):  # noqa
-    print ops.aircraft, ops.takeoff_datetime
+    print((ops.aircraft, ops.takeoff_datetime))
     return Status(id=100, action='INSERTED')
 
 

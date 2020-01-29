@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
 import cgi
 
 from . import namespaces as ns, soap11, xsd
@@ -52,26 +48,17 @@ class Reason(xsd.ComplexType):
 
 
 class Fault(xsd.ComplexType):
-    '''
-    SOAP Envelope Fault.
-    '''
     Code = xsd.Element(Code)
     Reason = xsd.Element(Reason)
     Role = xsd.Element(xsd.String, minOccurs=0)
 
 
 class Body(soap11.Body):
-    '''
-    SOAP Envelope Body.
-    '''
     message = xsd.ClassNamedElement(xsd.NamedType, minOccurs=0)
     Fault = xsd.Element(Fault, minOccurs=0)
 
 
 class Envelope(xsd.ComplexType):
-    '''
-    SOAP Envelope.
-    '''
     Header = xsd.Element(Header, nillable=True)
     Body = xsd.Element(Body)
 

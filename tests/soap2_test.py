@@ -1,11 +1,9 @@
 import unittest
 
 from lxml import etree
-from pythonic_testcase import assert_contains
 
 from soapfish import soap11, soap12, wsa, xsd
 from soapfish.py2xsd import generate_xsd
-
 
 SOAP11_ENVELOPE = '''\
 <?xml version="1.0" encoding="utf-8"?>
@@ -47,6 +45,7 @@ class AppHeader(xsd.ComplexType):
     Version = xsd.Element(xsd.String)
     Message = xsd.Element(GetWeatherByPlaceName)
 
+
 Schema_qualified = xsd.Schema(
     targetNamespace='http://www.example.org',
     elementFormDefault=xsd.ElementFormDefault.QUALIFIED,
@@ -77,6 +76,7 @@ class AppHeaderU(xsd.ComplexType):
     Version = xsd.Element(xsd.String)
     Message = xsd.Element(GetWeatherByPlaceNameU)
 
+
 Schema_unqualified = xsd.Schema(
     targetNamespace='http://www.example.org',
     complexTypes=[GetWeatherByPlaceNameU, AppHeaderU, PlaceU],
@@ -88,8 +88,7 @@ Schema_unqualified = xsd.Schema(
 XMLSchema_unqualified = etree.XMLSchema(generate_xsd(Schema_unqualified))
 
 
-class SOAP_TBase(object):
-
+class SOAP_TBase:
     def test_parse_message_qualified(self):
         self._test_parse_message(MESSAGE_QUALIFIED, GetWeatherByPlaceName, XMLSchema_qualified)
 
@@ -97,7 +96,7 @@ class SOAP_TBase(object):
         self._test_parse_message(MESSAGE_UNQUALIFIED, GetWeatherByPlaceNameU, XMLSchema_unqualified)
 
     def _test_parse_message(self, xml, MessageType, schema):
-        envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', xml).encode('utf8'))
+        envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', xml).encode())
         self.assertTrue(schema.validate(envelope.Body.content()))
         message = MessageType.parse_xmlelement(envelope.Body.content())
         self.assertEqual(message.Place.Name, 'Weatharia')
@@ -137,7 +136,7 @@ class SOAP_TBase(object):
 
     def test_empty_header(self):
         xml = self.SOAP.Envelope.response('Get', Place(), self.SOAP.Header())
-        assert_contains(b'<ns0:Header/>', xml)
+        self.assertIn(b'<ns0:Header/>', xml)
 
     def test_no_header_in_xml(self):
         xml = (
@@ -165,17 +164,16 @@ class SOAP_TBase(object):
             '</ns0:GetWeatherByPlaceName>'
             '</ns0:Body>'
             '</ns0:Envelope>'
-        ).format(self.SOAP.ENVELOPE_NAMESPACE).encode('utf-8')
+        ).format(self.SOAP.ENVELOPE_NAMESPACE).encode()
         self.assertEqual(expected_xml, xml)
 
 
 class SOAP11_Test(SOAP_TBase, unittest.TestCase):
-
     SOAP = soap11
     ENVELOPE_XML = SOAP11_ENVELOPE
 
     def test_parse_fault(self):
-        envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', SOAP11_FAULT).encode('utf8'))
+        envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', SOAP11_FAULT).encode())
         code, message, actor = self.SOAP.parse_fault_message(envelope.Body.Fault)
         self.assertEqual(message, 'Server was unable to process request.')
         self.assertEqual(code, 'soap:Server')
@@ -212,12 +210,11 @@ SOAP12_FAULT = '''
 
 
 class SOAP12_Test(SOAP_TBase, unittest.TestCase):
-
     SOAP = soap12
     ENVELOPE_XML = SOAP12_ENVELOPE
 
     def test_parse_fault(self):
-        envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', SOAP12_FAULT).encode('utf8'))
+        envelope = self.SOAP.Envelope.parsexml(self.ENVELOPE_XML.format('', SOAP12_FAULT).encode())
         code, message, actor = self.SOAP.parse_fault_message(envelope.Body.Fault)
         self.assertEqual(message, 'Server was unable to process request. Go away.')
         self.assertEqual(code, 'soap:Receiver')

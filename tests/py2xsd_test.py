@@ -1,14 +1,12 @@
-
-from __future__ import absolute_import, unicode_literals
+import unittest
 
 from lxml import etree
-from pythonic_testcase import PythonicTestCase, assert_false, assert_true
 
 from soapfish import xsd
 from soapfish.py2xsd import generate_xsd
 
 
-class py2xsdTest(PythonicTestCase):
+class py2xsdTest(unittest.TestCase):
     def test_can_generate_schema_xml_containing_types_with_pattern_restriction(self):
         ns = 'http://soap.example/pattern.xsd'
 
@@ -31,7 +29,7 @@ class py2xsdTest(PythonicTestCase):
 
         def is_valid(s):
             return xmlschema.validate(etree.fromstring(s))
-        assert_true(is_valid(valid_xml))
+        self.assertIs(is_valid(valid_xml), True)
 
         bad_xml = '<foo xmlns="%s"><code>abc</code></foo>' % ns
-        assert_false(is_valid(bad_xml))
+        self.assertIs(is_valid(bad_xml), False)

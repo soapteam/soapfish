@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
 from . import namespaces as ns, wsdl11, xsd
-
 
 # FIXME: With the current implementation of schema we cannot share classes
 #        between different schema so we duplicate classes from soapfish.wsdl11

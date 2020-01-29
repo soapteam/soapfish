@@ -1,15 +1,11 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, print_function
 
 import argparse
-import imp
 import inspect
 import logging
 import sys
+from importlib.machinery import SourceFileLoader
 
-import six
 from lxml import etree
 
 from . import namespaces as ns, xsd, xsdspec
@@ -30,10 +26,7 @@ logger = logging.getLogger('soapfish')
 
 # --- Helpers -----------------------------------------------------------------
 def get_xsd_type(_type):
-    '''
-    Check if type_ is a basic type in the XSD scope otherwise it must be user
-    defined type.
-    '''
+    """Check if type_ is a basic type in the XSD scope otherwise it must be user defined type."""
     base_class = _type.__class__.__bases__[0]
     if base_class == xsd.SimpleType or _type.__class__ in ALL_TYPES:
         return 'xsd:' + uncapitalize(_type.__class__.__name__)
@@ -66,10 +59,7 @@ def create_xsd_element(element):
         xsd_element.simpleType.restriction = xsdspec.Restriction()
         xsd_element.simpleType.restriction.base = get_xsd_type(element._type)
 
-        if (
-            hasattr(element._type, 'enumeration') and element._type.enumeration and
-            parent_type == xsd.SimpleType
-        ):
+        if hasattr(element._type, 'enumeration') and element._type.enumeration and parent_type == xsd.SimpleType:
             for value in element._type.enumeration:
                 enum = xsdspec.Enumeration.create(value)
                 xsd_element.simpleType.restriction.enumerations.append(enum)
@@ -186,7 +176,7 @@ def generate_xsdspec(schema):
 
 
 def generate_elements(xsd_schema, schema):
-    for name, element in six.iteritems(schema.elements):
+    for name, element in schema.elements.items():
         xsd_element = xsdspec.Element()
         xsd_element.name = name
 
@@ -195,7 +185,7 @@ def generate_elements(xsd_schema, schema):
             value = element.substitutionGroup
             xsd_element.substitutionGroup = value if value.startswith('sns:') else 'sns:%s' % value
 
-        if isinstance(element._passed_type, six.string_types) or inspect.isclass(element._passed_type):
+        if isinstance(element._passed_type, str) or inspect.isclass(element._passed_type):
             xsd_element.type = get_xsd_type(element._type)
         else:
             xsd_element.complexType = xsd_complexType(element._type.__class__, named=False)
@@ -223,15 +213,14 @@ def generate_xsd(schema):
 
 def schema_validator(schemas):
     """
-    Return a callable for the specified soapfish schemas which can be used
-    to validate (etree) xml documents.
-    The method takes care of resolving imported (soapfish) schemas but prevents
-    any unwanted network access.
+    Return a callable for the specified soapfish schemas which can be used to validate (etree) xml documents.
+
+    The method takes care of resolving imported (soapfish) schemas but prevents any unwanted network access.
     """
     class SchemaResolver(etree.Resolver):
 
         def __init__(self, schemas, *args, **kwargs):
-            super(SchemaResolver, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.lookup = walk_schema_tree(schemas, lambda x: x)
 
         def resolve(self, url, id_, context):
@@ -279,9 +268,9 @@ def main(argv=None):
                         nargs='?', type=argparse.FileType('wb'), default=stdout)
     opt = parser.parse_args(sys.argv[1:] if argv is None else argv)
 
-    logger.info('Generating XSD for Python module: %s' % opt.module)
-    module = imp.load_source('module.name', opt.module)
-    tree = generate_xsd(getattr(module, 'Schema'))
+    logger.info('Generating XSD for Python module: %s', opt.module)
+    module = SourceFileLoader('', opt.module).load_module()
+    tree = generate_xsd(module.Schema)
 
     opt.output.write(etree.tostring(tree, pretty_print=True))
 

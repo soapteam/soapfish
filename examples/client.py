@@ -38,7 +38,9 @@ class Ops(xsd.ComplexType):
     INDICATOR = xsd.Sequence
     aircraft = xsd.Element(xsd.String)
     flight_number = xsd.Element(xsd.String)
-    type = xsd.Element(xsd.String(enumeration=['COMMERCIAL', 'INCOMPLETE', 'ENGINE_RUN_UP', 'TEST', 'TRAINING', 'FERRY', 'POSITIONING', 'LINE_TRAINING']))
+    type = xsd.Element(xsd.String(
+        enumeration=['COMMERCIAL', 'INCOMPLETE', 'ENGINE_RUN_UP', 'TEST', 'TRAINING', 'FERRY', 'POSITIONING', 'LINE_TRAINING'],
+    ))
     takeoff_airport = xsd.Element('Airport')
     takeoff_gate_datetime = xsd.Element(xsd.DateTime, minOccurs=0)
     takeoff_datetime = xsd.Element(xsd.DateTime)
@@ -131,4 +133,4 @@ if __name__ == '__main__':
     ops.landing_airport = Airport.create(code_type='ICAO', code='EGLL')
     ops.landing_datetime = datetime.now()
     status = stub.PutOps(ops)
-    print status.action, status.id
+    print((status.action, status.id))

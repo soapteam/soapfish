@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
 import os
 import uuid
 
@@ -33,13 +29,14 @@ SCHEMA = xsd.Schema(
     attributeGroups=[],
     groups=[],
     complexTypes=[ReplyTo, Header],
-    elements={})
+    elements={},
+)
 XSD_SCHEMA = etree.parse(SCHEMA_IMPORT_PATH)
 XML_SCHEMA = etree.XMLSchema(XSD_SCHEMA)
 
 
 def fill_header(dst_header, src_header=None):
-    """Fill dst_header with the basic information based on src_header"""
+    """Fill dst_header with the basic information based on src_header."""
     if src_header:
         dst_header.Action = src_header.Action + 'Response'
         dst_header.RelatesTo = src_header.MessageID

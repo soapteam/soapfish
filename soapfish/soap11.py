@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
+import enum
 
 from . import namespaces as ns, xsd
 
@@ -32,15 +30,12 @@ def parse_fault_message(fault):
     return fault.faultcode, fault.faultstring, fault.faultactor
 
 
-class Code:
+class Code(str, enum.Enum):
     CLIENT = 'Client'
     SERVER = 'Server'
 
 
 class Header(xsd.ComplexType):
-    '''
-    SOAP Envelope Header.
-    '''
     def accept(self, value):
         return value
 
@@ -48,23 +43,16 @@ class Header(xsd.ComplexType):
         return ContentType.parse_xmlelement(self._xmlelement)
 
     def render(self, parent, instance, namespace=None, elementFormDefault=None):
-        return super(Header, self).render(parent, instance, namespace=instance.SCHEMA.targetNamespace,
-                                          elementFormDefault=elementFormDefault)
+        return super().render(parent, instance, instance.SCHEMA.targetNamespace, elementFormDefault)
 
 
 class Fault(xsd.ComplexType):
-    '''
-    SOAP Envelope Fault.
-    '''
     faultcode = xsd.Element(xsd.String, namespace='')
     faultstring = xsd.Element(xsd.String, namespace='')
     faultactor = xsd.Element(xsd.String, namespace='', minOccurs=0)
 
 
 class Body(xsd.ComplexType):
-    '''
-    SOAP Envelope Body.
-    '''
     message = xsd.ClassNamedElement(xsd.NamedType, minOccurs=0)
     Fault = xsd.Element(Fault, minOccurs=0)
 
@@ -76,9 +64,6 @@ class Body(xsd.ComplexType):
 
 
 class Envelope(xsd.ComplexType):
-    '''
-    SOAP Envelope.
-    '''
     Header = xsd.Element(Header, nillable=True)
     Body = xsd.Element(Body)
 

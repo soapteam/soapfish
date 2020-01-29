@@ -1,10 +1,8 @@
-
+import decimal
 import unittest
-from decimal import Decimal
 
 import iso8601
 from lxml import etree
-from pythonic_testcase import assert_equals, assert_raises
 
 from soapfish import xsd, xsdspec
 
@@ -80,7 +78,7 @@ class ElementTest(unittest.TestCase):
             foo = xsd.Element(xsd.String, tagname='bar')
         xml = b'<T><bar>coucou</bar></T>'
         obj = TestType.parsexml(xml)
-        self.assertEquals('coucou', obj.foo)
+        self.assertEqual('coucou', obj.foo)
 
     def test_tagname_parse_xmlelement(self):
         class TestType(xsd.ComplexType):
@@ -88,7 +86,7 @@ class ElementTest(unittest.TestCase):
         xml = b'<T><bar>coucou</bar></T>'
         xmlelement = etree.fromstring(xml)
         obj = TestType.parse_xmlelement(xmlelement)
-        self.assertEquals('coucou', obj.foo)
+        self.assertEqual('coucou', obj.foo)
 
     def test_tagname_render(self):
         class TestType(xsd.ComplexType):
@@ -97,7 +95,7 @@ class ElementTest(unittest.TestCase):
         xmlelement = etree.Element('T')
         obj.render(xmlelement, obj)
         xml = etree.tostring(xmlelement)
-        self.assertEquals(b'<T><bar>coucou</bar></T>', xml)
+        self.assertEqual(b'<T><bar>coucou</bar></T>', xml)
 
     def test_stringify_complextype(self):
         flight = Flight(takeoff_airport=Airport())
@@ -132,21 +130,22 @@ class ListElementTest(unittest.TestCase):
         self.assertEqual(1, test.values[0])
 
     def test_append_restriction(self):
-        l = xsd.ListElement(xsd.String, maxOccurs=1, tagname='toto').empty_value()
-        l.append('a')
-        e = assert_raises(ValueError, lambda: l.append('a'))
-        assert_equals('You must not add more than 1 items to this list.', str(e))
+        x = xsd.ListElement(xsd.String, maxOccurs=1, tagname='toto').empty_value()
+        x.append('a')
+        with self.assertRaises(ValueError) as cm:
+            x.append('a')
+        self.assertEqual('You must not add more than 1 items to this list.', str(cm.exception))
 
     def test_append_with_max_occurs_unbounded(self):
-        l = xsd.ListElement(xsd.String, maxOccurs=xsd.UNBOUNDED, tagname='toto').empty_value()
-        l.append('a')
-        l.append('a')
+        x = xsd.ListElement(xsd.String, maxOccurs=xsd.UNBOUNDED, tagname='toto').empty_value()
+        x.append('a')
+        x.append('a')
 
 
 class BooleanTypeTest(unittest.TestCase):
 
     def test_element_true(self):
-        mixed = xsd.Element(xsd.Boolean,)
+        mixed = xsd.Element(xsd.Boolean)
         xmlelement = etree.Element('complexType')
         mixed.render(xmlelement, 'mixed', True)
         expected_xml = b'''<complexType>
@@ -193,7 +192,7 @@ class DecimalTypeTest(unittest.TestCase):
             float = xsd.Element(xsd.Decimal())
 
         test = Test()
-        test.float = Decimal('2.2')
+        test.float = decimal.Decimal('2.2')
 
     def test_enumeration(self):
 
@@ -528,7 +527,7 @@ class ComplexTest(unittest.TestCase):
                                      )
         xml = '<test:foo xmlns:test="%s"><name>bar</name></test:foo>' % ns
         foo = A.parsexml(xml, schema=soapfish_schema)
-        assert_equals('bar', foo.name)
+        self.assertEqual('bar', foo.name)
 
 
 class XMLParsingTest(unittest.TestCase):
@@ -791,7 +790,7 @@ class AttributeGroupTest(unittest.TestCase):
         self.assertEqual(body.parts, 'Parts')
         self.assertEqual(body.tBodyAttributes.use, 'required')
         self.assertEqual(body.tBodyAttributes.namespace, 'xs')
-        self.assertEqual(body.tBodyAttributes.encodingStyle, None)
+        self.assertIsNone(body.tBodyAttributes.encodingStyle)
 
 
 class AirporttDocument(xsd.Document):
@@ -945,7 +944,3 @@ class MaxOccursTest(unittest.TestCase):
         max_occurs = xsd.MaxOccurs()
         value = max_occurs.pythonvalue('unbounded')
         self.assertEqual(xsd.UNBOUNDED, value)
-
-
-if __name__ == '__main__':
-    unittest.main()

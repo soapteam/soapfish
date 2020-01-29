@@ -22,7 +22,7 @@ Links to various specifications relevant to the project:
 - [Web Services Addressing 1.0 - SOAP Binding](https://www.w3.org/tr/ws-addr-soap/)
 - [Web Services Addressing 1.0 - WSDL Binding](https://www.w3.org/tr/ws-addr-wsdl/)
 - [Web Services Architecture](https://www.w3.org/tr/ws-arch/)
-- [Web Services Security 1.0](http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0.pdf)
-- [Web Services Security 1.1](http://www.oasis-open.org/committees/download.php/16790/wss-v1.1-spec-os-SOAPMessageSecurity.pdf)
+- [Web Services Security 1.0](https://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0.pdf)
+- [Web Services Security 1.1](https://www.oasis-open.org/committees/download.php/16790/wss-v1.1-spec-os-SOAPMessageSecurity.pdf)
 
 - [WSDL 1.1 Binding Extension for SOAP 1.2](https://www.w3.org/submission/wsdl11soap12/)

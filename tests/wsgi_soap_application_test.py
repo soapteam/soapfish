@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, unicode_literals
-
-from io import BytesIO
-
-from pythonic_testcase import PythonicTestCase, assert_equals
+import io
+import unittest
 
 from soapfish.soap_dispatch import SOAPDispatcher, WsgiSoapApplication
 from soapfish.testutil import echo_service
 
 
-class WsgiSoapApplicationTest(PythonicTestCase):
+class WsgiSoapApplicationTest(unittest.TestCase):
     def test_can_dispatch_soap_request_with_plain_wsgi(self):
         dispatcher = SOAPDispatcher(echo_service())
         app = WsgiSoapApplication(dispatcher)
@@ -26,8 +21,8 @@ class WsgiSoapApplicationTest(PythonicTestCase):
             b'</senv:Envelope>'
         )
         response = app(self._wsgi_env(soap_message), start_response)
-        assert_equals('200 OK', start_response.code)
-        assert_equals('text/xml', dict(start_response.headers)['Content-Type'])
+        self.assertEqual('200 OK', start_response.code)
+        self.assertEqual('text/xml', dict(start_response.headers)['Content-Type'])
         expected_xml = (
             b'<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/">'
             b'<ns0:Body>'
@@ -37,7 +32,7 @@ class WsgiSoapApplicationTest(PythonicTestCase):
             b'</ns0:Body>'
             b'</ns0:Envelope>'
         )
-        assert_equals(expected_xml, b''.join(response))
+        self.assertEqual(expected_xml, b''.join(response))
 
     def _response_mock(self):
         class StartResponse():
@@ -59,5 +54,5 @@ class WsgiSoapApplicationTest(PythonicTestCase):
             'SERVER_PORT': '7000',
             'REQUEST_METHOD': 'POST',
             'wsgi.url_scheme': 'http',
-            'wsgi.input': BytesIO(soap_xml),
+            'wsgi.input': io.BytesIO(soap_xml),
         }

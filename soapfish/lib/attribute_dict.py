@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # License: Public Domain
 # Authors: Felix Schwarz <felix.schwarz@oss.schwarz.eu>
 #
@@ -8,9 +6,7 @@
 # 1.0 (06.02.2010)
 #   - initial release
 
-from __future__ import absolute_import
-
-from unittest import TestCase
+import unittest
 
 __all__ = ['AttrDict']
 
@@ -22,17 +18,17 @@ class AttrDict(dict):
         return self[name]
 
 
-class AttributDictTests(TestCase):
+class AttributDictTests(unittest.TestCase):
 
     def test_can_use_class_as_dict(self):
         obj = AttrDict(foo=1, bar=2)
-        self.assertEquals(1, obj['foo'])
-        self.assertEquals(2, obj['bar'])
+        self.assertEqual(1, obj['foo'])
+        self.assertEqual(2, obj['bar'])
 
     def test_can_access_items_as_attributes(self):
         obj = AttrDict(foo=1, bar=2)
-        self.assertEquals(1, obj.foo)
-        self.assertEquals(2, obj.bar)
+        self.assertEqual(1, obj.foo)
+        self.assertEqual(2, obj.bar)
 
     def test_raise_attribute_error_for_non_existent_keys(self):
         obj = AttrDict(foo=1)

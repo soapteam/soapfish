@@ -1,7 +1,5 @@
-from __future__ import absolute_import
-
+import collections
 import unittest
-from collections import namedtuple
 from datetime import datetime
 
 from soapfish.django_ import django_dispatcher
@@ -26,7 +24,7 @@ else:
     from django.conf.urls import url
     from django.test import Client
 
-urlconf = namedtuple('urlconf', 'urlpatterns')
+urlconf = collections.namedtuple('urlconf', 'urlpatterns')
 
 
 @unittest.skipIf(django is None, 'Django is not installed.')
@@ -39,13 +37,13 @@ class DjangoDispatchTest(framework.DispatchTestMixin, unittest.TestCase):
 
     def _prepare_extras(self, headers):
         extras = {'HTTP_' + k.replace('-', '_').upper(): v for k, v in headers.items()}
-        extras.update(content_type=headers['Content-Type'])
+        extras['content_type'] = headers['Content-Type']
         return extras
 
     def test_can_retrieve_wsdl(self):
-        response = self.client.get('/ws/', {'wsdl': None})
-        self.assertEquals(200, response.status_code)
-        self.assertEquals('text/xml', response['Content-Type'])
+        response = self.client.get('/ws/', {'wsdl': ''})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('text/xml', response['Content-Type'])
         self.assertIn(b'<wsdl:definitions', response.content)
 
     def test_can_dispatch_simple_request(self):
@@ -53,6 +51,6 @@ class DjangoDispatchTest(framework.DispatchTestMixin, unittest.TestCase):
         headers, body = self._soap_request(input_value)
         extras = self._prepare_extras(headers)
         response = self.client.post('/ws/', body, **extras)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         body = self._soap_response(response.content)
-        self.assertEquals(input_value, body.value)
+        self.assertEqual(input_value, body.value)

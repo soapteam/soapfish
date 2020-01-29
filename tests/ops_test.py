@@ -30,7 +30,7 @@ class Ops(xsd.ComplexType):
     aircraft = xsd.Element(xsd.String)
     flight_number = xsd.Element(xsd.String)
     type = xsd.Element(xsd.String(enumeration=[
-        'COMMERCIAL', 'INCOMPLETE', 'ENGINE_RUN_UP', 'TEST', 'TRAINING', 'FERRY', 'POSITIONING', 'LINE_TRAINING'
+        'COMMERCIAL', 'INCOMPLETE', 'ENGINE_RUN_UP', 'TEST', 'TRAINING', 'FERRY', 'POSITIONING', 'LINE_TRAINING',
     ]))
     takeoff_airport = xsd.Element(Airport)
     takeoff_gate_datetime = xsd.Element(xsd.DateTime, minOccurs=0)
@@ -99,9 +99,5 @@ class OPS_Test(unittest.TestCase):
         self.assertEqual('COMMERCIAL', ops.type)
         self.assertEqual('ICAO', ops.takeoff_airport.code_type)
         self.assertEqual('EGLL', ops.takeoff_airport.code)
-        self.assertEqual(None, ops.takeoff_pilot)
+        self.assertIsNone(ops.takeoff_pilot)
         self.assertEqual(iso8601.parse_date('2009-12-30T23:35:59Z'), ops.landing_gate_datetime)
-
-
-if __name__ == '__main__':
-    unittest.main()

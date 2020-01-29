@@ -1,10 +1,9 @@
-
-from pythonic_testcase import PythonicTestCase, assert_equals, assert_none
+import unittest
 
 from soapfish import xsdspec
 
 
-class XSDSpecSchemaTest(PythonicTestCase):
+class XSDSpecSchemaTest(unittest.TestCase):
     def test_can_parse_references(self):
         xml = (
             '<xs:schema targetNamespace="http://site.example/ws/spec" \n'
@@ -30,12 +29,12 @@ class XSDSpecSchemaTest(PythonicTestCase):
         schema = xsdspec.Schema.parsexml(xml)
 
         job_element = schema.elements[1]
-        assert_equals('job', job_element.name)
+        self.assertEqual('job', job_element.name)
 
         person_reference = job_element.complexType.sequence.elements[0]
-        assert_none(person_reference.name)
-        assert_equals('example:person', person_reference.ref)
+        self.assertIsNone(person_reference.name)
+        self.assertEqual('example:person', person_reference.ref)
 
         person_element = schema.elements[0]
-        assert_equals('person', person_element.name)
+        self.assertEqual('person', person_element.name)
         # TODO: check that the person_reference points to person

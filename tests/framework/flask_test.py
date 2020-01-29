@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import unittest
 from datetime import datetime
 
@@ -23,14 +21,14 @@ class FlaskDispatchTest(framework.DispatchTestMixin, unittest.TestCase):
 
     def test_can_retrieve_wsdl(self):
         response = self.client.get('/ws/', query_string='wsdl')
-        self.assertEquals(200, response.status_code)
-        self.assertEquals('text/xml', response.headers['Content-Type'])
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('text/xml', response.headers['Content-Type'])
         self.assertIn(b'<wsdl:definitions', response.data)
 
     def test_can_dispatch_simple_request(self):
         input_value = str(datetime.now())
         headers, body = self._soap_request(input_value)
         response = self.client.post('/ws/', data=body, headers=headers)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         body = self._soap_response(response.data)
-        self.assertEquals(input_value, body.value)
+        self.assertEqual(input_value, body.value)

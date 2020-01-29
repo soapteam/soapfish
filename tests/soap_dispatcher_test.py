@@ -1,32 +1,15 @@
-from __future__ import absolute_import
+import unittest
 
-import six
 from lxml import etree
-from pythonic_testcase import (
-    PythonicTestCase,
-    assert_contains,
-    assert_equals,
-    assert_false,
-    assert_length,
-    assert_not_contains,
-    assert_not_none,
-    assert_raises,
-    assert_true,
-)
 
 from soapfish import wsa, xsd
 from soapfish.core import SOAPError, SOAPRequest, SOAPResponse
 from soapfish.middlewares import ExceptionToSoapFault
 from soapfish.soap_dispatch import SOAPDispatcher
-from soapfish.testutil import (
-    EchoInputHeader,
-    EchoOutputHeader,
-    echo_handler,
-    echo_service,
-)
+from soapfish.testutil import EchoInputHeader, EchoOutputHeader, echo_handler, echo_service
 
 
-class SOAPDispatcherTest(PythonicTestCase):
+class SOAPDispatcherTest(unittest.TestCase):
     def test_can_dispatch_good_soap_message(self):
         handler, handler_state = echo_handler()
         dispatcher = SOAPDispatcher(echo_service(handler))
@@ -36,11 +19,11 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
 
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
-        assert_equals('foobar', handler_state.input_.value)
+        self.assertEqual('foobar', handler_state.input_.value)
 
         response_document = etree.fromstring(response.http_content)
         response_xml = etree.tostring(response_document, pretty_print=True)
@@ -53,7 +36,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             b'  </ns0:Body>\n'
             b'</ns0:Envelope>\n'
         )
-        assert_equals(expected_xml, response_xml)
+        self.assertEqual(expected_xml, response_xml)
 
     def test_can_validate_soap_message(self):
         handler, handler_state = echo_handler()
@@ -64,19 +47,19 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
-        assert_false(handler_state.was_called)
-        self.assert_is_soap_fault(response, partial_fault_string=u"Element 'invalid': This element is not expected. "
-                                  u'Expected is ( value ).')
+        self.assertFalse(handler_state.was_called)
+        self.assert_is_soap_fault(response, partial_fault_string="Element 'invalid': This element is not expected. "
+                                  'Expected is ( value ).')
 
     def test_can_reject_malformed_xml_soap_message(self):
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), 'garbage')
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, 'garbage')
         dispatcher = SOAPDispatcher(echo_service())
         response = dispatcher.dispatch(request)
-        assert_equals(500, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['Content-Type'])
-        self.assert_is_soap_fault(response, partial_fault_string=u"Start tag expected, '<' not found")
+        self.assertEqual(500, response.http_status_code)
+        self.assertEqual('text/xml', response.http_headers['Content-Type'])
+        self.assert_is_soap_fault(response, partial_fault_string="Start tag expected, '<' not found")
 
     def test_can_include_imported_schemas_during_validation(self):
         # In case the SOAPDispatcher would not use imported schemas for
@@ -103,22 +86,22 @@ class SOAPDispatcherTest(PythonicTestCase):
         # into a soapfish model element for the handler but this was enough
         # to trigger the bug
         dispatcher = SOAPDispatcher(service)
-        wsgi_environ = dict(SOAPACTION='echo', REQUEST_METHOD='POST')
+        wsgi_environ = {'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}
         soap_message = '<ns0:foo xmlns:ns0="http://soap.example/included"><value>12345</value></ns0:foo>'
         request = SOAPRequest(wsgi_environ, self._wrap_with_soap_envelope(soap_message))
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
-        assert_equals('12345', handler_state.input_.value)
+        self.assertEqual('12345', handler_state.input_.value)
 
     def test_can_reject_non_soap_xml_body(self):
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), '<some>xml</some>')
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, '<some>xml</some>')
         dispatcher = SOAPDispatcher(echo_service())
 
         # previously this raised an AttributeError due to an unhandled exception
         response = dispatcher.dispatch(request)
-        assert_equals(500, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['Content-Type'])
-        self.assert_is_soap_fault(response, partial_fault_string=u'Missing SOAP body')
+        self.assertEqual(500, response.http_status_code)
+        self.assertEqual('text/xml', response.http_headers['Content-Type'])
+        self.assert_is_soap_fault(response, partial_fault_string='Missing SOAP body')
 
     def test_can_reject_invalid_action(self):
         soap_message = (
@@ -127,15 +110,15 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='invalid', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'invalid', 'REQUEST_METHOD': 'POST'}, request_message)
         dispatcher = SOAPDispatcher(echo_service())
         response = dispatcher.dispatch(request)
-        self.assert_is_soap_fault(response, partial_fault_string=u"Invalid SOAP action: invalid")
+        self.assert_is_soap_fault(response, partial_fault_string='Invalid SOAP action: invalid')
 
     def test_can_reject_invalid_root_tag(self):
         soap_message = ('<ns0:invalid xmlns:ns0="invalid"/>')
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'REQUEST_METHOD': 'POST'}, request_message)
         dispatcher = SOAPDispatcher(echo_service())
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, partial_fault_string='DocumentInvalid')
@@ -149,7 +132,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='""', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': '""', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
 
@@ -165,12 +148,12 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'REQUEST_METHOD': 'POST'}, request_message)
 
         response = dispatcher.dispatch(request)
-        assert_equals('text/xml', response.http_headers['Content-Type'])
-        assert_equals(500, response.http_status_code)
-        self.assert_is_soap_fault(response, fault_code='code', partial_fault_string=u'internal data error')
+        self.assertEqual('text/xml', response.http_headers['Content-Type'])
+        self.assertEqual(500, response.http_status_code)
+        self.assert_is_soap_fault(response, fault_code='code', partial_fault_string='internal data error')
 
     def test_can_handle_xsd_element_as_return_value_from_handler(self):
         def handler(request, input_):
@@ -182,13 +165,13 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
 
         response = dispatcher.dispatch(request)
         body_text = response.http_content
-        if not isinstance(body_text, six.string_types):
-            body_text = body_text.decode('utf-8')
-        assert_contains('<value>hello</value>', body_text)
+        if not isinstance(body_text, str):
+            body_text = body_text.decode()
+        self.assertIn('<value>hello</value>', body_text)
 
     def test_can_propagate_custom_input_header(self):
         handler, handler_state = echo_handler()
@@ -200,11 +183,11 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
-        assert_not_none(handler_state.input_header)
-        assert_equals('42', handler_state.input_header.InputVersion)
+        self.assertIsNotNone(handler_state.input_header)
+        self.assertEqual('42', handler_state.input_header.InputVersion)
 
     def test_can_handle_empty_input_header(self):
         handler, handler_state = echo_handler()
@@ -215,7 +198,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
 
@@ -229,7 +212,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, partial_fault_string='DocumentInvalid')
 
@@ -248,10 +231,10 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message, header=soap_header)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
-        assert_contains(b'<ns0:OutputVersion>42</ns0:OutputVersion>', response.http_content)
+        self.assertIn(b'<ns0:OutputVersion>42</ns0:OutputVersion>', response.http_content)
 
     def test_can_handle_empty_output_header(self):
         handler, handler_state = echo_handler()
@@ -262,7 +245,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response, handler_state)
 
@@ -277,38 +260,38 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'), request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
         self.assert_is_soap_fault(response, fault_code=service.version.Code.SERVER,
                                   partial_fault_string='unexpected exception')
-        assert_equals('text/xml', response.http_headers['Content-Type'])
-        assert_equals(500, response.http_status_code)
+        self.assertEqual('text/xml', response.http_headers['Content-Type'])
+        self.assertEqual(500, response.http_status_code)
 
     def test_can_validate_wsa_header(self):
         dispatcher = SOAPDispatcher(echo_service())
         header = wsa.Header.parsexml(
-            '<Header><Action xmlns="http://www.w3.org/2005/08/addressing">/Action</Action></Header>'
+            '<Header><Action xmlns="http://www.w3.org/2005/08/addressing">/Action</Action></Header>',
         )
         dispatcher._validate_header(header)
 
     def test_can_detect_invalid_wsa_header(self):
         dispatcher = SOAPDispatcher(echo_service())
         header = wsa.Header.parsexml(
-            '<Header><Invalid xmlns="http://www.w3.org/2005/08/addressing">/Action</Invalid></Header>'
+            '<Header><Invalid xmlns="http://www.w3.org/2005/08/addressing">/Action</Invalid></Header>',
         )
-        assert_raises(etree.DocumentInvalid, lambda: dispatcher._validate_header(header))
+        with self.assertRaises(etree.DocumentInvalid):
+            dispatcher._validate_header(header)
 
     def test_evaluate_service_location(self):
         handler, _ = echo_handler()
         service = echo_service(handler)
         service.location = '${scheme}://${host}/ws'
         dispatcher = SOAPDispatcher(service)
-        request = SOAPRequest(dict(REQUEST_METHOD='GET', QUERY_STRING='wsdl',
-                                   HTTP_HOST='soap.example'), '')
+        request = SOAPRequest({'REQUEST_METHOD': 'GET', 'QUERY_STRING': 'wsdl', 'HTTP_HOST': 'soap.example'}, '')
         response = dispatcher.dispatch(request)
         self.assert_is_successful_response(response)
-        assert_not_contains('${scheme}', response.http_content.decode())
-        assert_not_contains('${host}', response.http_content.decode())
+        self.assertNotIn('${scheme}', response.http_content.decode())
+        self.assertNotIn('${host}', response.http_content.decode())
 
     def test_service_bind_function(self):
         handler, handler_state = echo_handler()
@@ -326,11 +309,10 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</ns1:echoRequest>'
         )
         request_message = self._wrap_with_soap_envelope(soap_message)
-        request = SOAPRequest(dict(SOAPACTION='echo', REQUEST_METHOD='POST'),
-                              request_message)
+        request = SOAPRequest({'SOAPACTION': 'echo', 'REQUEST_METHOD': 'POST'}, request_message)
         response = dispatcher.dispatch(request)
 
-        assert_true(handler_state.new_func_was_called)
+        self.assertTrue(handler_state.new_func_was_called)
         self.assert_is_successful_response(response, handler_state)
 
     def test_hook_soap_request(self):
@@ -340,7 +322,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request = SOAPRequest(
-            {'REQUEST_METHOD': 'POST', 'SOAPACTION':'echo'},
+            {'REQUEST_METHOD': 'POST', 'SOAPACTION': 'echo'},
             self._wrap_with_soap_envelope(message),
         )
 
@@ -359,7 +341,7 @@ class SOAPDispatcherTest(PythonicTestCase):
             '</tns:echoRequest>'
         )
         request = SOAPRequest(
-            {'REQUEST_METHOD': 'POST', 'SOAPACTION':'echo'},
+            {'REQUEST_METHOD': 'POST', 'SOAPACTION': 'echo'},
             self._wrap_with_soap_envelope(message),
         )
 
@@ -374,40 +356,40 @@ class SOAPDispatcherTest(PythonicTestCase):
     # --- custom assertions ---------------------------------------------------
 
     def assert_is_successful_response(self, response, handler_state=None):
-        assert_equals(200, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['Content-Type'])
+        self.assertEqual(200, response.http_status_code)
+        self.assertEqual('text/xml', response.http_headers['Content-Type'])
         if handler_state:
-            assert_true(handler_state.was_called)
+            self.assertTrue(handler_state.was_called)
 
     def assert_is_soap_fault(self, response, fault_code=None, partial_fault_string=None):
-        assert_equals(500, response.http_status_code)
-        assert_equals('text/xml', response.http_headers['Content-Type'])
+        self.assertEqual(500, response.http_status_code)
+        self.assertEqual('text/xml', response.http_headers['Content-Type'])
 
         fault_document = etree.fromstring(response.http_content)
         soap_envelope = fault_document.getroottree()
         namespaces = {'s': 'http://schemas.xmlsoap.org/soap/envelope/'}
         fault_nodes = soap_envelope.xpath('/s:Envelope/s:Body/s:Fault', namespaces=namespaces)
-        assert_length(1, fault_nodes, message='expected exactly one SOAP fault')
+        self.assertEqual(len(fault_nodes), 1, msg='expected exactly one SOAP fault')
         children = list(fault_nodes[0])
-        assert_length(2, children)
+        self.assertEqual(len(children), 2)
 
         xml_fault_code, fault_string = children
         if fault_code is None:
             fault_code = 'Client'
-        assert_equals(fault_code, xml_fault_code.text)
+        self.assertEqual(fault_code, xml_fault_code.text)
         if partial_fault_string:
-            assert_contains(partial_fault_string, fault_string.text)
+            self.assertIn(partial_fault_string, fault_string.text)
 
     # --- internal helpers ----------------------------------------------------
 
     def _wrap_with_soap_envelope(self, payload, header=''):
         if header:
-            header = '<senv:Header>{header}</senv:Header>'.format(header=header)
+            header = f'<senv:Header>{header}</senv:Header>'
         envelope = (
             '<?xml version="1.0" encoding="UTF-8"?>'
             '<senv:Envelope xmlns:senv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://soap.example/echo/types">'
             '%(header)s'
             '<senv:Body>%(payload)s</senv:Body>'
             '</senv:Envelope>'
-        ) % dict(payload=payload, header=header)
-        return envelope.encode('utf-8')
+        ) % {'payload': payload, 'header': header}
+        return envelope.encode()

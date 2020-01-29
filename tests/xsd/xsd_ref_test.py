@@ -1,11 +1,9 @@
-
-from nose import SkipTest
-from pythonic_testcase import PythonicTestCase, assert_equals
+import unittest
 
 from soapfish import xsd
 
 
-class RefTest(PythonicTestCase):
+class RefTest(unittest.TestCase):
     def test_can_render_references_to_groups(self):
         class Person(xsd.Group):
             name = xsd.Element(xsd.String)
@@ -15,19 +13,18 @@ class RefTest(PythonicTestCase):
             person = xsd.Ref(Person)
 
         job = Job()
-        job.person = Person(name=u'Foo Bar')
-        assert_equals(u'Foo Bar', job.person.name)
+        job.person = Person(name='Foo Bar')
+        self.assertEqual('Foo Bar', job.person.name)
         # TODO: actually I think the current state is invalid as title is missing?
         expected_xml = (
             b'<job>\n'
             b'  <name>Foo Bar</name>\n'
             b'</job>\n'
         )
-        assert_equals(expected_xml, job.xml('job'))
+        self.assertEqual(expected_xml, job.xml('job'))
 
+    @unittest.skip('References to SimpleTypes are not yet implemented.')
     def test_can_render_references_to_simple_types(self):
-        raise SkipTest('References to SimpleTypes are not yet implemented.')
-
         class Person(xsd.SimpleType):
             pass
 
@@ -37,14 +34,14 @@ class RefTest(PythonicTestCase):
             name = xsd.Ref(Person)
 
         job = Job()
-        job.person = u'Foo Bar'
-        assert_equals(u'Foo Bar', job.person)
+        job.person = 'Foo Bar'
+        self.assertEqual('Foo Bar', job.person)
         expected_xml = (
             b'<job>\n'
             b'  <name>Foo Bar</name>\n'
             b'</job>\n'
         )
-        assert_equals(expected_xml, job.xml('job'))
+        self.assertEqual(expected_xml, job.xml('job'))
 
     def test_can_render_references_to_complex_types(self):
         class Person(xsd.ComplexType):
@@ -55,8 +52,8 @@ class RefTest(PythonicTestCase):
             person = xsd.Ref(Person)
 
         job = Job()
-        job.person = Person(name=u'Foo Bar')
-        assert_equals(u'Foo Bar', job.person.name)
+        job.person = Person(name='Foo Bar')
+        self.assertEqual('Foo Bar', job.person.name)
         expected_xml = (
             b'<job>\n'
             b'  <person>\n'
@@ -64,4 +61,4 @@ class RefTest(PythonicTestCase):
             b'  </person>\n'
             b'</job>\n'
         )
-        assert_equals(expected_xml, job.xml('job'))
+        self.assertEqual(expected_xml, job.xml('job'))

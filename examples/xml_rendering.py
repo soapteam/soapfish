@@ -1,7 +1,5 @@
 # Example 1. Rendering object to XML.
 
-from __future__ import print_function
-
 from soapfish import xsd
 
 

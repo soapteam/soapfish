@@ -1,3 +1,4 @@
+.cache
 .project
 .pydevproject
 .settings
@@ -12,3 +13,4 @@ dist
 docs/_build
 docs/_static
 docs/_templates
+venv/
