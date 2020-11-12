@@ -30,7 +30,7 @@ class SimpleTypeTestCase(unittest.TestCase):
         except ValueError:
             pass
         else:
-            self.fail('did accept forbidden value %r' % value)
+            self.fail(f'did accept forbidden value {value!r}')
 
     # --- internal helpers ----------------------------------------------------
     def _parse(self, string_value):
@@ -38,7 +38,7 @@ class SimpleTypeTestCase(unittest.TestCase):
             foo = xsd.Element(self.xsd_type)
         if string_value is None:
             string_value = ''
-        xml = '<container><foo>%s</foo></container>' % string_value
+        xml = f'<container><foo>{string_value}</foo></container>'
         return Container.parsexml(xml).foo
 
     def _normalize(self, xml):

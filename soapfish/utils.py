@@ -93,7 +93,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
             return 'xsd.Use.REQUIRED'
         if value == xsd.Use.PROHIBITED:
             return 'xsd.Use.PROHIBITED'
-        raise ValueError('Unknown value for use attribute: %s' % value)
+        raise ValueError(f'Unknown value for use attribute: {value}')
 
     def url_regex(url):
         return r'^%s$' % re.escape(urlparse(url).path.lstrip('/'))

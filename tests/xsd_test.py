@@ -525,7 +525,7 @@ class ComplexTest(unittest.TestCase):
                                      complexTypes=[A],
                                      elements={'foo': xsd.Element(A)},
                                      )
-        xml = '<test:foo xmlns:test="%s"><name>bar</name></test:foo>' % ns
+        xml = f'<test:foo xmlns:test="{ns}"><name>bar</name></test:foo>'
         foo = A.parsexml(xml, schema=soapfish_schema)
         self.assertEqual('bar', foo.name)
 

@@ -147,30 +147,30 @@ class String(SimpleType):
             return None
 
         if not isinstance(value, str):
-            raise ValueError("Value %r for class '%s'." % (value, self.__class__.__name__))
+            raise ValueError(f"Value {value!r} for class '{self.__class__.__name__}'.")
 
         value = self._clean_whitespace(value)
 
         if self.pattern:
             pattern = self.pattern + '$'
             if re.match(pattern, value) is None:
-                raise ValueError("Value '%s' doesn't match pattern '%s'" % (value, self.pattern))
+                raise ValueError(f"Value '{value}' doesn't match pattern '{self.pattern}'")
 
         if self.enumeration:
             if not (value in self.enumeration):
-                raise ValueError("Value '%s' not in list %s." % (value, self.enumeration))
+                raise ValueError(f"Value '{value}' not in list {self.enumeration}.")
 
         if self.length:
             if len(value) != self.length:
-                raise ValueError("Value '%s' length %s expected." % (value, self.length))
+                raise ValueError(f"Value '{value}' length {self.length} expected.")
 
         if self.minLength:
             if len(value) < self.minLength:
-                raise ValueError("Value '%s' minLength %s expected." % (value, self.minLength))
+                raise ValueError(f"Value '{value}' minLength {self.minLength} expected.")
 
         if self.maxLength:
             if len(value) > self.maxLength:
-                raise ValueError("Value '%s' maxLength %s expected." % (value, self.maxLength))
+                raise ValueError(f"Value '{value}' maxLength {self.maxLength} expected.")
 
         return value
 
@@ -199,7 +199,7 @@ class Boolean(SimpleType):
         if value in [True, False, None]:
             return value
         else:
-            raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
+            raise ValueError(f"Value '{value}' for class '{self.__class__.__name__}'.")
 
     def xmlvalue(self, value):
         if value is False:
@@ -209,7 +209,7 @@ class Boolean(SimpleType):
         elif value is None:
             return 'nil'
         else:
-            raise ValueError("Value '%s' for class '%s'." % (str(value), self.__class__.__name__))
+            raise ValueError(f"Value '{value}' for class '{self.__class__.__name__}'.")
 
     def pythonvalue(self, value):
         if value == 'false':
@@ -219,7 +219,7 @@ class Boolean(SimpleType):
         elif value == 'nil' or value is None:
             return None
         else:
-            raise ValueError('Boolean value error - %s' % value)
+            raise ValueError(f'Boolean value error - {value}')
 
 
 class Date(SimpleType):
@@ -243,7 +243,7 @@ class Date(SimpleType):
         if (hasattr(value, 'year') and hasattr(value, 'month') and hasattr(value, 'day')) and not has_time_compontent:
             tz = getattr(value, 'tzinfo', None)  # support datetime.date
             return XSDDate(value.year, value.month, value.day, tzinfo=tz)
-        raise ValueError('Incorrect type value %r for date field.' % value)
+        raise ValueError(f'Incorrect type value {value!r} for date field.')
 
     def xmlvalue(self, value):
         timestring_without_tz = value.strftime('%Y-%m-%d')
@@ -256,11 +256,11 @@ class Date(SimpleType):
         if value is None or value == 'nil':
             return None
         if not isinstance(value, str):
-            raise ValueError('Expected a string, not %r' % value)
+            raise ValueError(f'Expected a string, not {value!r}')
 
         match = self.YEAR_MONTH_DAY_REGEX.match(value)
         if match is None:
-            raise ValueError('Unable to parse date string %r' % value)
+            raise ValueError(f'Unable to parse date string {value!r}')
         year = int(match.group('year'))
         month = int(match.group('month'))
         day = int(match.group('day'))
@@ -290,7 +290,7 @@ class DateTime(SimpleType):
             return value
         elif isinstance(value, str):
             return iso8601.parse_date(value)
-        raise ValueError("Incorrect type value '%s' for DateTime field." % value)
+        raise ValueError(f"Incorrect type value '{value}' for DateTime field.")
 
     def xmlvalue(self, value):
         if value is None:
@@ -315,7 +315,7 @@ class Time(SimpleType):
             return value
         elif isinstance(value, str):
             return self._parse(value)
-        raise ValueError("Incorrect type value '%s' for Time field." % value)
+        raise ValueError(f"Incorrect type value '{value}' for Time field.")
 
     def xmlvalue(self, value):
         if value is None:
@@ -356,33 +356,33 @@ class Decimal(SimpleType):
 
     def _check_restrictions(self, value):
         if self.enumeration is not None and value not in self.enumeration:
-            raise ValueError('%s not in enumeration %s' % (value, self.enumeration))
+            raise ValueError(f'{value} not in enumeration {self.enumeration}')
 
         if self.fractionDigits is not None:
             strvalue = str(value)
             if self.fractionDigits == 0:
                 if '.' in strvalue:
-                    raise ValueError('Wrong fraction digits for value %s allowed %s' % (strvalue, self.fractionDigits))
+                    raise ValueError(f'Wrong fraction digits for value {strvalue} allowed {self.fractionDigits}')
             else:
                 if '.' not in strvalue:
-                    raise ValueError('Wrong fraction digits for value %s allowed %s' % (strvalue, self.fractionDigits))
+                    raise ValueError(f'Wrong fraction digits for value {strvalue} allowed {self.fractionDigits}')
                 fr = strvalue.split('.')[1]
                 if len(fr) != self.fractionDigits:
-                    raise ValueError('Wrong fraction digits for value %s allowed %s' % (strvalue, self.fractionDigits))
+                    raise ValueError(f'Wrong fraction digits for value {strvalue} allowed {self.fractionDigits}')
 
         if self.maxExclusive is not None and value >= self.maxExclusive:
-            raise ValueError('Value %s greater or equal to maxExclusive %s' % (value, self.maxExclusive))
+            raise ValueError(f'Value {value} greater or equal to maxExclusive {self.maxExclusive}')
         if self.maxInclusive is not None and value > self.maxInclusive:
-            raise ValueError('Value %s greater than maxInclusive %s' % (value, self.maxInclusive))
+            raise ValueError(f'Value {value} greater than maxInclusive {self.maxInclusive}')
         if self.minExclusive is not None and value <= self.minExclusive:
-            raise ValueError('Value %s smaller or equal to minExclusive %s' % (value, self.minExclusive))
+            raise ValueError(f'Value {value} smaller or equal to minExclusive {self.minExclusive}')
         if self.minInclusive is not None and value < self.minInclusive:
-            raise ValueError('Value %s smaller than minInclusive %s' % (value, self.minInclusive))
+            raise ValueError(f'Value {value} smaller than minInclusive {self.minInclusive}')
 
         if self.pattern is not None:
             pattern = self.pattern + '$'
             if re.match(pattern, str(value)) is None:
-                raise ValueError("Value %s doesn't match pattern %s." % (value, self.pattern))
+                raise ValueError(f"Value {value} doesn't match pattern {self.pattern}.")
 
         if self.totalDigits is not None:
             strvalue = str(value)
@@ -390,7 +390,7 @@ class Decimal(SimpleType):
             if '.' in strvalue:
                 length -= 1
             if length > self.totalDigits:
-                raise ValueError('Number of total digits of %s is bigger than %s.' % (strvalue, self.totalDigits))
+                raise ValueError(f'Number of total digits of {strvalue} is bigger than {self.totalDigits}.')
 
         return value
 
@@ -404,7 +404,7 @@ class Decimal(SimpleType):
         elif isinstance(value, str):
             value = float(value)
         else:
-            raise ValueError("Incorrect value '%s' for Decimal field." % value)
+            raise ValueError(f"Incorrect value '{value}' for Decimal field.")
 
         self._check_restrictions(value)
         return value
@@ -455,7 +455,7 @@ class Integer(Decimal):
         elif isinstance(value, str):
             value = int(value)
         else:
-            raise ValueError("Incorrect value '%s' for Decimal field." % value)
+            raise ValueError(f"Incorrect value '{value}' for Decimal field.")
 
         self._check_restrictions(value)
         return value
@@ -527,7 +527,7 @@ class MaxOccurs(SimpleType):
 
 def import_type(type_name):
     if '.' not in type_name:
-        raise ValueError('We need the full namepath to be able to import it: %s' % type_name)
+        raise ValueError(f'We need the full namepath to be able to import it: {type_name}')
     module, name = type_name.rsplit('.', 1)
     module = importlib.import_module(module)
     return getattr(module, name)
@@ -695,6 +695,7 @@ class Attribute(Element):
 class Ref(Element):
     """
     References are not fields, they point to a type that has them - usually groups.
+
     Ref fields will be rendered directly into the parent object. e.g.
 
         class Person(xsd.Group):
@@ -759,7 +760,7 @@ class TypedList(list):
         else:
             accepted_value = self._list._type.accept(value)
         if self._list._maxOccurs is not None and (len(self) + 1 > self._list._maxOccurs):
-            raise ValueError('You must not add more than %s items to this list.' % self._list._maxOccurs)
+            raise ValueError(f'You must not add more than {self._list._maxOccurs} items to this list.')
         super().append(accepted_value)
 
 

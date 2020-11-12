@@ -11,7 +11,7 @@ class SOAPError(Exception):
         self.actor = actor
 
     def __str__(self):
-        return '[%s] %s; actor=%s' % (self.code, self.message, self.actor)
+        return f'[{self.code}] {self.message}; actor={self.actor}'
 
 
 class SOAPResponse:

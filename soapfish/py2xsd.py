@@ -183,7 +183,7 @@ def generate_elements(xsd_schema, schema):
         # TODO: Support non-string values for substitutionGroup:
         if element.substitutionGroup is not None:
             value = element.substitutionGroup
-            xsd_element.substitutionGroup = value if value.startswith('sns:') else 'sns:%s' % value
+            xsd_element.substitutionGroup = value if value.startswith('sns:') else f'sns:{value}'
 
         if isinstance(element._passed_type, str) or inspect.isclass(element._passed_type):
             xsd_element.type = get_xsd_type(element._type)
@@ -228,7 +228,7 @@ def schema_validator(schemas):
                 schema_string = etree.tostring(generate_xsd(self.lookup[url]))
                 return self.resolve_string(schema_string, context)
             # prevent unwanted network access
-            raise ValueError('Cannot resolve %r - not a known soapfish schema' % url)
+            raise ValueError(f'Cannot resolve {url!r} - not a known soapfish schema')
 
     parser = etree.XMLParser(load_dtd=True)
     resolver = SchemaResolver(schemas)

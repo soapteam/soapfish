@@ -15,7 +15,7 @@ def determine_soap_action(request):
 
 
 def build_http_request_headers(soapAction):
-    return {'Content-Type': CONTENT_TYPE + '; action="%s"' % soapAction}
+    return {'Content-Type': CONTENT_TYPE + f'; action="{soapAction}"'}
 
 
 def get_error_response(code, message, actor=None, header=None):

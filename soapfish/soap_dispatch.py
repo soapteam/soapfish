@@ -33,7 +33,7 @@ class SOAPDispatcher:
         else:
             for hook in hooks:
                 if not re.match(r'(soap|wsdl|xsd)-(request|response)', hook):
-                    raise KeyError('Invalid dispatcher hook name: %s' % hook)
+                    raise KeyError(f'Invalid dispatcher hook name: {hook}')
         self.hooks = hooks
 
         if wsdl is None:
@@ -64,7 +64,7 @@ class SOAPDispatcher:
             # note : no validation is performed
             envelope = SOAP.Envelope.parsexml(xml)
         except etree.XMLSyntaxError as e:
-            raise SOAPError(SOAP.Code.CLIENT, '%s: %s' % (e.__class__.__name__, e)) from e
+            raise SOAPError(SOAP.Code.CLIENT, f'{e.__class__.__name__}: {e}') from e
         # Actually this is more a stopgap measure than a real fix. The real
         # fix is to change SOAP.Envelope/ComplexType so it raises some kind of
         # validation error. A missing SOAP body is not allowed by the SOAP
@@ -87,7 +87,7 @@ class SOAPDispatcher:
             try:
                 return next(m for m in self.service.methods if m.soapAction == action)
             except StopIteration as e:
-                raise SOAPError(SOAP.Code.CLIENT, 'Invalid SOAP action: %s' % action) from e
+                raise SOAPError(SOAP.Code.CLIENT, f'Invalid SOAP action: {action}') from e
 
         else:
             logger.debug('Finding handler using root tag of the SOAP body: %s', root_tag)
@@ -100,7 +100,7 @@ class SOAPDispatcher:
                 e = next(e for s in self.service.schemas for n, e in s.elements.items() if n == root_tag)
                 return next(m for m in self.service.methods if m.input == e.substitutionGroup.split(':')[-1])
             except StopIteration as e:
-                raise SOAPError(SOAP.Code.CLIENT, 'Missing SOAP action and invalid root tag: %s' % root_tag) from e
+                raise SOAPError(SOAP.Code.CLIENT, f'Missing SOAP action and invalid root tag: {root_tag}') from e
 
     def _parse_header(self, handler, soap_header):
         # TODO return soap fault if header is required but missing in the input
@@ -157,7 +157,7 @@ class SOAPDispatcher:
         try:
             self._validate_input(soap_envelope)
         except (etree.DocumentInvalid, etree.XMLSyntaxError) as e:
-            raise SOAPError(SOAP.Code.CLIENT, '%s: %s' % (e.__class__.__name__, e)) from e
+            raise SOAPError(SOAP.Code.CLIENT, f'{e.__class__.__name__}: {e}') from e
 
         request.method = self._find_handler_for_request(request, soap_body)
         request.soap_header = self._parse_header(request.method, soap_header)

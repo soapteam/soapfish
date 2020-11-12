@@ -24,7 +24,7 @@ class SOAPVersion:
         elif namespace == cls.SOAP12.ENVELOPE_NAMESPACE or namespace == cls.SOAP12.BINDING_NAMESPACE:
             return cls.SOAP12
         else:
-            raise ValueError("SOAP version with namespace '%s' is not supported." % namespace)
+            raise ValueError(f"SOAP version with namespace '{namespace}' is not supported.")
 
     @classmethod
     def get_version_name(cls, namespace):

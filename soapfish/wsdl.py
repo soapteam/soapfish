@@ -7,7 +7,7 @@ def get_by_name(_list, fullname):
     for item in _list:
         if item.name == name:
             return item
-    raise ValueError("Item '%s' not found in list:%s" % (name, _list))
+    raise ValueError(f"Item '{name}' not found in list:{_list}")
 
 
 def get_message_header(definitions, binding, operation, x):

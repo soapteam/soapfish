@@ -17,7 +17,7 @@ class ExceptionToSoapFault:
             if self.traceback:
                 message = traceback.format_exc()
             else:
-                message = '%s: %s' % (e.__class__.__name__, e)
+                message = f'{e.__class__.__name__}: {e}'
             return core.SOAPError(request.dispatcher.service.version.Code.SERVER, message)
 
 

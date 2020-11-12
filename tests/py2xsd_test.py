@@ -25,11 +25,11 @@ class py2xsdTest(unittest.TestCase):
         # previously this would fail
         xsd_element = generate_xsd(schema)
         xmlschema = etree.XMLSchema(xsd_element)
-        valid_xml = '<foo xmlns="%s"><code>1234</code></foo>' % ns
+        valid_xml = f'<foo xmlns="{ns}"><code>1234</code></foo>'
 
         def is_valid(s):
             return xmlschema.validate(etree.fromstring(s))
         self.assertIs(is_valid(valid_xml), True)
 
-        bad_xml = '<foo xmlns="%s"><code>abc</code></foo>' % ns
+        bad_xml = f'<foo xmlns="{ns}"><code>abc</code></foo>'
         self.assertIs(is_valid(bad_xml), False)

@@ -14,7 +14,7 @@ __all__ = ['AttrDict']
 class AttrDict(dict):
     def __getattr__(self, name):
         if name not in self:
-            raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, name))
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
         return self[name]
 
 

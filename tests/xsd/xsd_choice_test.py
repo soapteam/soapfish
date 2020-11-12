@@ -52,14 +52,14 @@ class XSDChoiceTest(unittest.TestCase):
         self.assertEqual('123', result.code)
 
     def _result_wrap(self, child_string):
-        return '<result xmlns="http://foo.example/">%s</result>' % child_string
+        return f'<result xmlns="http://foo.example/">{child_string}</result>'
 
     def assert_is_valid(self, xml_string, soapfish_schema):
         xml = etree.fromstring(xml_string)
         xmlschema = etree.XMLSchema(generate_xsd(soapfish_schema))
-        self.assertIs(xmlschema.validate(xml), True, msg='XML did not validate: %r' % xml_string)
+        self.assertIs(xmlschema.validate(xml), True, msg=f'XML did not validate: {xml_string!r}')
 
     def assert_is_invalid(self, xml_string, soapfish_schema):
         xml = etree.fromstring(xml_string)
         xmlschema = etree.XMLSchema(generate_xsd(soapfish_schema))
-        self.assertIs(xmlschema.validate(xml), False, msg='XML should fail to validate: %r' % xml_string)
+        self.assertIs(xmlschema.validate(xml), False, msg=f'XML should fail to validate: {xml_string!r}')

@@ -84,8 +84,8 @@ Note that `xml()` method takes one parameter - the name of the root tag.
     xml = '<takeoff_airport><type>IATA</type><code>WAW</code></takeoff_airport>'
     airport = Airport.parsexml(xml)
 
-    print('Type: %s' % airport.type)
-    print('Code: %s' % airport.code)
+    print(f'Type: {airport.type}')
+    print(f'Code: {airport.code}')
 
 .. code-block:: text
 

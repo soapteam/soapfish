@@ -65,7 +65,7 @@ This example middleware will log the client IP address.
         except KeyError:
             ip = request.environ['REMOTE_ADDR']
         # log the ip address
-        logger.info('Received request from %s' % str(ip))
+        logger.info('Received request from %s', ip)
         # call next middleware
         return next_call(request)
 

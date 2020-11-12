@@ -23,7 +23,7 @@ class RestrictionValue(xsd.ComplexType):
     value = xsd.Attribute(xsd.String)
 
     def __repr__(self):
-        return 'RestrictionValue<%r>' % self.value
+        return f'RestrictionValue<{self.value!r}>'
 
 
 class Restriction(xsd.ComplexType):
@@ -44,7 +44,7 @@ class Restriction(xsd.ComplexType):
     whiteSpace = xsd.Element(RestrictionValue)
 
     def to_python(self):
-        return '[%s]' % ', '.join("'%s'" % e.value for e in self.enumerations)
+        return '[%s]' % ', '.join(f"'{e.value}'" for e in self.enumerations)
 
 
 class List(xsd.ComplexType):

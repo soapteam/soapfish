@@ -83,7 +83,7 @@ class CodeGenerationTest(unittest.TestCase):
         try:
             self._exec(code, m)
         except SyntaxError as e:
-            self.fail('%s: %s' % (e.__class__.__name__, e))
+            self.fail(f'{e.__class__.__name__}: {e}')
 
     def test_schema_xsd_restriction(self):
         xml = utils.open_document('tests/assets/generation/restriction.xsd')
