@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Soapfish'
-copyright = '2016, Soapfish Contributors'
+copyright = '2021, Soapfish Contributors'
 author = 'Soapfish Contributors'
 
 # The version info for the project you're documenting, acts as replacement for
