@@ -7,7 +7,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse, urlunparse
 
-import requests
+import httpx
 from jinja2 import Environment, PackageLoader
 
 from . import namespaces as ns
@@ -29,7 +29,7 @@ def resolve_location(path, cwd):
 def open_document(path):
     if '://' in path:
         logger.info('Opening remote document: %s', path)
-        return requests.get(path).content
+        return httpx.get(path).content
     else:
         logger.info('Opening local document: %s', path)
         with open(path, 'rb') as f:

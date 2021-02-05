@@ -1,7 +1,7 @@
 Changes
 =======
 
-0.6.0 (2020-??-??)
+0.6.0 (2021-??-??)
 ------------------
 
 Project has been renamed to `soapfish` to distinguish it from the legacy
@@ -24,7 +24,7 @@ the `soapfish` fork.
     - _Patch contributed by Martin Mrose, tests written by Felix Schwarz_
   - Implemented a dispatcher for Flask (#53)
   - Implement service.route function to avoid changes to generated code (#68)
-  - Changed to use `requests` instead of `httplib2`.
+  - Changed to use ~~`requests`~~ `httpx` instead of `httplib2`.
   - Added support for multiple inline schema imports and includes.
   - Added support for import of other WSDL documents.
   - Support for reordering of schema imports and includes and handle circular imports.
