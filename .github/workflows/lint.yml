@@ -1,0 +1,46 @@
+name: Lint
+
+on:
+  pull_request:
+    branches-ignore:
+      - mrosemartin84
+      - soapbox
+  push:
+    branches-ignore:
+      - mrosemartin84
+      - soapbox
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        python: ['3.9']
+    steps:
+    - name: Check out source
+      uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Determine pip cache directory
+      id: pip-cache
+      run: echo "::set-output name=dir::$(pip cache dir)"
+    - name: Persist pip cache directory
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-${{ matrix.python }}-pip-${{ hashFiles('tests/requirements/lint.txt') }}
+    - name: Install dependencies
+      run: pip install --requirement=tests/requirements/lint.txt
+    - name: Run linters
+      run: |
+        mkdir --parents artifacts/${{ matrix.os }}/${{ matrix.python }}/
+        flake8 --benchmark --statistics --tee --output-file=artifacts/${{ matrix.os }}/${{ matrix.python }}/flake8.txt
+        check-manifest --verbose | tee artifacts/${{ matrix.os }}/${{ matrix.python }}/manifest.txt
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: lint-artifacts-${{ github.actor }}-${{ github.sha }}
+        path: artifacts

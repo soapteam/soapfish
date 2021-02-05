@@ -11,11 +11,4 @@ flake8-isort
 flake8-logging-format
 flake8-quotes
 flake8-raise
-iso8601>=0.1.12
 isort
-jinja2
-lxml
-pytest
-pytest-cov
-pytest-mock
-requests

@@ -1,13 +1,17 @@
 Soapfish
 ========
 
-[![Travis](https://img.shields.io/travis/soapteam/soapfish/master.svg)](https://travis-ci.org/soapteam/soapfish)
-[![PyPI](https://img.shields.io/pypi/v/soapfish.svg)](https://pypi.org/project/soapfish/)
-[![PyPI](https://img.shields.io/pypi/l/soapfish.svg)](https://pypi.org/project/soapfish/)
-[![PyPI](https://img.shields.io/pypi/dm/soapfish.svg)](https://pypi.org/project/soapfish/)
-[![PyPI](https://img.shields.io/pypi/pyversions/soapfish.svg)](https://pypi.org/project/soapfish/)
-[![PyPI](https://img.shields.io/pypi/status/soapfish.svg)](https://pypi.org/project/soapfish/)
-[![PyPI](https://img.shields.io/pypi/wheel/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI Version](https://img.shields.io/pypi/v/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI License](https://img.shields.io/pypi/l/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI Status](https://img.shields.io/pypi/status/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI Wheel](https://img.shields.io/pypi/wheel/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI Python Versions](https://img.shields.io/pypi/pyversions/soapfish.svg)](https://pypi.org/project/soapfish/)
+[![PyPI Implementation](https://img.shields.io/pypi/implementation/soapfish.svg)](https://pypi.org/projects/soapfish/)
+
+[![GitHub License](https://img.shields.io/github/license/soapteam/soapfish.svg)](https://github.com/soapteam/soapfish)
+[![GitHub Version](https://img.shields.io/github/v/tag/soapteam/soapfish.svg?sort=semver)](https://github.com/soapteam/soapfish)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/soapteam/soapfish/test.svg)](https://github.com/soapteam/soapfish)
 
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
