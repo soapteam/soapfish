@@ -1,0 +1,55 @@
+name: Test
+
+on:
+  pull_request:
+    branches-ignore:
+      - mrosemartin84
+      - soapbox
+  push:
+    branches-ignore:
+      - mrosemartin84
+      - soapbox
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        python: ['3.6', '3.7', '3.8', '3.9']
+        framework: ['django~=1.11.0', 'django~=2.2.0', 'django~=3.0.0', 'django~=3.1.0', 'flask~=1.0.0', 'flask~=1.1.0']
+        exclude:
+          - os: 'ubuntu-latest'
+            python: '3.8'
+            framework: 'django~=1.11.0'
+          - os: 'ubuntu-latest'
+            python: '3.9'
+            framework: 'django~=1.11.0'
+    steps:
+    - name: Check out source
+      uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Determine pip cache directory
+      id: pip-cache
+      run: echo "::set-output name=dir::$(pip cache dir)"
+    - name: Persist pip cache directory
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-${{ matrix.python }}-pip-${{ hashFiles('tests/requirements/test.txt') }}
+    - name: Install dependencies
+      run: pip install --requirement=tests/requirements/test.txt --editable=. ${{ matrix.framework }}
+    - name: Run tests
+      run: >
+        python -m pytest
+        --cov=soapfish --cov-config=setup.cfg --cov-report=term-missing
+        --cov-report=xml:artifacts/${{ matrix.os }}/${{ matrix.python }}/coverage.xml
+        --junit-xml=artifacts/${{ matrix.os }}/${{ matrix.python }}/xunit.xml
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-artifacts-${{ github.actor }}-${{ github.sha }}
+        path: artifacts
