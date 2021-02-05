@@ -80,13 +80,12 @@ def schema_select(schemas, elements):
 
 def get_rendering_environment(xsd_namespaces, module='soapfish'):
     """Return a rendering environment to use with code generation templates."""
-    from . import soap, xsd, xsdspec, wsdl
+    from . import soap, wsdl, xsd, xsdspec
 
     def capitalize(value):
         return value[0].upper() + value[1:]
 
     def use(value):
-        from . import xsd
         if value == xsd.Use.OPTIONAL:
             return 'xsd.Use.OPTIONAL'
         if value == xsd.Use.REQUIRED:
@@ -95,20 +94,12 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
             return 'xsd.Use.PROHIBITED'
         raise ValueError(f'Unknown value for use attribute: {value}')
 
-    def url_regex(url):
-        return r'^%s$' % re.escape(urlparse(url).path.lstrip('/'))
-
     def url_component(url, item):
         parts = urlparse(url)
         try:
             return getattr(parts, item)
         except AttributeError as e:
             raise ValueError(f'Unknown URL component: {item}') from e
-
-    def url_template(url):
-        o = list(urlparse(url))
-        o[0:2] = ['${scheme}', '${host}']
-        return urlunparse(o)
 
     def get_type(obj, known_types=None):
         qname = None
@@ -129,10 +120,7 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         if not qname:
             raise ValueError(f'Unable to determine type of {obj}')
 
-        qname = qname.split(':')
-        if len(qname) < 2:
-            qname.insert(0, None)
-        ns, name = qname
+        ns, name = qname.split(':', 1) if ':' in qname else (None, qname)
         name = capitalize(name)
 
         if ns in xsd_namespaces:
@@ -155,8 +143,8 @@ def get_rendering_environment(xsd_namespaces, module='soapfish'):
         remove_namespace=remove_namespace,
         type=get_type,
         url_component=url_component,
-        url_regex=url_regex,
-        url_template=url_template,
+        url_regex=lambda x: r'^%s$' % re.escape(urlparse(x).path.lstrip('/')),
+        url_template=lambda x: urlunparse(('${scheme}', '${host}') + urlparse(x)[2:]),
         use=use,
     )
     env.globals.update(

@@ -545,6 +545,8 @@ class Element:
 
     def __init__(self, _type, minOccurs=1, tagname=None, nillable=False, default=None, namespace=None, substitutionGroup=None):
         """
+        Initialise an element.
+
         :param _type: Class or instance of class that inherits from Type,
                       usually a child of SimpleType from the xsd package, or
                       a user defined class that inherits from ComplexType.
@@ -1102,6 +1104,8 @@ class Schema:
                  attributeGroups=None, groups=None, complexTypes=None, elements=None, imports=None, includes=None,
                  location=None):
         """
+        Initialise a schema.
+
         :param targetNamespace: string, xsd namespace URL.
         :param elementFormDefault: unqualified/qualified. Defines if namespaces
             be used in child elements.
