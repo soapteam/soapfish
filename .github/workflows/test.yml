@@ -6,9 +6,8 @@ on:
       - mrosemartin84
       - soapbox
   push:
-    branches-ignore:
-      - mrosemartin84
-      - soapbox
+    branches:
+      - master
 
 jobs:
   build:
