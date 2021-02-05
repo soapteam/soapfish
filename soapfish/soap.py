@@ -3,7 +3,7 @@
 import logging
 import string
 
-import requests
+import httpx
 
 from . import core, namespaces as ns, soap11, soap12, wsa
 from .utils import uncapitalize
@@ -134,7 +134,7 @@ class Stub:
         logger.info("Call '%s' on '%s'", operationName, self.location)
         logger.debug('Request Headers: %s', headers)
         logger.debug('Request Envelope: %s', data)
-        r = requests.post(self.location, auth=auth, headers=headers, data=data)
+        r = httpx.post(self.location, auth=auth, headers=headers, data=data)
         logger.debug('Response Headers: %s', r.headers)
         logger.debug('Response Envelope: %s', r.content)
         return self._handle_response(method, r.headers, r.content)
