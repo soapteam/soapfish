@@ -33,8 +33,9 @@ class ExceptionLogger:
         try:
             return next_call(request)
         except self.exceptions as e:
+            message = f'{e.__class__.__name__}: {e}'
             if self.traceback:
-                self.logger.exception(e)
+                self.logger.exception(message)
             else:
-                self.logger.error('%s: %s', e.__class__.__name__, e)
+                self.logger.error(message)
             raise

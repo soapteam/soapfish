@@ -5,7 +5,7 @@ __all__ = ['flask_dispatcher']
 
 
 def flask_dispatcher(service, **dispatcher_kwargs):
-    from flask import request, Response
+    from flask import Response, request
 
     def flask_dispatch():
         soap_request = SOAPRequest(request.environ, request.data)
