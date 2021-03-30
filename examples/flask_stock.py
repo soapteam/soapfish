@@ -17,4 +17,4 @@ app.add_url_rule('/stock/soap12', 'dispatch12', dispatch12,
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
