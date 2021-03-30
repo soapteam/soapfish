@@ -765,6 +765,11 @@ class TypedList(list):
             raise ValueError(f'You must not add more than {self._list._maxOccurs} items to this list.')
         super().append(accepted_value)
 
+    def __eq__(self, other):
+        if not isinstance(other, TypedList):
+            return False
+        return self._list == other._list and super().__eq__(other)
+
 
 class ListElement(Element):
     """
@@ -1195,3 +1200,8 @@ class NamedType(ComplexType):
     def __init__(self, name=None, value=None):
         self.name = name
         self.value = value
+
+    def __eq__(self, other):
+        if not isinstance(other, NamedType):
+            return False
+        return self.name == other.name and self.value == other.value and super().__eq__(other)
