@@ -164,8 +164,7 @@ class Schema(xsd.ComplexType):
         for element in self.elements:
             if name == element.name:
                 return element
-        else:
-            return None
+        return None
 
 
 SCHEMA = xsd.Schema(
