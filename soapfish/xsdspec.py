@@ -49,7 +49,6 @@ class Restriction(xsd.ComplexType):
 
 class List(xsd.ComplexType):
     NAMESPACE = ns.xsd
-    pass
 
 
 class SimpleType(xsd.ComplexType):
