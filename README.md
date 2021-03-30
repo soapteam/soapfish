@@ -13,6 +13,9 @@ Soapfish
 [![GitHub Version](https://img.shields.io/github/v/tag/soapteam/soapfish.svg?sort=semver)](https://github.com/soapteam/soapfish)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/soapteam/soapfish/test.svg)](https://github.com/soapteam/soapfish)
 
+[![LGTM Total Alerts](https://img.shields.io/lgtm/alerts/g/soapteam/soapfish.svg)](https://lgtm.com/projects/g/soapteam/soapfish/alerts/)
+[![LGTM Language Grade: Python](https://img.shields.io/lgtm/grade/python/g/soapteam/soapfish.svg)](https://lgtm.com/projects/g/soapteam/soapfish/context:python)
+
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
 **This project is not actively maintained. If you only need a dynamic client using a predefined WSDL rather than
