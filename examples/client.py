@@ -109,7 +109,7 @@ PutOpsPort_SERVICE = soap.Service(
     name='PutOpsPort',
     targetNamespace='http://flightdataservices.com/ops.wsdl',
     location='http://127.0.0.1:8088/mockPutOpsBinding',
-    schema=Schema,
+    schemas=[Schema],
     version=soap.SOAPVersion.SOAP11,
     methods=[PutOps_method])
 

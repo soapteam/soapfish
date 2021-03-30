@@ -43,7 +43,7 @@ SERVICE11 = soap.Service(
     version=soap.SOAPVersion.SOAP11,
     # The url were request should be send.
     location='http://127.0.0.1:8000/stock/soap11',
-    schema=Schema,
+    schemas=[Schema],
     methods=[get_stock_price_method])
 
 
@@ -54,7 +54,7 @@ SERVICE12 = soap.Service(
     version=soap.SOAPVersion.SOAP12,
     # The url where request should be sent.
     location='http://127.0.0.1:8000/stock/soap12',
-    schema=Schema,
+    schemas=[Schema],
     methods=[get_stock_price_method])
 
 
@@ -172,5 +172,5 @@ PutOps_method = xsd.Method(
 SERVICE = soap.Service(
     targetNamespace='http://flightdataservices.com/ops.wsdl',
     location='http://polaris.flightdataservices.com/ws/ops',
-    schema=Schema,
+    schemas=[Schema],
     methods=[PutOps_method])
