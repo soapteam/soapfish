@@ -197,7 +197,7 @@ class SOAPDispatcher:
             response.http_content = SOAP.get_error_response(error.code, error.message, header=response.soap_header)
             response.http_status_code = 500
         else:
-            tagname = uncapitalize(response.soap_body.__class__.__name__)
+            # tagname = uncapitalize(response.soap_body.__class__.__name__)
             # self._validate_response(response.soap_body, tagname)
             # TODO: handle validation results
             if isinstance(request.method.output, str):
