@@ -748,7 +748,7 @@ class Content(Ref):
         return None
 
 
-class TypedList(list):
+class TypedList(list):  # lgtm [py/missing-equals]
     def __init__(self, element):
         super().__init__()
         self._list = element
@@ -764,11 +764,6 @@ class TypedList(list):
         if self._list._maxOccurs is not None and (len(self) + 1 > self._list._maxOccurs):
             raise ValueError(f'You must not add more than {self._list._maxOccurs} items to this list.')
         super().append(accepted_value)
-
-    def __eq__(self, other):
-        if not isinstance(other, TypedList):
-            return False
-        return self._list == other._list and super().__eq__(other)
 
 
 class ListElement(Element):
