@@ -17,7 +17,8 @@ class XSDDate:
     Also the schema spec supports "negative" dates (B.C.) and dates with years > 10000.
 
     Currently this class only supports dates representable by Python's datetime.date (with an optional time zone
-    attached) but you should not assume that this will be true forever (see LIMITATIONS.md for further information).
+    attached) but you should not assume that this will be true forever (see the limitations section in the
+    documentation for further information).
     """
 
     def __init__(self, year, month, day, tzinfo=None):

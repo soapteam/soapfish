@@ -8,6 +8,10 @@ Contents:
 
     tutorial
     middlewares
+    limitations
+    specifications
+    contributing
+    todo
 
 Indices and tables
 ==================
