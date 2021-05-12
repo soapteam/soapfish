@@ -29,7 +29,8 @@ class DatetimeTest(unittest.TestCase):
     def test_wrong_type(self):
         mixed = xsd.Element(xsd.DateTime)
         xmlelement = etree.Element('flight')
-        self.assertRaises(Exception, lambda: mixed.render(xmlelement, 'takeoff_datetime', 1))
+        with self.assertRaises(AttributeError):
+            mixed.render(xmlelement, 'takeoff_datetime', 1)
 
     def test_parsing_utctimezone(self):
         class Test(xsd.ComplexType):

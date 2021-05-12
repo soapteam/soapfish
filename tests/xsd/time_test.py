@@ -24,7 +24,7 @@ class TimeTest(SimpleTypeTestCase):
     def test_wrong_type(self):
         mixed = xsd.Element(self.xsd_type)
         xmlelement = etree.Element('foo')
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             mixed.render(xmlelement, 'bar', 1)
 
     def test_parsing_utctimezone(self):
