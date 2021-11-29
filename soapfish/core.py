@@ -18,7 +18,7 @@ class SOAPResponse:
     def __init__(self, soap_body, soap_header=None, http_status_code=200, http_content=None, http_headers=None):
         self.soap_header = soap_header
         self.soap_body = soap_body
-        self.http_status_code = 200
+        self.http_status_code = http_status_code
         self.http_headers = {} if http_headers is None else http_headers
         self.http_content = http_content
 
