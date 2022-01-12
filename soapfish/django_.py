@@ -21,7 +21,7 @@ def django_dispatcher(service, **dispatcher_kwargs):
     from django.views.decorators.csrf import csrf_exempt
 
     def django_dispatch(request):
-        soap_request = SOAPRequest(DjangoEnvironWrapper(request.environ), request.body)
+        soap_request = SOAPRequest(DjangoEnvironWrapper(request.META), request.body)
         soap_request._original_request = request
         soap_dispatcher = SOAPDispatcher(service, **dispatcher_kwargs)
         soap_response = soap_dispatcher.dispatch(soap_request)
