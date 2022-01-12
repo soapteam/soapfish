@@ -23,14 +23,8 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    - name: Determine pip cache directory
-      id: pip-cache
-      run: echo "::set-output name=dir::$(pip cache dir)"
-    - name: Persist pip cache directory
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.pip-cache.outputs.dir }}
-        key: ${{ runner.os }}-${{ matrix.python }}-pip-${{ hashFiles('tests/requirements/lint.txt') }}
+        cache: pip
+        cache-dependency-path: tests/requirements/lint.txt
     - name: Install dependencies
       run: pip install --requirement=tests/requirements/lint.txt
     - name: Run linters
