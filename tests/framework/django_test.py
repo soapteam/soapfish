@@ -21,8 +21,8 @@ else:
         USE_I18N=False,
         USE_TZ=True,
     )
-    from django.conf.urls import url
     from django.test import Client
+    from django.urls import path
 
 urlconf = collections.namedtuple('urlconf', 'urlpatterns')
 
@@ -32,7 +32,7 @@ class DjangoDispatchTest(framework.DispatchTestMixin, unittest.TestCase):
 
     def setUp(self):  # noqa
         self.service = echo_service()
-        settings.ROOT_URLCONF = urlconf(urlpatterns=(url(r'^ws/$', django_dispatcher(self.service)),))
+        settings.ROOT_URLCONF = urlconf(urlpatterns=(path('ws/', django_dispatcher(self.service)),))
         self.client = Client()
 
     def _prepare_extras(self, headers):
