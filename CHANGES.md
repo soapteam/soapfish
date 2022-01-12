@@ -49,7 +49,7 @@ the `soapfish` fork.
   - Attempts to fix handling of remote vs local imports.
 - **Miscellaneous:**
   - Renamed `SoapboxRequest` and `SoapboxResponse` to `SOAPRequest` and `SOAPResponse` respectively.
-  - Support Python 3.7+, Django 1.11, 2.2, 3.0 & 3.1, and Flask 1.0.0+
+  - Support Python 3.7+, Django 1.11, 2.2, 3.0, 3.1 & 3.2, and Flask 1.0.0+
   - Improved testing against different versions of Python, Django & Flask.
   - Improved entry points for generation scripts - additional flags, etc.
   - Moved to using an external dependency for `iso8601`
