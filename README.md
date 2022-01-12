@@ -24,7 +24,7 @@ generated code, it is recommended that you check out [Zeep](https://pypi.org/pro
 Introduction
 ------------
 
-Soapfish is a library to use SOAP services in Python. The server-side component can be used with Django, Flask, Pyramid
+Soapfish is a library to use SOAP services in Python. The server-side component can be used with Django & Flask
 and other frameworks (including plain WSGI). The library can also be used to implement SOAP clients.
 
 The library can help parsing/serializing a Python class model from/to XML and a bare-bones SOAP client.
