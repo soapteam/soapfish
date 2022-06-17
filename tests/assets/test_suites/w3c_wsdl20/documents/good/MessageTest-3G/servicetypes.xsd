@@ -1,0 +1,35 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageTest-3G/servicetypes.xsd -->
+<!-- Copyright © 2007-01-08 19:41 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xs:schema elementFormDefault="qualified" 
+           targetNamespace="http://example.org/message-test/xsd"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsmt="http://example.org/message-test/xsd">
+  
+  <xs:element name="EchoString" type="xsmt:EchoStringType"/>
+  <xs:complexType name="EchoStringType">
+    <xs:sequence>
+      <xs:element name="string" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="EchoName" type="xsmt:EchoStructType"/>
+  <xs:complexType name="EchoStructType">
+    <xs:sequence>
+      <xs:element name="FirstName" type="xs:string"/>
+      <xs:element name="MiddleName" type="xs:string"/>
+      <xs:element name="LastName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="EchoNameFault" type="xsmt:FaultStructType"/>
+  <xs:complexType name="FaultStructType">
+    <xs:sequence>
+      <xs:element name="Fault" type="xs:string"/>
+      <xs:element name="FirstName" type="xs:string"/>
+      <xs:element name="MiddleName" type="xs:string"/>
+      <xs:element name="LastName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+
+

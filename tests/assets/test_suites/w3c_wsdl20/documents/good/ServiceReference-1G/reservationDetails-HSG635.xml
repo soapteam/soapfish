@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ServiceReference-1G/reservationDetails-HSG635.xml -->
+<!-- Copyright © 2005-03-26 01:34 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<reservationDetails
+	xmlns="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://greath.example.com/2004/schemas/reservationDetails reservationDetails.xsd ">
+	<confirmationNumber>HSG635</confirmationNumber>
+	<checkInDate>2005-06-27</checkInDate>
+	<checkOutDate>2005-06-28</checkOutDate>
+	<roomType>single</roomType>
+	<smoking>true</smoking>
+</reservationDetails>

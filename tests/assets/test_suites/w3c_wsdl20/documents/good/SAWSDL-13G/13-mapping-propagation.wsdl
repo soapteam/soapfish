@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SAWSDL-13G/13-mapping-propagation.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description
+  targetNamespace="http://www.w3.org/2002/ws/sawsdl/spec/wsdl/order#"
+  xmlns="http://www.w3.org/2002/ws/sawsdl/spec/wsdl/order#"
+  xmlns:wsdl="http://www.w3.org/ns/wsdl"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:sawsdl="http://www.w3.org/2007/01/sawsdl#">
+
+  <wsdl:types>
+    <xs:schema targetNamespace="http://www.w3.org/2002/ws/sawsdl/spec/wsdl/order#" elementFormDefault="qualified">
+      <xs:element name="OrderRequest" type="OrderRequestType"
+          sawsdl:loweringSchemaMapping=""/>
+      <xs:complexType name="OrderRequestType"
+          sawsdl:loweringSchemaMapping="http://www.w3.org/2002/ws/sawsdl/spec/examples/mapping/Ont2OrderRequest.lowering">
+        <xs:sequence>
+          <xs:element name="customerNo" type="xs:integer" />
+          <xs:element name="orderItem" type="item" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="item">
+        <xs:all>
+          <xs:element name="UPC" type="xs:string" />
+        </xs:all>
+        <xs:attribute name="quantity" type="xs:integer" />
+      </xs:complexType>
+
+      <xs:element name="OrderResponse" type="confirmation"
+          sawsdl:liftingSchemaMapping=""/>
+      <xs:simpleType name="confirmation"
+          sawsdl:liftingSchemaMapping="http://www.w3.org/2002/ws/sawsdl/spec/mapping/Response2Ont.xslt">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Confirmed" />
+          <xs:enumeration value="Pending" />
+          <xs:enumeration value="Rejected" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+
+  <wsdl:interface name="Order">
+    <wsdl:operation name="order" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input element="OrderRequest" />
+      <wsdl:output element="OrderResponse" />
+    </wsdl:operation>
+  </wsdl:interface>
+</wsdl:description>

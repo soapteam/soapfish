@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOutComplexTypes-3G/canon-inout-complextypes-selftest.descmsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log xmlns="http://www.w3.org/2002/ws/desc/logs/">
+<message timestamp="2006-07-06T10:44:56.932Z" conversation="1" number="1" type="request">
+<senderHostAndPort>KERGUELEN:1355</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/echoAxis2</uri>
+</Method>
+<Host>youenn.dyndns.ws</Host>
+<Pragma>no-cache</Pragma>
+<Accept>*/*</Accept>
+<SOAPAction>"echoString"</SOAPAction>
+<Content-Type type="text/xml">text/xml</Content-Type>
+<Content-Length>229</Content-Length>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStringParam xmlns:ns1="http://userguide.axis2.apache.org/xsd">echo string</ns1:echoStringParam></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:44:57.112Z" conversation="1" number="2" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>KERGUELEN:1355</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 14:44:50 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>231</Content-Length>
+<Content-Type type="text/xml">text/xml</Content-Type>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStringReturn xmlns:ns1="http://userguide.axis2.apache.org/xsd">echo string</ns1:echoStringReturn></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:45:00.347Z" conversation="2" number="3" type="request">
+<senderHostAndPort>KERGUELEN:1356</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/echoAxis2</uri>
+</Method>
+<Host>youenn.dyndns.ws</Host>
+<Pragma>no-cache</Pragma>
+<Accept>*/*</Accept>
+<SOAPAction>"echoStringArray"</SOAPAction>
+<Content-Type type="text/xml">text/xml</Content-Type>
+<Content-Length>314</Content-Length>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStringArrayParam xmlns:ns1="http://userguide.axis2.apache.org/xsd"><ns1:string>one</ns1:string><ns1:string>two</ns1:string><ns1:string>three</ns1:string></ns1:echoStringArrayParam></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:45:01.168Z" conversation="2" number="4" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>KERGUELEN:1356</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 14:44:53 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>316</Content-Length>
+<Content-Type type="text/xml">text/xml</Content-Type>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStringArrayReturn xmlns:ns1="http://userguide.axis2.apache.org/xsd"><ns1:string>one</ns1:string><ns1:string>two</ns1:string><ns1:string>three</ns1:string></ns1:echoStringArrayReturn></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:45:04.363Z" conversation="3" number="5" type="request">
+<senderHostAndPort>KERGUELEN:1357</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/echoAxis2</uri>
+</Method>
+<Host>youenn.dyndns.ws</Host>
+<Pragma>no-cache</Pragma>
+<Accept>*/*</Accept>
+<SOAPAction>"echoStruct"</SOAPAction>
+<Content-Type type="text/xml">text/xml</Content-Type>
+<Content-Length>325</Content-Length>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStructParam xmlns:ns1="http://userguide.axis2.apache.org/xsd"><ns1:varFloat>10.000000</ns1:varFloat><ns1:varInt>10</ns1:varInt><ns1:varString>echo string</ns1:varString></ns1:echoStructParam></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:45:04.543Z" conversation="3" number="6" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>KERGUELEN:1357</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 14:44:57 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>327</Content-Length>
+<Content-Type type="text/xml">text/xml</Content-Type>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Body><ns1:echoStructReturn xmlns:ns1="http://userguide.axis2.apache.org/xsd"><ns1:varFloat>10.000000</ns1:varFloat><ns1:varInt>10</ns1:varInt><ns1:varString>echo string</ns1:varString></ns1:echoStructReturn></env:Body></env:Envelope></content>
+</message>
+</log>

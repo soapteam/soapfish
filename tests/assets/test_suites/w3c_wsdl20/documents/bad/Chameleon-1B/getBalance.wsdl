@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Chameleon-1B/getBalance.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description xmlns:tns="http://example.org/getBalance/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://example.org/getBalance/"
+	xmlns:customer="http://example.org/getBalance/customer/"
+	xmlns:account="http://example.org/getBalance/account/">
+
+	<wsdl:documentation>
+		This test shows how not to use chameleon includes. The inline
+		schema includes the no-target xsd accountInfo.xsd, which imports
+		the xsd customerInfo.xsd. The wsdl then tries to use an element
+		defined in the xsd customerInfo.xsd.
+
+		This document is invalid became there is no import for the
+		namespace http://example.org/getBalance/customer. Even
+		though the included schema imports it, the namespace MUST
+		also be explicitly imported in the types element.
+		
+		This document violates assertion Schema-1066.
+	</wsdl:documentation>
+
+	<wsdl:types>
+		<xsd:schema
+			targetNamespace="http://example.org/getBalance/account/">
+			<xsd:include schemaLocation="accountInfo.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:interface name="getBalanceInf">
+		<wsdl:operation name="getBalance"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="customer:custInfo" />
+			<wsdl:output element="account:accInfo" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOnly-3G/canon-inonly-selftest.descmsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log xmlns="http://www.w3.org/2002/ws/desc/logs/">
+<message timestamp="2006-07-06T10:22:37.446Z" conversation="1" number="1" type="request">
+<senderHostAndPort>KERGUELEN:1328</senderHostAndPort>
+<receiverHostAndPort>youenn.dyndns.ws:80</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/wss/ping</uri>
+</Method>
+<Host>youenn.dyndns.ws</Host>
+<Pragma>no-cache</Pragma>
+<Accept>*/*</Accept>
+<Content-Type type="application/soap+xml">application/soap+xml;action=""</Content-Type>
+<Content-Length>255</Content-Length>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"><env:Body><ns1:ping xmlns:ns1="http://www.wso2.com/schemas/2006/interop/pingService"><pingStringParam>echo string</pingStringParam></ns1:ping></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:22:37.726Z" conversation="1" number="2" type="response">
+<senderHostAndPort>youenn.dyndns.ws:80</senderHostAndPort>
+<receiverHostAndPort>KERGUELEN:1328</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="200">HTTP/1.1 200 OK</StatusCode>
+<Date>Thu, 06 Jul 2006 14:22:30 GMT</Date>
+<Server>Apache/2.0.50 (Win32)</Server>
+<Content-Length>0</Content-Length>
+<Content-Type type="application/soap+xml">application/soap+xml</Content-Type>
+
+</httpHeaders>
+<content></content>
+</message>
+</log>

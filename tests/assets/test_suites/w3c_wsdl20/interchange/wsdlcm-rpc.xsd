@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm-rpc.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 RPC Extension Component Model Interchange Format
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2006-05-08 Arthur Ryman (ryman@ca.ibm.com)
+	- created
+	
+	2006-06-10: Arthur Ryman (ryman@ca.ibm.com)
+	- added wrapper elements for extensions
+		
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.w3.org/2002/ws/desc/wsdl/component-rpc"
+	xmlns:cmbase="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component-rpc"
+	elementFormDefault="qualified">
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+		schemaLocation="wsdlcm-base.xsd" />
+
+	<xs:element name="rpcInterfaceOperationExtension"
+		type="RpcInterfaceOperationExtension" />
+
+	<xs:complexType name="RpcInterfaceOperationExtension">
+		<xs:sequence>
+			<xs:element name="rpcSignature" type="Signature" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="Direction">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="#in" />
+			<xs:enumeration value="#out" />
+			<xs:enumeration value="#inout" />
+			<xs:enumeration value="#return" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="Argument">
+		<xs:sequence>
+			<xs:element name="name" type="cmbase:QName" />
+			<xs:element name="direction" type="Direction" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Signature">
+		<xs:sequence>
+			<xs:element name="argument" type="Argument" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

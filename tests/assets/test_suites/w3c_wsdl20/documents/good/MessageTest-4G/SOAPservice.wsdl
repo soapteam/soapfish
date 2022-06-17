@@ -1,0 +1,135 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageTest-4G/SOAPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://example.org/message-test"
+	xmlns:tns="http://example.org/message-test"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+	xmlns:whttp="http://www.w3.org/ns/wsdl/http"
+	xmlns:xsmt="http://example.org/message-test/xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+
+	<documentation>
+		<![CDATA[
+    This test is part of a set representing functionality manifesting changes in the
+    wire format of messages.  This testcase specificially exercises the SOAP Response
+    MEP and the safety attribute.
+    
+    When running a test pass against this WSDL, each endpoint should be invoked in order, and 
+    each operation within the interface bound by that binding should be invoked in the order 
+    it appears in the interface, extended interfaces first.  Thus the order will be:
+        EchoString2 - marked as safe, allowing alternate binding details
+  
+    This test scenario defines the following extensions, which are necessary to the test framework
+    to verify facilities not testable without them.
+    - A test SOAP module.  Identified by the URI http://www.w3.org/2002/ws/desc/6/10/test-module, 
+      this module simply inserts an empty header in messages where the module is in effect. 
+      The header is of the form <module-test xmlns="http://www.w3.org/2002/ws/desc/6/10/test-module"/>.
+    - A test SOAP header.  Identified by the QName tm:TestSOAPHeader where 
+      xmlns:tm="http://www.w3.org/2002/ws/desc/6/10/test-module", this empty header is inserted
+      when required by the wsdl.
+  ]]>
+	</documentation>
+
+	<types>
+		<xs:schema elementFormDefault="qualified"
+			targetNamespace="http://example.org/message-test/xsd"
+			xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:xsmt="http://example.org/message-test/xsd">
+			<xs:element name="echoString2" type="xsmt:stringStruct" />
+			<xs:element name="echoString2Return" type="xs:string" />
+			<xs:complexType name="stringStruct">
+				<xs:sequence>
+					<xs:element name="string" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</types>
+
+
+	<interface name="ComplexEcho">
+		<operation name="EchoString2"
+			pattern="http://www.w3.org/ns/wsdl/in-out" wsdlx:safe="true" 
+      style="http://www.w3.org/ns/wsdl/style/iri">
+			<documentation>
+				Simple echo service - pass in a string, get that string
+				back. Duplicate of EchoString allowing alternate binding
+				parameters to be tested.
+			</documentation>
+			<input element="xsmt:echoString2" />
+			<output element="xsmt:echoString2Return" />
+		</operation>
+	</interface>
+
+	<binding name="ComplexEchoSOAPBinding" interface="tns:ComplexEcho"
+		type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/"
+		wsoap:mepDefault="http://www.w3.org/2003/05/soap/mep/request-response/">
+		<documentation>
+			This SOAP 1.2/HTTP binding binds the ComplexEcho service
+			while exercising the following facilities of the SOAP
+			binding: - Response SOAP MEPs. - Test SOAP module on Binding
+			Faults, Binding Operations, Binding Message References (both
+			input and output), Binding Message Fault References,
+		</documentation>
+		<operation ref="tns:EchoString2"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+			wsoap:action="http://example.org/message-test/action/EchoString2">
+			<input />
+			<output>
+				<wsoap:module
+					ref="http://www.w3.org/2002/ws/desc/6/10/test-module" />
+			</output>
+		</operation>
+	</binding>
+
+	<binding name="GenericSOAPBinding"
+		type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/"
+		wsoap:mepDefault="http://www.w3.org/2003/05/soap/mep/request-response/">
+		<documentation>
+			This SOAP 1.2/HTTP binding is generic to any interface. The
+			only constraint it imposes is the engagement of the
+			http://www.w3.org/2002/ws/desc/6/10/test-module module over
+			the whole binding. All other binding details are defaulted.
+		</documentation>
+		<wsoap:module
+			ref="http://www.w3.org/2002/ws/desc/6/10/test-module" />
+	</binding>
+
+	<binding name="ComplexEchoSOAPHTTPBinding"
+		interface="tns:ComplexEcho" type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:version="1.2"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/"
+		whttp:cookies="true" whttp:contentEncodingDefault="gzip">
+		<documentation>
+			This SOAP 1.2/HTTP binding binds the ComplexEcho service
+			while exercising the following facilities of the SOAP
+			binding: - {http location} - {http headers} - {http content
+			encoding default} - {http content encoding} - {http cookies} -
+			{http authentication scheme} - {http authentication realm}
+		</documentation>
+		<operation ref="tns:EchoString2"
+			wsoap:action="http://example.org/message-test/action/EchoString2"
+			whttp:contentEncodingDefault="">
+			<input whttp:contentEncoding="gzip" />
+			<output whttp:contentEncoding="gzip" />
+		</operation>
+	</binding>
+
+	<service name="MessageTest4GService" interface="tns:ComplexEcho">
+		<documentation>Exercise each endpoint in order.</documentation>
+		<endpoint name="MessageTestSOAP"
+			binding="tns:ComplexEchoSOAPBinding"
+			address="http://example.org/MessageTest-1G/endpoint-1" />
+		<endpoint name="MessageTestGenericSOAP"
+			binding="tns:GenericSOAPBinding"
+			address="http://example.org/MessageTest-1G/endpoint-2" />
+		<endpoint name="MessageTestSOAPHTTP"
+			binding="tns:ComplexEchoSOAPHTTPBinding"
+			address="http://example.org/MessageTest-1G/endpoint-3"
+			whttp:authenticationScheme="basic"
+			whttp:authenticationRealm="example.org Realm" />
+	</service>
+</description>

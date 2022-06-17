@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOutComplexTypes-2G/TestMetadata.xml -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/messages/good/InOutComplexTypes-2G
+	</Identifier>
+	<Title>Good Messages From InOut Interoperability Test With Complex Types</Title>
+	<Purpose>For testing interoperability of Axis2 and Canon</Purpose>
+	<Description>IN-Out MEP Operation With Complex Types</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">Axis2SampleDocLit.wsdl</Input>
+		<Input>axistocanon-inout-complextypes.wsilog</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>true</Successful>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Lawrence Mandel</Name>
+		<Affiliation>IBM</Affiliation>
+		<EMail>lmandel@ca.ibm.com</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/messages/good</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20</Reference></SeeAlso>
+</TestMetadata>

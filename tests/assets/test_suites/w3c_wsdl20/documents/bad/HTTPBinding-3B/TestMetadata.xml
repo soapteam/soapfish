@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/HTTPBinding-3B/TestMetadata.xml -->
+<!-- Copyright © 2007-02-26 04:36 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/bad/HTTPBinding-3B
+	</Identifier>
+	<Title>Bad Document HTTPBinding-3B</Title>
+	<Purpose>Illustrates the HTTP assertion HTTPBindingOperation-2101.</Purpose>
+	<Description>The value of the serialization format used for a message is a media type which MUST be covered by this range.† Wild cards (for example, "application/*") SHOULD NOT be used in this attribute information item since they may lead to interoperability problems.</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">Echo.wsdl</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>false</Successful>
+		<ViolatesAssertion>HTTPBindingOperation-2101</ViolatesAssertion>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Philippe Le Hégaret</Name>
+		<Affiliation>W3C</Affiliation>
+		<EMail>plh@w3.org</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/documents/bad</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20-adjuncts</Reference></SeeAlso>
+</TestMetadata>

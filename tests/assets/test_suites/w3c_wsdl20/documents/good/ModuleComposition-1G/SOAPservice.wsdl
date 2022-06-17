@@ -1,0 +1,120 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ModuleComposition-1G/SOAPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+    targetNamespace="http://example.org/message-test" xmlns:tns="http://example.org/message-test"
+    xmlns:wsoap="http://www.w3.org/ns/wsdl/soap" xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+    xmlns:whttp="http://www.w3.org/ns/wsdl/http" xmlns:xsmt="http://example.org/message-test/xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+
+  <documentation><![CDATA[
+    This test checks that modules at different levels are all correctly emitted on messages.
+    
+    When running a test pass against this WSDL, each endpoint should be invoked in order, and 
+    each operation within the interface bound by that binding should be invoked in the order 
+    it appears in the interface, extended interfaces first.
+  
+    This test scenario defines the following test SOAP modules, support for which is necessary if
+    messages are to be tested.
+    - A test SOAP module.  Identified by the URI http://www.w3.org/2002/ws/desc/6/10/test-module, 
+      this module simply inserts an empty header in messages where the module is in effect. 
+      The header is of the form <module-test xmlns="http://www.w3.org/2002/ws/desc/6/10/test-module"/>.
+    - A test SOAP module.  Identified by the URI http://www.w3.org/2002/ws/desc/6/10/test-module-2, 
+      this module simply inserts an empty header in messages where the module is in effect. 
+      The header is of the form <module-test-2 xmlns="http://www.w3.org/2002/ws/desc/6/10/test-module-2"/>.
+    - A test SOAP module.  Identified by the URI http://www.w3.org/2002/ws/desc/6/10/test-module-3, 
+      this module simply inserts an empty header in messages where the module is in effect. 
+      The header is of the form <module-test-3 xmlns="http://www.w3.org/2002/ws/desc/6/10/test-module-3"/>.
+    - A test SOAP module.  Identified by the URI http://www.w3.org/2002/ws/desc/6/10/test-module-4, 
+      this module simply inserts an empty header in messages where the module is in effect. 
+      The header is of the form <module-test-4 xmlns="http://www.w3.org/2002/ws/desc/6/10/test-module-4"/>.
+  ]]></documentation>
+
+  <types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://example.org/message-test/xsd"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      xmlns:xsmt="http://example.org/message-test/xsd">
+      <xs:element name="echoString" type="xs:string"/>
+      <xs:element name="echoStringReturn" type="xs:string"/>
+      <xs:element name="echoString2" type="xs:string"/>
+      <xs:element name="echoString2Return" type="xs:string"/>
+      <xs:element name="echoString3" type="xs:string"/>
+      <xs:element name="echoString3Return" type="xs:string"/>
+      <xs:element name="echoString4" type="xs:string"/>
+      <xs:element name="echoString4Return" type="xs:string"/>
+      <xs:element name="messageTestSimpleOutFault" type="xs:string"/>
+    </xs:schema>
+  </types>
+
+  <interface name="SimpleEcho">
+    <documentation>This minimal interface defines four operations, to test bindings for
+    input messages, output messages, and fault messages.</documentation>
+    <fault name="MessageTestSimpleOutFault" element="xsmt:messageTestSimpleOutFault">
+      <documentation>
+        This fault structure is populated with the operation name (local part only)
+        when a fault is thrown - intended for outfaults.</documentation>
+    </fault>
+    <operation name="EchoString" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation>Simple echo service - pass in a string, get that string back.</documentation>
+      <input element="xsmt:echoString"/>
+      <output element="xsmt:echoStringReturn"/>
+    </operation>
+    <operation name="EchoString2" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation>Simple echo service - pass in a string, get that string back.</documentation>
+      <input element="xsmt:echoString2"/>
+      <output element="xsmt:echoString2Return"/>
+    </operation>
+    <operation name="EchoStringOutFault" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <documentation><![CDATA[
+        Operation is given a string, but 
+        MessageTestSimpleOutFault should be thrown with the messageTestSimpleFault value
+          <messageTestSimpleOutFault>EchoStringOutFault</messageTestSimpleOutFault>
+      ]]></documentation>
+      <input element="xsmt:echoString4"/>
+      <output element="xsmt:echoString4Return"/>
+      <outfault ref="tns:MessageTestSimpleOutFault"/>
+    </operation>
+  </interface>
+
+  <binding name="SimpleEchoSOAPBinding" interface="tns:SimpleEcho"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation>
+      This binding tests the composition of soap modules specified at various levels.
+    </documentation>
+    <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module-4"/>
+     <fault ref="tns:MessageTestSimpleOutFault">
+      <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module-3"/>
+    </fault>
+    <operation ref="tns:EchoString"
+      wsoap:action="http://example.org/message-test/action/EchoString">
+      <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module-2"/>
+      <input>
+        <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module"/>        
+      </input>
+      <output/>
+    </operation>
+    <operation ref="tns:EchoString2"
+      wsoap:action="http://example.org/message-test/action/EchoString2">
+      <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module-2"/>
+      <input/>
+      <output>
+        <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module"/>
+      </output>
+    </operation>
+    <operation ref="tns:EchoStringOutFault"
+      wsoap:action="http://example.org/message-test/action/EchoStringOutFault">
+      <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module-2"/>
+      <input/>
+      <output/>
+      <outfault ref="tns:MessageTestSimpleOutFault">
+        <wsoap:module required="true" ref="http://www.w3.org/2002/ws/desc/6/10/test-module"/>
+      </outfault>
+    </operation>
+  </binding>
+
+  <service name="ModuleCompositionService" interface="tns:SimpleEcho">
+    <documentation>Exercise each endpoint in order.</documentation>
+    <endpoint name="ModuleCompositionSOAP" binding="tns:SimpleEchoSOAPBinding"
+      address="http://example.org/ModuleComposition-1G/endpoint-1"/>
+  </service>
+</description>

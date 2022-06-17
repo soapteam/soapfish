@@ -1,0 +1,15 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageTest-5G/TestHeader.xsd -->
+<!-- Copyright © 2007-01-22 09:26 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xs:schema elementFormDefault="qualified" targetNamespace="http://www.w3.org/2002/ws/desc/6/10/test-module"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:test="http://www.w3.org/2002/ws/desc/6/10/test-module">
+  <xs:element name="TestSOAPHeader">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:restriction base="xs:anyType">
+	      <xs:anyAttribute namespace='##other' processContents='lax' />
+        </xs:restriction>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

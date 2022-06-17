@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/LocationTemplate-3G/pathdata.xsd -->
+<!-- Copyright © 2007-02-08 22:53 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xs:schema elementFormDefault="qualified" targetNamespace="http://example.org/path-data/xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:path="http://example.org/path-data/xsd">
+
+  <xs:element name="pathdata" type="path:pathDataType"/>
+
+  <xs:complexType name="pathDataType">
+    <xs:sequence>
+      <xs:element name="full-uri" type="xs:anyURI" maxOccurs="0"/>
+      <xs:element name="path" type="xs:anyURI" maxOccurs="0"/>
+      <xs:element name="data" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="result" type="xs:anyURI"/>
+
+</xs:schema>

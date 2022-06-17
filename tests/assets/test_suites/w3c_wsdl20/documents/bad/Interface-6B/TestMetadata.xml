@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Interface-6B/TestMetadata.xml -->
+<!-- Copyright © 2008-02-13 19:00 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/bad/Interface-6B
+	</Identifier>
+	<Title>Bad Document Interface-6B</Title>
+	<Purpose>Test circular references in Interface extension</Purpose>
+	<Description>
+	As well as circular interface references, this test includes operations, 
+	faults and bindings. If the processor does not handle the circular reference
+	correctly, an infinite loop may occur.
+	</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">reservation.wsdl</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>false</Successful>
+		<ViolatesAssertion>Interface-1009</ViolatesAssertion>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>John Kaputin</Name>
+		<Affiliation>IBM</Affiliation>
+		<EMail>jkaputin@apache.org</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/documents/bad</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20#Interface-1009</Reference></SeeAlso>
+</TestMetadata>

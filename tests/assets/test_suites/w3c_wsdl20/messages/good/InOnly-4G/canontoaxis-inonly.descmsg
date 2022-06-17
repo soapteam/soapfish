@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOnly-4G/canontoaxis-inonly.descmsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log xmlns="http://www.w3.org/2002/ws/desc/logs/">
+<message timestamp="2006-07-06T10:26:44.501Z" conversation="1" number="1" type="request">
+<senderHostAndPort>KERGUELEN:1338</senderHostAndPort>
+<receiverHostAndPort>chathura.dyndns.ws:8080</receiverHostAndPort>
+<httpHeaders>
+<Method value="POST">
+<uri>/axis2/services/pingService</uri>
+</Method>
+<Host>chathura.dyndns.ws:8080</Host>
+<Pragma>no-cache</Pragma>
+<Accept>*/*</Accept>
+<Content-Type type="application/soap+xml">application/soap+xml;action=""</Content-Type>
+<Content-Length>255</Content-Length>
+
+</httpHeaders>
+<content><?_xml version="1.0"?><env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"><env:Body><ns1:ping xmlns:ns1="http://www.wso2.com/schemas/2006/interop/pingService"><pingStringParam>echo string</pingStringParam></ns1:ping></env:Body></env:Envelope></content>
+</message>
+<message timestamp="2006-07-06T10:26:44.691Z" conversation="1" number="2" type="response">
+<senderHostAndPort>chathura.dyndns.ws:8080</senderHostAndPort>
+<receiverHostAndPort>KERGUELEN:1338</receiverHostAndPort>
+<httpHeaders>
+<StatusCode value="202">HTTP/1.1 202 Accepted</StatusCode>
+<Server>Apache-Coyote/1.1</Server>
+<Set-Cookie>JSESSIONID=F9B33818B2BB719720583F648A2521FF; Path=/axis2</Set-Cookie>
+<Content-Type type="text/xml">text/xml;charset=UTF-8</Content-Type>
+<Content-Length>0</Content-Length>
+<Date>Thu, 06 Jul 2006 15:26:34 GMT</Date>
+
+</httpHeaders>
+<content></content>
+</message>
+</log>

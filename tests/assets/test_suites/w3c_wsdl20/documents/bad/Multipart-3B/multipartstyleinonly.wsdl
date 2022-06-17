@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Multipart-3B/multipartstyleinonly.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://example.org/">
+
+	<wsdl:documentation>
+		This test shows aN INvalid use of a WSDL 2.0 interface with multipart style
+		and in-only MEP. The interface message reference corresponding to the initial
+		message is not #element.
+		
+		This test violates assertion MultipartStyle-2057.
+	</wsdl:documentation>
+	
+	<wsdl:interface name="myInterface"
+		styleDefault="http://www.w3.org/ns/wsdl/style/multipart">
+		<wsdl:operation name="myOperation"
+			pattern="http://www.w3.org/ns/wsdl/in-only">
+			<wsdl:input messageLabel="In" element="#other" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

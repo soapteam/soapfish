@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/InterfaceOperation-5B/InterfaceOperation.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:tns="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows an invalid use of an interface 
+		operation. When an interface extends two
+		interfaces and both define an operation with the
+		same name the component models of those operations
+		must be equivalent. This test also violates an
+		optional assertion that states that all interface
+		operation names with a namespace should be unique.
+		
+		This document violates assertion 
+		InterfaceOperation-1020 and InterfaceOperation-1021.
+	</wsdl:documentation>
+
+	<wsdl:interface name="myInterface">
+		<wsdl:operation name="myOperation" pattern="http://www.w3.org/ns/wsdl/in-only">
+		</wsdl:operation>
+	</wsdl:interface>
+	
+	<wsdl:interface name="myInterface2">
+		<wsdl:operation name="myOperation" pattern="http://www.w3.org/ns/wsdl/in-out">
+		</wsdl:operation>
+	</wsdl:interface>
+	
+	<wsdl:interface name="myInterface3" extends="tns:myInterface tns:myInterface2">
+	</wsdl:interface>
+
+</wsdl:description>

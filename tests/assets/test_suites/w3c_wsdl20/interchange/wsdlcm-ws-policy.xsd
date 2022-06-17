@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm-ws-policy.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 WS-Policy 1.5 Component Model Interchange Format
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2007-07-06 Jonathan Marsh (jonathan@wso2.com)
+	- created
+	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.w3.org/2002/ws/desc/wsdl/component-ws-policy"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component-ws-policy"
+	xmlns:wsp="http://www.w3.org/ns/ws-policy"
+	elementFormDefault="qualified">
+
+	<xs:import
+		namespace="http://www.w3.org/ns/ws-policy"
+		schemaLocation="http://www.w3.org/2007/02/ws-policy.xsd" />
+
+	<xs:element name="policy">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="wsp:Policy" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="wspServiceExtension" type="WspServiceExtension" />
+	<xs:element name="wspEndpointExtension" type="WspEndpointExtension" />
+	<xs:element name="wspBindingExtension" type="WspBindingExtension" />
+	<xs:element name="wspBindingOperationExtension" type="WspBindingOperationExtension" />
+	<xs:element name="wspBindingFaultExtension" type="WspBindingFaultExtension" />
+	<xs:element name="wspBindingMessageReferenceExtension" type="WspBindingMessageReferenceExtension" />
+	<xs:element name="wspBindingFaultReferenceExtension" type="WspBindingFaultReferenceExtension" />
+	<xs:element name="wspInterfaceExtension" type="WspInterfaceExtension" />
+	<xs:element name="wspInterfaceOperationExtension" type="WspInterfaceOperationExtension" />
+	<xs:element name="wspInterfaceFaultExtension" type="WspInterfaceFaultExtension" />
+	<xs:element name="wspInterfaceMessageReferenceExtension" type="WspInterfaceMessageReferenceExtension" />
+	<xs:element name="wspInterfaceFaultReferenceExtension" type="WspInterfaceFaultReferenceExtension" />
+
+	<xs:complexType name="WspServiceExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspEndpointExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspBindingExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspBindingOperationExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspBindingFaultExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspBindingMessageReferenceExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspBindingFaultReferenceExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspInterfaceExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspInterfaceOperationExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspInterfaceFaultExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspInterfaceMessageReferenceExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WspInterfaceFaultReferenceExtension">
+		<xs:sequence>
+			<xs:element ref="policy" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,65 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/Compound1-1G/compound1.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+             targetNamespace="http://soapinterop.org/"
+             xmlns:tns="http://soapinterop.org/"
+             xmlns:typens="http://soapinterop.org/xsd"
+             xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:wsdlns="http://soapinterop.org/">
+  <types>
+   <schema targetNamespace="http://soapinterop.org/xsd" 
+		xmlns="http://www.w3.org/2001/XMLSchema" 
+		elementFormDefault="qualified">			
+			<complexType name="Person">
+				<sequence>
+					<element minOccurs="1" maxOccurs="1" name="Age" type="double"/>
+					<element minOccurs="1" maxOccurs="1" name="ID" type="xsd:float"/>					
+				</sequence>
+				<attribute name="Name" type="string"/>
+				<attribute name="Male" type="boolean"/>
+			</complexType>
+			<element name="x_Person" type="typens:Person"/>	
+			<element name="result_Person" type="typens:Person"/>
+			
+			<complexType name="Document">
+			<simpleContent>
+			 <extension base="string">
+			   <xsd:attribute name ="ID" type="string"/>
+			 </extension>
+			</simpleContent>
+			</complexType>	
+			<element name="x_Document" type="typens:Document"/>	
+			<element name="result_Document" type="typens:Document"/>	
+		</schema>
+  </types>
+  <interface name="SoapInteropCompound1PortType">
+    <operation name="echoPerson"
+               pattern="http://www.w3.org/ns/wsdl/in-out">
+      <input messageLabel="In" element="typens:x_Person"/>
+      <output messageLabel="Out" element="typens:result_Person"/>
+    </operation>
+    <operation name="echoDocument"
+               pattern="http://www.w3.org/ns/wsdl/in-out">
+      <input messageLabel="In" element="typens:x_Document"/>
+      <output messageLabel="Out" element="typens:result_Document"/>
+    </operation>
+  </interface>
+  <binding name="SoapInteropCompound1Binding"
+           interface="tns:SoapInteropCompound1PortType"
+           type="http://www.w3.org/ns/wsdl/soap"
+           wsoap:version="1.1"
+           wsoap:protocol="http://www.w3.org/2006/01/soap11/bindings/HTTP/">
+    <operation ref="tns:echoPerson" wsoap:action="http://soapinterop/echoPerson">
+    </operation>
+    <operation ref="tns:echoDocument" wsoap:action="http://soapinterop/echoDocument">
+    </operation>
+  </binding>
+  <service name="Compound1"
+           interface="tns:SoapInteropCompound1PortType">
+    <endpoint name="SoapInteropCompound1Port"
+              binding="tns:SoapInteropCompound1Binding"
+              address="http://127.0.0.1:8080/axis2/services/Compound1">
+    </endpoint>
+  </service>
+</description>

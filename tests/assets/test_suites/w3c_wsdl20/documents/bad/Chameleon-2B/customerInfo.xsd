@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Chameleon-2B/customerInfo.xsd -->
+<!-- Copyright © 2006-02-19 23:27 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://example.org/getBalance/customer/"
+	xmlns:tns="http://example.org/getBalance/customer/">
+
+	<xsd:complexType name="cinfoct">
+		<xsd:sequence>
+			<xsd:element name="customerSurname" type="xsd:string" />
+			<xsd:element name="customerForname" type="xsd:string" />
+			<xsd:element name="branchCode">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern
+							value="[0-9]{2}[\-][0-9]{2}[\-][0-9]{2}" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="custInfo" type="tns:cinfoct" />
+</xsd:schema>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ServiceReference-1G/reservationList-all.xml -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<reservationList
+	xmlns="http://greath.example.com/2004/schemas/reservationList"
+	xmlns:details="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://greath.example.com/2004/schemas/reservationList reservationList.xsd 
+		http://greath.example.com/2004/schemas/reservationDetails reservationDetails.xsd">
+
+	<reservation>
+		<details:confirmationNumber>HSG635</details:confirmationNumber>
+		<details:checkInDate>2005-06-27</details:checkInDate>
+		<details:checkOutDate>2005-06-28</details:checkOutDate>
+		<details:reservationDetailsSOAPEndpoint>
+			http://greath.example.com/2004/reservation/HSG635
+		</details:reservationDetailsSOAPEndpoint>
+	</reservation>
+
+	<reservation>
+		<details:confirmationNumber>OMX736</details:confirmationNumber>
+		<details:checkInDate>2005-06-01</details:checkInDate>
+		<details:checkOutDate>2005-06-03</details:checkOutDate>
+		<details:reservationDetailsSOAPEndpoint>
+			http://greath.example.com/2004/reservation/OMX736
+		</details:reservationDetailsSOAPEndpoint>
+	</reservation>
+
+	<reservation>
+		<details:confirmationNumber>WUH663</details:confirmationNumber>
+		<details:checkInDate>2005-06-11</details:checkInDate>
+		<details:checkOutDate>2005-06-15</details:checkOutDate>
+		<details:reservationDetailsSOAPEndpoint>
+			http://greath.example.com/2004/reservation/WUH663
+		</details:reservationDetailsSOAPEndpoint>
+	</reservation>
+
+</reservationList>

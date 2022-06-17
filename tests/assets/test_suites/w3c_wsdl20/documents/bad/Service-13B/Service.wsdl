@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Service-13B/Service.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Service"
+	xmlns:tns="http://example.org/Service"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a Service. An invalid endpoint
+		binding has been specified.
+
+		This document violate assertion QName-resolution-1064.
+	</wsdl:documentation>
+
+	<wsdl:interface name="EchoInterface">
+		<wsdl:operation name="Echo"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="#any" />
+			<wsdl:output element="#any" />
+		</wsdl:operation>
+	</wsdl:interface>
+
+	<wsdl:binding name="EchoSOAPBinding"
+		type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/" />
+
+	<wsdl:service name="EchoService" interface="tns:EchoInterface">
+		<wsdl:endpoint name="SOAPEndpoint" binding="EchoSOAPBinding" />
+	</wsdl:service>
+</wsdl:description>

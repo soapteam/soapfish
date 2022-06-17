@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/CreditCardFaults-1G/resSvc.xsd -->
+<!-- Copyright © 2005-11-28 23:12 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://greath.example.com/2004/schemas/resSvc"
+	xmlns="http://greath.example.com/2004/schemas/resSvc"
+	xmlns:cc="http://finance.example.com/CreditCardFaults/xsd">
+
+	<xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		namespace="http://finance.example.com/CreditCardFaults/xsd"
+		schemaLocation="credit-card-faults.xsd" />
+
+	<xs:element name="checkAvailability" type="tCheckAvailability" />
+	<xs:complexType name="tCheckAvailability">
+		<xs:sequence>
+			<xs:element name="checkInDate" type="xs:date" />
+			<xs:element name="checkOutDate" type="xs:date" />
+			<xs:element name="roomType" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="checkAvailabilityResponse" type="xs:double" />
+
+	<xs:element name="makeReservation" type="tMakeReservation" />
+	<xs:complexType name="tMakeReservation">
+		<xs:sequence>
+			<xs:element ref="cc:CreditCardType" />
+			<xs:element ref="cc:CreditCardNumber" />
+			<xs:element name="checkInDate" type="xs:date" />
+			<xs:element name="checkOutDate" type="xs:date" />
+			<xs:element name="roomType" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="makeReservationResponse" type="xs:double" />
+
+	<xs:element name="invalidDataError" type="xs:string" />
+
+</xs:schema>

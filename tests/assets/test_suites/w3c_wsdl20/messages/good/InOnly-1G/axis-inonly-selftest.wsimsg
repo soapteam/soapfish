@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOnly-1G/axis-inonly-selftest.wsimsg -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<log timestamp="2006-07-06T10:17:38.025"
+    xmlns="http://www.ws-i.org/testing/2004/07/log/"
+    xmlns:wsi-monConfig="http://www.ws-i.org/testing/2004/07/monitorConfig/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <monitor version="1.0" releaseDate="2003-03-20">
+    <implementer name="IBM" location=""/>
+    <environment>
+      <runtime name="Java(TM) 2 Runtime Environment, Standard Edition" version="1.5.0_06-b05"/>
+      <operatingSystem name="Windows XP" version="5.1"/>
+      <xmlParser name="Apache Xerces" version="Xerces-J 2.8.0"/>
+    </environment>
+    <wsi-monConfig:configuration>
+    <wsi-monConfig:comment>Comment</wsi-monConfig:comment>
+      <wsi-monConfig:logFile replace="true" location="URL">
+      <wsi-monConfig:addStyleSheet href="null" type="null" />
+    </wsi-monConfig:logFile>
+      <wsi-monConfig:logDuration>600</wsi-monConfig:logDuration>
+      <wsi-monConfig:cleanupTimeoutSeconds>3</wsi-monConfig:cleanupTimeoutSeconds>
+      <wsi-monConfig:manInTheMiddle>
+      </wsi-monConfig:manInTheMiddle>
+    </wsi-monConfig:configuration>
+  </monitor>
+
+<messageEntry xsi:type="httpMessageEntry" ID="1" conversationID="1" type="request" timestamp="2006-07-06T10:16:53.822Z">
+<messageContent>&lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body&gt;&lt;ping xmlns=&quot;http://www.wso2.com/schemas/2006/interop/pingService&quot;&gt;&lt;pingStringParam xmlns=&quot;&quot;&gt;Pinging String&lt;/pingStringParam&gt;&lt;/ping&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</messageContent>
+<senderHostAndPort>199.43.208.130:1137</senderHostAndPort>
+<receiverHostAndPort>chathura.dyndns.ws:8080</receiverHostAndPort>
+<httpHeaders>POST /axis2/services/pingService HTTP/1.1&#xd;
+User-Agent: Axis2&#xd;
+SOAPAction: urn:ping&#xd;
+Host: chathura.dyndns.ws:8080&#xd;
+Transfer-Encoding: chunked&#xd;
+Content-Type: text/xml; charset=UTF-8&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+<messageEntry xsi:type="httpMessageEntry" ID="2" conversationID="1" type="response" timestamp="2006-07-06T10:16:59.790Z">
+<messageContent></messageContent>
+<senderHostAndPort>chathura.dyndns.ws:8080</senderHostAndPort>
+<receiverHostAndPort>199.43.208.130:1137</receiverHostAndPort>
+<httpHeaders>HTTP/1.1 202 Accepted&#xd;
+Server: Apache-Coyote/1.1&#xd;
+Set-Cookie: JSESSIONID=6425D724FF08B90FDD6F10403C383344; Path=/axis2&#xd;
+Content-Type: text/xml;charset=UTF-8&#xd;
+Content-Length: 0&#xd;
+Date: Thu, 06 Jul 2006 15:16:49 GMT&#xd;
+&#xd;
+</httpHeaders>
+</messageEntry>
+</log>

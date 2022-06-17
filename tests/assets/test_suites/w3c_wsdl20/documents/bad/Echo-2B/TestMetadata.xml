@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Echo-2B/TestMetadata.xml -->
+<!-- Copyright © 2007-02-09 04:13 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/bad/Echo-2B
+	</Identifier>
+	<Title>Bad Document Echo-2B</Title>
+	<Purpose></Purpose>
+	<Description>This is a clone of Echo-2G, which has an unknown (by definition) extension.  As a Bad document is verifies an implementation's ability to flag required unknown extensions.</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">echo.wsdl</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>false</Successful>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Otu Ekanem</Name>
+		<Affiliation>BT</Affiliation>
+		<EMail>otu.ekanem@bt.com</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/documents/bad</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20</Reference></SeeAlso>
+</TestMetadata>

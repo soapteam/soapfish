@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Import-8B/Echo.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Echo"
+	xmlns:tns="http://example.org/Echo"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:types>
+		<xs:schema targetNamespace="http://example.org/Echo">
+			<xs:element name="parameter" type="xs:string"/>
+		</xs:schema>
+	</wsdl:types>
+
+	<wsdl:interface name="EchoInterface">
+		<wsdl:operation name="echoOperation"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="tns:parameter" />
+			<wsdl:output element="tns:parameter" />
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm-extensions.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 Extensions Component Model Interchange Format
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2006-05-08 Arthur Ryman (ryman@ca.ibm.com)
+	- created
+	
+	2006-06-10: Arthur Ryman (ryman@ca.ibm.com)
+	- added wrapper elements for extensions
+	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.w3.org/2002/ws/desc/wsdl/component-extensions"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component-extensions"
+	elementFormDefault="qualified">
+
+	<xs:element name="wsdlInterfaceOperationExtension"
+		type="WsdlInterfaceOperationExtension" />
+
+	<xs:complexType name="WsdlInterfaceOperationExtension">
+		<xs:sequence>
+			<xs:element name="safety" type="xs:boolean" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

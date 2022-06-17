@@ -1,0 +1,78 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/LocationTemplate-2G/SOAPservice.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+  targetNamespace="http://example.org/message-test" xmlns:tns="http://example.org/message-test"
+  xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+  xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+  xmlns:whttp="http://www.w3.org/ns/wsdl/http" xmlns:path="http://example.org/path-data/xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  
+  <documentation><![CDATA[
+    This test exercises %-encoding during http templating.
+    
+    The constructReference is provided a structure (pathdata), and returns a URI corresponding to
+    the structure, in particular, the URI constructed from the template.
+    
+    For test purposes, invoke the operation with the following structure:
+      <pathdata xmlns="http://example.org/path-data/xsd">
+        <full-uri>http://www.example.org:9443/</full-uri>
+        <path>2007/02</path>
+        <fragment>#id</fragment>
+        <data>encoded "#%*/&lt;&gt;?[\]^`{|}&#xa3; unencoded !$&amp;'()+,-.:;=@_~</data>
+      </pathdata>
+
+    When running a test pass against this WSDL, each endpoint should be invoked in order, and 
+    each operation within the interface bound by that binding should be invoked in the order 
+    it appears in the interface, extended interfaces first.
+ ]]></documentation>
+  <types>
+    <xs:import namespace="http://example.org/path-data/xsd" schemaLocation="pathdata.xsd"/>
+  </types>
+  
+  <interface name="ProbeData">
+    <documentation>This minimal interface defines a single operation which can be bound
+    in a variety of ways.</documentation>
+    <operation name="constructReference" pattern="http://www.w3.org/ns/wsdl/in-out" style="http://www.w3.org/ns/wsdl/style/iri">
+      <documentation>Simple probe service - pass in a query structure, get a uri constructed from that structure back.</documentation>
+      <input element="path:pathdata"/>
+      <output element="path:result"/>
+    </operation>
+  </interface>
+ 
+  <binding name="EncodedParameterAmp" interface="tns:ProbeData"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the that parameters are encoded successfully, including &amp; as a qps.
+      Expect: http://example.org/EncodedParameterAmp?data=encoded%20%22%23%25%2A%2F%3C%3E%3F%5B%5C%5D%5E%60%7B%7C%7D%C2%A3%20unencoded%20!$%26'()+,-.:;=@_~&amp;full-uri=http://www.example.org:9443/&amp;path=2007/02?&amp;fragment=%23id      
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="EncodedParameterAmp?data={data}" whttp:queryParameterSeparator="&amp;"/>
+  </binding>
+
+  <binding name="EncodedParameterSemicolon" interface="tns:ProbeData"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the that parameters are encoded successfully, including ; as a qps.
+      Expect: http://example.org/EncodedParameter?data=encoded%20%22%23%25%2A%2F%3C%3E%3F%5B%5C%5D%5E%60%7B%7C%7D%C2%A3%20unencoded%20!$&amp;'()+,-.:%3B=@_~;full-uri=http://www.example.org:9443/;path=2007/02?;fragment=%23id      
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="EncodedParameterSemicolon?data={data}" whttp:queryParameterSeparator=";"/>
+  </binding>
+
+  <binding name="EncodedPath" interface="tns:ProbeData"
+    type="http://www.w3.org/ns/wsdl/soap" wsoap:version="1.2"
+    wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <documentation> This binding tests the path segments can be encoded properly.
+      Expect: http://example.org/EncodedPath/encoded%20%22%23%25%2A%2F%3C%3E%3F%5B%5C%5D%5E%60%7B%7C%7D%C2%A3%20unencoded%20!$%26'()+,-.:;=@_~/service?full-uri=http://www.example.org:9443/&amp;path=2007/02?&amp;fragment=%23id
+    </documentation>
+    <operation ref="tns:constructReference" wsoap:mep="http://www.w3.org/2003/05/soap/mep/soap-response/"
+      whttp:location="EncodedPath/{data}/service"/>
+  </binding>
+  
+  <service name="ProbeDataService" interface="tns:ProbeData">
+    <documentation>Exercise each endpoint in order.</documentation>
+    <endpoint name="EncodedParameterAmpEndpoing" binding="tns:EncodedParameterAmp" address="http://example.org/"/>
+    <endpoint name="EncodedParameterSemicolonEndpoint" binding="tns:EncodedParameterSemicolon" address="http://example.org/"/>
+    <endpoint name="EncodedPathEndpoint" binding="tns:EncodedPath" address="http://example.org/"/>
+  </service>
+</description>

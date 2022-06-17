@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Include-1B/EchoImpl.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/EchoImpl"
+	xmlns:tns="http://example.org/EchoImpl"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a WSDL include. The
+		wsdl:include element MUST reference a WSDL document with the
+		same target namespace as this document. The included WSDL
+		document contains a different namespace.
+		
+		This document violates assertion Include-1081.
+	</wsdl:documentation>
+	
+	<wsdl:include location="Echo.wsdl"/>
+
+	<wsdl:binding name="EchoSOAPBinding"
+		type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/" />
+
+	<wsdl:service name="EchoService" interface="tns:EchoInterface">
+		<wsdl:documentation>The Echo service.</wsdl:documentation>
+		<wsdl:endpoint name="SOAPEndpoint"
+			binding="tns:EchoSOAPBinding" />
+	</wsdl:service>
+		
+	
+</wsdl:description>

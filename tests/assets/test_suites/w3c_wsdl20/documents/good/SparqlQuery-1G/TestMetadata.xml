@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SparqlQuery-1G/TestMetadata.xml -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/good/SparqlQuery-1G
+	</Identifier>
+	<Title>Good Document SparqlQuery-1G</Title>
+	<Purpose></Purpose>
+	<Description>
+		This WSDL describes the SPARQL Query interface as defined by the
+		SPARQL Protocol for RDF.
+	</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">sparql-protocol-query.wsdl</Input>
+		<Input role="required-extension">http://www.w3.org/ns/wsdl/soap</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>true</Successful>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>RDF Data Access Working Group</Name>
+		<Affiliation>W3C</Affiliation>
+		<EMail>public-rdf-dawg-comments@w3.org</EMail>
+	</Contributor>
+	<Rights>
+		http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231
+	</Rights>
+	<Grouping>/documents/good</Grouping>
+	<SeeAlso>
+		<Reference>http://www.w3.org/TR/wsdl20</Reference>
+		<Reference>http://www.w3.org/TR/rdf-sparql-protocol</Reference>
+	</SeeAlso>
+</TestMetadata>

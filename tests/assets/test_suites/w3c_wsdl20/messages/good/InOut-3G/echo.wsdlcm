@@ -1,0 +1,482 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOut-3G/echo.wsdlcm -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<descriptionComponent xmlns='http://www.w3.org/2002/ws/desc/wsdl/component'
+ xmlns:cmextensions='http://www.w3.org/2002/ws/desc/wsdl/component-extensions'
+ xmlns:cmbase='http://www.w3.org/2002/ws/desc/wsdl/component-base'
+ xmlns:cmhttp='http://www.w3.org/2002/ws/desc/wsdl/component-http'
+ xmlns:cmrpc='http://www.w3.org/2002/ws/desc/wsdl/component-rpc'
+ xmlns:cmsoap='http://www.w3.org/2002/ws/desc/wsdl/component-soap'
+xml:id='id-1464583191'>
+  <extensions>
+    <cmbase:uri>http://www.w3.org/ns/wsdl-extensions</cmbase:uri>
+    <cmbase:uri>http://www.w3.org/ns/wsdl/http</cmbase:uri>
+    <cmbase:uri>http://www.w3.org/ns/wsdl/rpc</cmbase:uri>
+    <cmbase:uri>http://www.w3.org/ns/wsdl/soap</cmbase:uri>
+  </extensions>
+  <interfaces>
+    <interfaceComponent xml:id='id-1853850647'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/wsdl/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>echoServiceInterface</cmbase:localName>
+      </name>
+      <interfaceOperations>
+        <interfaceOperationComponent xml:id='id-1846051863'>
+          <name>
+            <cmbase:namespaceName>http://www.wso2.com/wsdl/2006/interop/EchoService</cmbase:namespaceName>
+            <cmbase:localName>echoString</cmbase:localName>
+          </name>
+          <messageExchangePattern>http://www.w3.org/ns/wsdl/in-out</messageExchangePattern>
+          <interfaceMessageReferences>
+            <interfaceMessageReferenceComponent xml:id='id-1858847767'>
+              <messageLabel>In</messageLabel>
+              <direction>in</direction>
+              <messageContentModel>#element</messageContentModel>
+              <elementDeclaration ref='id-2114569239'/>
+              <cmbase:parent ref='id-1846051863'/>
+            </interfaceMessageReferenceComponent>
+            <interfaceMessageReferenceComponent xml:id='id-1684587543'>
+              <messageLabel>Out</messageLabel>
+              <direction>out</direction>
+              <messageContentModel>#element</messageContentModel>
+              <elementDeclaration ref='id-2114700311'/>
+              <cmbase:parent ref='id-1846051863'/>
+            </interfaceMessageReferenceComponent>
+          </interfaceMessageReferences>
+          <cmbase:parent ref='id-1853850647'/>
+          <cmextensions:wsdlInterfaceOperationExtension>
+            <cmextensions:safety>false</cmextensions:safety>
+          </cmextensions:wsdlInterfaceOperationExtension>
+        </interfaceOperationComponent>
+        <interfaceOperationComponent xml:id='id-1677935639'>
+          <name>
+            <cmbase:namespaceName>http://www.wso2.com/wsdl/2006/interop/EchoService</cmbase:namespaceName>
+            <cmbase:localName>echoXML</cmbase:localName>
+          </name>
+          <messageExchangePattern>http://www.w3.org/ns/wsdl/in-out</messageExchangePattern>
+          <interfaceMessageReferences>
+            <interfaceMessageReferenceComponent xml:id='id-1690666007'>
+              <messageLabel>In</messageLabel>
+              <direction>in</direction>
+              <messageContentModel>#element</messageContentModel>
+              <elementDeclaration ref='id-2114765847'/>
+              <cmbase:parent ref='id-1677935639'/>
+            </interfaceMessageReferenceComponent>
+            <interfaceMessageReferenceComponent xml:id='id-1692451863'>
+              <messageLabel>Out</messageLabel>
+              <direction>out</direction>
+              <messageContentModel>#element</messageContentModel>
+              <elementDeclaration ref='id-2114634775'/>
+              <cmbase:parent ref='id-1677935639'/>
+            </interfaceMessageReferenceComponent>
+          </interfaceMessageReferences>
+          <cmbase:parent ref='id-1853850647'/>
+          <cmextensions:wsdlInterfaceOperationExtension>
+            <cmextensions:safety>false</cmextensions:safety>
+          </cmextensions:wsdlInterfaceOperationExtension>
+        </interfaceOperationComponent>
+      </interfaceOperations>
+    </interfaceComponent>
+  </interfaces>
+  <bindings>
+    <bindingComponent xml:id='id-1689732119'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/wsdl/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>echoServiceSOAPBinding</cmbase:localName>
+      </name>
+      <interface ref='id-1853850647'/>
+      <type>http://www.w3.org/ns/wsdl/soap</type>
+      <bindingOperations>
+        <bindingOperationComponent xml:id='id-1667974167'>
+          <interfaceOperation ref='id-1846051863'/>
+          <cmbase:parent ref='id-1689732119'/>
+          <cmsoap:soapBindingOperationExtension>
+            <cmsoap:soapMep>http://www.w3.org/2003/05/soap/mep/soap-response/</cmsoap:soapMep>
+          </cmsoap:soapBindingOperationExtension>
+        </bindingOperationComponent>
+        <bindingOperationComponent xml:id='id-1664336919'>
+          <interfaceOperation ref='id-1677935639'/>
+          <cmbase:parent ref='id-1689732119'/>
+          <cmsoap:soapBindingOperationExtension>
+            <cmsoap:soapMep>http://www.w3.org/2003/05/soap/mep/soap-response/</cmsoap:soapMep>
+          </cmsoap:soapBindingOperationExtension>
+        </bindingOperationComponent>
+      </bindingOperations>
+      <cmsoap:soapBindingExtension>
+        <cmsoap:soapUnderlyingProtocol>http://www.w3.org/2003/05/soap/bindings/HTTP/</cmsoap:soapUnderlyingProtocol>
+        <cmsoap:soapVersion>1.2</cmsoap:soapVersion>
+      </cmsoap:soapBindingExtension>
+    </bindingComponent>
+  </bindings>
+  <services>
+    <serviceComponent xml:id='id-1677542423'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/wsdl/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>echoService</cmbase:localName>
+      </name>
+      <interface ref='id-1853850647'/>
+      <endpoints>
+        <endpointComponent xml:id='id-1670218775'>
+          <name>echoServiceSOAPBinding_http</name>
+          <binding ref='id-1689732119'/>
+          <address>http://www-lk.wso2.com/axis2/services/EchoService</address>
+          <cmbase:parent ref='id-1677542423'/>
+        </endpointComponent>
+      </endpoints>
+    </serviceComponent>
+  </services>
+  <elementDeclarations>
+    <elementDeclarationComponent xml:id='id-2114569239'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/schemas/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>echoString</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </elementDeclarationComponent>
+    <elementDeclarationComponent xml:id='id-2114700311'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/schemas/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>echoStringResponse</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </elementDeclarationComponent>
+    <elementDeclarationComponent xml:id='id-2114765847'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/schemas/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>echoXML</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </elementDeclarationComponent>
+    <elementDeclarationComponent xml:id='id-2114634775'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/schemas/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>echoXMLResponse</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </elementDeclarationComponent>
+  </elementDeclarations>
+  <typeDefinitions>
+    <typeDefinitionComponent xml:id='id-2124055575'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>ENTITIES</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2130248727'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>ENTITY</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125923351'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>ID</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125726743'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>IDREF</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125595671'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>IDREFS</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2102166551'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>NCName</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2102101015'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>NMTOKEN</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2129789975'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>NMTOKENS</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2126578711'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>NOTATION</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2124678167'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>Name</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2126251031'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>QName</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2126644247'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>anyURI</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2130052119'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>base64Binary</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2102232087'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>boolean</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2122515479'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>byte</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125988887'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>date</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2128708631'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>dateTime</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2129167383'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>decimal</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2126775319'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>double</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2130641943'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>duration</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2122646551'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>float</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125399063'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>gDay</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2129986583'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>gMonth</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2124317719'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>gMonthDay</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2102297623'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>gYear</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2124809239'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>gYearMonth</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2126709783'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>hexBinary</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125792279'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>int</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2101773335'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>integer</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2124186647'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>language</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2101969943'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>long</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2101838871'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>negativeInteger</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2130576407'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>nonNegativeInteger</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2123793431'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>nonPositiveInteger</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2124121111'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>normalizedString</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2122318871'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>positiveInteger</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2101904407'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>short</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2130510871'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>string</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2126054423'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>time</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2128970775'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>token</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2122908695'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>unsignedByte</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125464599'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>unsignedInt</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2126119959'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>unsignedLong</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2125333527'>
+      <name>
+        <cmbase:namespaceName>http://www.w3.org/2001/XMLSchema</cmbase:namespaceName>
+        <cmbase:localName>unsignedShort</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2114290711'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/schemas/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>tEchoString</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+    <typeDefinitionComponent xml:id='id-2114356247'>
+      <name>
+        <cmbase:namespaceName>http://www.wso2.com/schemas/2006/interop/EchoService</cmbase:namespaceName>
+        <cmbase:localName>tEchoXML</cmbase:localName>
+      </name>
+      <system>http://www.w3.org/2001/XMLSchema</system>
+    </typeDefinitionComponent>
+  </typeDefinitions>
+</descriptionComponent>

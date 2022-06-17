@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/TicketAgent-1B/TicketAgent-bad.wsdl -->
+<!-- Copyright © 2007-03-23 05:52 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/TicketAgent.wsdl"
+	xmlns:xsTicketAgent="http://example.org/TicketAgent.xsd"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows an invalid order of elements.
+		The wsdl:types element MUST preceed the wsdl:interface element.
+		
+		This document violates assertion Description-1005.
+	</wsdl:documentation>
+
+	<wsdl:interface name="TicketAgent">
+		<wsdl:operation name="listFlights"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="xsTicketAgent:listFlightsRequest" />
+			<wsdl:output element="xsTicketAgent:listFlightsResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="reserveFlight"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="xsTicketAgent:reserveFlightRequest" />
+			<wsdl:output element="xsTicketAgent:reserveFlightResponse" />
+		</wsdl:operation>
+	</wsdl:interface>
+
+	<wsdl:types>
+		<xs:import schemaLocation="TicketAgent.xsd"
+			namespace="http://example.org/TicketAgent.xsd" />
+	</wsdl:types>
+
+</wsdl:description>

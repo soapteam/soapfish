@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SchemaLocationFragment-1G/Details.xsd -->
+<!-- Copyright © 2006-02-19 23:27 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<xs:schema
+	targetNamespace="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:items="http://greath.example.com/2004/schemas/reservationItems"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:import
+		namespace="http://greath.example.com/2004/schemas/reservationItems"
+		schemaLocation="Items.wsdl#items" />
+
+	<xs:element name="reservationDetails">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="items:confirmationNumber" />
+				<xs:element ref="items:checkInDate" />
+				<xs:element ref="items:checkOutDate" />
+				<xs:element ref="items:roomType" />
+				<xs:element ref="items:smoking" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
+

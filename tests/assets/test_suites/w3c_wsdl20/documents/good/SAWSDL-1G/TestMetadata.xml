@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SAWSDL-1G/TestMetadata.xml -->
+<!-- Copyright © 2007-02-09 04:13 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+  <Identifier>
+    http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/good/SAWSDL-1G
+  </Identifier>
+  <Title>Good Document SAWSDL-1G</Title>
+  <Purpose>SAWSDL modelReference on WSDL Interface components</Purpose>
+  <Description/>
+  <Status>accepted</Status>
+  <SpecRef>http://www.w3.org/2002/ws/sawsdl/spec/SAWSDL.html#annotateWSDLInterfaces</SpecRef>
+  <Preconditions>none</Preconditions>
+  <Inputs>
+    <Input role="root">01-interface-annotation.wsdl</Input>
+    <Input>01-multiple-interface-annotation.wsdl</Input>
+    <Input role="required-extension">http://www.w3.org/2007/01/sawsdl#</Input>
+  </Inputs>
+  <ExpectedResults>
+    <Successful>true</Successful>
+  </ExpectedResults>
+  <Version>1.0</Version>
+  <Contributor>
+    <Name>Jacek Kopecky</Name>
+    <Affiliation>Chair, SAWSDL WG</Affiliation>
+    <EMail>jacek.kopecky@deri.org</EMail>
+  </Contributor>
+  <Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+  <Grouping>/documents/good</Grouping>
+  <SeeAlso>
+    <Reference>http://www.w3.org/TR/wsdl20</Reference>
+    <Reference>http://www.w3.org/2002/ws/sawsdl/CR/testsuite</Reference>
+  </SeeAlso>
+</TestMetadata>

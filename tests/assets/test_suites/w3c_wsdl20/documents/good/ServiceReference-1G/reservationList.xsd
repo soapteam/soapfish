@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ServiceReference-1G/reservationList.xsd -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	targetNamespace="http://greath.example.com/2004/schemas/reservationList"
+	xmlns:tns="http://greath.example.com/2004/schemas/reservationList"
+	xmlns:details="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:wsdli="http://www.w3.org/ns/wsdl-instance">
+
+	<import namespace="http://www.w3.org/ns/wsdl-instance" />
+
+	<import
+		namespace="http://greath.example.com/2004/schemas/reservationDetails"
+		schemaLocation="reservationDetails.xsd" />
+
+	<element name="reservation">
+		<annotation>
+			<documentation>
+				A reservation contains the confirmation number, check-in
+				and check-out dates, and a reference to a Reservation
+				Details Web service.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element ref="details:confirmationNumber" />
+				<element ref="details:checkInDate" />
+				<element ref="details:checkOutDate" />
+				<element ref="details:reservationDetailsSOAPEndpoint" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="reservationList">
+		<annotation>
+			<documentation>
+				A reservation list contains a sequence of zero or more
+				reservations.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element ref="tns:reservation" minOccurs="0"
+					maxOccurs="unbounded">
+				</element>
+			</sequence>
+			<attribute ref="wsdli:wsdlLocation" />
+		</complexType>
+	</element>
+
+</schema>

@@ -1,0 +1,33 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/MessageTest-6G/servicetypes.xsd -->
+<!-- Copyright © 2007-01-17 06:02 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://example.org/message-test/xsd"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      xmlns:xsmt="http://example.org/message-test/xsd">
+      <xs:element name="echoString" type="xs:string"/>
+      <xs:element name="echoStringReturn" type="xs:string"/>
+      <xs:element name="echoString2" type="xs:string"/>
+      <xs:element name="echoString2Return" type="xs:string"/>
+      <xs:element name="echoString3" type="xs:string"/>
+      <xs:element name="echoString3Return" type="xs:string"/>
+      <xs:element name="EchoInt" type="xsmt:intStruct"/>
+      <xs:complexType name="intStruct">
+        <xs:sequence>
+          <xs:element name="int" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="echoIntReturn" type="xs:int"/>
+      <xs:element name="echoInt2" type="xs:int"/>
+      <xs:element name="echoInt2Return" type="xs:int"/>
+      <xs:element name="echoInt3" type="xs:int"/>
+      <xs:element name="echoInt3Return" type="xs:int"/>
+      <xs:element name="sendString" type="xs:string"/>
+      <xs:element name="sendInt" type="xs:int"/>
+      <xs:complexType name="IntFaultStruct">
+        <xs:all>
+          <xs:element name="faultNumber" type="xs:int"/>
+          <xs:element name="faultOperationName" type="xs:string"/>
+        </xs:all>
+      </xs:complexType>
+      <xs:element name="messageTestFault" type="xsmt:IntFaultStruct"/>
+      <xs:element name="messageTestSimpleFault" type="xs:string"/>
+    </xs:schema>

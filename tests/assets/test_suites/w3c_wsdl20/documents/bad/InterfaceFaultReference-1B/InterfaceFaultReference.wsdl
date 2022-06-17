@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/InterfaceFaultReference-1B/InterfaceFaultReference.wsdl -->
+<!-- Copyright © 2007-03-23 05:52 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:tns="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows a invalid use of WSDL 2.0 interface 
+		fault reference. The fault reference direction must
+		follow the direction outlined by the MEP. In this
+		example the MEP specifies that the fault must have
+		the opposite direction as the message reference but
+		it has the same direction.
+		
+		This document violates assertion 
+		InterfaceFaultReference-1038.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:schema targetNamespace="http://example.org">
+			<xs:element name="myElement" type="xs:string" />
+		</xs:schema>
+	</wsdl:types>
+	
+	<wsdl:interface name="myInterface">
+		<wsdl:operation name="myOperation" pattern="http://www.w3.org/ns/wsdl/robust-in-only">
+			<wsdl:input element="tns:myElement"/>
+			<wsdl:infault ref="tns:myFault"/>
+		</wsdl:operation>
+		<wsdl:fault name="myFault" element="tns:myElement"></wsdl:fault>
+	</wsdl:interface>
+
+</wsdl:description>

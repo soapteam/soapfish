@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ServiceReference-1G/reservationServiceReferences-HSG635.xml -->
+<!-- Copyright © 2005-06-17 01:00 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<details:reservationDetailsService
+	xmlns:details="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://greath.example.com/2004/schemas/reservationDetails reservationDetails.xsd">
+
+	<details:soap>
+		http://greath.example.com/2004/reservation/HSG635
+	</details:soap>
+
+	<details:secure-soap>
+		https://greath.example.com/2004/reservation/HSG635
+	</details:secure-soap>
+
+</details:reservationDetailsService>

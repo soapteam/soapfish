@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Schema-4B/Schema.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://example.org/"
+	xmlns:person="http://example.org/Person/">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a schema QName
+		reference. The input and output elements reference
+		the name element in the namespace 
+		http://example.org/Person/ but this namespace has
+		not been imported properly. Namespaces imported in
+		inline schemas are not visible to the WSDL document.
+		
+		This test violates assertions Types-1300000,
+		Types-1300001, Types-1300002 and Description-0024.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:schema targetNamespace="http://example.org/">
+			<xs:import namespace="http://example.org/Person/" schemaLocation="Schema.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	
+	<wsdl:interface name="People">
+		<wsdl:operation name="getPerson" pattern="http://www.w3.org/ns/wsdl/in-out">
+			<wsdl:input element="person:name"></wsdl:input>
+			<wsdl:output element="person:name"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:interface>
+</wsdl:description>

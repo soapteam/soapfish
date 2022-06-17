@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/W3CBugzillaHttp-1G/nc.xsd -->
+<!-- Copyright © 2007-04-18 06:17 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://home.netscape.com/NC-rdf#"
+	xmlns:nc="http://home.netscape.com/NC-rdf#"
+	elementFormDefault="qualified">
+	
+	<attribute name="parseType" type="string"></attribute>
+	
+</schema>

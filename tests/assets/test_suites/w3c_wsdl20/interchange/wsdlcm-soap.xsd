@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm-soap.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 SOAP Binding Component Model Interchange Format
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2006-05-08 Arthur Ryman (ryman@ca.ibm.com)
+	- created
+	
+	2006-05-19 Arthur Ryman (ryman@ca.ibm.com)
+	- corrected SoapFaultCodeType and SoapFaultSubcodesType to use complex type	for QNames
+	
+	2006-06-10: Arthur Ryman (ryman@ca.ibm.com)
+	- moved parent into base
+	- added wrapper elements for extensions
+	
+	2006-06-18: Arthur Ryman (ryman@ca.ibm.com)
+	- added missing HTTP properties
+	
+	{http location} on Binding Operation components, as defined in 6.4 Binding Operations
+	
+	{http headers} on Binding Message Reference and
+	Binding Fault components, as defined in 6.5 Declaring HTTP Headers
+	
+	{http content encoding default} on Binding and 
+	Binding Operation components, 
+	
+	{http content encoding} on Binding Message Reference and 
+	Binding Fault components, as defined in 6.8 Specifying the Content Encoding
+	
+	{http cookies} on Binding components, as defined in 6.9 Specifying the Use of HTTP Cookies
+	
+	{http authentication scheme} and 
+	{http authentication realm} on Endpoint components, as defined in 6.10 Specifying HTTP Access Authentication
+	
+	2006-07-06: Arthur Ryman (ryman@ca.ibm.com)
+	- made {http cookies} optional within the SOAP binding extension
+	
+	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.w3.org/2002/ws/desc/wsdl/component-soap"
+	xmlns:cmbase="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+	xmlns:cmhttp="http://www.w3.org/2002/ws/desc/wsdl/component-http"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component-soap"
+	elementFormDefault="qualified">
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+		schemaLocation="wsdlcm-base.xsd" />
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-http"
+		schemaLocation="wsdlcm-http.xsd" />
+
+	<xs:element name="soapBindingExtension" type="SoapBindingExtension" />
+
+	<xs:complexType name="SoapBindingExtension">
+		<xs:sequence>
+			<xs:element ref="cmhttp:httpCookies" minOccurs="0" />
+			<xs:element ref="cmhttp:httpContentEncodingDefault"
+				minOccurs="0" />
+			<xs:element ref="cmhttp:httpQueryParameterSeparatorDefault" minOccurs="0"/>
+			<xs:element ref="soapMepDefault" minOccurs="0" />
+			<xs:element ref="soapModules" minOccurs="0" />
+			<xs:element ref="soapUnderlyingProtocol" />
+			<xs:element ref="soapVersion" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="soapBindingFaultExtension"
+		type="SoapBindingFaultExtension" />
+
+	<xs:complexType name="SoapBindingFaultExtension">
+		<xs:sequence>
+			<xs:element ref="cmhttp:httpHeaders" minOccurs="0" />
+			<xs:element ref="cmhttp:httpContentEncoding" minOccurs="0" />
+			<xs:element ref="soapFaultCode" />
+			<xs:element ref="soapFaultSubcodes" />
+			<xs:element ref="soapHeaders" minOccurs="0" />
+			<xs:element ref="soapModules" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="soapBindingOperationExtension"
+		type="SoapBindingOperationExtension" />
+
+	<xs:complexType name="SoapBindingOperationExtension">
+		<xs:sequence>
+			<xs:element ref="cmhttp:httpLocation" minOccurs="0" />
+			<xs:element ref="cmhttp:httpContentEncodingDefault"
+				minOccurs="0" />
+			<xs:element ref="cmhttp:httpQueryParameterSeparator" minOccurs="0"/>
+			<xs:element ref="soapAction" minOccurs="0" />
+			<xs:element ref="soapMep" minOccurs="0" />
+			<xs:element ref="soapModules" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="soapEndpointExtension"
+		type="SoapEndpointExtension" />
+
+	<xs:complexType name="SoapEndpointExtension">
+		<xs:sequence>
+			<xs:element ref="cmhttp:httpAuthenticationRealm"
+				minOccurs="0" />
+			<xs:element ref="cmhttp:httpAuthenticationScheme"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="soapBindingMessageReferenceExtension"
+		type="SoapBindingMessageReferenceExtension" />
+
+	<xs:complexType name="SoapBindingMessageReferenceExtension">
+		<xs:sequence>
+			<xs:element ref="cmhttp:httpHeaders" minOccurs="0" />
+			<xs:element ref="cmhttp:httpContentEncoding" minOccurs="0" />
+			<xs:element ref="soapHeaders" minOccurs="0" />
+			<xs:element ref="soapModules" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="soapBindingFaultReferenceExtension"
+		type="SoapBindingFaultReferenceExtension" />
+
+	<xs:complexType name="SoapBindingFaultReferenceExtension">
+		<xs:sequence>
+			<xs:element ref="soapModules" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="soapAction" type="xs:anyURI" />
+
+	<xs:element name="soapFaultCode" type="SoapFaultCodeType" />
+
+	<xs:element name="soapFaultSubcodes" type="SoapFaultSubcodesType" />
+
+	<xs:element name="soapHeaders" type="SoapHeaderBlockComponents" />
+
+	<xs:element name="soapMep" type="xs:anyURI" />
+
+	<xs:element name="soapMepDefault" type="xs:anyURI" />
+
+	<xs:element name="soapModules" type="SoapModuleComponents" />
+
+	<xs:element name="soapUnderlyingProtocol" type="xs:anyURI" />
+
+	<xs:element name="soapVersion" type="xs:string" />
+
+	<xs:complexType name="SoapFaultCodeType">
+		<xs:annotation>
+			<xs:documentation>
+				Empty content represents #any.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="code" type="cmbase:QName" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SoapFaultSubcodesType">
+		<xs:annotation>
+			<xs:documentation>
+				Empty content represents #any.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="subcodes" type="CodesType" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="CodesType">
+		<xs:annotation>
+			<xs:documentation>
+				A list of zero or more QName codes.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="code" type="cmbase:QName" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SoapHeaderBlockComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of SOAP Header Block.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="soapHeaderBlockComponent"
+				type="SoapHeaderBlockComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SoapHeaderBlockComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of SOAP Header Block is (name of
+				elementDeclaration).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="elementDeclaration"
+						type="cmbase:Ref" />
+					<xs:element name="mustUnderstand" type="xs:boolean" />
+					<xs:element name="required" type="xs:boolean" />
+					<xs:element ref="cmbase:parent" />
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SoapModuleComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of SOAP Module.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="soapModuleComponent"
+				type="SoapModuleComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SoapModuleComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of SOAP Module is (ref).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="ref" type="xs:anyURI" />
+					<xs:element name="required" type="xs:boolean" />
+					<xs:element ref="cmbase:parent" />
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

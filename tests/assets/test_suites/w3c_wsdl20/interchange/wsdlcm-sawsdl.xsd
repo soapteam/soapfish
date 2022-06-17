@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm-sawsdl.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 SAWSDL Component Model Interchange Format
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2007-02-08 Jonathan Marsh (jonathan@wso2.com)
+	- created
+	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:cmsawsdl="http://www.w3.org/2002/ws/desc/wsdl/component-sawsdl"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component-sawsdl"
+	xmlns:sawsdl="http://www.w3.org/2007/01/sawsdl#"
+	xmlns:cmbase="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+	elementFormDefault="qualified">
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+		schemaLocation="wsdlcm-base.xsd" />
+
+	<xs:element name="sawsdlInterfaceExtension"
+		type="cmsawsdl:SawsdlInterfaceExtension" />
+	
+	<xs:complexType name="SawsdlInterfaceExtension">
+		<xs:sequence>
+			<xs:element ref="cmsawsdl:modelReference" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="sawsdlInterfaceFaultExtension"
+		type="cmsawsdl:SawsdlInterfaceFaultExtension" />
+
+	<xs:complexType name="SawsdlInterfaceFaultExtension">
+		<xs:sequence>
+			<xs:element ref="cmsawsdl:modelReference" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="sawsdlInterfaceOperationExtension"
+		type="cmsawsdl:SawsdlInterfaceOperationExtension" />
+
+	<xs:complexType name="SawsdlInterfaceOperationExtension">
+		<xs:sequence>
+			<xs:element ref="cmsawsdl:modelReference" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="sawsdlTypeDefinitionExtension"
+		type="cmsawsdl:SawsdlTypeDefinitionExtension" />
+	
+	<xs:complexType name="SawsdlTypeDefinitionExtension">
+		<xs:sequence>
+			<xs:element ref="cmsawsdl:modelReference" minOccurs="0"/>
+			<xs:element ref="cmsawsdl:liftingSchemaMapping" minOccurs="0"/>
+			<xs:element ref="cmsawsdl:loweringSchemaMapping" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="sawsdlElementDeclarationExtension"
+		type="cmsawsdl:SawsdlElementDeclarationExtension" />
+	
+	<xs:complexType name="SawsdlElementDeclarationExtension">
+		<xs:sequence>
+			<xs:element ref="cmsawsdl:modelReference" minOccurs="0"/>
+			<xs:element ref="cmsawsdl:liftingSchemaMapping" minOccurs="0"/>
+			<xs:element ref="cmsawsdl:loweringSchemaMapping" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="modelReference" type="cmbase:Uris" />
+	<xs:element name="liftingSchemaMapping" type="cmbase:ZeroOrMoreUris" />
+	<xs:element name="loweringSchemaMapping" type="cmbase:ZeroOrMoreUris" />
+	
+</xs:schema>

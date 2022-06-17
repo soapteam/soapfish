@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ServiceReference-1G/reservationList.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://greath.example.com/2004/services/reservationList"
+	xmlns:tns="http://greath.example.com/2004/services/reservationList"
+	xmlns:details="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:list="http://greath.example.com/2004/schemas/reservationList"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<documentation>
+		This document describes the GreatH Reservation List Web
+		services. Use this service to retrieve lists of reservations
+		based on a variety of search criteria.
+	</documentation>
+
+	<types>
+		<xs:import
+			namespace="http://greath.example.com/2004/schemas/reservationDetails"
+			schemaLocation="reservationDetails.xsd" />
+		<xs:import
+			namespace="http://greath.example.com/2004/schemas/reservationList"
+			schemaLocation="reservationList.xsd" />
+	</types>
+
+	<interface name="reservationListInterface">
+
+		<operation name="retrieve"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<input messageLabel="In" element="#none" />
+			<output messageLabel="Out" element="list:reservationList" />
+		</operation>
+
+		<operation name="retrieveByConfirmationNumber"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<input messageLabel="In"
+				element="details:confirmationNumber" />
+			<output messageLabel="Out" element="list:reservationList" />
+		</operation>
+
+		<operation name="retrieveByCheckInDate"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<input messageLabel="In" element="details:checkInDate" />
+			<output messageLabel="Out" element="list:reservationList" />
+		</operation>
+
+		<operation name="retrieveByCheckOutDate"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<input messageLabel="In" element="details:checkOutDate" />
+			<output messageLabel="Out" element="list:reservationList" />
+		</operation>
+
+	</interface>
+
+	<binding name="reservationListSOAPBinding"
+		interface="tns:reservationListInterface"
+		type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+
+		<operation ref="tns:retrieve"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+
+		<operation ref="tns:retrieveByConfirmationNumber"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+
+		<operation ref="tns:retrieveByCheckInDate"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+
+		<operation ref="tns:retrieveByCheckOutDate"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+
+	</binding>
+
+	<service name="reservationListService"
+		interface="tns:reservationListInterface">
+
+		<endpoint name="reservationListEndpoint"
+			binding="tns:reservationListSOAPBinding"
+			address="http://greath.example.com/2004/reservationList" />
+
+	</service>
+
+</description>

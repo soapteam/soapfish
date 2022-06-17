@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/HTTPBinding-2B/Echo.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/Echo"
+	xmlns:tns="http://example.org/Echo"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:whttp="http://www.w3.org/ns/wsdl/http"
+	xmlns:wsdlx="http://www.w3.org/ns/wsdl-extensions"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows an invalid use of the HTTP binding.
+	</wsdl:documentation>
+
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			elementFormDefault="qualified"
+			targetNamespace="http://example.org/Echo">
+			<xsd:element name="Echo" type="xsd:string" />
+			<xsd:element name="EchoResponse" type="xsd:string" />
+			<xsd:element name="EchoFault" type="xsd:string" />
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:interface name="EchoInterface">
+		<wsdl:operation name="echo"
+			pattern="http://www.w3.org/ns/wsdl/in-out" wsdlx:safe="true">
+			<wsdl:input element="tns:Echo" />
+			<wsdl:output element="tns:EchoResponse" />
+		</wsdl:operation>
+		<wsdl:fault name="EchoFault" element="tns:EchoFault" />
+	</wsdl:interface>
+
+	<wsdl:binding name="EchoHTTPBinding" interface="tns:EchoInterface"
+		type="http://www.w3.org/ns/wsdl/http" whttp:version="1.1">
+		<wsdl:operation ref="tns:echo" whttp:method="GET" />
+		<wsdl:fault ref="tns:EchoFault" whttp:code="4000004"/>
+	</wsdl:binding>
+
+
+	<wsdl:service name="EchoService" interface="tns:EchoInterface">
+		<wsdl:documentation>The Echo service.</wsdl:documentation>
+		<wsdl:endpoint name="EchoHTTPEndpoint"
+			binding="tns:EchoHTTPBinding" whttp:authenticationScheme="basic"
+			whttp:authenticationRealm="example.org Realm" />
+	</wsdl:service>
+	
+</wsdl:description>

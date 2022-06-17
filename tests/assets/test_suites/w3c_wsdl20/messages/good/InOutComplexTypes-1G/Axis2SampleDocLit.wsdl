@@ -1,0 +1,76 @@
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/messages/good/InOutComplexTypes-1G/Axis2SampleDocLit.wsdl -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+             targetNamespace="http://userguide.axis2.apache.org/Axis2SampleDocLit"
+             xmlns:tns="http://userguide.axis2.apache.org/Axis2SampleDocLit"
+             xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+             xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+
+             xmlns:xsd1="http://userguide.axis2.apache.org/xsd">
+  <types>
+    <schema elementFormDefault="qualified" targetNamespace="http://userguide.axis2.apache.org/xsd" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            <complexType name="ArrayOfstring_literal">
+                <sequence>
+                    <element maxOccurs="unbounded" minOccurs="1" name="string" type="xsd:string"/>
+                </sequence>
+            </complexType>
+            <complexType name="SOAPStruct">
+                <all>
+                    <element name="varFloat" type="xsd:float"/>
+                    <element name="varInt" type="xsd:int"/>
+                    <element name="varString" type="xsd:string"/>
+                </all>
+            </complexType>
+
+            <element name="echoStringParam" type="xsd:string"/>
+            <element name="echoIntParam" type="xsd:int"/>
+
+            <element name="echoStringReturn" type="xsd:string"/>
+            <element name="echoStringArrayParam" type="xsd1:ArrayOfstring_literal"/>
+
+            <element name="echoStringArrayReturn" type="xsd1:ArrayOfstring_literal"/>
+
+            <element name="echoStructParam" type="xsd1:SOAPStruct"/>
+
+            <element name="echoStructReturn" type="xsd1:SOAPStruct"/>
+        </schema>
+  </types>
+  <interface name="Axis2SampleDocLitPortType">
+    <operation name="echoString"
+               pattern="http://www.w3.org/ns/wsdl/in-out">
+      <input messageLabel="In" element="xsd1:echoStringParam"/>
+      <output messageLabel="Out" element="xsd1:echoStringReturn"/>
+    </operation>
+    <operation name="echoStringArray"
+               pattern="http://www.w3.org/ns/wsdl/in-out">
+      <input messageLabel="In" element="xsd1:echoStringArrayParam"/>
+      <output messageLabel="Out" element="xsd1:echoStringArrayReturn"/>
+    </operation>
+    <operation name="echoStruct"
+               pattern="http://www.w3.org/ns/wsdl/in-out">
+      <input messageLabel="In" element="xsd1:echoStructParam"/>
+      <output messageLabel="Out" element="xsd1:echoStructReturn"/>
+    </operation>
+  </interface>
+  <binding name="Axis2SampleDocLitPortBinding"
+           interface="tns:Axis2SampleDocLitPortType"
+           type="http://www.w3.org/ns/wsdl/soap"
+           wsoap:version="1.1"
+           wsoap:protocol="http://www.w3.org/2006/01/soap11/bindings/HTTP/">
+    <operation ref="tns:echoString" wsoap:action="echoString">
+    </operation>
+    <operation ref="tns:echoStringArray" wsoap:action="echoStringArray">
+    </operation>
+    <operation ref="tns:echoStruct" wsoap:action="echoStruct">
+    </operation>
+  </binding>
+  <service name="Axis2SampleDocLitService"
+           interface="tns:Axis2SampleDocLitPortType">
+    <endpoint name="Axis2SampleDocLitPort"
+              binding="tns:Axis2SampleDocLitPortBinding"
+              address="http://userguide.axis2.apache.org/stkv3/wsdl/Axis2SampleDocLit.wsdl">
+    </endpoint>
+  </service>
+</description>

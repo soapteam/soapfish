@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/SAWSDL-14G/05-simpletype-annotation-with-attribute.wsdl -->
+<!-- Copyright © 2007-04-24 21:14 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description
+  targetNamespace="http://www.w3.org/2002/ws/sawsdl/spec/wsdl/order#"
+  xmlns="http://www.w3.org/2002/ws/sawsdl/spec/wsdl/order#"
+  xmlns:wsdl="http://www.w3.org/ns/wsdl"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:sawsdl="http://www.w3.org/2007/01/sawsdl#">
+
+  <wsdl:types>
+    <xs:schema targetNamespace="http://www.w3.org/2002/ws/sawsdl/spec/wsdl/order#" elementFormDefault="qualified">
+      <xs:element name="OrderRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="customerNo" type="xs:integer" />
+            <xs:element name="orderItem" type="item" minOccurs="1" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="item">
+        <xs:all>
+          <xs:element name="UPC" type="xs:string" />
+        </xs:all>
+        <xs:attribute name="quantity" type="xs:integer" />
+      </xs:complexType>
+
+      <xs:element name="OrderResponse" type="confirmation" />
+      <xs:simpleType name="confirmation"
+          sawsdl:modelReference="http://www.w3.org/2002/ws/sawsdl/spec/ontology/purchaseorder#OrderConfirmation">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Confirmed" />
+          <xs:enumeration value="Pending" />
+          <xs:enumeration value="Rejected" />
+        </xs:restriction>
+      </xs:simpleType>
+
+      <xs:attribute name="TestAttribute" type="confirmation"/>
+      <!-- used for testing of propagation of modelReference -->
+    </xs:schema>
+  </wsdl:types>
+
+  <wsdl:interface name="Order">
+    <wsdl:operation name="order" pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input element="OrderRequest" />
+      <wsdl:output element="OrderResponse" />
+    </wsdl:operation>
+  </wsdl:interface>
+</wsdl:description>

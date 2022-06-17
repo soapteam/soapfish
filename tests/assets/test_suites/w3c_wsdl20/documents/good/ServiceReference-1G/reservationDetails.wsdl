@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/ServiceReference-1G/reservationDetails.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://greath.example.com/2004/services/reservationDetails"
+	xmlns:tns="http://greath.example.com/2004/services/reservationDetails"
+	xmlns:wdetails="http://greath.example.com/2004/schemas/reservationDetails"
+	xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<documentation>
+		This document describes the GreatH Reservation Details Web
+		services. Use these services to retrieve or update reservation
+		details. Each reservation has its own service and endpoint. To
+		obtain the serice reference for a reservation, make a request to
+		the GreatH Reservation List Web service. See
+		reservationList.wsdl for a description of the Reservation List
+		Web service.
+	</documentation>
+
+	<types>
+		<xs:import
+			namespace="http://greath.example.com/2004/schemas/reservationDetails"
+			schemaLocation="reservationDetails.xsd" />
+	</types>
+
+	<interface name="reservationDetailsInterface">
+
+		<operation name="retrieve"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<input messageLabel="In" element="#none" />
+			<output messageLabel="Out"
+				element="wdetails:reservationDetails" />
+		</operation>
+
+		<operation name="update"
+			pattern="http://www.w3.org/ns/wsdl/in-out">
+			<input messageLabel="In"
+				element="wdetails:reservationDetails" />
+			<output messageLabel="Out"
+				element="wdetails:reservationDetails" />
+		</operation>
+
+	</interface>
+
+	<binding name="reservationDetailsSOAPBinding"
+		interface="tns:reservationDetailsInterface"
+		type="http://www.w3.org/ns/wsdl/soap"
+		wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+
+		<operation ref="tns:retrieve"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+
+		<operation ref="tns:update"
+			wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+
+	</binding>
+
+</description>

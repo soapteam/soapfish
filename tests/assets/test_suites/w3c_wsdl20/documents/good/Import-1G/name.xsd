@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/Import-1G/name.xsd -->
+<!-- Copyright © 2006-02-19 23:27 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://example.org/name"
+	xmlns:tns="http://example.org/name">
+	<!-- This document is used as a sample XML schema document. -->
+	<element name="Name">
+		<complexType>
+			<sequence>
+				<element name="FirstName" type="string"></element>
+				<element name="LastName" type="string"></element>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="SIN" type="string" />
+
+</schema>

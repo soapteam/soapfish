@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Schema-2B/Schema.wsdl -->
+<!-- Copyright © 2007-03-23 05:52 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://example.org/">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a schema import.
+		The namespace of the imported document is not the
+		same as that specified for the namespace attribute
+		of the xs:import element.
+		
+		This test violates assertion Schema-1070.
+	</wsdl:documentation>
+	
+	<wsdl:types>
+		<xs:import namespace="http://example.org/schema/" schemaLocation="Schema.xsd"/>
+	</wsdl:types>
+</wsdl:description>

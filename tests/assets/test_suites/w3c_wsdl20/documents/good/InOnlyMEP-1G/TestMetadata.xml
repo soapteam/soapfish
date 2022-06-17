@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/InOnlyMEP-1G/TestMetadata.xml -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<TestMetadata xmlns="http://www.w3.org/2006/02/wsdl/TestMetadata">
+	<Identifier>
+		http://dev.w3.org/cvsweb/2002/ws/desc/test-suite/documents/good/InOnlyMEP-1G
+	</Identifier>
+	<Title>Good Document InOnly MEP Operation</Title>
+	<Purpose>For testing interoperability</Purpose>
+	<Description>IN-Only MEP Operation</Description>
+	<Status>accepted</Status>
+	<SpecRef></SpecRef>
+	<Preconditions>none</Preconditions>
+	<Inputs>
+		<Input role="root">Oneway.wsdl</Input>
+		<Input role="required-extension">http://www.w3.org/ns/wsdl/soap</Input>
+	</Inputs>
+	<ExpectedResults>
+		<Successful>true</Successful>
+	</ExpectedResults>
+	<Version>1.0</Version>
+	<Contributor>
+		<Name>Chathura Herath</Name>
+		<Affiliation>Indiana University, Extreme!! Lab</Affiliation>
+		<EMail>cherath@cs.indiana.edu</EMail>
+	</Contributor>
+	<Rights>http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</Rights>
+	<Grouping>/documents/good</Grouping>
+	<SeeAlso><Reference>http://www.w3.org/TR/wsdl20</Reference></SeeAlso>
+</TestMetadata>

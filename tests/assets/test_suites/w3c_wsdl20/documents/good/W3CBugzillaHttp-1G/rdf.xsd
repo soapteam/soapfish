@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/W3CBugzillaHttp-1G/rdf.xsd -->
+<!-- Copyright © 2007-04-18 06:17 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:bz="http://www.bugzilla.org/rdf#"
+	elementFormDefault="qualified">
+
+	<import namespace="http://www.bugzilla.org/rdf#"
+		schemaLocation="bz.xsd">
+	</import>
+
+	<element name="RDF">
+		<complexType>
+			<sequence>
+				<element ref="bz:result"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="Seq">
+		<complexType>
+			<sequence>
+				<element ref="rdf:li" minOccurs="0"
+					maxOccurs="unbounded">
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="li">
+		<complexType>
+			<sequence>
+				<element ref="bz:bug"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<attribute name="about" type="anyURI"></attribute>
+
+	<attribute name="resource" type="anyURI"></attribute>
+
+</schema>

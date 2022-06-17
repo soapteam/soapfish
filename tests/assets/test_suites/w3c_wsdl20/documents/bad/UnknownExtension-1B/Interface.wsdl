@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/UnknownExtension-1B/Interface.wsdl -->
+<!-- Copyright © 2007-03-23 05:50 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:unknown="http://example.org/unknown-wsdl-extension">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a WSDL 2.0 interface with a
+		required unknown extension element. The extension is explicitly
+		marked as required.
+	</wsdl:documentation>
+
+	<wsdl:interface name="myInterface">
+		<unknown:extension wsdl:required="true" />
+	</wsdl:interface>
+
+</wsdl:description>

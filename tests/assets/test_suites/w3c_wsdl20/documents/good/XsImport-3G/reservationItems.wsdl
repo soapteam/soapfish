@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/XsImport-3G/reservationItems.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<description xmlns="http://www.w3.org/ns/wsdl"
+	targetNamespace="http://greath.example.com/2004/services/retrieveItems"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<documentation>
+		Test case XsImport-3G shows that the schemaLocation attribute is
+		not required when importing a namespace that is defined in an
+		inline schema contained in an imported WSDL document. In this
+		example, the second inline schema imports the namespace defined
+		in the inline schema that is contained in the imported WSDL
+		document, but does not specify a schemaLocation since the WSDL
+		processor can locate it by virtue of it being contained the
+		imported WSDL document.
+	</documentation>
+
+	<types>
+
+		<xs:schema
+			targetNamespace="http://greath.example.com/2004/schemas/reservationItems">
+
+			<xs:element name="confirmationNumber" type="xs:string" />
+			<xs:element name="checkInDate" type="xs:date" />
+			<xs:element name="checkOutDate" type="xs:date" />
+			<xs:element name="roomType" type="xs:string" />
+			<xs:element name="smoking" type="xs:boolean" />
+
+		</xs:schema>
+
+	</types>
+
+</description>

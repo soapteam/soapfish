@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/bad/Interface-2B/Interface.wsdl -->
+<!-- Copyright © 2007-03-23 05:51 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<wsdl:description targetNamespace="http://example.org/"
+	xmlns:tns="http://example.org/"
+	xmlns:wsdl="http://www.w3.org/ns/wsdl"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<wsdl:documentation>
+		This test shows an invalid use of a WSDL 2.0 interface. The
+		interface extends itself. As specified in section 2.1.1 "an
+		interface MUST NOT appear as an element of the set of interfaces
+		it extends, either directly or indirectly."
+		
+		This document violates assertion Interface-1009.
+	</wsdl:documentation>
+
+	<wsdl:interface name="myInterface" extends="tns:myInterface">
+		<wsdl:documentation>Some documentation</wsdl:documentation>
+	</wsdl:interface>
+</wsdl:description>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/documents/good/TicketAgent-1G/TicketAgent.xsd -->
+<!-- Copyright © 2006-02-19 23:27 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://example.org/TicketAgent.xsd">
+
+	<element name="listFlightsRequest">
+		<complexType>
+			<sequence>
+				<element name="depart" type="dateTime"></element>
+				<element name="origin" type="string"></element>
+				<element name="destination" type="string"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="listFlightsResponse">
+		<complexType>
+			<sequence>
+				<element name="flight" type="string" minOccurs="0"
+					maxOccurs="unbounded">
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="reserveFlightRequest">
+		<complexType>
+			<sequence>
+				<element name="depart" type="dateTime"></element>
+				<element name="origin" type="string"></element>
+				<element name="destination" type="string"></element>
+				<element name="flight" type="string"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="reserveFlightResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"></element>
+			</sequence>
+		</complexType>
+	</element>
+
+</schema>

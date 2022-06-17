@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://dev.w3.org/2002/ws/desc/test-suite/interchange/wsdlcm-http.xsd -->
+<!-- Copyright © 2008 - W3C, (MIT, ERCIM, Keio). All Rights Reserved. http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231 -->
+<!--
+	
+	Schema for WSDL 2.0 HTTP Binding Component Model Interchange Format
+	
+	This format is used to compare component model instances computed by different implementation.
+	
+	ChangeLog:
+	
+	2006-05-08 Arthur Ryman (ryman@ca.ibm.com)
+	- created
+	
+	2006-05-19 Arthur Ryman (ryman@ca.ibm.com)
+	- modifed HttpErrorStatusCodeType to be consistent with SOAP complex type
+	
+	2006-06-10: Arthur Ryman (ryman@ca.ibm.com)
+	- moved parent into base
+	- added wrapper elements for extensions
+	
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:cmbase="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+	xmlns="http://www.w3.org/2002/ws/desc/wsdl/component-http"
+	targetNamespace="http://www.w3.org/2002/ws/desc/wsdl/component-http"
+	elementFormDefault="qualified">
+
+	<xs:import
+		namespace="http://www.w3.org/2002/ws/desc/wsdl/component-base"
+		schemaLocation="wsdlcm-base.xsd" />
+
+	<xs:element name="httpBindingExtension" type="HttpBindingExtension" />
+
+	<xs:complexType name="HttpBindingExtension">
+		<xs:sequence>
+			<xs:element ref="httpCookies" />
+			<xs:element ref="httpMethodDefault" minOccurs="0" />
+			<xs:element ref="httpQueryParameterSeparatorDefault" />
+			<xs:element ref="httpContentEncodingDefault" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="httpBindingFaultExtension"
+		type="HttpBindingFaultExtension" />
+
+	<xs:complexType name="HttpBindingFaultExtension">
+		<xs:sequence>
+			<xs:element ref="httpErrorStatusCode" />
+			<xs:element ref="httpHeaders" minOccurs="0" />
+			<xs:element ref="httpContentEncoding" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="httpBindingOperationExtension"
+		type="HttpBindingOperationExtension" />
+
+	<xs:complexType name="HttpBindingOperationExtension">
+		<xs:sequence>
+			<xs:element ref="httpFaultSerialization" />
+			<xs:element ref="httpInputSerialization" />
+			<xs:element ref="httpLocation" minOccurs="0" />
+			<xs:element ref="httpLocationIgnoreUncited" minOccurs="0" />
+			<xs:element ref="httpMethod" minOccurs="0" />
+			<xs:element ref="httpOutputSerialization" />
+			<xs:element ref="httpQueryParameterSeparator" minOccurs="0" />
+			<xs:element ref="httpContentEncodingDefault" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="httpBindingMessageReferenceExtension"
+		type="HttpBindingMessageReferenceExtension" />
+
+	<xs:complexType name="HttpBindingMessageReferenceExtension">
+		<xs:sequence>
+			<xs:element ref="httpHeaders" minOccurs="0" />
+			<xs:element ref="httpContentEncoding" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="httpEndpointExtension"
+		type="HttpEndpointExtension" />
+
+	<xs:complexType name="HttpEndpointExtension">
+		<xs:sequence>
+			<xs:element ref="httpAuthenticationRealm" minOccurs="0" />
+			<xs:element ref="httpAuthenticationScheme" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="httpAuthenticationRealm" type="xs:string" />
+
+	<xs:element name="httpAuthenticationScheme"
+		type="HttpAuthenticationSchemeType" />
+
+	<xs:element name="httpCookies" type="xs:boolean" />
+
+	<xs:element name="httpErrorStatusCode"
+		type="HttpErrorStatusCodeType" />
+
+	<xs:element name="httpFaultSerialization" type="xs:string" />
+
+	<xs:element name="httpHeaders" type="HttpHeaderComponents" />
+
+	<xs:element name="httpInputSerialization" type="xs:string" />
+
+	<xs:element name="httpLocation" type="xs:anyURI" />
+
+	<xs:element name="httpLocationIgnoreUncited" type="xs:boolean" />
+
+	<xs:element name="httpMethod" type="xs:string" />
+
+	<xs:element name="httpMethodDefault" type="xs:string" />
+
+	<xs:element name="httpOutputSerialization" type="xs:string" />
+
+	<xs:element name="httpQueryParameterSeparator" type="xs:string" />
+
+	<xs:element name="httpQueryParameterSeparatorDefault"
+		type="xs:string" />
+
+	<xs:element name="httpContentEncoding" type="xs:string" />
+
+	<xs:element name="httpContentEncodingDefault" type="xs:string" />
+
+	<xs:simpleType name="HttpAuthenticationSchemeType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="basic" />
+			<xs:enumeration value="digest" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="HttpErrorStatusCodeType">
+		<xs:annotation>
+			<xs:documentation>
+				Empty content represents #any.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="code" type="xs:int" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="HttpHeaderComponents">
+		<xs:annotation>
+			<xs:documentation>
+				The sequence is sorted by the key of HTTP Header.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="httpHeaderComponent"
+				type="HttpHeaderComponent" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="HttpHeaderComponent">
+		<xs:annotation>
+			<xs:documentation>
+				The key of HTTP Header is (name).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="cmbase:Component">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" />
+					<xs:element name="typeDefinition" type="cmbase:Ref" />
+					<xs:element name="required" type="xs:boolean" />
+					<xs:element ref="cmbase:parent" />
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>
